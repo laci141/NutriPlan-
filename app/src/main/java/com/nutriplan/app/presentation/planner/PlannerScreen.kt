@@ -47,6 +47,7 @@ import com.nutriplan.app.domain.model.NutritionTotals
 import com.nutriplan.app.domain.model.Recipe
 import com.nutriplan.app.domain.model.WeekDay
 import com.nutriplan.app.presentation.components.NutritionSummary
+import com.nutriplan.app.presentation.util.displayName
 import com.nutriplan.app.presentation.util.label
 
 /**
@@ -211,7 +212,7 @@ private fun MealSlot(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${assignment.recipe.name} (${assignment.recipe.calories} ${stringResource(R.string.kcal_unit)})",
+                    text = "${assignment.recipe.displayName()} (${assignment.recipe.calories} ${stringResource(R.string.kcal_unit)})",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
@@ -245,7 +246,7 @@ private fun RecipePickerDialog(
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     items(recipes, key = { it.id }) { recipe ->
                         Text(
-                            text = "${recipe.name} · ${recipe.calories} ${stringResource(R.string.kcal_unit)}",
+                            text = "${recipe.displayName()} · ${recipe.calories} ${stringResource(R.string.kcal_unit)}",
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier
                                 .fillMaxWidth()

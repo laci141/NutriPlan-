@@ -15,5 +15,7 @@ data class ShoppingItemEntity(
     val quantity: Double,
     val unit: String,
     val category: String,
-    val purchased: Boolean = false
+    val purchased: Boolean = false,
+    // Fordítási kulcs az összevont hozzávalóhoz (null = literál név)
+    val nameKey: String? = null
 )

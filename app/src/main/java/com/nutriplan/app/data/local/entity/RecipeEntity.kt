@@ -19,5 +19,7 @@ data class RecipeEntity(
     val carbs: Double,
     val fat: Double,
     // Jelzi, hogy ez az első indításkor betöltött alaprecept-e
-    val isDefault: Boolean = false
+    val isDefault: Boolean = false,
+    // Fordítási kulcs az alaprecept nevéhez (null = literál név)
+    val nameKey: String? = null
 )

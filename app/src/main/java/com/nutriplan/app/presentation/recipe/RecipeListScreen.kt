@@ -38,6 +38,7 @@ import com.nutriplan.app.R
 import com.nutriplan.app.domain.model.Recipe
 import com.nutriplan.app.presentation.components.EmptyState
 import com.nutriplan.app.presentation.util.ConfirmDeleteDialog
+import com.nutriplan.app.presentation.util.displayName
 import com.nutriplan.app.presentation.util.formatQuantity
 import com.nutriplan.app.presentation.util.label
 
@@ -128,7 +129,7 @@ private fun RecipeCard(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = recipe.name,
+                    text = recipe.displayName(),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )

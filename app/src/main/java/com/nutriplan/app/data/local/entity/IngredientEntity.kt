@@ -31,5 +31,7 @@ data class IngredientEntity(
     // Mértékegység kulcsa szövegként (pl. "g")
     val unit: String,
     // Bevásárlólista kategória kulcsa szövegként (pl. "meat")
-    val category: String
+    val category: String,
+    // Fordítási kulcs az alaphozzávaló nevéhez (null = literál név)
+    val nameKey: String? = null
 )

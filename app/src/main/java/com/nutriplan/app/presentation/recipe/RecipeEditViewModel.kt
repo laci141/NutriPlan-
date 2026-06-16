@@ -28,7 +28,9 @@ data class IngredientForm(
     val name: String = "",
     val quantity: String = "",
     val unit: MeasurementUnit = MeasurementUnit.GRAM,
-    val category: IngredientCategory = IngredientCategory.OTHER
+    val category: IngredientCategory = IngredientCategory.OTHER,
+    // Fordítási kulcs (alaphozzávalónál); a név szerkesztésekor töröljük
+    val nameKey: String? = null
 )
 
 /**
@@ -45,7 +47,9 @@ data class RecipeFormState(
     val ingredients: List<IngredientForm> = listOf(IngredientForm()),
     val isEditing: Boolean = false,
     val nameError: Boolean = false,
-    val saved: Boolean = false
+    val saved: Boolean = false,
+    // Fordítási kulcs (alaprecept); a név szerkesztésekor töröljük
+    val nameKey: String? = null
 )
 
 /**
@@ -85,9 +89,10 @@ class RecipeEditViewModel @Inject constructor(
                     carbs = recipe.carbs.toString(),
                     fat = recipe.fat.toString(),
                     ingredients = recipe.ingredients.map {
-                        IngredientForm(it.name, it.quantity.toString(), it.unit, it.category)
+                        IngredientForm(it.name, it.quantity.toString(), it.unit, it.category, it.nameKey)
                     }.ifEmpty { listOf(IngredientForm()) },
-                    isEditing = true
+                    isEditing = true,
+                    nameKey = recipe.nameKey
                 )
             } else {
                 Logger.w(Logger.Tags.VIEWMODEL, "A betöltendő recept nem található: id=$id")
@@ -95,7 +100,8 @@ class RecipeEditViewModel @Inject constructor(
         }
     }
 
-    fun onNameChange(value: String) { _state.value = _state.value.copy(name = value, nameError = false) }
+    // A név szerkesztésekor töröljük a fordítási kulcsot (egyedi recept lesz a megadott szöveggel)
+    fun onNameChange(value: String) { _state.value = _state.value.copy(name = value, nameError = false, nameKey = null) }
     fun onMealTypeChange(value: MealType) { _state.value = _state.value.copy(mealType = value) }
     fun onCaloriesChange(value: String) { _state.value = _state.value.copy(calories = value.filterNumeric()) }
     fun onProteinChange(value: String) { _state.value = _state.value.copy(protein = value.filterDecimal()) }
@@ -130,7 +136,8 @@ class RecipeEditViewModel @Inject constructor(
         val current = _state.value.ingredients.getOrNull(index) ?: return
         updateIngredient(
             index,
-            current.copy(name = name, category = IngredientCategorizer.categorize(name))
+            // A név szerkesztésekor töröljük a fordítási kulcsot
+            current.copy(name = name, category = IngredientCategorizer.categorize(name), nameKey = null)
         )
     }
 
@@ -152,7 +159,8 @@ class RecipeEditViewModel @Inject constructor(
                         name = it.name.trim(),
                         quantity = it.quantity.toDoubleOrNull() ?: 0.0,
                         unit = it.unit,
-                        category = it.category
+                        category = it.category,
+                        nameKey = it.nameKey
                     )
                 }
 
@@ -164,7 +172,8 @@ class RecipeEditViewModel @Inject constructor(
                 protein = current.protein.toDoubleOrNull() ?: 0.0,
                 carbs = current.carbs.toDoubleOrNull() ?: 0.0,
                 fat = current.fat.toDoubleOrNull() ?: 0.0,
-                ingredients = ingredients
+                ingredients = ingredients,
+                nameKey = current.nameKey
             )
 
             Logger.i(Logger.Tags.VIEWMODEL, "RecipeEditViewModel – recept mentése: '${recipe.name}'")

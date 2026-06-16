@@ -26,6 +26,7 @@ data class RecipeDto(
     val carbs: Double,
     val fat: Double,
     val isDefault: Boolean,
+    val nameKey: String? = null,
     val ingredients: List<IngredientDto>
 )
 
@@ -34,7 +35,8 @@ data class IngredientDto(
     val name: String,
     val quantity: Double,
     val unit: String,
-    val category: String
+    val category: String,
+    val nameKey: String? = null
 )
 
 @Serializable
@@ -50,5 +52,6 @@ data class ShoppingItemDto(
     val quantity: Double,
     val unit: String,
     val category: String,
-    val purchased: Boolean
+    val purchased: Boolean,
+    val nameKey: String? = null
 )

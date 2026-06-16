@@ -54,14 +54,15 @@ class BackupRepositoryImpl @Inject constructor(
                     carbs = rwi.recipe.carbs,
                     fat = rwi.recipe.fat,
                     isDefault = rwi.recipe.isDefault,
+                    nameKey = rwi.recipe.nameKey,
                     ingredients = rwi.ingredients.map {
-                        IngredientDto(it.name, it.quantity, it.unit, it.category)
+                        IngredientDto(it.name, it.quantity, it.unit, it.category, it.nameKey)
                     }
                 )
             },
             mealPlans = plans.map { MealPlanDto(it.weekDay, it.mealType, it.recipeId) },
             shoppingItems = shopping.map {
-                ShoppingItemDto(it.name, it.quantity, it.unit, it.category, it.purchased)
+                ShoppingItemDto(it.name, it.quantity, it.unit, it.category, it.purchased, it.nameKey)
             }
         )
 
@@ -96,7 +97,8 @@ class BackupRepositoryImpl @Inject constructor(
                     protein = recipeDto.protein,
                     carbs = recipeDto.carbs,
                     fat = recipeDto.fat,
-                    isDefault = recipeDto.isDefault
+                    isDefault = recipeDto.isDefault,
+                    nameKey = recipeDto.nameKey
                 )
             )
             recipeDao.insertIngredients(
@@ -106,7 +108,8 @@ class BackupRepositoryImpl @Inject constructor(
                         name = it.name,
                         quantity = it.quantity,
                         unit = it.unit,
-                        category = it.category
+                        category = it.category,
+                        nameKey = it.nameKey
                     )
                 }
             )
@@ -131,7 +134,8 @@ class BackupRepositoryImpl @Inject constructor(
                     quantity = it.quantity,
                     unit = it.unit,
                     category = it.category,
-                    purchased = it.purchased
+                    purchased = it.purchased,
+                    nameKey = it.nameKey
                 )
             }
         )

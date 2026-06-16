@@ -41,6 +41,7 @@ import com.nutriplan.app.R
 import com.nutriplan.app.domain.model.IngredientCategory
 import com.nutriplan.app.domain.model.ShoppingItem
 import com.nutriplan.app.presentation.components.EmptyState
+import com.nutriplan.app.presentation.util.displayName
 import com.nutriplan.app.presentation.util.formatQuantity
 import com.nutriplan.app.presentation.util.label
 
@@ -139,7 +140,7 @@ private fun ShoppingRow(
     ) {
         Checkbox(checked = item.purchased, onCheckedChange = { onToggle() })
         Text(
-            text = "${item.name} – ${formatQuantity(item.quantity)} ${item.unit.label()}",
+            text = "${item.displayName()} – ${formatQuantity(item.quantity)} ${item.unit.label()}",
             style = MaterialTheme.typography.bodyLarge,
             textDecoration = if (item.purchased) TextDecoration.LineThrough else TextDecoration.None,
             color = if (item.purchased) MaterialTheme.colorScheme.onSurfaceVariant

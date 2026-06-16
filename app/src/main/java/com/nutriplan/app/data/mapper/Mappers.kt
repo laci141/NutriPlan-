@@ -20,7 +20,8 @@ fun IngredientEntity.toDomain(): Ingredient = Ingredient(
     name = name,
     quantity = quantity,
     unit = MeasurementUnit.fromKey(unit),
-    category = IngredientCategory.fromKey(category)
+    category = IngredientCategory.fromKey(category),
+    nameKey = nameKey
 )
 
 fun Ingredient.toEntity(recipeId: Long): IngredientEntity = IngredientEntity(
@@ -29,7 +30,8 @@ fun Ingredient.toEntity(recipeId: Long): IngredientEntity = IngredientEntity(
     name = name,
     quantity = quantity,
     unit = unit.key,
-    category = category.key
+    category = category.key,
+    nameKey = nameKey
 )
 
 fun RecipeWithIngredients.toDomain(): Recipe = Recipe(
@@ -41,7 +43,8 @@ fun RecipeWithIngredients.toDomain(): Recipe = Recipe(
     carbs = recipe.carbs,
     fat = recipe.fat,
     isDefault = recipe.isDefault,
-    ingredients = ingredients.map { it.toDomain() }
+    ingredients = ingredients.map { it.toDomain() },
+    nameKey = recipe.nameKey
 )
 
 fun Recipe.toEntity(): RecipeEntity = RecipeEntity(
@@ -52,7 +55,8 @@ fun Recipe.toEntity(): RecipeEntity = RecipeEntity(
     protein = protein,
     carbs = carbs,
     fat = fat,
-    isDefault = isDefault
+    isDefault = isDefault,
+    nameKey = nameKey
 )
 
 fun ShoppingItemEntity.toDomain(): ShoppingItem = ShoppingItem(
@@ -61,7 +65,8 @@ fun ShoppingItemEntity.toDomain(): ShoppingItem = ShoppingItem(
     quantity = quantity,
     unit = MeasurementUnit.fromKey(unit),
     category = IngredientCategory.fromKey(category),
-    purchased = purchased
+    purchased = purchased,
+    nameKey = nameKey
 )
 
 fun ShoppingItem.toEntity(): ShoppingItemEntity = ShoppingItemEntity(
@@ -70,5 +75,6 @@ fun ShoppingItem.toEntity(): ShoppingItemEntity = ShoppingItemEntity(
     quantity = quantity,
     unit = unit.key,
     category = category.key,
-    purchased = purchased
+    purchased = purchased,
+    nameKey = nameKey
 )

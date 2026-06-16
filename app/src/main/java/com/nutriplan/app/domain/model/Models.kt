@@ -9,7 +9,9 @@ data class Ingredient(
     val name: String,
     val quantity: Double,
     val unit: MeasurementUnit,
-    val category: IngredientCategory = IngredientCategory.OTHER
+    val category: IngredientCategory = IngredientCategory.OTHER,
+    // Fordítási kulcs (alaphozzávalóknál); ha null, a name literál szöveget jelenítjük meg
+    val nameKey: String? = null
 )
 
 /**
@@ -24,7 +26,9 @@ data class Recipe(
     val carbs: Double,
     val fat: Double,
     val isDefault: Boolean = false,
-    val ingredients: List<Ingredient> = emptyList()
+    val ingredients: List<Ingredient> = emptyList(),
+    // Fordítási kulcs (alaprecepteknél); ha null, a name literál szöveget jelenítjük meg
+    val nameKey: String? = null
 )
 
 /**
@@ -46,7 +50,9 @@ data class ShoppingItem(
     val quantity: Double,
     val unit: MeasurementUnit,
     val category: IngredientCategory,
-    val purchased: Boolean = false
+    val purchased: Boolean = false,
+    // Fordítási kulcs az összevont hozzávalóhoz (ha alaphozzávalóból származik)
+    val nameKey: String? = null
 )
 
 /**

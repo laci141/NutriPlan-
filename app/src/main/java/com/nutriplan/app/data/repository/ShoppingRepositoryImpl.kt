@@ -46,7 +46,9 @@ class ShoppingRepositoryImpl @Inject constructor(
             val recipe = recipeMap[plan.recipeId] ?: continue
             for (ingredient in recipe.ingredients) {
                 totalIngredients++
-                val key = ingredient.name.lowercase().trim() + "|" + ingredient.unit
+                // Az azonos hozzávalókat fordítási kulcs (ha van) vagy név szerint vonjuk össze
+                val mergeId = (ingredient.nameKey ?: ingredient.name.lowercase().trim())
+                val key = mergeId + "|" + ingredient.unit
                 val existing = merged[key]
                 if (existing == null) {
                     merged[key] = ShoppingItemEntity(
@@ -54,7 +56,8 @@ class ShoppingRepositoryImpl @Inject constructor(
                         quantity = ingredient.quantity,
                         unit = ingredient.unit,
                         category = ingredient.category,
-                        purchased = false
+                        purchased = false,
+                        nameKey = ingredient.nameKey
                     )
                 } else {
                     // Azonos hozzávaló mennyiségének összeadása
