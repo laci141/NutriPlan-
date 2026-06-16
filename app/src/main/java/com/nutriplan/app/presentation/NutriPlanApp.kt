@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.nutriplan.app.presentation.dashboard.DashboardScreen
 import com.nutriplan.app.presentation.navigation.BottomNavItem
 import com.nutriplan.app.presentation.navigation.Routes
 import com.nutriplan.app.presentation.nutrition.NutritionScreen
@@ -52,7 +53,7 @@ fun NutriPlanApp() {
                                 if (currentRoute != item.route) {
                                     Logger.d(Logger.Tags.APP, "Navigáció: ${item.route}")
                                     navController.navigate(item.route) {
-                                        popUpTo(Routes.PLANNER) { saveState = true }
+                                        popUpTo(Routes.DASHBOARD) { saveState = true }
                                         launchSingleTop = true
                                         restoreState = true
                                     }
@@ -70,7 +71,7 @@ fun NutriPlanApp() {
         val animDuration = 300
         NavHost(
             navController = navController,
-            startDestination = Routes.PLANNER,
+            startDestination = Routes.DASHBOARD,
             modifier = Modifier.padding(innerPadding),
             enterTransition = {
                 slideInHorizontally(tween(animDuration)) { it / 6 } + fadeIn(tween(animDuration))
@@ -85,6 +86,18 @@ fun NutriPlanApp() {
                 slideOutHorizontally(tween(animDuration)) { it / 6 } + fadeOut(tween(animDuration))
             }
         ) {
+            composable(Routes.DASHBOARD) {
+                DashboardScreen(
+                    onOpenNutrition = {
+                        navController.navigate(Routes.NUTRITION) {
+                            popUpTo(Routes.DASHBOARD) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+
             composable(Routes.PLANNER) { PlannerScreen() }
 
             composable(Routes.RECIPES) {

@@ -115,6 +115,21 @@
     <string name="kcal_over_goal">%1$d kcal peste obiectiv</string>
     <string name="goal_reached">Obiectiv atins</string>
 
+    <!-- Acasă (Dashboard) -->
+    <string name="nav_dashboard">Acasă</string>
+    <string name="greeting_morning">Bună dimineața! Gata pentru un mic dejun sănătos?</string>
+    <string name="greeting_afternoon">Bună ziua! Continuă tot așa.</string>
+    <string name="greeting_evening">Bravo azi! Nu uita să notezi cina.</string>
+    <string name="dashboard_calories_today">Calorii azi</string>
+    <string name="dashboard_macros">Macronutrienți</string>
+    <string name="dashboard_water">Apă</string>
+    <string name="dashboard_steps">Pași</string>
+    <string name="water_add">+250 ml</string>
+    <string name="ml_progress">%1$d / %2$d ml</string>
+    <string name="steps_progress">%1$d / %2$d</string>
+    <string name="enable">Activează</string>
+    <string name="left_short">încă %1$d</string>
+
     <!-- Comune -->
     <string name="save">Salvează</string>
     <string name="cancel">Anulează</string>

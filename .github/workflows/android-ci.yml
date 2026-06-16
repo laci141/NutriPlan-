@@ -92,6 +92,11 @@ jobs:
           # Az aláírás érvényességének ellenőrzése
           "${BT}apksigner" verify --print-certs "$APK" >/dev/null && echo "Aláírás érvényes."
 
+      # 7/c. lépés – Android App Bundle (.aab) fordítása a Play Store-hoz.
+      # Az .aab eszközönként testreszabott, kisebb letöltést tesz lehetővé (ABI/sűrűség/nyelv szerint).
+      - name: Release AAB fordítása (Play Store formátum)
+        run: ./gradlew bundleRelease --stacktrace
+
       # 8. lépés – a kész release APK feltöltése letölthető csomagként
       - name: Release APK feltöltése (artifact)
         if: success()
@@ -99,6 +104,15 @@ jobs:
         with:
           name: nutriplan-release-apk
           path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: warn
+
+      # 8/b. lépés – az AAB feltöltése (Play Console feltöltéshez)
+      - name: Release AAB feltöltése (artifact)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nutriplan-release-aab
+          path: app/build/outputs/bundle/release/*.aab
           if-no-files-found: warn
 
       # 9. lépés – teszt-jelentések feltöltése (akkor is, ha a teszt elbukott)

@@ -3,6 +3,12 @@
 
     <!-- Az alkalmazás teljesen offline működik, internet engedély nem szükséges. -->
 
+    <!-- Lépésszámláláshoz (a kezdőlap lépés-kártyája); a szenzor opcionális. -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-feature
+        android:name="android.hardware.sensor.stepcounter"
+        android:required="false" />
+
     <application
         android:name=".NutriPlanApplication"
         android:allowBackup="true"

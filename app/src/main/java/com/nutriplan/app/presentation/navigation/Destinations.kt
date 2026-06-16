@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -14,6 +15,7 @@ import com.nutriplan.app.R
  * Az alkalmazás navigációs útvonalai.
  */
 object Routes {
+    const val DASHBOARD = "dashboard"
     const val PLANNER = "planner"
     const val RECIPES = "recipes"
     const val SHOPPING = "shopping"
@@ -37,6 +39,7 @@ enum class BottomNavItem(
     @StringRes val labelRes: Int,
     val icon: ImageVector
 ) {
+    DASHBOARD(Routes.DASHBOARD, R.string.nav_dashboard, Icons.Filled.GridView),
     PLANNER(Routes.PLANNER, R.string.nav_planner, Icons.Filled.CalendarMonth),
     RECIPES(Routes.RECIPES, R.string.nav_recipes, Icons.AutoMirrored.Filled.MenuBook),
     SHOPPING(Routes.SHOPPING, R.string.nav_shopping, Icons.Filled.ShoppingCart),

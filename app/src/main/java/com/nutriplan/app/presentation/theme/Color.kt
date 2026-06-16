@@ -20,9 +20,10 @@ val LightSurfaceVariant = Color(0xFFE7EDEA)
 val GreenPrimaryLight = Color(0xFF34D399)
 val DarkGreenContainer = Color(0xFF065F46)
 val OnDarkGreenContainer = Color(0xFFA7F3D0)
-val DarkBackground = Color(0xFF0F172A)
-val DarkSurface = Color(0xFF1E293B)
-val DarkSurfaceVariant = Color(0xFF334155)
+// Mély, organikus olíva-szürke tónusok (NEM tiszta fekete, NEM rideg kék)
+val DarkBackground = Color(0xFF12140F)
+val DarkSurface = Color(0xFF1B1E16)
+val DarkSurfaceVariant = Color(0xFF2A2E24)
 
 // Kiegészítő színek
 val ErrorRed = Color(0xFFDC2626)
