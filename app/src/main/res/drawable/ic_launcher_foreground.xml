@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher ikon előtér: stilizált levél (NutriPlan logó) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,28 C71,39 77,59 54,86 C31,59 37,39 54,28 Z" />
+    <path
+        android:strokeColor="#059669"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M54,35 L54,80" />
+</vector>

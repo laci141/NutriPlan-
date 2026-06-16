@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NutriPlan</string>
+
+    <!-- Navigáció -->
+    <string name="nav_planner">Tervező</string>
+    <string name="nav_recipes">Receptek</string>
+    <string name="nav_shopping">Bevásárlás</string>
+    <string name="nav_nutrition">Tápérték</string>
+    <string name="nav_settings">Beállítások</string>
+
+    <!-- Étkezések -->
+    <string name="meal_breakfast">Reggeli</string>
+    <string name="meal_morning_snack">Tízórai</string>
+    <string name="meal_lunch">Ebéd</string>
+    <string name="meal_afternoon_snack">Uzsonna</string>
+    <string name="meal_dinner">Vacsora</string>
+
+    <!-- Napok -->
+    <string name="day_monday">Hétfő</string>
+    <string name="day_tuesday">Kedd</string>
+    <string name="day_wednesday">Szerda</string>
+    <string name="day_thursday">Csütörtök</string>
+    <string name="day_friday">Péntek</string>
+    <string name="day_saturday">Szombat</string>
+    <string name="day_sunday">Vasárnap</string>
+
+    <!-- Mértékegységek -->
+    <string name="unit_g">g</string>
+    <string name="unit_kg">kg</string>
+    <string name="unit_ml">ml</string>
+    <string name="unit_l">l</string>
+    <string name="unit_piece">db</string>
+
+    <!-- Kategóriák -->
+    <string name="cat_vegetables">Zöldségek</string>
+    <string name="cat_fruits">Gyümölcsök</string>
+    <string name="cat_meat">Húsok</string>
+    <string name="cat_fish">Halak</string>
+    <string name="cat_dairy">Tejtermékek</string>
+    <string name="cat_bakery">Pékáruk</string>
+    <string name="cat_dry_goods">Száraz áruk</string>
+    <string name="cat_nuts">Olajos magvak</string>
+    <string name="cat_other">Egyéb</string>
+
+    <!-- Receptek -->
+    <string name="recipes_title">Receptek</string>
+    <string name="search_hint">Receptek keresése…</string>
+    <string name="add_recipe">Recept hozzáadása</string>
+    <string name="edit_recipe">Recept szerkesztése</string>
+    <string name="new_recipe">Új recept</string>
+    <string name="delete_recipe">Recept törlése</string>
+    <string name="no_recipes">Még nincs recept. Koppints a + gombra egy hozzáadásához.</string>
+    <string name="recipe_name">Recept neve</string>
+    <string name="calories">Kalória</string>
+    <string name="protein">Fehérje</string>
+    <string name="carbs">Szénhidrát</string>
+    <string name="fat">Zsír</string>
+    <string name="ingredients">Hozzávalók</string>
+    <string name="add_ingredient">Hozzávaló hozzáadása</string>
+    <string name="ingredient_name">Hozzávaló neve</string>
+    <string name="quantity">Mennyiség</string>
+    <string name="unit">Mértékegység</string>
+    <string name="category">Kategória</string>
+    <string name="meal_type">Étkezés típusa</string>
+    <string name="kcal_unit">kcal</string>
+
+    <!-- Tervező -->
+    <string name="planner_title">Heti tervező</string>
+    <string name="clear_week">Hét törlése</string>
+    <string name="add_meal">Hozzáad</string>
+    <string name="select_recipe">Recept kiválasztása</string>
+    <string name="no_recipes_for_meal">Nincs elérhető recept ehhez az étkezéshez.</string>
+    <string name="day_total">Napi összesen</string>
+
+    <!-- Bevásárlás -->
+    <string name="shopping_title">Bevásárlólista</string>
+    <string name="generate_list">Generálás a tervből</string>
+    <string name="clear_purchased">Megvettek törlése</string>
+    <string name="clear_all">Összes törlése</string>
+    <string name="empty_shopping">A bevásárlólista üres. Generáld a heti tervből.</string>
+    <string name="shopping_generated">Bevásárlólista elkészült: %1$d tétel</string>
+
+    <!-- Tápérték -->
+    <string name="nutrition_title">Tápérték</string>
+    <string name="weekly_totals">Heti összesen</string>
+    <string name="daily_breakdown">Napi bontás</string>
+    <string name="no_nutrition_data">Még nincs betervezett étkezés.</string>
+
+    <!-- Beállítások -->
+    <string name="settings_title">Beállítások</string>
+    <string name="language">Nyelv</string>
+    <string name="theme">Téma</string>
+    <string name="theme_light">Világos</string>
+    <string name="theme_dark">Sötét</string>
+    <string name="theme_system">Rendszer szerinti</string>
+    <string name="lang_hungarian">Magyar</string>
+    <string name="lang_english">Angol</string>
+    <string name="lang_romanian">Román</string>
+    <string name="export_data">Adatok exportálása (JSON)</string>
+    <string name="import_data">Adatok importálása (JSON)</string>
+    <string name="data_management">Adatkezelés</string>
+    <string name="export_success">Exportálás kész</string>
+    <string name="import_success">Importálás kész</string>
+    <string name="import_error">Sikertelen importálás. Hibás fájl.</string>
+    <string name="export_error">Sikertelen exportálás.</string>
+    <string name="about">Névjegy</string>
+    <string name="about_text">NutriPlan – offline étkezéstervező. Verzió: 1.0.0</string>
+
+    <!-- Általános -->
+    <string name="save">Mentés</string>
+    <string name="cancel">Mégse</string>
+    <string name="delete">Törlés</string>
+    <string name="ok">Rendben</string>
+    <string name="confirm">Megerősítés</string>
+    <string name="field_required">Ez a mező kötelező</string>
+    <string name="delete_confirm_title">Törlés megerősítése</string>
+    <string name="delete_recipe_message">Biztosan törlöd ezt a receptet?</string>
+    <string name="clear_week_message">Eltávolítod az összes hozzárendelést a heti tervből?</string>
+    <string name="clear_all_message">Törlöd a teljes bevásárlólistát?</string>
+    <string name="remove">Eltávolítás</string>
+</resources>

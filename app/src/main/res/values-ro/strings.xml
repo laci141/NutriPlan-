@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NutriPlan</string>
+
+    <!-- Navigare -->
+    <string name="nav_planner">Planificator</string>
+    <string name="nav_recipes">Rețete</string>
+    <string name="nav_shopping">Cumpărături</string>
+    <string name="nav_nutrition">Nutriție</string>
+    <string name="nav_settings">Setări</string>
+
+    <!-- Tipuri de mese -->
+    <string name="meal_breakfast">Mic dejun</string>
+    <string name="meal_morning_snack">Gustare de dimineață</string>
+    <string name="meal_lunch">Prânz</string>
+    <string name="meal_afternoon_snack">Gustare de după-amiază</string>
+    <string name="meal_dinner">Cină</string>
+
+    <!-- Zile -->
+    <string name="day_monday">Luni</string>
+    <string name="day_tuesday">Marți</string>
+    <string name="day_wednesday">Miercuri</string>
+    <string name="day_thursday">Joi</string>
+    <string name="day_friday">Vineri</string>
+    <string name="day_saturday">Sâmbătă</string>
+    <string name="day_sunday">Duminică</string>
+
+    <!-- Unități -->
+    <string name="unit_g">g</string>
+    <string name="unit_kg">kg</string>
+    <string name="unit_ml">ml</string>
+    <string name="unit_l">l</string>
+    <string name="unit_piece">buc</string>
+
+    <!-- Categorii -->
+    <string name="cat_vegetables">Legume</string>
+    <string name="cat_fruits">Fructe</string>
+    <string name="cat_meat">Carne</string>
+    <string name="cat_fish">Pește</string>
+    <string name="cat_dairy">Lactate</string>
+    <string name="cat_bakery">Panificație</string>
+    <string name="cat_dry_goods">Produse uscate</string>
+    <string name="cat_nuts">Semințe și nuci</string>
+    <string name="cat_other">Altele</string>
+
+    <!-- Rețete -->
+    <string name="recipes_title">Rețete</string>
+    <string name="search_hint">Caută rețete…</string>
+    <string name="add_recipe">Adaugă rețetă</string>
+    <string name="edit_recipe">Editează rețeta</string>
+    <string name="new_recipe">Rețetă nouă</string>
+    <string name="delete_recipe">Șterge rețeta</string>
+    <string name="no_recipes">Nicio rețetă încă. Apasă + pentru a adăuga.</string>
+    <string name="recipe_name">Numele rețetei</string>
+    <string name="calories">Calorii</string>
+    <string name="protein">Proteine</string>
+    <string name="carbs">Carbohidrați</string>
+    <string name="fat">Grăsimi</string>
+    <string name="ingredients">Ingrediente</string>
+    <string name="add_ingredient">Adaugă ingredient</string>
+    <string name="ingredient_name">Numele ingredientului</string>
+    <string name="quantity">Cantitate</string>
+    <string name="unit">Unitate</string>
+    <string name="category">Categorie</string>
+    <string name="meal_type">Tipul mesei</string>
+    <string name="kcal_unit">kcal</string>
+
+    <!-- Planificator -->
+    <string name="planner_title">Planificator săptămânal</string>
+    <string name="clear_week">Golește săptămâna</string>
+    <string name="add_meal">Adaugă</string>
+    <string name="select_recipe">Selectează rețeta</string>
+    <string name="no_recipes_for_meal">Nicio rețetă disponibilă pentru această masă.</string>
+    <string name="day_total">Total pe zi</string>
+
+    <!-- Cumpărături -->
+    <string name="shopping_title">Listă de cumpărături</string>
+    <string name="generate_list">Generează din plan</string>
+    <string name="clear_purchased">Șterge cumpărate</string>
+    <string name="clear_all">Șterge tot</string>
+    <string name="empty_shopping">Lista de cumpărături este goală. Generează din planul săptămânal.</string>
+    <string name="shopping_generated">Listă generată: %1$d produse</string>
+
+    <!-- Nutriție -->
+    <string name="nutrition_title">Nutriție</string>
+    <string name="weekly_totals">Total săptămânal</string>
+    <string name="daily_breakdown">Detaliere zilnică</string>
+    <string name="no_nutrition_data">Nicio masă planificată încă.</string>
+
+    <!-- Setări -->
+    <string name="settings_title">Setări</string>
+    <string name="language">Limbă</string>
+    <string name="theme">Temă</string>
+    <string name="theme_light">Luminoasă</string>
+    <string name="theme_dark">Întunecată</string>
+    <string name="theme_system">Implicit sistem</string>
+    <string name="lang_hungarian">Maghiară</string>
+    <string name="lang_english">Engleză</string>
+    <string name="lang_romanian">Română</string>
+    <string name="export_data">Exportă date (JSON)</string>
+    <string name="import_data">Importă date (JSON)</string>
+    <string name="data_management">Gestionare date</string>
+    <string name="export_success">Export finalizat</string>
+    <string name="import_success">Import finalizat</string>
+    <string name="import_error">Import eșuat. Fișier invalid.</string>
+    <string name="export_error">Export eșuat.</string>
+    <string name="about">Despre</string>
+    <string name="about_text">NutriPlan – planificator de mese offline. Versiunea 1.0.0</string>
+
+    <!-- Comune -->
+    <string name="save">Salvează</string>
+    <string name="cancel">Anulează</string>
+    <string name="delete">Șterge</string>
+    <string name="ok">OK</string>
+    <string name="confirm">Confirmă</string>
+    <string name="field_required">Acest câmp este obligatoriu</string>
+    <string name="delete_confirm_title">Confirmă ștergerea</string>
+    <string name="delete_recipe_message">Sigur dorești să ștergi această rețetă?</string>
+    <string name="clear_week_message">Elimini toate atribuirile din planul săptămânal?</string>
+    <string name="clear_all_message">Ștergi întreaga listă de cumpărături?</string>
+    <string name="remove">Elimină</string>
+</resources>
