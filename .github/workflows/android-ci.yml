@@ -57,6 +57,41 @@ jobs:
       - name: Release APK fordítása
         run: ./gradlew assembleRelease --stacktrace
 
+      # 7/b. lépés – garantált metaadat-eltávolítás
+      # Az AGP a csomagolás UTÁN injektálja az app-metadata.properties fájlt, ezért a
+      # Gradle exclude nem mindig elég. Itt biztosan kivágjuk, majd újraigazítjuk
+      # (zipalign) és újraírjuk (apksigner) a csomagot a debug kulccsal.
+      - name: app-metadata eltávolítása és APK újraaláírása
+        run: |
+          set -e
+          APK="app/build/outputs/apk/release/app-release.apk"
+          echo "Eltávolítás előtti tartalom:"
+          unzip -l "$APK" | grep -i "app-metadata" || echo "  (már nincs benne)"
+          # A bejegyzés törlése a csomagból
+          zip -d "$APK" "META-INF/com/android/build/gradle/app-metadata.properties" || true
+          # A legfrissebb build-tools megkeresése a zipalign/apksigner eszközökhöz
+          BT="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)"
+          echo "build-tools: $BT"
+          # Újraigazítás (a törlés után szükséges)
+          "${BT}zipalign" -f -p 4 "$APK" "${APK%.apk}-aligned.apk"
+          # Újraaláírás a debug kulccsal (AGP által generált ~/.android/debug.keystore)
+          "${BT}apksigner" sign \
+            --ks "$HOME/.android/debug.keystore" \
+            --ks-pass pass:android \
+            --key-pass pass:android \
+            --ks-key-alias androiddebugkey \
+            "${APK%.apk}-aligned.apk"
+          mv -f "${APK%.apk}-aligned.apk" "$APK"
+          rm -f "${APK%.apk}-aligned.apk.idsig"
+          echo "Eltávolítás utáni ellenőrzés (üres = sikeres):"
+          if unzip -l "$APK" | grep -i "app-metadata"; then
+            echo "HIBA: az app-metadata még mindig bent van!"; exit 1
+          else
+            echo "OK: nincs app-metadata.properties a csomagban."
+          fi
+          # Az aláírás érvényességének ellenőrzése
+          "${BT}apksigner" verify --print-certs "$APK" >/dev/null && echo "Aláírás érvényes."
+
       # 8. lépés – a kész release APK feltöltése letölthető csomagként
       - name: Release APK feltöltése (artifact)
         if: success()

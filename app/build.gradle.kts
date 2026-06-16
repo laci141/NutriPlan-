@@ -66,7 +66,10 @@ android {
             // a végleges csomagból (méretcsökkentés + biztonság).
             excludes += setOf(
                 "/META-INF/{AL2.0,LGPL2.1}",
+                // Az AGP által injektált build-metaadat (AGP verzió) – több mintával is próbáljuk
+                "META-INF/com/android/build/gradle/app-metadata.properties",
                 "/META-INF/com/android/build/gradle/app-metadata.properties",
+                "META-INF/com/android/build/**",
                 "/META-INF/androidx/**/LICENSE.txt",
                 "/META-INF/*.version",
                 "/META-INF/*.kotlin_module",
