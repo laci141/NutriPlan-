@@ -87,7 +87,9 @@ fun RecipeListScreen(
                         RecipeCard(
                             recipe = recipe,
                             onClick = { onEditRecipe(recipe.id) },
-                            onDelete = { recipeToDelete = recipe }
+                            onDelete = { recipeToDelete = recipe },
+                            // A lista elemeinek finom be-/átrendeződő animációja
+                            modifier = Modifier.animateItem()
                         )
                     }
                 }
@@ -113,10 +115,11 @@ fun RecipeListScreen(
 private fun RecipeCard(
     recipe: Recipe,
     onClick: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         onClick = onClick
     ) {
         Row(

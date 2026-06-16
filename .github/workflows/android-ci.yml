@@ -1,19 +1,17 @@
 # NutriPlan – folyamatos integráció (CI)
-# Ez a "robot" minden feltöltésnél és pull requestnél lefordítja az appot
-# és lefuttatja a teszteket. Ha hiba van, pirossal jelez; ha minden jó, zölddel.
+# Ez a "robot" minden feltöltésnél és pull requestnél lefuttatja a teszteket,
+# lefordítja a megerősített (R8-csökkentett, obfuszkált) RELEASE APK-t,
+# és közzéteszi letölthető Release-ként. Hiba esetén pirossal jelez.
 name: Android CI
 
-# Mikor induljon el a robot?
 on:
   push:
     branches:
       - main
       - "claude/**"
   pull_request:
-  # Kézi indítás is engedélyezett a GitHub felületéről
   workflow_dispatch:
 
-# Ha gyorsan egymás után több feltöltés jön, a régebbi futást leállítjuk
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -31,7 +29,7 @@ jobs:
       - name: Kód letöltése
         uses: actions/checkout@v4
 
-      # 2. lépés – Java (JDK 17) telepítése, amire az Android build-nek szüksége van
+      # 2. lépés – Java (JDK 17) telepítése
       - name: JDK 17 beállítása
         uses: actions/setup-java@v4
         with:
@@ -42,7 +40,7 @@ jobs:
       - name: Android SDK beállítása
         uses: android-actions/setup-android@v3
 
-      # 4. lépés – Gradle előkészítése (a gyorsítótárral gyorsabb lesz a következő futás)
+      # 4. lépés – Gradle előkészítése (gyorsítótárral)
       - name: Gradle beállítása
         uses: gradle/actions/setup-gradle@v4
 
@@ -50,24 +48,25 @@ jobs:
       - name: gradlew futtathatóvá tétele
         run: chmod +x ./gradlew
 
-      # 6. lépés – egységtesztek lefuttatása
+      # 6. lépés – egységtesztek futtatása
       - name: Egységtesztek futtatása
         run: ./gradlew testDebugUnitTest --stacktrace
 
-      # 7. lépés – a debug APK összeállítása (a tényleges fordítás)
-      - name: Debug APK fordítása
-        run: ./gradlew assembleDebug --stacktrace
+      # 7. lépés – a MEGERŐSÍTETT release APK fordítása (R8 + erőforrás-zsugorítás)
+      # Ez egyúttal ellenőrzi, hogy a ProGuard/R8 szabályok nem törik el az appot.
+      - name: Release APK fordítása
+        run: ./gradlew assembleRelease --stacktrace
 
-      # 8. lépés – a kész APK feltöltése, hogy le lehessen tölteni a GitHubról
-      - name: Debug APK feltöltése
+      # 8. lépés – a kész release APK feltöltése letölthető csomagként
+      - name: Release APK feltöltése (artifact)
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: nutriplan-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: nutriplan-release-apk
+          path: app/build/outputs/apk/release/*.apk
           if-no-files-found: warn
 
-      # 9. lépés – a teszt-eredmények feltöltése (akkor is, ha a teszt elbukott)
+      # 9. lépés – teszt-jelentések feltöltése (akkor is, ha a teszt elbukott)
       - name: Teszt-jelentések feltöltése
         if: always()
         uses: actions/upload-artifact@v4
@@ -77,14 +76,12 @@ jobs:
           if-no-files-found: ignore
 
       # 10. lépés – az APK közzététele letölthető Release-ként (állandó link)
-      # Minden ág-feltöltésnél frissül a "nutriplan-debug" nevű kiadás a friss APK-val,
-      # így nem kell az Actions fülre menni a letöltéshez.
       - name: APK közzététele Release-ként
         if: github.event_name == 'push' && success()
         uses: softprops/action-gh-release@v2
         with:
           tag_name: nutriplan-debug
-          name: NutriPlan debug APK (legfrissebb)
-          body: "A legfrissebb fordításból készült telepíthető debug APK. Automatikusan frissül minden feltöltésnél."
+          name: NutriPlan APK (legfrissebb)
+          body: "A legfrissebb fordításból készült, megerősített (R8) telepíthető APK. Automatikusan frissül minden feltöltésnél."
           prerelease: true
-          files: app/build/outputs/apk/debug/*.apk
+          files: app/build/outputs/apk/release/*.apk

@@ -27,14 +27,21 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // Kódzsugorítás (R8) és nem használt erőforrások eltávolítása
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // A release csomagot a debug kulccsal írjuk alá, hogy közvetlenül telepíthető legyen.
+            // (Play Store kiadáshoz külön, biztonságos kiadói kulcs szükséges.)
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
     }
 
@@ -49,11 +56,24 @@ android {
 
     buildFeatures {
         compose = true
+        // A BuildConfig kikapcsolva, mert nincs rá szükségünk (kevesebb metaadat)
+        buildConfig = false
     }
 
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            // Felesleges és potenciálisan információt szivárogtató metaadat-fájlok kizárása
+            // a végleges csomagból (méretcsökkentés + biztonság).
+            excludes += setOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/com/android/build/gradle/app-metadata.properties",
+                "/META-INF/androidx/**/LICENSE.txt",
+                "/META-INF/*.version",
+                "/META-INF/*.kotlin_module",
+                "/META-INF/CHANGES",
+                "/META-INF/README.md",
+                "DebugProbesKt.bin"
+            )
         }
     }
 }

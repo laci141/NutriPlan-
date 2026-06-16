@@ -1,5 +1,10 @@
 package com.nutriplan.app.presentation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -61,10 +66,24 @@ fun NutriPlanApp() {
             }
         }
     ) { innerPadding ->
+        // Finom, natív képernyőváltó animációk (csúszás + áttűnés)
+        val animDuration = 300
         NavHost(
             navController = navController,
             startDestination = Routes.PLANNER,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            enterTransition = {
+                slideInHorizontally(tween(animDuration)) { it / 6 } + fadeIn(tween(animDuration))
+            },
+            exitTransition = {
+                fadeOut(tween(animDuration))
+            },
+            popEnterTransition = {
+                slideInHorizontally(tween(animDuration)) { -it / 6 } + fadeIn(tween(animDuration))
+            },
+            popExitTransition = {
+                slideOutHorizontally(tween(animDuration)) { it / 6 } + fadeOut(tween(animDuration))
+            }
         ) {
             composable(Routes.PLANNER) { PlannerScreen() }
 

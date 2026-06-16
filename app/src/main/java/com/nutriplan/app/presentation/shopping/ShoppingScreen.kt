@@ -113,7 +113,9 @@ fun ShoppingScreen(viewModel: ShoppingViewModel = hiltViewModel()) {
                             ShoppingRow(
                                 item = shoppingItem,
                                 onToggle = { viewModel.togglePurchased(shoppingItem) },
-                                onDelete = { viewModel.deleteItem(shoppingItem.id) }
+                                onDelete = { viewModel.deleteItem(shoppingItem.id) },
+                                // Finom animáció a tételek megjelenésekor/átrendeződésekor
+                                modifier = Modifier.animateItem()
                             )
                         }
                     }
@@ -128,10 +130,11 @@ fun ShoppingScreen(viewModel: ShoppingViewModel = hiltViewModel()) {
 private fun ShoppingRow(
     item: ShoppingItem,
     onToggle: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(checked = item.purchased, onCheckedChange = { onToggle() })
