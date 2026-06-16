@@ -13,9 +13,10 @@ local.properties
 # Kotlin
 .kotlin/
 
-# Keystore
+# Keystore (a titkos kulcsokat nem követjük, KIVÉVE a megosztott tesztkulcsot)
 *.jks
 *.keystore
+!app/signing/nutriplan-release.jks
 
 # Logs
 *.log

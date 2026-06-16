@@ -25,6 +25,17 @@ android {
         }
     }
 
+    signingConfigs {
+        // Stabil, tesztelési aláíró kulcs – minden build ugyanazzal a kulccsal íródik alá,
+        // így az app helyben frissíthető marad. (Play Store-hoz külön, titkos kulcs kell.)
+        create("release") {
+            storeFile = file("signing/nutriplan-release.jks")
+            storePassword = "nutriplan"
+            keyAlias = "nutriplan"
+            keyPassword = "nutriplan"
+        }
+    }
+
     buildTypes {
         release {
             // Kódzsugorítás (R8) és nem használt erőforrások eltávolítása
@@ -34,9 +45,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // A release csomagot a debug kulccsal írjuk alá, hogy közvetlenül telepíthető legyen.
-            // (Play Store kiadáshoz külön, biztonságos kiadói kulcs szükséges.)
-            signingConfig = signingConfigs.getByName("debug")
+            // A release csomagot a stabil tesztkulccsal írjuk alá (közvetlenül telepíthető).
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             isMinifyEnabled = false

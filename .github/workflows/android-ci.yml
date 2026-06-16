@@ -74,12 +74,12 @@ jobs:
           echo "build-tools: $BT"
           # Újraigazítás (a törlés után szükséges)
           "${BT}zipalign" -f -p 4 "$APK" "${APK%.apk}-aligned.apk"
-          # Újraaláírás a debug kulccsal (AGP által generált ~/.android/debug.keystore)
+          # Újraaláírás a repóban tárolt stabil tesztkulccsal (ugyanaz, mint a Gradle-é)
           "${BT}apksigner" sign \
-            --ks "$HOME/.android/debug.keystore" \
-            --ks-pass pass:android \
-            --key-pass pass:android \
-            --ks-key-alias androiddebugkey \
+            --ks app/signing/nutriplan-release.jks \
+            --ks-pass pass:nutriplan \
+            --key-pass pass:nutriplan \
+            --ks-key-alias nutriplan \
             "${APK%.apk}-aligned.apk"
           mv -f "${APK%.apk}-aligned.apk" "$APK"
           rm -f "${APK%.apk}-aligned.apk.idsig"
