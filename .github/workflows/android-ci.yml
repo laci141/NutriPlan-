@@ -22,6 +22,9 @@ jobs:
   build:
     name: Fordítás és tesztek
     runs-on: ubuntu-latest
+    # Jogosultság a Release létrehozásához/frissítéséhez
+    permissions:
+      contents: write
 
     steps:
       # 1. lépés – a robot lemásolja a kódot a tiszta gépre
@@ -72,3 +75,16 @@ jobs:
           name: test-reports
           path: app/build/reports/tests/
           if-no-files-found: ignore
+
+      # 10. lépés – az APK közzététele letölthető Release-ként (állandó link)
+      # Minden ág-feltöltésnél frissül a "nutriplan-debug" nevű kiadás a friss APK-val,
+      # így nem kell az Actions fülre menni a letöltéshez.
+      - name: APK közzététele Release-ként
+        if: github.event_name == 'push' && success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nutriplan-debug
+          name: NutriPlan debug APK (legfrissebb)
+          body: "A legfrissebb fordításból készült telepíthető debug APK. Automatikusan frissül minden feltöltésnél."
+          prerelease: true
+          files: app/build/outputs/apk/debug/*.apk
