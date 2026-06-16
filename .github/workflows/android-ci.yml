@@ -1,0 +1,74 @@
+# NutriPlan – folyamatos integráció (CI)
+# Ez a "robot" minden feltöltésnél és pull requestnél lefordítja az appot
+# és lefuttatja a teszteket. Ha hiba van, pirossal jelez; ha minden jó, zölddel.
+name: Android CI
+
+# Mikor induljon el a robot?
+on:
+  push:
+    branches:
+      - main
+      - "claude/**"
+  pull_request:
+  # Kézi indítás is engedélyezett a GitHub felületéről
+  workflow_dispatch:
+
+# Ha gyorsan egymás után több feltöltés jön, a régebbi futást leállítjuk
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Fordítás és tesztek
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. lépés – a robot lemásolja a kódot a tiszta gépre
+      - name: Kód letöltése
+        uses: actions/checkout@v4
+
+      # 2. lépés – Java (JDK 17) telepítése, amire az Android build-nek szüksége van
+      - name: JDK 17 beállítása
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # 3. lépés – Android SDK telepítése
+      - name: Android SDK beállítása
+        uses: android-actions/setup-android@v3
+
+      # 4. lépés – Gradle előkészítése (a gyorsítótárral gyorsabb lesz a következő futás)
+      - name: Gradle beállítása
+        uses: gradle/actions/setup-gradle@v4
+
+      # 5. lépés – a gradlew futtathatóvá tétele
+      - name: gradlew futtathatóvá tétele
+        run: chmod +x ./gradlew
+
+      # 6. lépés – egységtesztek lefuttatása
+      - name: Egységtesztek futtatása
+        run: ./gradlew testDebugUnitTest --stacktrace
+
+      # 7. lépés – a debug APK összeállítása (a tényleges fordítás)
+      - name: Debug APK fordítása
+        run: ./gradlew assembleDebug --stacktrace
+
+      # 8. lépés – a kész APK feltöltése, hogy le lehessen tölteni a GitHubról
+      - name: Debug APK feltöltése
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nutriplan-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
+
+      # 9. lépés – a teszt-eredmények feltöltése (akkor is, ha a teszt elbukott)
+      - name: Teszt-jelentések feltöltése
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: app/build/reports/tests/
+          if-no-files-found: ignore
