@@ -1,1 +1,394 @@
+<!DOCTYPE html>
+<html lang="hu" class="scroll-smooth">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>GitHub feltöltés – Útmutató</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { font-family:'Plus Jakarta Sans',ui-sans-serif,system-ui,-apple-system,sans-serif; background:#0f172a; color:#f1f5f9; }
+  .card { display:none; flex-direction:column; gap:12px; }
+  .card.active { display:flex; animation: slide .22s cubic-bezier(.2,.7,.3,1) both; }
+  @keyframes slide { from{opacity:0;transform:translateX(28px)} to{opacity:1;transform:none} }
+  .dot { width:10px;height:10px;border-radius:50%;background:#334155;transition:all .2s;cursor:pointer;flex-shrink:0; }
+  .dot.on { background:#059669;transform:scale(1.25);box-shadow:0 0 8px rgba(5,150,105,.6); }
+  .press { transition:transform .08s ease; }
+  .press:active { transform:scale(.96); }
+  #toast { position:fixed;bottom:80px;left:50%;transform:translate(-50%,120%);z-index:99;
+    padding:10px 18px;border-radius:12px;font-size:14px;font-weight:700;color:#fff;
+    background:#059669;box-shadow:0 8px 24px rgba(0,0,0,.35);
+    transition:transform .25s cubic-bezier(.2,.8,.2,1);white-space:nowrap; }
+  #toast.show { transform:translate(-50%,0); }
+  .code-box { display:flex;align-items:center;gap:8px;background:#020617;border:1px solid #1e293b;border-radius:12px;padding:10px 12px; }
+  .code-text { font-family:monospace;color:#34d399;font-size:13px;flex:1;word-break:break-all;line-height:1.4; }
+  .copy-btn { flex-shrink:0;background:#1e293b;color:#94a3b8;border:none;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s; }
+  .copy-btn:active { background:#059669;color:#fff; }
+  .info-box { border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.55; }
+  .info-green { background:rgba(5,150,105,.12);border:1px solid rgba(5,150,105,.3);color:#6ee7b7; }
+  .info-amber { background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.25);color:#fcd34d; }
+  .info-blue  { background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.25);color:#93c5fd; }
+  ol.steps li { display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#cbd5e1; }
+  ol.steps li span.num { background:#0f172a;color:#34d399;font-weight:800;font-size:11px;padding:2px 7px;border-radius:6px;margin-top:1px;flex-shrink:0; }
+  .section-title { font-weight:700;font-size:15px;color:#e2e8f0;margin-bottom:4px; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
 
+<!-- Fejléc -->
+<header class="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white px-4 py-3.5 shadow-lg sticky top-0 z-50">
+  <div class="max-w-lg mx-auto flex items-center justify-between">
+    <div>
+      <h1 class="text-lg font-extrabold tracking-tight">📋 GitHub feltöltés</h1>
+      <p class="text-emerald-100 text-[12px] mt-0.5">Interaktív útmutató – mobilra</p>
+    </div>
+    <span class="text-2xl">🌿</span>
+  </div>
+</header>
+
+<!-- Repo név beviteli mező -->
+<div class="max-w-lg mx-auto w-full px-4 pt-4">
+  <div class="bg-slate-800 border border-slate-700 rounded-2xl p-3.5">
+    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">✏️ Repository neve (módosítsd ha kell):</label>
+    <div class="flex gap-2">
+      <span class="text-slate-500 text-sm font-mono self-center">github.com/laci141/</span>
+      <input id="repoInput" type="text" value="NutriPlan-" autocomplete="off" spellcheck="false"
+        class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-emerald-400 outline-none focus:border-emerald-500 transition min-w-0"/>
+    </div>
+  </div>
+</div>
+
+<!-- Haladásjelző + pontok -->
+<div class="max-w-lg mx-auto w-full px-4 pt-4 space-y-2.5">
+  <div class="flex justify-between items-center">
+    <span id="stepLabel" class="text-xs font-bold text-slate-400">1. lépés / 8</span>
+    <span id="pct" class="text-xs font-bold text-emerald-400">12%</span>
+  </div>
+  <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+    <div id="bar" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width:12.5%"></div>
+  </div>
+  <div id="dots" class="flex justify-center gap-2.5 pt-0.5"></div>
+</div>
+
+<!-- Kártyák -->
+<main class="flex-1 flex flex-col px-4 pt-3 pb-4 max-w-lg mx-auto w-full">
+  <div id="cards" class="flex-1 flex flex-col gap-3">
+
+    <!-- KÁRTYA 1 -->
+    <div class="card active" data-i="0">
+      <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl px-5 py-4 text-center text-white shadow-md">
+        <div class="text-4xl mb-1">🌐</div>
+        <h2 class="text-xl font-extrabold">1. lépés</h2>
+        <p class="text-emerald-100 text-xs mt-0.5">GitHub megnyitása</p>
+      </div>
+      <div class="bg-slate-800 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+        <p class="section-title">Chrome → Írj a címsávba:</p>
+        <div class="code-box">
+          <span class="code-text">github.com</span>
+          <button class="copy-btn" data-copy="github.com">📋 Másol</button>
+        </div>
+        <div class="info-amber">
+          💡 Ha még <strong>nincs fiókod</strong> → koppints <strong>Sign up</strong><br>
+          Ha már <strong>van fiókod</strong> → koppints <strong>Sign in</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- KÁRTYA 2 -->
+    <div class="card" data-i="1">
+      <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl px-5 py-4 text-center text-white shadow-md">
+        <div class="text-4xl mb-1">📁</div>
+        <h2 class="text-xl font-extrabold">2. lépés</h2>
+        <p class="text-blue-100 text-xs mt-0.5">Repository megnyitása</p>
+      </div>
+      <div class="bg-slate-800 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+        <p class="section-title">Írd be egyenesen ezt:</p>
+        <div class="code-box">
+          <span class="code-text dyn" data-t="github.com/laci141/{r}"></span>
+          <button class="copy-btn dyn-copy" data-t="github.com/laci141/{r}">📋 Másol</button>
+        </div>
+        <div class="info-amber">
+          💡 <strong>Még nincs repó?</strong><br>
+          Jobb felül <strong>+</strong> ikon → <strong>New repository</strong> → Adj nevet → <strong>Public</strong> → <strong>Create repository</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- KÁRTYA 3 -->
+    <div class="card" data-i="2">
+      <div class="bg-gradient-to-r from-violet-600 to-violet-700 rounded-2xl px-5 py-4 text-center text-white shadow-md">
+        <div class="text-4xl mb-1">⬆️</div>
+        <h2 class="text-xl font-extrabold">3. lépés</h2>
+        <p class="text-violet-100 text-xs mt-0.5">HTML fájl feltöltése</p>
+      </div>
+      <div class="bg-slate-800 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+        <p class="section-title">Közvetlen feltöltési link:</p>
+        <div class="code-box">
+          <span class="code-text dyn" data-t="github.com/laci141/{r}/upload/main"></span>
+          <button class="copy-btn dyn-copy" data-t="github.com/laci141/{r}/upload/main">📋 Másol</button>
+        </div>
+        <div class="info-green">
+          ✅ Megnyílik a feltöltő oldal. Koppints:<br>
+          <strong>"choose your files"</strong> → Fájlok / Letöltések mappa → válaszd ki az <strong>index.html</strong>-t
+        </div>
+      </div>
+    </div>
+
+    <!-- KÁRTYA 4 -->
+    <div class="card" data-i="3">
+      <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl px-5 py-4 text-center text-white shadow-md">
+        <div class="text-4xl mb-1">💾</div>
+        <h2 class="text-xl font-extrabold">4. lépés</h2>
+        <p class="text-orange-100 text-xs mt-0.5">Mentés véglegesítése</p>
+      </div>
+      <div class="bg-slate-800 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+        <p class="section-title">Miután a fájl megjelent (zöld pipa):</p>
+        <ol class="steps space-y-2">
+          <li><span class="num">1</span> Görgess le az oldal aljára</li>
+          <li><span class="num">2</span> Keresd a <strong class="text-white">"Commit changes"</strong> szekciót</li>
+          <li><span class="num">3</span> Ellenőrizd: <strong class="text-white">"Commit directly to main branch"</strong> legyen kijelölve</li>
+          <li><span class="num">4</span> Koppints a <strong class="text-emerald-400">zöld "Commit changes"</strong> gombra</li>
+        </ol>
+        <div class="info-green">✅ A fájlod felkerült a GitHub-ra!</div>
+      </div>
+    </div>
+
+    <!-- KÁRTYA 5 -->
+    <div class="card" data-i="4">
+      <div class="bg-gradient-to-r from-teal-600 to-teal-700 rounded-2xl px-5 py-4 text-center text-white shadow-md">
+        <div class="text-4xl mb-1">⚙️</div>
+        <h2 class="text-xl font-extrabold">5. lépés</h2>
+        <p class="text-teal-100 text-xs mt-0.5">Weboldal bekapcsolása (Pages)</p>
+      </div>
+      <div class="bg-slate-800 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+        <p class="section-title">⚠️ Csak EGYSZER kell! Menj ide:</p>
+        <div class="code-box">
+          <span class="code-text dyn" data-t="github.com/laci141/{r}/settings/pages"></span>
+          <button class="copy-btn dyn-copy" data-t="github.com/laci141/{r}/settings/pages">📋 Másol</button>
+        </div>
+        <ol class="steps space-y-2">
+          <li><span class="num">1</span> Koppints a <strong class="text-white">"None"</strong> legördülőre → válaszd: <strong class="text-white">main</strong></li>
+          <li><span class="num">2</span> Mappa maradjon: <strong class="text-white">/ (root)</strong></li>
+          <li><span class="num">3</span> Koppints a <strong class="text-emerald-400">Save</strong> gombra</li>
+          <li><span class="num">4</span> Frissítsd az oldalt 1-2 perc múlva</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- KÁRTYA 6 -->
+    <div class="card" data-i="5">
+      <div class="bg-gradient-to-r from-pink-600 to-pink-700 rounded-2xl px-5 py-4 text-center text-white shadow-md">
+        <div class="text-4xl mb-1">🔗</div>
+        <h2 class="text-xl font-extrabold">6. lépés</h2>
+        <p class="text-pink-100 text-xs mt-0.5">Megkaptad az élő linket!</p>
+      </div>
+      <div class="bg-slate-800 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+        <p class="section-title">Az appod élő, publikus linkje:</p>
+        <div class="code-box">
+          <span class="code-text dyn" data-t="https://laci141.github.io/{r}/"></span>
+          <button class="copy-btn dyn-copy" data-t="https://laci141.github.io/{r}/">📋 Másol</button>
+        </div>
+        <button id="visitBtn" class="press w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-sm">
+          🚀 Megnyitás Chrome-ban
+        </button>
+        <p class="section-title">Kezdőképernyőre rögzítés:</p>
+        <ol class="steps space-y-1.5">
+          <li><span class="num">1</span> Chrome-ban nyisd meg a fenti linket</li>
+          <li><span class="num">2</span> <strong class="text-white">⋮</strong> → <strong class="text-white">Hozzáadás a kezdőképernyőhöz</strong></li>
+          <li><span class="num">3</span> <strong class="text-emerald-400">Hozzáadás</strong> → 🎉 Kész, appként nyílik!</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- KÁRTYA 7 -->
+    <div class="card" data-i="6">
+      <div class="bg-gradient-to-r from-slate-600 to-slate-700 rounded-2xl px-5 py-4 text-center text-white shadow-md">
+        <div class="text-4xl mb-1">🔄</div>
+        <h2 class="text-xl font-extrabold">Frissítés</h2>
+        <p class="text-slate-300 text-xs mt-0.5">Új verzió feltöltése</p>
+      </div>
+      <div class="bg-slate-800 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+        <p class="section-title">Ha Claude-dal módosítottad az appot:</p>
+        <div class="code-box">
+          <span class="code-text dyn" data-t="github.com/laci141/{r}/upload/main"></span>
+          <button class="copy-btn dyn-copy" data-t="github.com/laci141/{r}/upload/main">📋 Másol</button>
+        </div>
+        <ol class="steps space-y-2">
+          <li><span class="num">1</span> Töltsd le az új <strong class="text-white">index.html</strong>-t Claude-tól</li>
+          <li><span class="num">2</span> Nyisd meg a fenti linket</li>
+          <li><span class="num">3</span> Válaszd ki az új fájlt → <strong class="text-emerald-400">Commit changes</strong></li>
+        </ol>
+        <div class="info-blue">
+          ℹ️ Pages beállítást <strong>nem kell megismételni!</strong><br>
+          1-2 perc múlva automatikusan frissül az appod.
+        </div>
+      </div>
+    </div>
+
+    <!-- KÁRTYA 8 -->
+    <div class="card" data-i="7">
+      <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-2xl px-5 py-4 text-center text-white shadow-md">
+        <div class="text-4xl mb-1">🤖</div>
+        <h2 class="text-xl font-extrabold">Claude munkafolyamat</h2>
+        <p class="text-indigo-100 text-xs mt-0.5">Fejlesztési körforgás</p>
+      </div>
+      <div class="bg-slate-800 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+        <div class="info-blue space-y-1">
+          <p>💬 <em>"Adj hozzá sötét módot"</em></p>
+          <p>💬 <em>"Javítsd a gombok méretét"</em></p>
+          <p>💬 <em>"Fordítsd le angolra is"</em></p>
+        </div>
+        <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 space-y-2">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">1️⃣</span>
+            <p class="text-sm text-slate-300">Megírod a kérést Claude-nak</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">2️⃣</span>
+            <p class="text-sm text-slate-300">Letöltöd az új <strong class="text-white">index.html</strong>-t</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">3️⃣</span>
+            <p class="text-sm text-slate-300">Feltöltöd GitHub-ra (7. kártya)</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">4️⃣</span>
+            <p class="text-sm text-slate-300">1-2 perc → <strong class="text-emerald-400">az appod frissül!</strong></p>
+          </div>
+        </div>
+        <div class="info-green text-center font-bold">
+          🌿 Az appod linkje soha nem változik!
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cards -->
+
+  <!-- Navigációs gombok -->
+  <div class="flex items-center gap-3 mt-4 sticky bottom-0 pb-2 pt-1" style="background:#0f172a">
+    <button id="prevBtn" onclick="move(-1)"
+      class="press flex-1 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm">
+      ← Vissza
+    </button>
+    <span id="counter" class="text-slate-500 font-bold text-xs whitespace-nowrap bg-slate-900 px-3 py-2 rounded-xl border border-slate-800">
+      1 / 8
+    </span>
+    <button id="nextBtn" onclick="move(1)"
+      class="press flex-1 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-sm">
+      Következő →
+    </button>
+  </div>
+</main>
+
+<div id="toast">✅ Vágólapra másolva!</div>
+
+<script>
+(function(){
+  const TOTAL = 8;
+  let cur = 0;
+  const dotsEl = document.getElementById("dots");
+  const cards  = document.querySelectorAll(".card");
+  const repoIn = document.getElementById("repoInput");
+
+  // Pontok generálása
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement("div");
+    d.className="dot"+(i===0?" on":"");
+    d.onclick=()=>go(i);
+    dotsEl.appendChild(d);
+  }
+
+  // Dinamikus szövegek frissítése a repo-input alapján
+  function updateDyn(){
+    const r = (repoIn.value.trim()||"NutriPlan-");
+    document.querySelectorAll(".dyn").forEach(el=>{
+      el.textContent = el.dataset.t.replace("{r}",r);
+    });
+    document.querySelectorAll(".dyn-copy").forEach(btn=>{
+      btn.dataset.copy = btn.dataset.t.replace("{r}",r);
+    });
+    // Visit gomb
+    const vb = document.getElementById("visitBtn");
+    if(vb) vb.dataset.url = "https://laci141.github.io/"+r+"/";
+  }
+
+  // Navigáció
+  function go(n){
+    cards[cur].classList.remove("active");
+    dotsEl.children[cur].classList.remove("on");
+    cur = Math.max(0, Math.min(TOTAL-1, n));
+    cards[cur].classList.add("active");
+    dotsEl.children[cur].classList.add("on");
+    const pct = Math.round((cur+1)/TOTAL*100);
+    document.getElementById("bar").style.width = pct+"%";
+    document.getElementById("pct").textContent  = pct+"%";
+    document.getElementById("stepLabel").textContent = (cur+1)+". lépés / "+TOTAL;
+    document.getElementById("counter").textContent   = (cur+1)+" / "+TOTAL;
+    document.getElementById("prevBtn").disabled = cur===0;
+    document.getElementById("nextBtn").textContent = cur===TOTAL-1 ? "🔄 Elejére" : "Következő →";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function move(d){ cur+d>=TOTAL ? go(0) : go(cur+d); }
+  window.move = move;
+
+  // Toast visszajelzés
+  let toastTimer;
+  function showToast(msg){
+    const t=document.getElementById("toast");
+    t.textContent=msg; t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>t.classList.remove("show"),1800);
+  }
+
+  // Másolás kezelése (delegált)
+  document.body.addEventListener("click", e=>{
+    const btn = e.target.closest(".copy-btn");
+    if(!btn) return;
+    const text = btn.dataset.copy||btn.closest(".code-box")?.querySelector(".code-text")?.textContent||"";
+    if(!text) return;
+    const done=()=>showToast("✅ Vágólapra másolva!");
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(()=>{try{fallback(text);done();}catch(e){}});
+    } else { try{fallback(text);done();}catch(e){showToast("Másold ki kézzel.");} }
+  });
+
+  function fallback(text){
+    const ta=document.createElement("textarea");
+    ta.value=text; ta.style.position="fixed"; ta.style.top="-999px";
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,9999);
+    document.execCommand("copy"); document.body.removeChild(ta);
+  }
+
+  // Visit gomb
+  document.getElementById("visitBtn").addEventListener("click", function(){
+    const url = this.dataset.url||"https://laci141.github.io/NutriPlan-/";
+    window.open(url,"_blank");
+  });
+
+  // Swipe mobilon
+  let tx=0;
+  document.getElementById("cards").addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+  document.getElementById("cards").addEventListener("touchend",e=>{
+    const dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>55) move(dx<0?1:-1);
+  },{passive:true});
+
+  // Billentyűzet (PC)
+  document.addEventListener("keydown",e=>{
+    if(e.key==="ArrowRight") move(1);
+    if(e.key==="ArrowLeft")  move(-1);
+  });
+
+  // Input figyelés
+  repoIn.addEventListener("input", updateDyn);
+
+  // Init
+  updateDyn();
+  go(0);
+})();
+</script>
+</body>
+</html>
