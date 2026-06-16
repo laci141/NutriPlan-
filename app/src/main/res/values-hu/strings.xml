@@ -106,6 +106,14 @@
     <string name="export_error">Sikertelen exportálás.</string>
     <string name="about">Névjegy</string>
     <string name="about_text">NutriPlan – offline étkezéstervező. Verzió: 1.0.0</string>
+    <string name="daily_calorie_goal">Napi kalóriacél</string>
+    <string name="calorie_goal_summary">A Tápérték képernyőn a napi haladásod követésére használjuk.</string>
+
+    <!-- Kalóriacél haladás -->
+    <string name="goal_progress">%1$d / %2$d kcal</string>
+    <string name="kcal_remaining">még %1$d kcal</string>
+    <string name="kcal_over_goal">%1$d kcal a cél felett</string>
+    <string name="goal_reached">Cél elérve</string>
 
     <!-- Általános -->
     <string name="save">Mentés</string>

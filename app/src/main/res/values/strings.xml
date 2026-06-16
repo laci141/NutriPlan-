@@ -106,6 +106,14 @@
     <string name="export_error">Export failed.</string>
     <string name="about">About</string>
     <string name="about_text">NutriPlan – offline meal planner. Version 1.0.0</string>
+    <string name="daily_calorie_goal">Daily calorie goal</string>
+    <string name="calorie_goal_summary">Used in the Nutrition screen to track your daily progress.</string>
+
+    <!-- Calorie goal progress -->
+    <string name="goal_progress">%1$d / %2$d kcal</string>
+    <string name="kcal_remaining">%1$d kcal remaining</string>
+    <string name="kcal_over_goal">%1$d kcal over goal</string>
+    <string name="goal_reached">Goal reached</string>
 
     <!-- Common -->
     <string name="save">Save</string>

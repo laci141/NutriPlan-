@@ -1,14 +1,18 @@
 package com.nutriplan.app.presentation.nutrition
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -60,6 +65,11 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                                 modifier = Modifier.padding(bottom = 12.dp)
                             )
                             NutritionSummary(totals = state.weekTotals)
+                            // Heti cél = napi cél × 7
+                            CalorieGoalProgress(
+                                consumed = state.weekTotals.calories,
+                                goal = state.calorieGoal * 7
+                            )
                         }
                     }
                 }
@@ -90,10 +100,49 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             NutritionSummary(totals = totals)
+                            CalorieGoalProgress(
+                                consumed = totals.calories,
+                                goal = state.calorieGoal
+                            )
                         }
                     }
                 }
             }
         }
+    }
+}
+
+/**
+ * Kalóriacél haladásjelző: színes csík + szöveges állapot (hátralévő / cél felett).
+ * Ha nincs cél beállítva (0), nem jelenik meg semmi.
+ */
+@Composable
+private fun CalorieGoalProgress(consumed: Int, goal: Int) {
+    if (goal <= 0) return
+    val fraction = (consumed.toFloat() / goal).coerceIn(0f, 1f)
+    val animated by animateFloatAsState(targetValue = fraction, label = "goalProgress")
+    val over = consumed > goal
+    val barColor = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+
+    Column(modifier = Modifier.padding(top = 12.dp)) {
+        LinearProgressIndicator(
+            progress = { animated },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(RoundedCornerShape(4.dp)),
+            color = barColor,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+        Text(
+            text = stringResource(R.string.goal_progress, consumed, goal) + " · " + when {
+                over -> stringResource(R.string.kcal_over_goal, consumed - goal)
+                consumed == goal -> stringResource(R.string.goal_reached)
+                else -> stringResource(R.string.kcal_remaining, goal - consumed)
+            },
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 4.dp)
+        )
     }
 }

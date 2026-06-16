@@ -12,10 +12,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -49,6 +52,7 @@ import com.nutriplan.app.presentation.util.label
 fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val theme by viewModel.theme.collectAsStateWithLifecycle()
     val language by viewModel.language.collectAsStateWithLifecycle()
+    val calorieGoal by viewModel.calorieGoal.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -113,6 +117,19 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                 }
             }
 
+            // Napi kalóriacél szekció
+            SettingsSection(title = stringResource(R.string.daily_calorie_goal)) {
+                CalorieGoalStepper(
+                    value = calorieGoal,
+                    onValueChange = viewModel::setCalorieGoal
+                )
+                Text(
+                    text = stringResource(R.string.calorie_goal_summary),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
             // Adatkezelés szekció
             SettingsSection(title = stringResource(R.string.data_management)) {
                 OutlinedButton(
@@ -159,6 +176,29 @@ private fun SettingsSection(title: String, content: @Composable () -> Unit) {
                 modifier = Modifier.padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) { content() }
+        }
+    }
+}
+
+/** Napi kalóriacél beállító léptető (− érték +), 50 kcal-os lépésekkel. */
+@Composable
+private fun CalorieGoalStepper(value: Int, onValueChange: (Int) -> Unit) {
+    val step = 50
+    androidx.compose.foundation.layout.Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        FilledTonalIconButton(onClick = { onValueChange(value - step) }) {
+            Icon(Icons.Filled.Remove, contentDescription = "-$step")
+        }
+        Text(
+            text = "$value ${stringResource(R.string.kcal_unit)}",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+        FilledTonalIconButton(onClick = { onValueChange(value + step) }) {
+            Icon(Icons.Filled.Add, contentDescription = "+$step")
         }
     }
 }

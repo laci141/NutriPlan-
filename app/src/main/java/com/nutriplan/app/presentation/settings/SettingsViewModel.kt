@@ -45,6 +45,7 @@ class SettingsViewModel @Inject constructor(
 
     val theme: StateFlow<ThemeMode> = settingsManager.theme
     val language: StateFlow<Language> = settingsManager.language
+    val calorieGoal: StateFlow<Int> = settingsManager.calorieGoal
 
     private val _events = MutableSharedFlow<SettingsEvent>()
     val events: SharedFlow<SettingsEvent> = _events.asSharedFlow()
@@ -56,6 +57,11 @@ class SettingsViewModel @Inject constructor(
     /** Téma mód módosítása. */
     fun setTheme(mode: ThemeMode) {
         settingsManager.setTheme(mode)
+    }
+
+    /** A napi kalóriacél módosítása. */
+    fun setCalorieGoal(value: Int) {
+        settingsManager.setCalorieGoal(value)
     }
 
     /** Nyelv módosítása – a hívó felület újraindítja az Activity-t. */
