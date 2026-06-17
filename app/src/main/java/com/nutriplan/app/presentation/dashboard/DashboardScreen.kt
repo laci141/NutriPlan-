@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,7 +43,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -179,20 +183,41 @@ fun DashboardScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
-                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
+                // Gyűrűk + jelmagyarázat egymás mellett, hogy elférjen a keskeny kártyán
+                Row(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
                     ActivityRings(
                         rings = listOf(
                             RingData(fractionOf(state.todayTotals.protein, state.proteinTarget), ProteinColor),
                             RingData(fractionOf(state.todayTotals.carbs, state.carbsTarget), CarbsColor),
                             RingData(fractionOf(state.todayTotals.fat, state.fatTarget), FatColor)
                         ),
-                        modifier = Modifier.size(110.dp)
+                        modifier = Modifier.fillMaxHeight().aspectRatio(1f)
                     )
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    MacroLegend(stringResource(R.string.protein), ProteinColor)
-                    MacroLegend(stringResource(R.string.carbs), CarbsColor)
-                    MacroLegend(stringResource(R.string.fat), FatColor)
+                    // A három makró egymás alatt, külön színnel, soronként egy sorban
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        MacroLegend(
+                            label = stringResource(R.string.protein),
+                            value = macroValue(state.todayTotals.protein, state.proteinTarget),
+                            color = ProteinColor
+                        )
+                        MacroLegend(
+                            label = stringResource(R.string.carbs),
+                            value = macroValue(state.todayTotals.carbs, state.carbsTarget),
+                            color = CarbsColor
+                        )
+                        MacroLegend(
+                            label = stringResource(R.string.fat),
+                            value = macroValue(state.todayTotals.fat, state.fatTarget),
+                            color = FatColor
+                        )
+                    }
                 }
             }
 
@@ -263,6 +288,10 @@ fun DashboardScreen(
 private fun fractionOf(value: Double, target: Int): Float =
     if (target > 0) (value / target).toFloat() else 0f
 
+/** Makró-érték rövid szövege: "aktuális/cél g". */
+private fun macroValue(value: Double, target: Int): String =
+    "${value.roundToInt()}/$target g"
+
 /** Egységes, erősen lekerekített Bento kártya. */
 @Composable
 private fun BentoCard(
@@ -283,20 +312,37 @@ private fun BentoCard(
     }
 }
 
-/** Kis jelmagyarázat pötty + címke a makró-gyűrűkhöz. */
+/**
+ * Egysoros makró-jelmagyarázat: színes pötty + címke + érték.
+ * A címke és az érték a makró saját színét kapja, és garantáltan egy sorban marad.
+ */
 @Composable
-private fun MacroLegend(label: String, color: Color) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(
-            modifier = Modifier
-                .size(8.dp)
-                .padding(0.dp)
-        ) {
+private fun MacroLegend(label: String, value: String, color: Color) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(modifier = Modifier.size(8.dp)) {
             androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
                 drawCircle(color)
             }
         }
+        Spacer(Modifier.size(6.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = color,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
         Spacer(Modifier.size(4.dp))
-        Text(text = label, style = MaterialTheme.typography.labelLarge)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
     }
 }
