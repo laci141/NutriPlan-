@@ -130,6 +130,14 @@
     <string name="enable">Bekapcsolás</string>
     <string name="left_short">még %1$d</string>
 
+    <!-- Biztonság / alkalmazászár -->
+    <string name="security">Biztonság</string>
+    <string name="app_lock">Alkalmazászár</string>
+    <string name="app_lock_summary">Ujjlenyomat vagy arc szükséges az app megnyitásához.</string>
+    <string name="app_lock_prompt">Azonosítsd magad a NutriPlan megnyitásához</string>
+    <string name="app_locked">A NutriPlan zárolva van</string>
+    <string name="unlock">Feloldás</string>
+
     <!-- Általános -->
     <string name="save">Mentés</string>
     <string name="cancel">Mégse</string>

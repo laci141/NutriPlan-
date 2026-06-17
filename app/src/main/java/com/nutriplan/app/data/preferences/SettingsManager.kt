@@ -33,6 +33,11 @@ class SettingsManager @Inject constructor(
     private val _calorieGoal = MutableStateFlow(readCalorieGoal())
     val calorieGoal: StateFlow<Int> = _calorieGoal.asStateFlow()
 
+    private val _appLock = MutableStateFlow(readAppLock())
+    val appLock: StateFlow<Boolean> = _appLock.asStateFlow()
+
+    private fun readAppLock(): Boolean = prefs.getBoolean(KEY_APP_LOCK, false)
+
     private fun readTheme(): ThemeMode =
         ThemeMode.fromKey(prefs.getString(KEY_THEME, ThemeMode.SYSTEM.key) ?: ThemeMode.SYSTEM.key)
 
@@ -67,6 +72,13 @@ class SettingsManager @Inject constructor(
         Logger.i(Logger.Tags.SETTINGS, "Napi kalóriacél módosítva: $clamped kcal")
     }
 
+    /** A biometrikus alkalmazászár ki-/bekapcsolása. */
+    fun setAppLock(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_APP_LOCK, enabled).apply()
+        _appLock.value = enabled
+        Logger.i(Logger.Tags.SETTINGS, "Alkalmazászár módosítva: $enabled")
+    }
+
     /** Szinkron nyelvi kód lekérés (a Context becsomagolásához használjuk). */
     fun currentLanguageCode(): String = readLanguage().code
 
@@ -75,6 +87,7 @@ class SettingsManager @Inject constructor(
         private const val KEY_THEME = "theme_mode"
         private const val KEY_LANGUAGE = "language"
         private const val KEY_CALORIE_GOAL = "calorie_goal"
+        private const val KEY_APP_LOCK = "app_lock"
         const val DEFAULT_CALORIE_GOAL = 2000
         const val MAX_CALORIE_GOAL = 10000
 

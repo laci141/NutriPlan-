@@ -125,6 +125,17 @@ dependencies {
     // DataStore – beállítások tárolása
     implementation(libs.androidx.datastore.preferences)
 
+    // Biometrikus zár
+    implementation(libs.androidx.biometric)
+    implementation(libs.androidx.fragment.ktx)
+
+    // Glance – kezdőképernyő-widget
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+
+    // ProfileInstaller – a könyvtárak baseline profiljainak telepítése (gyorsabb indulás)
+    implementation(libs.androidx.profileinstaller)
+
     // Timber – naplózás
     implementation(libs.timber)
 

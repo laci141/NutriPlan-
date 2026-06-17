@@ -46,6 +46,7 @@ class SettingsViewModel @Inject constructor(
     val theme: StateFlow<ThemeMode> = settingsManager.theme
     val language: StateFlow<Language> = settingsManager.language
     val calorieGoal: StateFlow<Int> = settingsManager.calorieGoal
+    val appLock: StateFlow<Boolean> = settingsManager.appLock
 
     private val _events = MutableSharedFlow<SettingsEvent>()
     val events: SharedFlow<SettingsEvent> = _events.asSharedFlow()
@@ -62,6 +63,11 @@ class SettingsViewModel @Inject constructor(
     /** A napi kalóriacél módosítása. */
     fun setCalorieGoal(value: Int) {
         settingsManager.setCalorieGoal(value)
+    }
+
+    /** A biometrikus alkalmazászár ki-/bekapcsolása. */
+    fun setAppLock(enabled: Boolean) {
+        settingsManager.setAppLock(enabled)
     }
 
     /** Nyelv módosítása – a hívó felület újraindítja az Activity-t. */

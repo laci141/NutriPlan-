@@ -130,6 +130,14 @@
     <string name="enable">Activează</string>
     <string name="left_short">încă %1$d</string>
 
+    <!-- Securitate / blocare aplicație -->
+    <string name="security">Securitate</string>
+    <string name="app_lock">Blocare aplicație</string>
+    <string name="app_lock_summary">Necesită amprentă sau față pentru a deschide aplicația.</string>
+    <string name="app_lock_prompt">Autentifică-te pentru a deschide NutriPlan</string>
+    <string name="app_locked">NutriPlan este blocat</string>
+    <string name="unlock">Deblochează</string>
+
     <!-- Comune -->
     <string name="save">Salvează</string>
     <string name="cancel">Anulează</string>

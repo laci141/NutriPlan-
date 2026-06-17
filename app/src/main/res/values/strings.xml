@@ -130,6 +130,14 @@
     <string name="enable">Enable</string>
     <string name="left_short">%1$d left</string>
 
+    <!-- Security / app lock -->
+    <string name="security">Security</string>
+    <string name="app_lock">App lock</string>
+    <string name="app_lock_summary">Require fingerprint or face to open the app.</string>
+    <string name="app_lock_prompt">Authenticate to open NutriPlan</string>
+    <string name="app_locked">NutriPlan is locked</string>
+    <string name="unlock">Unlock</string>
+
     <!-- Common -->
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
