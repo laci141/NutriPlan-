@@ -150,6 +150,13 @@
     <string name="copy_day">Nap másolása</string>
     <string name="copy_to_all_days">Másolás minden napra</string>
 
+    <!-- Kedvencek, rendezés, megosztás -->
+    <string name="favorite">Kedvenc</string>
+    <string name="favorites">Kedvencek</string>
+    <string name="sort_by_name">Név</string>
+    <string name="sort_by_calories">Kalória</string>
+    <string name="share_list">Lista megosztása</string>
+
     <!-- Általános -->
     <string name="save">Mentés</string>
     <string name="cancel">Mégse</string>

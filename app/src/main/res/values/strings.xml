@@ -150,6 +150,13 @@
     <string name="copy_day">Copy day</string>
     <string name="copy_to_all_days">Copy to all days</string>
 
+    <!-- Favorites, sorting, sharing -->
+    <string name="favorite">Favorite</string>
+    <string name="favorites">Favorites</string>
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_calories">Calories</string>
+    <string name="share_list">Share list</string>
+
     <!-- Common -->
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>

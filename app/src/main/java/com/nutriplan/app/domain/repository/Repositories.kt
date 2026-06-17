@@ -18,6 +18,7 @@ interface RecipeRepository {
     suspend fun saveRecipe(recipe: Recipe): Long
     suspend fun deleteRecipe(recipe: Recipe)
     suspend fun countRecipes(): Int
+    suspend fun setFavorite(id: Long, isFavorite: Boolean)
 }
 
 /**

@@ -17,18 +17,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -55,6 +60,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.nutriplan.app.R
+import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.Recipe
 import com.nutriplan.app.presentation.components.EmptyState
 import com.nutriplan.app.presentation.components.NutritionSummary
@@ -78,6 +84,9 @@ fun RecipeListScreen(
 ) {
     val recipes by viewModel.recipes.collectAsStateWithLifecycle()
     val query by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val favoritesOnly by viewModel.favoritesOnly.collectAsStateWithLifecycle()
+    val mealFilter by viewModel.mealFilter.collectAsStateWithLifecycle()
+    val sort by viewModel.sort.collectAsStateWithLifecycle()
     var recipeToDelete by remember { mutableStateOf<Recipe?>(null) }
     // A megnyitott (kibontott) recept – ha nem null, a részletes nézet látszik
     var selected by remember { mutableStateOf<Recipe?>(null) }
@@ -99,10 +108,22 @@ fun RecipeListScreen(
                 OutlinedTextField(
                     value = query,
                     onValueChange = viewModel::onSearchChanged,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                     singleLine = true,
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                     placeholder = { Text(stringResource(R.string.search_hint)) }
+                )
+                RecipeFilterBar(
+                    favoritesOnly = favoritesOnly,
+                    mealFilter = mealFilter,
+                    sort = sort,
+                    onToggleFavorites = viewModel::toggleFavoritesOnly,
+                    onMealFilter = viewModel::setMealFilter,
+                    onToggleSort = {
+                        viewModel.setSort(
+                            if (sort == RecipeSort.NAME) RecipeSort.CALORIES else RecipeSort.NAME
+                        )
+                    }
                 )
             }
 
@@ -128,6 +149,7 @@ fun RecipeListScreen(
                                         recipe = recipe,
                                         onClick = { selected = recipe },
                                         onDelete = { recipeToDelete = recipe },
+                                        onToggleFavorite = { viewModel.toggleFavorite(recipe) },
                                         sharedScope = sharedScope,
                                         animatedVisibilityScope = avScope
                                     )
@@ -172,6 +194,7 @@ private fun RecipeCard(
     recipe: Recipe,
     onClick: () -> Unit,
     onDelete: () -> Unit,
+    onToggleFavorite: () -> Unit,
     sharedScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
@@ -221,6 +244,14 @@ private fun RecipeCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+            IconButton(onClick = onToggleFavorite) {
+                Icon(
+                    imageVector = if (recipe.isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                    contentDescription = stringResource(R.string.favorite),
+                    tint = if (recipe.isFavorite) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             IconButton(onClick = onDelete) {
                 Icon(
                     Icons.Filled.Delete,
@@ -228,6 +259,58 @@ private fun RecipeCard(
                     tint = MaterialTheme.colorScheme.error
                 )
             }
+        }
+    }
+}
+
+/** Szűrősáv: kedvencek, étkezéstípus és rendezés. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RecipeFilterBar(
+    favoritesOnly: Boolean,
+    mealFilter: MealType?,
+    sort: RecipeSort,
+    onToggleFavorites: () -> Unit,
+    onMealFilter: (MealType?) -> Unit,
+    onToggleSort: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        FilterChip(
+            selected = favoritesOnly,
+            onClick = onToggleFavorites,
+            label = { Text(stringResource(R.string.favorites)) },
+            leadingIcon = {
+                Icon(
+                    if (favoritesOnly) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                    contentDescription = null
+                )
+            }
+        )
+        FilterChip(
+            selected = false,
+            onClick = onToggleSort,
+            label = {
+                Text(
+                    stringResource(
+                        if (sort == RecipeSort.NAME) R.string.sort_by_name else R.string.sort_by_calories
+                    )
+                )
+            },
+            leadingIcon = { Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = null) }
+        )
+        MealType.entries.forEach { type ->
+            FilterChip(
+                selected = mealFilter == type,
+                onClick = { onMealFilter(if (mealFilter == type) null else type) },
+                label = { Text(type.label()) }
+            )
         }
     }
 }

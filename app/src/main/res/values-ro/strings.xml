@@ -150,6 +150,13 @@
     <string name="copy_day">Copiază ziua</string>
     <string name="copy_to_all_days">Copiază în toate zilele</string>
 
+    <!-- Favorite, sortare, partajare -->
+    <string name="favorite">Favorit</string>
+    <string name="favorites">Favorite</string>
+    <string name="sort_by_name">Nume</string>
+    <string name="sort_by_calories">Calorii</string>
+    <string name="share_list">Partajează lista</string>
+
     <!-- Comune -->
     <string name="save">Salvează</string>
     <string name="cancel">Anulează</string>

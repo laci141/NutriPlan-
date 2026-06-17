@@ -29,6 +29,7 @@ data class RecipeDto(
     val nameKey: String? = null,
     val imagePath: String? = null,
     val instructions: String? = null,
+    val isFavorite: Boolean = false,
     val ingredients: List<IngredientDto>
 )
 

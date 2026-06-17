@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.PlaylistAddCheck
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -29,8 +30,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import android.content.Intent
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -41,6 +44,7 @@ import com.nutriplan.app.R
 import com.nutriplan.app.domain.model.IngredientCategory
 import com.nutriplan.app.domain.model.ShoppingItem
 import com.nutriplan.app.presentation.components.EmptyState
+import com.nutriplan.app.presentation.util.ShoppingShare
 import com.nutriplan.app.presentation.util.displayName
 import com.nutriplan.app.presentation.util.formatQuantity
 import com.nutriplan.app.presentation.util.label
@@ -54,6 +58,8 @@ fun ShoppingScreen(viewModel: ShoppingViewModel = hiltViewModel()) {
     val items by viewModel.items.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val generatedMessage = stringResource(R.string.shopping_generated)
+    val context = LocalContext.current
+    val shareTitle = stringResource(R.string.share_list)
 
     // A generálás eredményének megjelenítése snackbarban
     LaunchedEffect(Unit) {
@@ -67,6 +73,20 @@ fun ShoppingScreen(viewModel: ShoppingViewModel = hiltViewModel()) {
             TopAppBar(
                 title = { Text(stringResource(R.string.shopping_title)) },
                 actions = {
+                    IconButton(
+                        onClick = {
+                            if (items.isNotEmpty()) {
+                                val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.shopping_title))
+                                    putExtra(Intent.EXTRA_TEXT, ShoppingShare.buildText(context, items))
+                                }
+                                context.startActivity(Intent.createChooser(sendIntent, shareTitle))
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Filled.Share, contentDescription = shareTitle)
+                    }
                     IconButton(onClick = viewModel::clearPurchased) {
                         Icon(Icons.Filled.PlaylistAddCheck, contentDescription = stringResource(R.string.clear_purchased))
                     }

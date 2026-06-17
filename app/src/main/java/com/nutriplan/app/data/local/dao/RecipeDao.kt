@@ -30,6 +30,10 @@ interface RecipeDao {
     @Update
     suspend fun updateRecipe(recipe: RecipeEntity)
 
+    /** Egy recept kedvenc állapotának beállítása. */
+    @Query("UPDATE recipes SET isFavorite = :isFavorite WHERE id = :id")
+    suspend fun setFavorite(id: Long, isFavorite: Boolean)
+
     /** Recept törlése (a hozzávalók CASCADE módon törlődnek). */
     @Delete
     suspend fun deleteRecipe(recipe: RecipeEntity)

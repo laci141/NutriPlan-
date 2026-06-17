@@ -63,6 +63,16 @@ class SaveRecipeUseCase @Inject constructor(
     }
 }
 
+/** Recept kedvenc állapotának átváltása. */
+class ToggleFavoriteUseCase @Inject constructor(
+    private val repository: RecipeRepository
+) {
+    suspend operator fun invoke(recipe: Recipe) {
+        Logger.i(Logger.Tags.RECIPE, "ToggleFavoriteUseCase meghívva, id=${recipe.id}")
+        repository.setFavorite(recipe.id, !recipe.isFavorite)
+    }
+}
+
 /** Recept törlése. */
 class DeleteRecipeUseCase @Inject constructor(
     private val repository: RecipeRepository

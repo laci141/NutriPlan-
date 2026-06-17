@@ -32,7 +32,9 @@ data class Recipe(
     // A recept fotójának helyi elérési útja (null = nincs kép)
     val imagePath: String? = null,
     // Elkészítési útmutató / leírás (null vagy üres = nincs)
-    val instructions: String? = null
+    val instructions: String? = null,
+    // Kedvencnek jelölve
+    val isFavorite: Boolean = false
 )
 
 /**

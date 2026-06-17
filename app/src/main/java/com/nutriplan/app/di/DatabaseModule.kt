@@ -2,6 +2,8 @@ package com.nutriplan.app.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.nutriplan.app.data.local.NutriPlanDatabase
 import com.nutriplan.app.data.local.dao.MealPlanDao
 import com.nutriplan.app.data.local.dao.RecipeDao
@@ -21,6 +23,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    // 3 -> 4: kedvenc oszlop hozzáadása a felhasználói adatok megőrzésével
+    private val migration3to4 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE recipes ADD COLUMN isFavorite INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): NutriPlanDatabase {
@@ -30,6 +39,7 @@ object DatabaseModule {
             NutriPlanDatabase::class.java,
             NutriPlanDatabase.DATABASE_NAME
         )
+            .addMigrations(migration3to4)
             .fallbackToDestructiveMigration()
             .build()
     }

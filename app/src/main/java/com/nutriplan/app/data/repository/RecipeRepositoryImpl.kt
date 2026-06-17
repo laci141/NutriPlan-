@@ -74,6 +74,11 @@ class RecipeRepositoryImpl @Inject constructor(
         Logger.i(Logger.Tags.RECIPE, "Recipe deleted – recept törölve, id=${recipe.id}, név='${recipe.name}'")
     }
 
+    override suspend fun setFavorite(id: Long, isFavorite: Boolean) {
+        recipeDao.setFavorite(id, isFavorite)
+        Logger.i(Logger.Tags.RECIPE, "Recept kedvenc állapota módosítva: id=$id, kedvenc=$isFavorite")
+    }
+
     override suspend fun countRecipes(): Int {
         val count = recipeDao.countRecipes()
         Logger.d(Logger.Tags.REPOSITORY, "Receptek száma az adatbázisban: $count")
