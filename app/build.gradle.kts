@@ -136,6 +136,9 @@ dependencies {
     // ProfileInstaller – a könyvtárak baseline profiljainak telepítése (gyorsabb indulás)
     implementation(libs.androidx.profileinstaller)
 
+    // Coil – képek (recept-fotók) betöltése helyi fájlból
+    implementation(libs.coil.compose)
+
     // Timber – naplózás
     implementation(libs.timber)
 

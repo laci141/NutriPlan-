@@ -138,6 +138,18 @@
     <string name="app_locked">A NutriPlan zárolva van</string>
     <string name="unlock">Feloldás</string>
 
+    <!-- Recept-fotó és elkészítés -->
+    <string name="recipe_image">Recept fotó</string>
+    <string name="take_photo">Fotó</string>
+    <string name="choose_gallery">Galéria</string>
+    <string name="remove_image">Fotó eltávolítása</string>
+    <string name="instructions">Elkészítés</string>
+    <string name="instructions_hint">Hogyan készül…</string>
+
+    <!-- Nap másolása -->
+    <string name="copy_day">Nap másolása</string>
+    <string name="copy_to_all_days">Másolás minden napra</string>
+
     <!-- Általános -->
     <string name="save">Mentés</string>
     <string name="cancel">Mégse</string>

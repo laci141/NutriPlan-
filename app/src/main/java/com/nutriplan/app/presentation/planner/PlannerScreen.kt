@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -63,6 +64,8 @@ fun PlannerScreen(viewModel: PlannerViewModel = hiltViewModel()) {
     var showClearDialog by remember { mutableStateOf(false) }
     // A recept-választó állapota: melyik naphoz és étkezéshez választunk
     var picker by remember { mutableStateOf<Pair<WeekDay, MealType>?>(null) }
+    // A nap-másoló forrásnapja (ha nem null, a cél-választó látszik)
+    var copySource by remember { mutableStateOf<WeekDay?>(null) }
 
     Scaffold(
         topBar = {
@@ -87,7 +90,8 @@ fun PlannerScreen(viewModel: PlannerViewModel = hiltViewModel()) {
                     assignments = assignments.filter { it.weekDay == day },
                     totals = dayTotals[day] ?: NutritionTotals(),
                     onAdd = { mealType -> picker = day to mealType },
-                    onRemove = { viewModel.remove(it) }
+                    onRemove = { viewModel.remove(it) },
+                    onCopy = { copySource = day }
                 )
             }
         }
@@ -103,6 +107,22 @@ fun PlannerScreen(viewModel: PlannerViewModel = hiltViewModel()) {
                 picker = null
             },
             onDismiss = { picker = null }
+        )
+    }
+
+    // Nap-másoló cél-választó párbeszéd
+    copySource?.let { source ->
+        CopyDayDialog(
+            source = source,
+            onCopyTo = { target ->
+                viewModel.copyDay(source, target)
+                copySource = null
+            },
+            onCopyToAll = {
+                viewModel.copyDayToAll(source)
+                copySource = null
+            },
+            onDismiss = { copySource = null }
         )
     }
 
@@ -134,7 +154,8 @@ private fun DayCard(
     assignments: List<MealAssignment>,
     totals: NutritionTotals,
     onAdd: (MealType) -> Unit,
-    onRemove: (Long) -> Unit
+    onRemove: (Long) -> Unit,
+    onCopy: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -155,6 +176,10 @@ private fun DayCard(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+                // Nap másolása másik napra
+                IconButton(onClick = onCopy) {
+                    Icon(Icons.Filled.ContentCopy, contentDescription = stringResource(R.string.copy_day))
                 }
                 Icon(
                     imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
@@ -226,6 +251,48 @@ private fun MealSlot(
             }
         }
     }
+}
+
+/** Nap-másoló párbeszéd: a forrásnap étkezéseit átmásolja a kiválasztott napra (vagy minden napra). */
+@Composable
+private fun CopyDayDialog(
+    source: WeekDay,
+    onCopyTo: (WeekDay) -> Unit,
+    onCopyToAll: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("${stringResource(R.string.copy_day)} · ${source.label()}") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = stringResource(R.string.copy_to_all_days),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onCopyToAll() }
+                        .padding(vertical = 12.dp)
+                )
+                HorizontalDivider()
+                WeekDay.entries.filter { it != source }.forEach { target ->
+                    Text(
+                        text = target.label(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onCopyTo(target) }
+                            .padding(vertical = 12.dp)
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        }
+    )
 }
 
 /** Recept-választó párbeszéd egy adott étkezéshez. */

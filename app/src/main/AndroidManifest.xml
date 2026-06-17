@@ -9,6 +9,12 @@
         android:name="android.hardware.sensor.stepcounter"
         android:required="false" />
 
+    <!-- Recept-fotó készítéséhez; a kamera opcionális. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+
     <application
         android:name=".NutriPlanApplication"
         android:allowBackup="true"
@@ -30,6 +36,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Recept-fotók megosztása a kamera alkalmazással -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <!-- Vízfogyasztás kezdőképernyő-widget (Glance) -->
         <receiver

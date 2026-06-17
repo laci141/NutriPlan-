@@ -138,6 +138,18 @@
     <string name="app_locked">NutriPlan este blocat</string>
     <string name="unlock">Deblochează</string>
 
+    <!-- Foto rețetă și preparare -->
+    <string name="recipe_image">Foto rețetă</string>
+    <string name="take_photo">Foto</string>
+    <string name="choose_gallery">Galerie</string>
+    <string name="remove_image">Elimină foto</string>
+    <string name="instructions">Preparare</string>
+    <string name="instructions_hint">Cum se prepară…</string>
+
+    <!-- Copiere zi -->
+    <string name="copy_day">Copiază ziua</string>
+    <string name="copy_to_all_days">Copiază în toate zilele</string>
+
     <!-- Comune -->
     <string name="save">Salvează</string>
     <string name="cancel">Anulează</string>

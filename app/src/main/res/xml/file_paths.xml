@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A FileProvider által megosztható útvonalak (recept-fotók a privát tárhelyen). -->
+<paths>
+    <files-path
+        name="recipe_images"
+        path="recipe_images/" />
+</paths>

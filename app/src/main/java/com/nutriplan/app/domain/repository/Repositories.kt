@@ -28,6 +28,8 @@ interface MealPlanRepository {
     suspend fun assignRecipe(weekDay: WeekDay, mealType: MealType, recipeId: Long)
     suspend fun removeAssignment(id: Long)
     suspend fun clearWeek()
+    /** Egy nap összes hozzárendelésének átmásolása egy másik napra (a cél nap előző tartalmát törli). */
+    suspend fun copyDay(from: WeekDay, to: WeekDay)
 }
 
 /**

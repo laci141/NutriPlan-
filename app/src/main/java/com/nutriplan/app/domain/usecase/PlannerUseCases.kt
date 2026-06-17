@@ -54,3 +54,13 @@ class ClearWeekUseCase @Inject constructor(
         repository.clearWeek()
     }
 }
+
+/** Egy nap étkezéseinek átmásolása egy másik napra. */
+class CopyDayUseCase @Inject constructor(
+    private val repository: MealPlanRepository
+) {
+    suspend operator fun invoke(from: WeekDay, to: WeekDay) {
+        Logger.i(Logger.Tags.PLANNER, "CopyDayUseCase meghívva: ${from.key} -> ${to.key}")
+        repository.copyDay(from, to)
+    }
+}

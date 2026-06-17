@@ -67,4 +67,24 @@ class MealPlanRepositoryImpl @Inject constructor(
         mealPlanDao.clearAll()
         Logger.i(Logger.Tags.PLANNER, "Teljes heti terv törölve")
     }
+
+    override suspend fun copyDay(from: WeekDay, to: WeekDay) {
+        if (from == to) return
+        // A cél nap előző tartalmát töröljük, majd a forrás nap bejegyzéseit átmásoljuk
+        mealPlanDao.deleteByDay(to.key)
+        val source = mealPlanDao.getAllOnce().filter { it.weekDay == from.key }
+        source.forEach { entry ->
+            mealPlanDao.insert(
+                MealPlanEntity(
+                    weekDay = to.key,
+                    mealType = entry.mealType,
+                    recipeId = entry.recipeId
+                )
+            )
+        }
+        Logger.i(
+            Logger.Tags.PLANNER,
+            "Nap átmásolva: ${from.key} -> ${to.key} (${source.size} bejegyzés)"
+        )
+    }
 }

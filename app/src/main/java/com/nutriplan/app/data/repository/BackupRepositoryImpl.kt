@@ -55,6 +55,8 @@ class BackupRepositoryImpl @Inject constructor(
                     fat = rwi.recipe.fat,
                     isDefault = rwi.recipe.isDefault,
                     nameKey = rwi.recipe.nameKey,
+                    imagePath = rwi.recipe.imagePath,
+                    instructions = rwi.recipe.instructions,
                     ingredients = rwi.ingredients.map {
                         IngredientDto(it.name, it.quantity, it.unit, it.category, it.nameKey)
                     }
@@ -98,7 +100,9 @@ class BackupRepositoryImpl @Inject constructor(
                     carbs = recipeDto.carbs,
                     fat = recipeDto.fat,
                     isDefault = recipeDto.isDefault,
-                    nameKey = recipeDto.nameKey
+                    nameKey = recipeDto.nameKey,
+                    imagePath = recipeDto.imagePath,
+                    instructions = recipeDto.instructions
                 )
             )
             recipeDao.insertIngredients(

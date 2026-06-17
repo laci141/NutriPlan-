@@ -44,7 +44,9 @@ fun RecipeWithIngredients.toDomain(): Recipe = Recipe(
     fat = recipe.fat,
     isDefault = recipe.isDefault,
     ingredients = ingredients.map { it.toDomain() },
-    nameKey = recipe.nameKey
+    nameKey = recipe.nameKey,
+    imagePath = recipe.imagePath,
+    instructions = recipe.instructions
 )
 
 fun Recipe.toEntity(): RecipeEntity = RecipeEntity(
@@ -56,7 +58,9 @@ fun Recipe.toEntity(): RecipeEntity = RecipeEntity(
     carbs = carbs,
     fat = fat,
     isDefault = isDefault,
-    nameKey = nameKey
+    nameKey = nameKey,
+    imagePath = imagePath,
+    instructions = instructions
 )
 
 fun ShoppingItemEntity.toDomain(): ShoppingItem = ShoppingItem(

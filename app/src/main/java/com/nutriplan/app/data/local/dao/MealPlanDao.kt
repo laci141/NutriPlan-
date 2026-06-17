@@ -33,6 +33,10 @@ interface MealPlanDao {
     @Query("DELETE FROM meal_plans")
     suspend fun clearAll()
 
+    /** Egy adott nap összes hozzárendelésének törlése. */
+    @Query("DELETE FROM meal_plans WHERE weekDay = :weekDay")
+    suspend fun deleteByDay(weekDay: String)
+
     /** Egy adott recepthez tartozó összes hozzárendelés törlése (recept törlésekor). */
     @Query("DELETE FROM meal_plans WHERE recipeId = :recipeId")
     suspend fun deleteByRecipe(recipeId: Long)

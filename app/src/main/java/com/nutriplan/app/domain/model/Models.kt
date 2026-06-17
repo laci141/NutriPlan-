@@ -28,7 +28,11 @@ data class Recipe(
     val isDefault: Boolean = false,
     val ingredients: List<Ingredient> = emptyList(),
     // Fordítási kulcs (alaprecepteknél); ha null, a name literál szöveget jelenítjük meg
-    val nameKey: String? = null
+    val nameKey: String? = null,
+    // A recept fotójának helyi elérési útja (null = nincs kép)
+    val imagePath: String? = null,
+    // Elkészítési útmutató / leírás (null vagy üres = nincs)
+    val instructions: String? = null
 )
 
 /**

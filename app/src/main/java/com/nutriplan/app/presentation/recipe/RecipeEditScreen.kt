@@ -1,18 +1,29 @@
 package com.nutriplan.app.presentation.recipe
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,20 +38,30 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.nutriplan.app.R
 import com.nutriplan.app.domain.model.IngredientCategory
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.MeasurementUnit
 import com.nutriplan.app.presentation.components.LabeledDropdown
 import com.nutriplan.app.presentation.util.label
+import com.nutriplan.app.util.ImageStorage
+import java.io.File
 
 /**
  * Recept szerkesztő/létrehozó képernyő.
@@ -99,6 +120,13 @@ fun RecipeEditScreen(
                 } else null,
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
+            )
+
+            // Recept-fotó: kamera vagy galéria
+            RecipePhotoSection(
+                imagePath = state.imagePath,
+                onImageSelected = viewModel::onImageSelected,
+                onImageRemoved = viewModel::onImageRemoved
             )
 
             LabeledDropdown(
@@ -175,6 +203,109 @@ fun RecipeEditScreen(
                 Text(
                     text = "  ${stringResource(R.string.add_ingredient)}",
                 )
+            }
+
+            // Elkészítési útmutató (többsoros)
+            Text(
+                text = stringResource(R.string.instructions),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+            OutlinedTextField(
+                value = state.instructions,
+                onValueChange = viewModel::onInstructionsChange,
+                label = { Text(stringResource(R.string.instructions_hint)) },
+                minLines = 3,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+/** Recept-fotó kiválasztása kamerával vagy galériából, előnézettel. */
+@Composable
+private fun RecipePhotoSection(
+    imagePath: String?,
+    onImageSelected: (String?) -> Unit,
+    onImageRemoved: () -> Unit
+) {
+    val context = LocalContext.current
+    // A kamera által írandó fájl (a sikeres visszatérésig megőrizzük)
+    var pendingCameraFile by remember { mutableStateOf<File?>(null) }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) onImageSelected(pendingCameraFile?.absolutePath) else pendingCameraFile = null
+    }
+
+    fun launchCamera() {
+        val file = ImageStorage.newImageFile(context)
+        pendingCameraFile = file
+        cameraLauncher.launch(ImageStorage.uriFor(context, file))
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted -> if (granted) launchCamera() }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) onImageSelected(ImageStorage.importFrom(context, uri))
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (imagePath != null) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                AsyncImage(
+                    model = File(imagePath),
+                    contentDescription = stringResource(R.string.recipe_image),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+                IconButton(
+                    onClick = onImageRemoved,
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        Icons.Filled.Close,
+                        contentDescription = stringResource(R.string.remove_image),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(
+                onClick = {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        launchCamera()
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                },
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(Icons.Filled.PhotoCamera, contentDescription = null)
+                Text("  ${stringResource(R.string.take_photo)}")
+            }
+            OutlinedButton(
+                onClick = {
+                    galleryLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(Icons.Filled.PhotoLibrary, contentDescription = null)
+                Text("  ${stringResource(R.string.choose_gallery)}")
             }
         }
     }

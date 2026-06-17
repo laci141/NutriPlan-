@@ -10,6 +10,7 @@ import com.nutriplan.app.domain.model.WeekDay
 import com.nutriplan.app.domain.usecase.AssignRecipeUseCase
 import com.nutriplan.app.domain.usecase.CalculateNutritionUseCase
 import com.nutriplan.app.domain.usecase.ClearWeekUseCase
+import com.nutriplan.app.domain.usecase.CopyDayUseCase
 import com.nutriplan.app.domain.usecase.GetRecipesUseCase
 import com.nutriplan.app.domain.usecase.GetWeeklyPlanUseCase
 import com.nutriplan.app.domain.usecase.RemoveAssignmentUseCase
@@ -33,6 +34,7 @@ class PlannerViewModel @Inject constructor(
     private val assignRecipeUseCase: AssignRecipeUseCase,
     private val removeAssignmentUseCase: RemoveAssignmentUseCase,
     private val clearWeekUseCase: ClearWeekUseCase,
+    private val copyDayUseCase: CopyDayUseCase,
     private val calculateNutritionUseCase: CalculateNutritionUseCase
 ) : ViewModel() {
 
@@ -82,6 +84,22 @@ class PlannerViewModel @Inject constructor(
         viewModelScope.launch {
             Logger.i(Logger.Tags.VIEWMODEL, "PlannerViewModel – teljes hét törlése")
             clearWeekUseCase()
+        }
+    }
+
+    /** Egy nap átmásolása egy másik napra. */
+    fun copyDay(from: WeekDay, to: WeekDay) {
+        viewModelScope.launch {
+            Logger.i(Logger.Tags.VIEWMODEL, "PlannerViewModel – nap másolása: ${from.key} -> ${to.key}")
+            copyDayUseCase(from, to)
+        }
+    }
+
+    /** Egy nap átmásolása a hét összes többi napjára. */
+    fun copyDayToAll(from: WeekDay) {
+        viewModelScope.launch {
+            Logger.i(Logger.Tags.VIEWMODEL, "PlannerViewModel – nap másolása minden napra: ${from.key}")
+            WeekDay.entries.filter { it != from }.forEach { copyDayUseCase(from, it) }
         }
     }
 }

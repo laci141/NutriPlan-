@@ -21,7 +21,7 @@ import com.nutriplan.app.data.local.entity.ShoppingItemEntity
         MealPlanEntity::class,
         ShoppingItemEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class NutriPlanDatabase : RoomDatabase() {

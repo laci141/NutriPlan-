@@ -27,6 +27,8 @@ data class RecipeDto(
     val fat: Double,
     val isDefault: Boolean,
     val nameKey: String? = null,
+    val imagePath: String? = null,
+    val instructions: String? = null,
     val ingredients: List<IngredientDto>
 )
 

@@ -12,6 +12,7 @@ import com.nutriplan.app.domain.usecase.GetRecipeUseCase
 import com.nutriplan.app.domain.usecase.SaveRecipeUseCase
 import com.nutriplan.app.domain.util.IngredientCategorizer
 import com.nutriplan.app.presentation.navigation.Routes
+import com.nutriplan.app.util.ImageStorage
 import com.nutriplan.app.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,7 +50,11 @@ data class RecipeFormState(
     val nameError: Boolean = false,
     val saved: Boolean = false,
     // Fordítási kulcs (alaprecept); a név szerkesztésekor töröljük
-    val nameKey: String? = null
+    val nameKey: String? = null,
+    // A recept fotójának helyi elérési útja (null = nincs kép)
+    val imagePath: String? = null,
+    // Elkészítési útmutató
+    val instructions: String = ""
 )
 
 /**
@@ -92,7 +97,9 @@ class RecipeEditViewModel @Inject constructor(
                         IngredientForm(it.name, it.quantity.toString(), it.unit, it.category, it.nameKey)
                     }.ifEmpty { listOf(IngredientForm()) },
                     isEditing = true,
-                    nameKey = recipe.nameKey
+                    nameKey = recipe.nameKey,
+                    imagePath = recipe.imagePath,
+                    instructions = recipe.instructions.orEmpty()
                 )
             } else {
                 Logger.w(Logger.Tags.VIEWMODEL, "A betöltendő recept nem található: id=$id")
@@ -107,6 +114,23 @@ class RecipeEditViewModel @Inject constructor(
     fun onProteinChange(value: String) { _state.value = _state.value.copy(protein = value.filterDecimal()) }
     fun onCarbsChange(value: String) { _state.value = _state.value.copy(carbs = value.filterDecimal()) }
     fun onFatChange(value: String) { _state.value = _state.value.copy(fat = value.filterDecimal()) }
+    fun onInstructionsChange(value: String) { _state.value = _state.value.copy(instructions = value) }
+
+    /** Új recept-fotó beállítása (kamera vagy galéria). A korábbi képet töröljük. */
+    fun onImageSelected(path: String?) {
+        if (path == null) return
+        val previous = _state.value.imagePath
+        if (previous != null && previous != path) ImageStorage.delete(previous)
+        _state.value = _state.value.copy(imagePath = path)
+        Logger.i(Logger.Tags.RECIPE, "Recept-fotó beállítva")
+    }
+
+    /** A recept-fotó eltávolítása. */
+    fun onImageRemoved() {
+        ImageStorage.delete(_state.value.imagePath)
+        _state.value = _state.value.copy(imagePath = null)
+        Logger.i(Logger.Tags.RECIPE, "Recept-fotó eltávolítva")
+    }
 
     /** Új, üres hozzávaló sor hozzáadása. */
     fun addIngredient() {
@@ -173,7 +197,9 @@ class RecipeEditViewModel @Inject constructor(
                 carbs = current.carbs.toDoubleOrNull() ?: 0.0,
                 fat = current.fat.toDoubleOrNull() ?: 0.0,
                 ingredients = ingredients,
-                nameKey = current.nameKey
+                nameKey = current.nameKey,
+                imagePath = current.imagePath,
+                instructions = current.instructions.trim().ifBlank { null }
             )
 
             Logger.i(Logger.Tags.VIEWMODEL, "RecipeEditViewModel – recept mentése: '${recipe.name}'")

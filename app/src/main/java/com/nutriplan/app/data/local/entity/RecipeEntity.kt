@@ -21,5 +21,9 @@ data class RecipeEntity(
     // Jelzi, hogy ez az első indításkor betöltött alaprecept-e
     val isDefault: Boolean = false,
     // Fordítási kulcs az alaprecept nevéhez (null = literál név)
-    val nameKey: String? = null
+    val nameKey: String? = null,
+    // A recept fotójának helyi elérési útja (null = nincs kép)
+    val imagePath: String? = null,
+    // Elkészítési útmutató / leírás
+    val instructions: String? = null
 )

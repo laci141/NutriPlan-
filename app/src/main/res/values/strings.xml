@@ -138,6 +138,18 @@
     <string name="app_locked">NutriPlan is locked</string>
     <string name="unlock">Unlock</string>
 
+    <!-- Recipe photo & instructions -->
+    <string name="recipe_image">Recipe photo</string>
+    <string name="take_photo">Photo</string>
+    <string name="choose_gallery">Gallery</string>
+    <string name="remove_image">Remove photo</string>
+    <string name="instructions">Instructions</string>
+    <string name="instructions_hint">How to prepare it…</string>
+
+    <!-- Copy day -->
+    <string name="copy_day">Copy day</string>
+    <string name="copy_to_all_days">Copy to all days</string>
+
     <!-- Common -->
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
