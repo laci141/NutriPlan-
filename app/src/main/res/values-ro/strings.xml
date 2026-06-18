@@ -308,4 +308,12 @@
     <string name="macro_goals">Obiective macro (g)</string>
     <string name="macro_goals_summary">Lasă gol pentru valori automate din obiectivul caloric.</string>
     <string name="macro_auto">Auto</string>
+
+    <!-- Jurnal alimentar -->
+    <string name="streak_days">Serie de %1$d zile</string>
+    <string name="food_log_title">Jurnalul de azi</string>
+    <string name="food_log_empty">Nimic înregistrat azi.</string>
+    <string name="log_food">Înregistrează aliment</string>
+    <string name="food_name">Numele alimentului</string>
+    <string name="grams">Cantitate (g)</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.nutriplan.app.data.local.NutriPlanDatabase
+import com.nutriplan.app.data.local.dao.FoodLogDao
 import com.nutriplan.app.data.local.dao.MealPlanDao
 import com.nutriplan.app.data.local.dao.RecipeDao
 import com.nutriplan.app.data.local.dao.ShoppingDao
@@ -30,6 +31,24 @@ object DatabaseModule {
         }
     }
 
+    // 4 -> 5: étkezés-napló tábla létrehozása (a meglévő adatok megőrzésével)
+    private val migration4to5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS food_log (" +
+                    "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    "epochDay INTEGER NOT NULL, " +
+                    "name TEXT NOT NULL, " +
+                    "calories INTEGER NOT NULL, " +
+                    "protein REAL NOT NULL, " +
+                    "carbs REAL NOT NULL, " +
+                    "fat REAL NOT NULL, " +
+                    "mealType TEXT NOT NULL)"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS index_food_log_epochDay ON food_log(epochDay)")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): NutriPlanDatabase {
@@ -39,7 +58,7 @@ object DatabaseModule {
             NutriPlanDatabase::class.java,
             NutriPlanDatabase.DATABASE_NAME
         )
-            .addMigrations(migration3to4)
+            .addMigrations(migration3to4, migration4to5)
             .fallbackToDestructiveMigration()
             .build()
     }
@@ -52,4 +71,7 @@ object DatabaseModule {
 
     @Provides
     fun provideShoppingDao(database: NutriPlanDatabase): ShoppingDao = database.shoppingDao()
+
+    @Provides
+    fun provideFoodLogDao(database: NutriPlanDatabase): FoodLogDao = database.foodLogDao()
 }

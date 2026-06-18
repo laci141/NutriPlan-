@@ -1,10 +1,12 @@
 package com.nutriplan.app.di
 
 import com.nutriplan.app.data.repository.BackupRepositoryImpl
+import com.nutriplan.app.data.repository.FoodLogRepositoryImpl
 import com.nutriplan.app.data.repository.MealPlanRepositoryImpl
 import com.nutriplan.app.data.repository.RecipeRepositoryImpl
 import com.nutriplan.app.data.repository.ShoppingRepositoryImpl
 import com.nutriplan.app.domain.repository.BackupRepository
+import com.nutriplan.app.domain.repository.FoodLogRepository
 import com.nutriplan.app.domain.repository.MealPlanRepository
 import com.nutriplan.app.domain.repository.RecipeRepository
 import com.nutriplan.app.domain.repository.ShoppingRepository
@@ -36,4 +38,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindBackupRepository(impl: BackupRepositoryImpl): BackupRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFoodLogRepository(impl: FoodLogRepositoryImpl): FoodLogRepository
 }

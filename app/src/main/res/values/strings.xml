@@ -308,4 +308,12 @@
     <string name="macro_goals">Macro goals (g)</string>
     <string name="macro_goals_summary">Leave empty for automatic values from your calorie goal.</string>
     <string name="macro_auto">Auto</string>
+
+    <!-- Food log / diary -->
+    <string name="streak_days">%1$d-day streak</string>
+    <string name="food_log_title">Today\'s log</string>
+    <string name="food_log_empty">Nothing logged yet today.</string>
+    <string name="log_food">Log food</string>
+    <string name="food_name">Food name</string>
+    <string name="grams">Amount (g)</string>
 </resources>

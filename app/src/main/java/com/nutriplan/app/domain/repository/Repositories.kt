@@ -1,11 +1,25 @@
 package com.nutriplan.app.domain.repository
 
+import com.nutriplan.app.domain.model.FoodLogEntry
 import com.nutriplan.app.domain.model.MealAssignment
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.Recipe
 import com.nutriplan.app.domain.model.ShoppingItem
 import com.nutriplan.app.domain.model.WeekDay
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
+
+/**
+ * Étkezés-napló tároló interfész.
+ */
+interface FoodLogRepository {
+    fun entriesForDay(date: LocalDate): Flow<List<FoodLogEntry>>
+    fun entriesForRange(from: LocalDate, to: LocalDate): Flow<List<FoodLogEntry>>
+    suspend fun rangeOnce(from: LocalDate, to: LocalDate): List<FoodLogEntry>
+    fun recent(): Flow<List<FoodLogEntry>>
+    suspend fun add(entry: FoodLogEntry): Long
+    suspend fun delete(id: Long)
+}
 
 /**
  * Recept tároló interfész – a recept CRUD műveletek absztrakciója.

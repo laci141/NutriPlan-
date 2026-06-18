@@ -308,4 +308,12 @@
     <string name="macro_goals">Makró-célok (g)</string>
     <string name="macro_goals_summary">Hagyd üresen az automatikus értékhez (a kalóriacélból).</string>
     <string name="macro_auto">Auto</string>
+
+    <!-- Étkezés-napló -->
+    <string name="streak_days">%1$d napos sorozat</string>
+    <string name="food_log_title">Mai napló</string>
+    <string name="food_log_empty">Ma még nincs naplózva semmi.</string>
+    <string name="log_food">Étel naplózása</string>
+    <string name="food_name">Étel neve</string>
+    <string name="grams">Mennyiség (g)</string>
 </resources>

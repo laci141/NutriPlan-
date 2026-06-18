@@ -1,5 +1,21 @@
 package com.nutriplan.app.domain.model
 
+import java.time.LocalDate
+
+/**
+ * Egy elfogyasztott étel naplóbejegyzése egy adott napon.
+ */
+data class FoodLogEntry(
+    val id: Long = 0L,
+    val date: LocalDate,
+    val name: String,
+    val calories: Int,
+    val protein: Double,
+    val carbs: Double,
+    val fat: Double,
+    val mealType: MealType = MealType.LUNCH
+)
+
 /**
  * Hozzávaló domain modell.
  * Egy recepthez tartozó alapanyag mennyiséggel, mértékegységgel és kategóriával.

@@ -9,10 +9,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nutriplan.app.data.preferences.DashboardPreferences
 import com.nutriplan.app.data.preferences.SettingsManager
+import com.nutriplan.app.data.remote.OpenFoodFactsDataSource
+import com.nutriplan.app.data.remote.ProductLookupResult
+import com.nutriplan.app.data.remote.ScannedProduct
+import com.nutriplan.app.domain.model.FoodLogEntry
+import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.NutritionTotals
-import com.nutriplan.app.domain.model.WeekDay
-import com.nutriplan.app.domain.usecase.CalculateNutritionUseCase
-import com.nutriplan.app.domain.usecase.GetWeeklyPlanUseCase
+import com.nutriplan.app.domain.repository.FoodLogRepository
 import com.nutriplan.app.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -32,6 +35,8 @@ import kotlin.math.roundToInt
  */
 data class DashboardUiState(
     val todayTotals: NutritionTotals = NutritionTotals(),
+    val todayEntries: List<FoodLogEntry> = emptyList(),
+    val streak: Int = 0,
     val calorieGoal: Int = 0,
     val proteinTarget: Int = 0,
     val carbsTarget: Int = 0,
@@ -53,15 +58,13 @@ data class DashboardUiState(
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    getWeeklyPlanUseCase: GetWeeklyPlanUseCase,
     settingsManager: SettingsManager,
     private val dashboardPreferences: DashboardPreferences,
-    private val calculateNutritionUseCase: CalculateNutritionUseCase
+    private val foodLogRepository: FoodLogRepository,
+    private val openFoodFacts: OpenFoodFactsDataSource
 ) : ViewModel() {
 
-    // A mai nap a saját WeekDay enumunkra leképezve
-    private val today: WeekDay
-        get() = WeekDay.valueOf(LocalDate.now().dayOfWeek.name)
+    private val today: LocalDate = LocalDate.now()
 
     // Egyéni makró-célok (0 = automatikus) egyetlen flow-ba kötve
     private val macroGoals = combine(
@@ -70,20 +73,33 @@ class DashboardViewModel @Inject constructor(
         settingsManager.fatGoal
     ) { p, c, f -> Triple(p, c, f) }
 
+    // A mai naplóbejegyzések
+    private val todayEntries = foodLogRepository.entriesForDay(today)
+
+    // Az elmúlt ~60 nap a sorozat (streak) számításához
+    private val recentRange =
+        foodLogRepository.entriesForRange(today.minusDays(60), today)
+
+    /** A gyakran/utoljára naplózott ételek a gyors újra-hozzáadáshoz. */
+    val recentFoods: StateFlow<List<FoodLogEntry>> = foodLogRepository.recent()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     val uiState: StateFlow<DashboardUiState> = combine(
-        getWeeklyPlanUseCase(),
+        todayEntries,
         settingsManager.calorieGoal,
         dashboardPreferences.waterToday,
-        macroGoals
-    ) { assignments, goal, water, macros ->
-        val todayRecipes = assignments.filter { it.weekDay == today }.map { it.recipe }
-        val totals = calculateNutritionUseCase(todayRecipes)
-        // Makró-célok: ha a felhasználó megadott egyénit, azt használjuk, különben a
-        // kalóriacélból 30% fehérje, 40% szénhidrát, 30% zsír arány szerint.
+        macroGoals,
+        recentRange
+    ) { entries, goal, water, macros, range ->
+        val totals = entries.fold(NutritionTotals()) { acc, e ->
+            acc + NutritionTotals(e.calories, e.protein, e.carbs, e.fat)
+        }
         val effectiveGoal = if (goal > 0) goal else 2000
         val (customP, customC, customF) = macros
         DashboardUiState(
             todayTotals = totals,
+            todayEntries = entries,
+            streak = computeStreak(range, goal),
             calorieGoal = goal,
             proteinTarget = if (customP > 0) customP else (effectiveGoal * 0.30 / 4).roundToInt(),
             carbsTarget = if (customC > 0) customC else (effectiveGoal * 0.40 / 4).roundToInt(),
@@ -91,6 +107,74 @@ class DashboardViewModel @Inject constructor(
             water = water
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DashboardUiState())
+
+    /**
+     * Folyamatos napi sorozat: hány egymást követő napon (ma vagy tegnaptól visszafelé)
+     * érte el a napló a kalóriacél 80–120%-át. Cél nélkül bármely naplózott nap számít.
+     */
+    private fun computeStreak(entries: List<FoodLogEntry>, goal: Int): Int {
+        val byDay = entries.groupBy { it.date }
+            .mapValues { (_, list) -> list.sumOf { it.calories } }
+        var day = today
+        if ((byDay[day] ?: 0) == 0) day = today.minusDays(1)
+        var streak = 0
+        while (true) {
+            val cal = byDay[day] ?: 0
+            val hit = if (goal > 0) cal in (goal * 0.8).toInt()..(goal * 1.2).toInt() else cal > 0
+            if (hit) {
+                streak++
+                day = day.minusDays(1)
+            } else break
+        }
+        return streak
+    }
+
+    /** Új naplóbejegyzés hozzáadása a mai naphoz. */
+    fun addFood(name: String, calories: Int, protein: Double, carbs: Double, fat: Double, mealType: MealType) {
+        if (name.isBlank()) return
+        viewModelScope.launch {
+            foodLogRepository.add(
+                FoodLogEntry(
+                    date = today,
+                    name = name.trim(),
+                    calories = calories,
+                    protein = protein,
+                    carbs = carbs,
+                    fat = fat,
+                    mealType = mealType
+                )
+            )
+            Logger.i(Logger.Tags.VIEWMODEL, "Étel naplózva: '$name' ($calories kcal)")
+        }
+    }
+
+    /** Egy naplóbejegyzés törlése. */
+    fun deleteFood(id: Long) {
+        viewModelScope.launch { foodLogRepository.delete(id) }
+    }
+
+    // --- Vonalkód a naplóhoz: a beolvasott termék 100 g-os adatai ---
+    private val _scannedProduct = MutableStateFlow<ScannedProduct?>(null)
+    val scannedProduct: StateFlow<ScannedProduct?> = _scannedProduct.asStateFlow()
+
+    private val _scanLookupFailed = MutableStateFlow(false)
+    val scanLookupFailed: StateFlow<Boolean> = _scanLookupFailed.asStateFlow()
+
+    /** Vonalkód lekérdezése az Open Food Facts-ből (a napló-dialógus tölti ki belőle a mezőket). */
+    fun lookupBarcode(code: String) {
+        viewModelScope.launch {
+            when (val result = openFoodFacts.lookup(code)) {
+                is ProductLookupResult.Success -> _scannedProduct.value = result.product
+                else -> _scanLookupFailed.value = true
+            }
+        }
+    }
+
+    /** A beolvasott termék / hiba nyugtázása a dialógus után. */
+    fun consumeScan() {
+        _scannedProduct.value = null
+        _scanLookupFailed.value = false
+    }
 
     // --- Lépésszámláló (hardveres szenzor, biztonságos kezeléssel) ---
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
