@@ -9,6 +9,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.security.MessageDigest
+import java.security.SecureRandom
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,7 +38,13 @@ class SettingsManager @Inject constructor(
     private val _appLock = MutableStateFlow(readAppLock())
     val appLock: StateFlow<Boolean> = _appLock.asStateFlow()
 
+    private val _pinSet = MutableStateFlow(readPinSet())
+    /** Igaz, ha a felhasználó beállított feloldó PIN-kódot. */
+    val pinSet: StateFlow<Boolean> = _pinSet.asStateFlow()
+
     private fun readAppLock(): Boolean = prefs.getBoolean(KEY_APP_LOCK, false)
+
+    private fun readPinSet(): Boolean = !prefs.getString(KEY_PIN_HASH, null).isNullOrEmpty()
 
     private fun readTheme(): ThemeMode =
         ThemeMode.fromKey(prefs.getString(KEY_THEME, ThemeMode.SYSTEM.key) ?: ThemeMode.SYSTEM.key)
@@ -79,6 +87,46 @@ class SettingsManager @Inject constructor(
         Logger.i(Logger.Tags.SETTINGS, "Alkalmazászár módosítva: $enabled")
     }
 
+    /**
+     * Feloldó PIN-kód beállítása. A kódot sózott SHA-256 hash-ként tároljuk,
+     * sosem nyílt szövegként.
+     */
+    fun setPin(pin: String) {
+        val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+        val hash = hashPin(pin, salt)
+        prefs.edit()
+            .putString(KEY_PIN_SALT, salt.toHex())
+            .putString(KEY_PIN_HASH, hash)
+            .apply()
+        _pinSet.value = true
+        Logger.i(Logger.Tags.SETTINGS, "Feloldó PIN beállítva")
+    }
+
+    /** A beállított PIN törlése. */
+    fun clearPin() {
+        prefs.edit().remove(KEY_PIN_SALT).remove(KEY_PIN_HASH).apply()
+        _pinSet.value = false
+        Logger.i(Logger.Tags.SETTINGS, "Feloldó PIN törölve")
+    }
+
+    /** Igaz, ha a megadott PIN megegyezik a tárolt kóddal. */
+    fun verifyPin(pin: String): Boolean {
+        val saltHex = prefs.getString(KEY_PIN_SALT, null) ?: return false
+        val stored = prefs.getString(KEY_PIN_HASH, null) ?: return false
+        return hashPin(pin, saltHex.fromHex()) == stored
+    }
+
+    private fun hashPin(pin: String, salt: ByteArray): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        digest.update(salt)
+        return digest.digest(pin.toByteArray(Charsets.UTF_8)).toHex()
+    }
+
+    private fun ByteArray.toHex(): String = joinToString("") { "%02x".format(it) }
+
+    private fun String.fromHex(): ByteArray =
+        chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+
     /** Szinkron nyelvi kód lekérés (a Context becsomagolásához használjuk). */
     fun currentLanguageCode(): String = readLanguage().code
 
@@ -88,6 +136,8 @@ class SettingsManager @Inject constructor(
         private const val KEY_LANGUAGE = "language"
         private const val KEY_CALORIE_GOAL = "calorie_goal"
         private const val KEY_APP_LOCK = "app_lock"
+        private const val KEY_PIN_SALT = "pin_salt"
+        private const val KEY_PIN_HASH = "pin_hash"
         const val DEFAULT_CALORIE_GOAL = 2000
         const val MAX_CALORIE_GOAL = 10000
 

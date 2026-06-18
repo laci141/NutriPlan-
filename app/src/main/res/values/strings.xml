@@ -133,10 +133,23 @@
     <!-- Security / app lock -->
     <string name="security">Security</string>
     <string name="app_lock">App lock</string>
-    <string name="app_lock_summary">Require fingerprint or face to open the app.</string>
+    <string name="app_lock_summary">Require a fingerprint or PIN to open the app.</string>
     <string name="app_lock_prompt">Authenticate to open NutriPlan</string>
     <string name="app_locked">NutriPlan is locked</string>
     <string name="unlock">Unlock</string>
+    <!-- PIN lock -->
+    <string name="set_pin">Set PIN</string>
+    <string name="change_pin">Change PIN</string>
+    <string name="remove_pin">Remove PIN</string>
+    <string name="pin_label">PIN (4–8 digits)</string>
+    <string name="pin_confirm_label">Confirm PIN</string>
+    <string name="enter_pin">Enter PIN</string>
+    <string name="wrong_pin">Wrong PIN</string>
+    <string name="pin_mismatch">The PINs do not match</string>
+    <string name="pin_too_short">The PIN must be at least 4 digits</string>
+    <string name="use_biometric">Use fingerprint instead</string>
+    <string name="pin_set_summary">PIN is set — it works even without a fingerprint.</string>
+    <string name="pin_not_set_summary">Set a PIN to unlock without a fingerprint.</string>
 
     <!-- Recipe photo & instructions -->
     <string name="recipe_image">Recipe photo</string>

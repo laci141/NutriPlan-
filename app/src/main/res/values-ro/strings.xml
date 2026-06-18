@@ -133,10 +133,23 @@
     <!-- Securitate / blocare aplicație -->
     <string name="security">Securitate</string>
     <string name="app_lock">Blocare aplicație</string>
-    <string name="app_lock_summary">Necesită amprentă sau față pentru a deschide aplicația.</string>
+    <string name="app_lock_summary">Necesită amprentă sau PIN pentru a deschide aplicația.</string>
     <string name="app_lock_prompt">Autentifică-te pentru a deschide NutriPlan</string>
     <string name="app_locked">NutriPlan este blocat</string>
     <string name="unlock">Deblochează</string>
+    <!-- Blocare cu PIN -->
+    <string name="set_pin">Setează PIN</string>
+    <string name="change_pin">Schimbă PIN-ul</string>
+    <string name="remove_pin">Elimină PIN-ul</string>
+    <string name="pin_label">PIN (4–8 cifre)</string>
+    <string name="pin_confirm_label">Confirmă PIN-ul</string>
+    <string name="enter_pin">Introdu PIN-ul</string>
+    <string name="wrong_pin">PIN greșit</string>
+    <string name="pin_mismatch">PIN-urile nu coincid</string>
+    <string name="pin_too_short">PIN-ul trebuie să aibă cel puțin 4 cifre</string>
+    <string name="use_biometric">Folosește amprenta</string>
+    <string name="pin_set_summary">PIN-ul este setat – funcționează și fără amprentă.</string>
+    <string name="pin_not_set_summary">Setează un PIN pentru a debloca fără amprentă.</string>
 
     <!-- Foto rețetă și preparare -->
     <string name="recipe_image">Foto rețetă</string>

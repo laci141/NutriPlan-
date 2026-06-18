@@ -47,6 +47,7 @@ class SettingsViewModel @Inject constructor(
     val language: StateFlow<Language> = settingsManager.language
     val calorieGoal: StateFlow<Int> = settingsManager.calorieGoal
     val appLock: StateFlow<Boolean> = settingsManager.appLock
+    val pinSet: StateFlow<Boolean> = settingsManager.pinSet
 
     private val _events = MutableSharedFlow<SettingsEvent>()
     val events: SharedFlow<SettingsEvent> = _events.asSharedFlow()
@@ -68,6 +69,16 @@ class SettingsViewModel @Inject constructor(
     /** A biometrikus alkalmazászár ki-/bekapcsolása. */
     fun setAppLock(enabled: Boolean) {
         settingsManager.setAppLock(enabled)
+    }
+
+    /** Feloldó PIN beállítása vagy módosítása. */
+    fun setPin(pin: String) {
+        settingsManager.setPin(pin)
+    }
+
+    /** A beállított PIN törlése. */
+    fun clearPin() {
+        settingsManager.clearPin()
     }
 
     /** Nyelv módosítása – a hívó felület újraindítja az Activity-t. */

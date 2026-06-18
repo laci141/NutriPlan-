@@ -33,6 +33,11 @@ android {
             storePassword = "nutriplan"
             keyAlias = "nutriplan"
             keyPassword = "nutriplan"
+            // V1 (JAR) aláírás is – egyes gyártói (pl. Huawei/EMUI) csomagtelepítők
+            // a régi V1 séma nélkül "Az alkalmazás nincs telepítve" hibát adnak.
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
         }
     }
 

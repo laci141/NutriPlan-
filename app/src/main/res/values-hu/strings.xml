@@ -133,10 +133,23 @@
     <!-- Biztonság / alkalmazászár -->
     <string name="security">Biztonság</string>
     <string name="app_lock">Alkalmazászár</string>
-    <string name="app_lock_summary">Ujjlenyomat vagy arc szükséges az app megnyitásához.</string>
+    <string name="app_lock_summary">Ujjlenyomat vagy PIN szükséges az app megnyitásához.</string>
     <string name="app_lock_prompt">Azonosítsd magad a NutriPlan megnyitásához</string>
     <string name="app_locked">A NutriPlan zárolva van</string>
     <string name="unlock">Feloldás</string>
+    <!-- PIN-zár -->
+    <string name="set_pin">PIN beállítása</string>
+    <string name="change_pin">PIN módosítása</string>
+    <string name="remove_pin">PIN törlése</string>
+    <string name="pin_label">PIN (4–8 számjegy)</string>
+    <string name="pin_confirm_label">PIN megerősítése</string>
+    <string name="enter_pin">Add meg a PIN-kódot</string>
+    <string name="wrong_pin">Hibás PIN</string>
+    <string name="pin_mismatch">A két PIN nem egyezik</string>
+    <string name="pin_too_short">A PIN legalább 4 számjegy legyen</string>
+    <string name="use_biometric">Inkább ujjlenyomattal</string>
+    <string name="pin_set_summary">A PIN be van állítva – ujjlenyomat nélkül is működik.</string>
+    <string name="pin_not_set_summary">Állíts be PIN-t, hogy ujjlenyomat nélkül is fel tudd oldani.</string>
 
     <!-- Recept-fotó és elkészítés -->
     <string name="recipe_image">Recept fotó</string>
