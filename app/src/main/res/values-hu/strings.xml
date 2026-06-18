@@ -322,4 +322,15 @@
     <string name="weight_title">Testsúly</string>
     <string name="weight_add">Testsúly hozzáadása</string>
     <string name="weight_hint">Adj meg legalább két mérést a trendhez.</string>
+
+    <!-- Szinkron & AI (saját kulccsal) -->
+    <string name="sync_ai">Szinkron &amp; AI (kísérleti)</string>
+    <string name="sync_ai_enable">Szinkron &amp; AI bekapcsolása</string>
+    <string name="sync_ai_summary">Saját fiók/kulcs használata a felhő-szinkronhoz és az AI-funkciókhoz.</string>
+    <string name="sync_provider">Szolgáltató (pl. Drive, WebDAV, OpenAI…)</string>
+    <string name="api_key">API-kulcs / token</string>
+    <string name="clear_key">Kulcs törlése</string>
+    <string name="sync_key_set">Van eltárolt kulcs (titkosítva).</string>
+    <string name="sync_key_none">Még nincs eltárolt kulcs.</string>
+    <string name="sync_ai_note">Az eszközön titkosítva tárolva (Keystore), és sosem kerül a mentésbe. A tényleges szinkron/AI még véglegesítés alatt.</string>
 </resources>

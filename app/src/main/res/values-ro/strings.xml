@@ -322,4 +322,15 @@
     <string name="weight_title">Greutate</string>
     <string name="weight_add">Adaugă greutate</string>
     <string name="weight_hint">Adaugă cel puțin două valori pentru a vedea tendința.</string>
+
+    <!-- Sincronizare & AI (cheie proprie) -->
+    <string name="sync_ai">Sincronizare &amp; AI (experimental)</string>
+    <string name="sync_ai_enable">Activează sincronizarea &amp; AI</string>
+    <string name="sync_ai_summary">Folosește propriul cont/cheie pentru sincronizare și funcții AI.</string>
+    <string name="sync_provider">Furnizor (ex. Drive, WebDAV, OpenAI…)</string>
+    <string name="api_key">Cheie API / token</string>
+    <string name="clear_key">Șterge cheia</string>
+    <string name="sync_key_set">Există o cheie salvată (criptată).</string>
+    <string name="sync_key_none">Nicio cheie salvată încă.</string>
+    <string name="sync_ai_note">Stocată criptat pe acest dispozitiv (Keystore) și niciodată inclusă în backup. Sincronizarea/AI reală este în finalizare.</string>
 </resources>

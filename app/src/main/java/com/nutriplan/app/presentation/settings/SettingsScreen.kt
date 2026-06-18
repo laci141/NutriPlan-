@@ -68,6 +68,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val carbsGoal by viewModel.carbsGoal.collectAsStateWithLifecycle()
     val fatGoal by viewModel.fatGoal.collectAsStateWithLifecycle()
     val dynamicColor by viewModel.dynamicColor.collectAsStateWithLifecycle()
+    val syncEnabled by viewModel.syncEnabled.collectAsStateWithLifecycle()
+    val hasApiKey by viewModel.hasApiKey.collectAsStateWithLifecycle()
+    val syncProvider by viewModel.syncProvider.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var showPinDialog by remember { mutableStateOf(false) }
@@ -184,6 +187,19 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                     text = stringResource(R.string.macro_goals_summary),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Szinkron & AI (kísérleti, saját kulccsal) – a kulcs titkosítva tárolódik
+            SettingsSection(title = stringResource(R.string.sync_ai)) {
+                SyncAiContent(
+                    enabled = syncEnabled,
+                    hasKey = hasApiKey,
+                    provider = syncProvider,
+                    onEnabledChange = viewModel::setSyncEnabled,
+                    onProviderChange = viewModel::setSyncProvider,
+                    onSaveKey = viewModel::setApiKey,
+                    onClearKey = viewModel::clearApiKey
                 )
             }
 
@@ -360,6 +376,82 @@ private fun MacroGoalField(label: String, value: Int, onValueChange: (Int) -> Un
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = Modifier.fillMaxWidth()
     )
+}
+
+/** Szinkron & AI szekció tartalma: kapcsoló, szolgáltató és titkosított API-kulcs. */
+@Composable
+private fun SyncAiContent(
+    enabled: Boolean,
+    hasKey: Boolean,
+    provider: String,
+    onEnabledChange: (Boolean) -> Unit,
+    onProviderChange: (String) -> Unit,
+    onSaveKey: (String) -> Unit,
+    onClearKey: () -> Unit
+) {
+    var keyInput by remember { mutableStateOf("") }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.sync_ai_enable),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text = stringResource(R.string.sync_ai_summary),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Switch(checked = enabled, onCheckedChange = onEnabledChange)
+        }
+        if (enabled) {
+            OutlinedTextField(
+                value = provider,
+                onValueChange = onProviderChange,
+                label = { Text(stringResource(R.string.sync_provider)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = keyInput,
+                onValueChange = { keyInput = it },
+                label = { Text(stringResource(R.string.api_key)) },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            androidx.compose.foundation.layout.Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = { onSaveKey(keyInput); keyInput = "" },
+                    enabled = keyInput.isNotBlank(),
+                    modifier = Modifier.weight(1f)
+                ) { Text(stringResource(R.string.save)) }
+                if (hasKey) {
+                    OutlinedButton(onClick = onClearKey, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.clear_key))
+                    }
+                }
+            }
+            Text(
+                text = stringResource(if (hasKey) R.string.sync_key_set else R.string.sync_key_none),
+                style = MaterialTheme.typography.bodySmall,
+                color = if (hasKey) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = stringResource(R.string.sync_ai_note),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
 }
 
 /** PIN beállító párbeszéd: kód megadása és megerősítése (min. 4 számjegy). */

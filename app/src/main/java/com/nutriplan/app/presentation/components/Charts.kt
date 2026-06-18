@@ -89,8 +89,8 @@ fun SimpleLineChart(
     lineColor: Color = MaterialTheme.colorScheme.primary
 ) {
     if (points.size < 2) return
-    val minV = points.min()
-    val maxV = points.max()
+    val minV = points.minOrNull() ?: return
+    val maxV = points.maxOrNull() ?: return
     val range = (maxV - minV).coerceAtLeast(0.1f)
     Canvas(
         modifier = modifier

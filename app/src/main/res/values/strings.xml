@@ -322,4 +322,15 @@
     <string name="weight_title">Weight</string>
     <string name="weight_add">Add weight</string>
     <string name="weight_hint">Add at least two entries to see your trend.</string>
+
+    <!-- Sync & AI (bring-your-own-key) -->
+    <string name="sync_ai">Sync &amp; AI (experimental)</string>
+    <string name="sync_ai_enable">Enable sync &amp; AI</string>
+    <string name="sync_ai_summary">Use your own account/key for cloud sync and AI features.</string>
+    <string name="sync_provider">Provider (e.g. Drive, WebDAV, OpenAI…)</string>
+    <string name="api_key">API key / token</string>
+    <string name="clear_key">Remove key</string>
+    <string name="sync_key_set">A key is stored (encrypted).</string>
+    <string name="sync_key_none">No key stored yet.</string>
+    <string name="sync_ai_note">Stored encrypted on this device (Keystore) and never included in backups. Actual sync/AI is being finalized.</string>
 </resources>

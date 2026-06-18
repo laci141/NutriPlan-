@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nutriplan.app.data.preferences.SecureKeyStore
 import com.nutriplan.app.data.preferences.SettingsManager
 import com.nutriplan.app.domain.model.Language
 import com.nutriplan.app.domain.model.ThemeMode
@@ -39,6 +40,7 @@ sealed interface SettingsEvent {
 class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsManager: SettingsManager,
+    private val secureKeyStore: SecureKeyStore,
     private val exportDataUseCase: ExportDataUseCase,
     private val importDataUseCase: ImportDataUseCase
 ) : ViewModel() {
@@ -52,6 +54,9 @@ class SettingsViewModel @Inject constructor(
     val carbsGoal: StateFlow<Int> = settingsManager.carbsGoal
     val fatGoal: StateFlow<Int> = settingsManager.fatGoal
     val dynamicColor: StateFlow<Boolean> = settingsManager.dynamicColor
+    val syncEnabled: StateFlow<Boolean> = secureKeyStore.syncEnabled
+    val hasApiKey: StateFlow<Boolean> = secureKeyStore.hasApiKey
+    val syncProvider: StateFlow<String> = secureKeyStore.provider
 
     private val _events = MutableSharedFlow<SettingsEvent>()
     val events: SharedFlow<SettingsEvent> = _events.asSharedFlow()
@@ -79,6 +84,12 @@ class SettingsViewModel @Inject constructor(
     fun setDynamicColor(enabled: Boolean) {
         settingsManager.setDynamicColor(enabled)
     }
+
+    // --- Szinkron / AI (BYO-key, titkosítva tárolva) ---
+    fun setSyncEnabled(enabled: Boolean) = secureKeyStore.setSyncEnabled(enabled)
+    fun setSyncProvider(name: String) = secureKeyStore.setProvider(name)
+    fun setApiKey(key: String) = secureKeyStore.setApiKey(key)
+    fun clearApiKey() = secureKeyStore.clearApiKey()
 
     /** A biometrikus alkalmazászár ki-/bekapcsolása. */
     fun setAppLock(enabled: Boolean) {
