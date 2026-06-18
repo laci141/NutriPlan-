@@ -333,4 +333,5 @@
     <string name="sync_key_set">Van eltárolt kulcs (titkosítva).</string>
     <string name="sync_key_none">Még nincs eltárolt kulcs.</string>
     <string name="sync_ai_note">Az eszközön titkosítva tárolva (Keystore), és sosem kerül a mentésbe. A tényleges szinkron/AI még véglegesítés alatt.</string>
+    <string name="servings">Adagok</string>
 </resources>

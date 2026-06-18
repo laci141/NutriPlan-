@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -382,6 +383,8 @@ private fun RecipeDetail(
             animatedVisibilityScope = animatedVisibilityScope
         )
     }
+    // Adagolás: a hozzávalók és a tápérték ezzel a szorzóval skálázódnak
+    var servings by remember(recipe.id) { mutableStateOf(1) }
     Card(
         modifier = sharedModifier
             .fillMaxSize()
@@ -416,6 +419,25 @@ private fun RecipeDetail(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
+            // Adagolás (porció) léptető
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(R.string.servings),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(onClick = { if (servings > 1) servings-- }, enabled = servings > 1) {
+                    Icon(Icons.Filled.Remove, contentDescription = null)
+                }
+                Text(
+                    text = "$servings",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                IconButton(onClick = { if (servings < 20) servings++ }, enabled = servings < 20) {
+                    Icon(Icons.Filled.Add, contentDescription = null)
+                }
+            }
             // Recept-fotó, ha van
             recipe.imagePath?.let { path ->
                 AsyncImage(
@@ -429,7 +451,12 @@ private fun RecipeDetail(
                 )
             }
             NutritionSummary(
-                totals = NutritionTotals(recipe.calories, recipe.protein, recipe.carbs, recipe.fat)
+                totals = NutritionTotals(
+                    recipe.calories * servings,
+                    recipe.protein * servings,
+                    recipe.carbs * servings,
+                    recipe.fat * servings
+                )
             )
             HorizontalDivider()
             Text(
@@ -439,7 +466,7 @@ private fun RecipeDetail(
             )
             recipe.ingredients.forEach { ingredient ->
                 Text(
-                    text = "• ${ingredient.displayName()} – ${formatQuantity(ingredient.quantity)} ${ingredient.unit.label()}",
+                    text = "• ${ingredient.displayName()} – ${formatQuantity(ingredient.quantity * servings)} ${ingredient.unit.label()}",
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
