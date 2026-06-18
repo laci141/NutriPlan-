@@ -160,8 +160,16 @@
     <!-- Általános -->
     <string name="save">Mentés</string>
     <string name="cancel">Mégse</string>
+    <string name="close">Bezárás</string>
     <string name="delete">Törlés</string>
     <string name="ok">Rendben</string>
+
+    <!-- Vonalkód-olvasó -->
+    <string name="scan_barcode">Vonalkód beolvasása</string>
+    <string name="scan_hint">Irányítsd a kamerát a termék vonalkódjára</string>
+    <string name="scan_success">Termék megtalálva – tápérték kitöltve (100 g-ra)</string>
+    <string name="scan_not_found">A termék nem található az adatbázisban</string>
+    <string name="scan_error">Nincs kapcsolat. Ellenőrizd az internetet, és próbáld újra</string>
     <string name="confirm">Megerősítés</string>
     <string name="field_required">Ez a mező kötelező</string>
     <string name="delete_confirm_title">Törlés megerősítése</string>

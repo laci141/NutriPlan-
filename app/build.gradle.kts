@@ -139,6 +139,15 @@ dependencies {
     // Coil – képek (recept-fotók) betöltése helyi fájlból
     implementation(libs.coil.compose)
 
+    // CameraX – kamera-előnézet a vonalkód-olvasóhoz
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    // ML Kit – vonalkód-felismerés (offline, beágyazott modell)
+    implementation(libs.mlkit.barcode.scanning)
+
     // Timber – naplózás
     implementation(libs.timber)
 

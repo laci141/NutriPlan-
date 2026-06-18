@@ -160,8 +160,16 @@
     <!-- Comune -->
     <string name="save">Salvează</string>
     <string name="cancel">Anulează</string>
+    <string name="close">Închide</string>
     <string name="delete">Șterge</string>
     <string name="ok">OK</string>
+
+    <!-- Scaner cod de bare -->
+    <string name="scan_barcode">Scanează codul de bare</string>
+    <string name="scan_hint">Îndreaptă camera spre codul de bare al produsului</string>
+    <string name="scan_success">Produs găsit – valori nutriționale completate (la 100 g)</string>
+    <string name="scan_not_found">Produsul nu a fost găsit în baza de date</string>
+    <string name="scan_error">Fără conexiune. Verifică internetul și încearcă din nou</string>
     <string name="confirm">Confirmă</string>
     <string name="field_required">Acest câmp este obligatoriu</string>
     <string name="delete_confirm_title">Confirmă ștergerea</string>

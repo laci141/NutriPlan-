@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +25,9 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +35,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -41,9 +46,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.nutriplan.app.presentation.scanner.BarcodeScannerOverlay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -73,13 +80,50 @@ fun RecipeEditScreen(
     viewModel: RecipeEditViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showScanner by remember { mutableStateOf(false) }
+
+    // Kamera-engedély kérése a vonalkód-olvasóhoz
+    val scannerPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted -> if (granted) showScanner = true }
+
+    fun openScanner() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            showScanner = true
+        } else {
+            scannerPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
 
     // Sikeres mentés után visszalépünk
     LaunchedEffect(state.saved) {
         if (state.saved) onDone()
     }
 
+    // A beolvasás eredményének megjelenítése snackbarként
+    val successMsg = stringResource(R.string.scan_success)
+    val notFoundMsg = stringResource(R.string.scan_not_found)
+    val errorMsg = stringResource(R.string.scan_error)
+    LaunchedEffect(state.scanFeedback) {
+        val message = when (state.scanFeedback) {
+            ScanFeedback.SUCCESS -> successMsg
+            ScanFeedback.NOT_FOUND -> notFoundMsg
+            ScanFeedback.ERROR -> errorMsg
+            null -> null
+        }
+        if (message != null) {
+            snackbarHostState.showSnackbar(message)
+            viewModel.consumeScanFeedback()
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -136,6 +180,15 @@ fun RecipeEditScreen(
                 optionLabel = { it.label() },
                 onSelected = viewModel::onMealTypeChange
             )
+
+            // Vonalkód beolvasása: kitölti a nevet és a 100 g-os tápértéket
+            OutlinedButton(
+                onClick = { openScanner() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Filled.QrCodeScanner, contentDescription = null)
+                Text("  ${stringResource(R.string.scan_barcode)}")
+            }
 
             // Tápérték mezők két sorban
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -218,6 +271,30 @@ fun RecipeEditScreen(
                 label = { Text(stringResource(R.string.instructions_hint)) },
                 minLines = 3,
                 modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+
+        // Termék-lekérdezés töltésjelzője
+        if (state.isLookingUp) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        // Teljes képernyős vonalkód-olvasó
+        if (showScanner) {
+            BarcodeScannerOverlay(
+                onBarcode = { value ->
+                    showScanner = false
+                    viewModel.onBarcodeScanned(value)
+                },
+                onClose = { showScanner = false }
             )
         }
     }

@@ -3,6 +3,9 @@ package com.nutriplan.app.presentation.recipe
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nutriplan.app.data.remote.OpenFoodFactsDataSource
+import com.nutriplan.app.data.remote.ProductLookupResult
+import com.nutriplan.app.data.remote.ScannedProduct
 import com.nutriplan.app.domain.model.Ingredient
 import com.nutriplan.app.domain.model.IngredientCategory
 import com.nutriplan.app.domain.model.MealType
@@ -35,6 +38,11 @@ data class IngredientForm(
 )
 
 /**
+ * A vonalkód-beolvasás visszajelzése (a képernyő fordítja szöveggé).
+ */
+enum class ScanFeedback { SUCCESS, NOT_FOUND, ERROR }
+
+/**
  * A recept szerkesztő űrlap teljes állapota.
  */
 data class RecipeFormState(
@@ -54,7 +62,11 @@ data class RecipeFormState(
     // A recept fotójának helyi elérési útja (null = nincs kép)
     val imagePath: String? = null,
     // Elkészítési útmutató
-    val instructions: String = ""
+    val instructions: String = "",
+    // Folyamatban lévő termék-lekérdezés (vonalkód után)
+    val isLookingUp: Boolean = false,
+    // Egyszer megjelenítendő visszajelzés a beolvasásról
+    val scanFeedback: ScanFeedback? = null
 )
 
 /**
@@ -64,7 +76,8 @@ data class RecipeFormState(
 class RecipeEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getRecipeUseCase: GetRecipeUseCase,
-    private val saveRecipeUseCase: SaveRecipeUseCase
+    private val saveRecipeUseCase: SaveRecipeUseCase,
+    private val openFoodFacts: OpenFoodFactsDataSource
 ) : ViewModel() {
 
     private val recipeId: Long = savedStateHandle[Routes.ARG_RECIPE_ID] ?: 0L
@@ -165,6 +178,48 @@ class RecipeEditViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Beolvasott vonalkód feldolgozása: az Open Food Facts adatbázisból lekérdezzük
+     * a termék nevét és 100 g-ra vetített tápértékét, majd kitöltjük az űrlapot.
+     */
+    fun onBarcodeScanned(barcode: String) {
+        if (barcode.isBlank() || _state.value.isLookingUp) return
+        Logger.i(Logger.Tags.VIEWMODEL, "Vonalkód beolvasva: $barcode")
+        _state.value = _state.value.copy(isLookingUp = true)
+        viewModelScope.launch {
+            when (val result = openFoodFacts.lookup(barcode)) {
+                is ProductLookupResult.Success -> applyScannedProduct(result.product)
+                ProductLookupResult.NotFound ->
+                    _state.value = _state.value.copy(isLookingUp = false, scanFeedback = ScanFeedback.NOT_FOUND)
+                ProductLookupResult.NetworkError ->
+                    _state.value = _state.value.copy(isLookingUp = false, scanFeedback = ScanFeedback.ERROR)
+            }
+        }
+    }
+
+    /** A megtalált termék adatainak betöltése az űrlapba (100 g-os értékek). */
+    private fun applyScannedProduct(product: ScannedProduct) {
+        val current = _state.value
+        // A nevet csak akkor írjuk felül, ha még üres, és a terméknek van neve
+        val fillName = current.name.isBlank() && product.name.isNotBlank()
+        _state.value = current.copy(
+            name = if (fillName) product.name else current.name,
+            nameKey = if (fillName) null else current.nameKey,
+            nameError = false,
+            calories = product.caloriesPer100g.toString(),
+            protein = product.proteinPer100g.trimDecimalString(),
+            carbs = product.carbsPer100g.trimDecimalString(),
+            fat = product.fatPer100g.trimDecimalString(),
+            isLookingUp = false,
+            scanFeedback = ScanFeedback.SUCCESS
+        )
+    }
+
+    /** A beolvasási visszajelzés nyugtázása (a snackbar megjelenítése után). */
+    fun consumeScanFeedback() {
+        _state.value = _state.value.copy(scanFeedback = null)
+    }
+
     /** Recept mentése validáció után. */
     fun save() {
         val current = _state.value
@@ -214,4 +269,9 @@ class RecipeEditViewModel @Inject constructor(
     // Tizedes számokat enged (pont vagy vessző)
     private fun String.filterDecimal(): String =
         replace(',', '.').filter { it.isDigit() || it == '.' }
+
+    // Egész értéknél elhagyja a tizedesjegyet (5.0 -> "5"), különben egy tizedesre kerekít
+    private fun Double.trimDecimalString(): String =
+        if (this == kotlin.math.floor(this)) toInt().toString()
+        else "%.1f".format(this).replace(',', '.')
 }

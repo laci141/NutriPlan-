@@ -160,8 +160,16 @@
     <!-- Common -->
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
     <string name="delete">Delete</string>
     <string name="ok">OK</string>
+
+    <!-- Barcode scanner -->
+    <string name="scan_barcode">Scan barcode</string>
+    <string name="scan_hint">Point the camera at the product barcode</string>
+    <string name="scan_success">Product found — nutrition filled in (per 100 g)</string>
+    <string name="scan_not_found">Product not found in the database</string>
+    <string name="scan_error">No connection. Check the internet and try again</string>
     <string name="confirm">Confirm</string>
     <string name="field_required">This field is required</string>
     <string name="delete_confirm_title">Confirm deletion</string>
