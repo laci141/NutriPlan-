@@ -38,6 +38,22 @@ class SettingsManager @Inject constructor(
     private val _appLock = MutableStateFlow(readAppLock())
     val appLock: StateFlow<Boolean> = _appLock.asStateFlow()
 
+    private val _proteinGoal = MutableStateFlow(prefs.getInt(KEY_PROTEIN_GOAL, 0))
+    /** Egyéni fehérje-cél grammban (0 = automatikus, a kalóriacélból). */
+    val proteinGoal: StateFlow<Int> = _proteinGoal.asStateFlow()
+
+    private val _carbsGoal = MutableStateFlow(prefs.getInt(KEY_CARBS_GOAL, 0))
+    /** Egyéni szénhidrát-cél grammban (0 = automatikus). */
+    val carbsGoal: StateFlow<Int> = _carbsGoal.asStateFlow()
+
+    private val _fatGoal = MutableStateFlow(prefs.getInt(KEY_FAT_GOAL, 0))
+    /** Egyéni zsír-cél grammban (0 = automatikus). */
+    val fatGoal: StateFlow<Int> = _fatGoal.asStateFlow()
+
+    private val _dynamicColor = MutableStateFlow(prefs.getBoolean(KEY_DYNAMIC_COLOR, true))
+    /** Material You (rendszer háttérképből generált) színek használata. */
+    val dynamicColor: StateFlow<Boolean> = _dynamicColor.asStateFlow()
+
     private val _pinSet = MutableStateFlow(readPinSet())
     /** Igaz, ha a felhasználó beállított feloldó PIN-kódot. */
     val pinSet: StateFlow<Boolean> = _pinSet.asStateFlow()
@@ -127,6 +143,32 @@ class SettingsManager @Inject constructor(
     private fun String.fromHex(): ByteArray =
         chunked(2).map { it.toInt(16).toByte() }.toByteArray()
 
+    /**
+     * Egyéni makró-célok beállítása grammban. A 0 érték „automatikus" módot jelent
+     * (a kalóriacélból 30/40/30 arány szerint számolva).
+     */
+    fun setMacroGoals(protein: Int, carbs: Int, fat: Int) {
+        val p = protein.coerceIn(0, 1000)
+        val c = carbs.coerceIn(0, 1000)
+        val f = fat.coerceIn(0, 1000)
+        prefs.edit()
+            .putInt(KEY_PROTEIN_GOAL, p)
+            .putInt(KEY_CARBS_GOAL, c)
+            .putInt(KEY_FAT_GOAL, f)
+            .apply()
+        _proteinGoal.value = p
+        _carbsGoal.value = c
+        _fatGoal.value = f
+        Logger.i(Logger.Tags.SETTINGS, "Makró-célok módosítva: F$p Sz$c Zs$f g")
+    }
+
+    /** A Material You dinamikus színek ki-/bekapcsolása. */
+    fun setDynamicColor(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_DYNAMIC_COLOR, enabled).apply()
+        _dynamicColor.value = enabled
+        Logger.i(Logger.Tags.SETTINGS, "Dinamikus színek: $enabled")
+    }
+
     /** Szinkron nyelvi kód lekérés (a Context becsomagolásához használjuk). */
     fun currentLanguageCode(): String = readLanguage().code
 
@@ -138,6 +180,10 @@ class SettingsManager @Inject constructor(
         private const val KEY_APP_LOCK = "app_lock"
         private const val KEY_PIN_SALT = "pin_salt"
         private const val KEY_PIN_HASH = "pin_hash"
+        private const val KEY_PROTEIN_GOAL = "protein_goal"
+        private const val KEY_CARBS_GOAL = "carbs_goal"
+        private const val KEY_FAT_GOAL = "fat_goal"
+        private const val KEY_DYNAMIC_COLOR = "dynamic_color"
         const val DEFAULT_CALORIE_GOAL = 2000
         const val MAX_CALORIE_GOAL = 10000
 

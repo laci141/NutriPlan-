@@ -1,5 +1,8 @@
 package com.nutriplan.app.presentation.recipe
 
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -28,7 +31,9 @@ import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.Card
@@ -41,9 +46,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -91,8 +100,48 @@ fun RecipeListScreen(
     // A megnyitott (kibontott) recept – ha nem null, a részletes nézet látszik
     var selected by remember { mutableStateOf<Recipe?>(null) }
 
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val importOkMsg = stringResource(R.string.recipe_import_ok)
+    val importFailMsg = stringResource(R.string.recipe_import_fail)
+    LaunchedEffect(Unit) {
+        viewModel.importResult.collect { ok ->
+            snackbarHostState.showSnackbar(if (ok) importOkMsg else importFailMsg)
+        }
+    }
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri -> uri?.let { viewModel.importFromUri(it) } }
+
+    // Egy recept megosztása JSON-szövegként
+    fun shareRecipe(recipe: Recipe) {
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, recipe.name)
+            putExtra(Intent.EXTRA_TEXT, viewModel.shareText(recipe))
+        }
+        context.startActivity(Intent.createChooser(sendIntent, recipe.name))
+    }
+
     Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.recipes_title)) }) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.recipes_title)) },
+                actions = {
+                    if (selected == null) {
+                        IconButton(onClick = {
+                            importLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
+                        }) {
+                            Icon(
+                                Icons.Filled.FileUpload,
+                                contentDescription = stringResource(R.string.import_recipe)
+                            )
+                        }
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             // A FAB csak a listán látszik, a részletes nézetben nem
             if (selected == null) {
@@ -165,6 +214,7 @@ fun RecipeListScreen(
                                 selected = null
                                 onEditRecipe(id)
                             },
+                            onShare = { shareRecipe(sel) },
                             sharedScope = sharedScope,
                             animatedVisibilityScope = avScope
                         )
@@ -322,6 +372,7 @@ private fun RecipeDetail(
     recipe: Recipe,
     onBack: () -> Unit,
     onEdit: () -> Unit,
+    onShare: () -> Unit,
     sharedScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
@@ -353,6 +404,9 @@ private fun RecipeDetail(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
+                IconButton(onClick = onShare) {
+                    Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.share))
+                }
                 IconButton(onClick = onEdit) {
                     Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.edit_recipe))
                 }

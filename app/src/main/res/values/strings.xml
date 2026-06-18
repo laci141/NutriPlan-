@@ -294,4 +294,18 @@
     <string name="ing_vegetable_soup">Vegetable soup</string>
     <string name="ing_mozzarella">Mozzarella</string>
     <string name="ing_pear">Pear</string>
+
+    <!-- New features: planner auto, recipe share, macros, dynamic color -->
+    <string name="share">Share</string>
+    <string name="auto_plan">Auto-generate week</string>
+    <string name="plan_generated">Auto-plan ready: %1$d meals</string>
+    <string name="plan_no_recipes">Add recipes first to generate a plan</string>
+    <string name="import_recipe">Import recipe</string>
+    <string name="recipe_import_ok">Recipe imported</string>
+    <string name="recipe_import_fail">Could not import recipe</string>
+    <string name="dynamic_color">Dynamic colors</string>
+    <string name="dynamic_color_summary">Use colors from your wallpaper (Android 12+).</string>
+    <string name="macro_goals">Macro goals (g)</string>
+    <string name="macro_goals_summary">Leave empty for automatic values from your calorie goal.</string>
+    <string name="macro_auto">Auto</string>
 </resources>

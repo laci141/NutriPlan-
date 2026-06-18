@@ -63,21 +63,31 @@ class DashboardViewModel @Inject constructor(
     private val today: WeekDay
         get() = WeekDay.valueOf(LocalDate.now().dayOfWeek.name)
 
+    // Egyéni makró-célok (0 = automatikus) egyetlen flow-ba kötve
+    private val macroGoals = combine(
+        settingsManager.proteinGoal,
+        settingsManager.carbsGoal,
+        settingsManager.fatGoal
+    ) { p, c, f -> Triple(p, c, f) }
+
     val uiState: StateFlow<DashboardUiState> = combine(
         getWeeklyPlanUseCase(),
         settingsManager.calorieGoal,
-        dashboardPreferences.waterToday
-    ) { assignments, goal, water ->
+        dashboardPreferences.waterToday,
+        macroGoals
+    ) { assignments, goal, water, macros ->
         val todayRecipes = assignments.filter { it.weekDay == today }.map { it.recipe }
         val totals = calculateNutritionUseCase(todayRecipes)
-        // Makró-célok a kalóriacélból: 30% fehérje, 40% szénhidrát, 30% zsír
+        // Makró-célok: ha a felhasználó megadott egyénit, azt használjuk, különben a
+        // kalóriacélból 30% fehérje, 40% szénhidrát, 30% zsír arány szerint.
         val effectiveGoal = if (goal > 0) goal else 2000
+        val (customP, customC, customF) = macros
         DashboardUiState(
             todayTotals = totals,
             calorieGoal = goal,
-            proteinTarget = (effectiveGoal * 0.30 / 4).roundToInt(),
-            carbsTarget = (effectiveGoal * 0.40 / 4).roundToInt(),
-            fatTarget = (effectiveGoal * 0.30 / 9).roundToInt(),
+            proteinTarget = if (customP > 0) customP else (effectiveGoal * 0.30 / 4).roundToInt(),
+            carbsTarget = if (customC > 0) customC else (effectiveGoal * 0.40 / 4).roundToInt(),
+            fatTarget = if (customF > 0) customF else (effectiveGoal * 0.30 / 9).roundToInt(),
             water = water
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DashboardUiState())

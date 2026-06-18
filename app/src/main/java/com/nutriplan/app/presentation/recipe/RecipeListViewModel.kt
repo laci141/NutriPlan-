@@ -1,23 +1,33 @@
 package com.nutriplan.app.presentation.recipe
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.Recipe
 import com.nutriplan.app.domain.usecase.DeleteRecipeUseCase
+import com.nutriplan.app.domain.usecase.ImportRecipeUseCase
 import com.nutriplan.app.domain.usecase.SearchRecipesUseCase
+import com.nutriplan.app.domain.usecase.ShareRecipeUseCase
 import com.nutriplan.app.domain.usecase.ToggleFavoriteUseCase
 import com.nutriplan.app.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /** A recept lista rendezési módja. */
@@ -29,10 +39,17 @@ enum class RecipeSort { NAME, CALORIES }
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class RecipeListViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val searchRecipesUseCase: SearchRecipesUseCase,
     private val deleteRecipeUseCase: DeleteRecipeUseCase,
-    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val shareRecipeUseCase: ShareRecipeUseCase,
+    private val importRecipeUseCase: ImportRecipeUseCase
 ) : ViewModel() {
+
+    // Az importálás eredménye (siker/hiba) snackbarhoz
+    private val _importResult = MutableSharedFlow<Boolean>()
+    val importResult: SharedFlow<Boolean> = _importResult.asSharedFlow()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -100,6 +117,24 @@ class RecipeListViewModel @Inject constructor(
         viewModelScope.launch {
             Logger.i(Logger.Tags.VIEWMODEL, "RecipeListViewModel – recept törlése: id=${recipe.id}")
             deleteRecipeUseCase(recipe)
+        }
+    }
+
+    /** A recept megosztható JSON-szövege. */
+    fun shareText(recipe: Recipe): String = shareRecipeUseCase(recipe)
+
+    /** Recept importálása egy megnyitott fájl URI-ból. */
+    fun importFromUri(uri: Uri) {
+        viewModelScope.launch {
+            val content = withContext(Dispatchers.IO) {
+                runCatching {
+                    context.contentResolver.openInputStream(uri)?.use { stream ->
+                        stream.readBytes().toString(Charsets.UTF_8)
+                    }
+                }.getOrNull()
+            }
+            val ok = content != null && importRecipeUseCase(content)
+            _importResult.emit(ok)
         }
     }
 }

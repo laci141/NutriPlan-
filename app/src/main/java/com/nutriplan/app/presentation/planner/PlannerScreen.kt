@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DeleteSweep
@@ -26,10 +27,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,11 +71,26 @@ fun PlannerScreen(viewModel: PlannerViewModel = hiltViewModel()) {
     // A nap-másoló forrásnapja (ha nem null, a cél-választó látszik)
     var copySource by remember { mutableStateOf<WeekDay?>(null) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val planGeneratedTemplate = stringResource(R.string.plan_generated)
+    val noRecipesMsg = stringResource(R.string.plan_no_recipes)
+    LaunchedEffect(Unit) {
+        viewModel.generatedCount.collect { count ->
+            snackbarHostState.showSnackbar(
+                if (count > 0) planGeneratedTemplate.format(count) else noRecipesMsg
+            )
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.planner_title)) },
                 actions = {
+                    IconButton(onClick = { viewModel.generateWeek() }) {
+                        Icon(Icons.Filled.AutoAwesome, contentDescription = stringResource(R.string.auto_plan))
+                    }
                     IconButton(onClick = { showClearDialog = true }) {
                         Icon(Icons.Filled.DeleteSweep, contentDescription = stringResource(R.string.clear_week))
                     }

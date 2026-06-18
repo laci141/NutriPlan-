@@ -48,6 +48,10 @@ class SettingsViewModel @Inject constructor(
     val calorieGoal: StateFlow<Int> = settingsManager.calorieGoal
     val appLock: StateFlow<Boolean> = settingsManager.appLock
     val pinSet: StateFlow<Boolean> = settingsManager.pinSet
+    val proteinGoal: StateFlow<Int> = settingsManager.proteinGoal
+    val carbsGoal: StateFlow<Int> = settingsManager.carbsGoal
+    val fatGoal: StateFlow<Int> = settingsManager.fatGoal
+    val dynamicColor: StateFlow<Boolean> = settingsManager.dynamicColor
 
     private val _events = MutableSharedFlow<SettingsEvent>()
     val events: SharedFlow<SettingsEvent> = _events.asSharedFlow()
@@ -64,6 +68,16 @@ class SettingsViewModel @Inject constructor(
     /** A napi kalóriacél módosítása. */
     fun setCalorieGoal(value: Int) {
         settingsManager.setCalorieGoal(value)
+    }
+
+    /** Egyéni makró-célok módosítása grammban (0 = automatikus). */
+    fun setMacroGoals(protein: Int, carbs: Int, fat: Int) {
+        settingsManager.setMacroGoals(protein, carbs, fat)
+    }
+
+    /** A Material You dinamikus színek ki-/bekapcsolása. */
+    fun setDynamicColor(enabled: Boolean) {
+        settingsManager.setDynamicColor(enabled)
     }
 
     /** A biometrikus alkalmazászár ki-/bekapcsolása. */

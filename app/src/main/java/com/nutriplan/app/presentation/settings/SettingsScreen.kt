@@ -64,6 +64,10 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val calorieGoal by viewModel.calorieGoal.collectAsStateWithLifecycle()
     val appLock by viewModel.appLock.collectAsStateWithLifecycle()
     val pinSet by viewModel.pinSet.collectAsStateWithLifecycle()
+    val proteinGoal by viewModel.proteinGoal.collectAsStateWithLifecycle()
+    val carbsGoal by viewModel.carbsGoal.collectAsStateWithLifecycle()
+    val fatGoal by viewModel.fatGoal.collectAsStateWithLifecycle()
+    val dynamicColor by viewModel.dynamicColor.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var showPinDialog by remember { mutableStateOf(false) }
@@ -127,6 +131,23 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                         onClick = { viewModel.setTheme(mode) }
                     )
                 }
+                androidx.compose.foundation.layout.Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(R.string.dynamic_color),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = stringResource(R.string.dynamic_color_summary),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(checked = dynamicColor, onCheckedChange = viewModel::setDynamicColor)
+                }
             }
 
             // Napi kalóriacél szekció
@@ -137,6 +158,30 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                 )
                 Text(
                     text = stringResource(R.string.calorie_goal_summary),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Makró-célok szekció (0 = automatikus a kalóriacélból)
+            SettingsSection(title = stringResource(R.string.macro_goals)) {
+                MacroGoalField(
+                    label = stringResource(R.string.protein),
+                    value = proteinGoal,
+                    onValueChange = { viewModel.setMacroGoals(it, carbsGoal, fatGoal) }
+                )
+                MacroGoalField(
+                    label = stringResource(R.string.carbs),
+                    value = carbsGoal,
+                    onValueChange = { viewModel.setMacroGoals(proteinGoal, it, fatGoal) }
+                )
+                MacroGoalField(
+                    label = stringResource(R.string.fat),
+                    value = fatGoal,
+                    onValueChange = { viewModel.setMacroGoals(proteinGoal, carbsGoal, it) }
+                )
+                Text(
+                    text = stringResource(R.string.macro_goals_summary),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -298,6 +343,23 @@ private fun OptionRow(text: String, selected: Boolean, onClick: () -> Unit) {
             modifier = Modifier.padding(start = 8.dp)
         )
     }
+}
+
+/** Egy makró-cél beviteli mező grammban (üres = automatikus). */
+@Composable
+private fun MacroGoalField(label: String, value: Int, onValueChange: (Int) -> Unit) {
+    OutlinedTextField(
+        value = if (value == 0) "" else value.toString(),
+        onValueChange = { input ->
+            onValueChange(input.filter { it.isDigit() }.take(4).toIntOrNull() ?: 0)
+        },
+        label = { Text(label) },
+        placeholder = { Text(stringResource(R.string.macro_auto)) },
+        suffix = { Text("g") },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 /** PIN beállító párbeszéd: kód megadása és megerősítése (min. 4 számjegy). */

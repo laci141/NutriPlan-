@@ -294,4 +294,18 @@
     <string name="ing_vegetable_soup">Supă de legume</string>
     <string name="ing_mozzarella">Mozzarella</string>
     <string name="ing_pear">Pară</string>
+
+    <!-- Funcții noi: plan automat, partajare rețetă, macro, culori dinamice -->
+    <string name="share">Partajează</string>
+    <string name="auto_plan">Generează săptămâna</string>
+    <string name="plan_generated">Plan automat gata: %1$d mese</string>
+    <string name="plan_no_recipes">Adaugă întâi rețete pentru a genera un plan</string>
+    <string name="import_recipe">Importă rețetă</string>
+    <string name="recipe_import_ok">Rețetă importată</string>
+    <string name="recipe_import_fail">Rețeta nu a putut fi importată</string>
+    <string name="dynamic_color">Culori dinamice</string>
+    <string name="dynamic_color_summary">Folosește culorile din imaginea de fundal (Android 12+).</string>
+    <string name="macro_goals">Obiective macro (g)</string>
+    <string name="macro_goals_summary">Lasă gol pentru valori automate din obiectivul caloric.</string>
+    <string name="macro_auto">Auto</string>
 </resources>

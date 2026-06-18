@@ -10,14 +10,19 @@ import com.nutriplan.app.domain.model.WeekDay
 import com.nutriplan.app.domain.usecase.AssignRecipeUseCase
 import com.nutriplan.app.domain.usecase.CalculateNutritionUseCase
 import com.nutriplan.app.domain.usecase.ClearWeekUseCase
+import com.nutriplan.app.data.preferences.SettingsManager
 import com.nutriplan.app.domain.usecase.CopyDayUseCase
+import com.nutriplan.app.domain.usecase.GenerateWeekPlanUseCase
 import com.nutriplan.app.domain.usecase.GetRecipesUseCase
 import com.nutriplan.app.domain.usecase.GetWeeklyPlanUseCase
 import com.nutriplan.app.domain.usecase.RemoveAssignmentUseCase
 import com.nutriplan.app.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -35,8 +40,15 @@ class PlannerViewModel @Inject constructor(
     private val removeAssignmentUseCase: RemoveAssignmentUseCase,
     private val clearWeekUseCase: ClearWeekUseCase,
     private val copyDayUseCase: CopyDayUseCase,
+    private val generateWeekPlanUseCase: GenerateWeekPlanUseCase,
+    private val settingsManager: SettingsManager,
     private val calculateNutritionUseCase: CalculateNutritionUseCase
 ) : ViewModel() {
+
+    // Egyszeri események (pl. az auto-terv eredménye snackbarhoz)
+    private val _events = MutableSharedFlow<Int>()
+    /** Az automatikus terv elkészültekor a kiosztott étkezések számát küldi. */
+    val generatedCount: SharedFlow<Int> = _events.asSharedFlow()
 
     // A teljes heti terv hozzárendelései
     val assignments: StateFlow<List<MealAssignment>> = getWeeklyPlanUseCase()
@@ -92,6 +104,15 @@ class PlannerViewModel @Inject constructor(
         viewModelScope.launch {
             Logger.i(Logger.Tags.VIEWMODEL, "PlannerViewModel – nap másolása: ${from.key} -> ${to.key}")
             copyDayUseCase(from, to)
+        }
+    }
+
+    /** Automatikus heti terv generálása a receptekből, a kalóriacél köré. */
+    fun generateWeek() {
+        viewModelScope.launch {
+            Logger.i(Logger.Tags.VIEWMODEL, "PlannerViewModel – automatikus heti terv generálása")
+            val count = generateWeekPlanUseCase(settingsManager.calorieGoal.value)
+            _events.emit(count)
         }
     }
 

@@ -294,4 +294,18 @@
     <string name="ing_vegetable_soup">Zöldségleves</string>
     <string name="ing_mozzarella">Mozzarella</string>
     <string name="ing_pear">Körte</string>
+
+    <!-- Új funkciók: auto-terv, recept-megosztás, makrók, dinamikus szín -->
+    <string name="share">Megosztás</string>
+    <string name="auto_plan">Heti terv automatikusan</string>
+    <string name="plan_generated">Auto-terv kész: %1$d étkezés</string>
+    <string name="plan_no_recipes">Előbb adj hozzá recepteket a tervhez</string>
+    <string name="import_recipe">Recept importálása</string>
+    <string name="recipe_import_ok">Recept importálva</string>
+    <string name="recipe_import_fail">A recept nem importálható</string>
+    <string name="dynamic_color">Dinamikus színek</string>
+    <string name="dynamic_color_summary">A háttérkép színeit használja (Android 12+).</string>
+    <string name="macro_goals">Makró-célok (g)</string>
+    <string name="macro_goals_summary">Hagyd üresen az automatikus értékhez (a kalóriacélból).</string>
+    <string name="macro_auto">Auto</string>
 </resources>

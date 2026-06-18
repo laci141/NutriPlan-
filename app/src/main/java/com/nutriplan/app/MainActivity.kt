@@ -79,8 +79,9 @@ class MainActivity : FragmentActivity() {
             val appLock by settingsManager.appLock.collectAsState()
 
             val pinSet by settingsManager.pinSet.collectAsState()
+            val dynamicColor by settingsManager.dynamicColor.collectAsState()
 
-            NutriPlanTheme(themeMode = themeMode) {
+            NutriPlanTheme(themeMode = themeMode, dynamicColor = dynamicColor) {
                 if (appLock && !unlocked.value) {
                     LockScreen(
                         pinEnabled = pinSet,
