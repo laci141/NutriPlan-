@@ -71,9 +71,13 @@ import com.nutriplan.app.presentation.components.ActivityRings
 import com.nutriplan.app.presentation.components.CalorieRing
 import com.nutriplan.app.presentation.components.LabeledDropdown
 import com.nutriplan.app.presentation.components.RingData
+import com.nutriplan.app.presentation.components.SimpleBarChart
+import com.nutriplan.app.presentation.components.SimpleLineChart
 import com.nutriplan.app.presentation.scanner.BarcodeScannerOverlay
 import com.nutriplan.app.presentation.util.label
 import java.time.LocalTime
+import java.time.format.TextStyle
+import java.util.Locale
 
 // A makró-gyűrűk színei (egészséget sugárzó tónusok)
 private val ProteinColor = Color(0xFF34D399) // almazöld
@@ -95,10 +99,13 @@ fun DashboardScreen(
     val steps by viewModel.steps.collectAsStateWithLifecycle()
     val recentFoods by viewModel.recentFoods.collectAsStateWithLifecycle()
     val scannedProduct by viewModel.scannedProduct.collectAsStateWithLifecycle()
+    val weekCalories by viewModel.weekCalories.collectAsStateWithLifecycle()
+    val weights by viewModel.weights.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     var showAddFood by remember { mutableStateOf(false) }
     var showScanner by remember { mutableStateOf(false) }
+    var showWeightDialog by remember { mutableStateOf(false) }
 
     // Kamera-engedély a napló vonalkód-olvasójához
     val scannerPermissionLauncher = rememberLauncherForActivityResult(
@@ -361,6 +368,18 @@ fun DashboardScreen(
             onAdd = { showAddFood = true },
             onDelete = { viewModel.deleteFood(it) }
         )
+
+        // Heti kalória oszlopdiagram
+        WeeklyCaloriesCard(
+            data = weekCalories,
+            goal = state.calorieGoal
+        )
+
+        // Testsúly trend
+        WeightCard(
+            weights = weights,
+            onAdd = { showWeightDialog = true }
+        )
     }
 
     // Étel hozzáadása dialógus (kézi, gyakori, vagy vonalkódról adagolással)
@@ -394,7 +413,108 @@ fun DashboardScreen(
             onClose = { showScanner = false }
         )
     }
+
+    // Testsúly megadása
+    if (showWeightDialog) {
+        WeightDialog(
+            current = weights.lastOrNull()?.weightKg,
+            onSubmit = { kg ->
+                viewModel.addWeight(kg)
+                showWeightDialog = false
+            },
+            onDismiss = { showWeightDialog = false }
+        )
     }
+    }
+}
+
+/** Heti kalória oszlopdiagram kártya (utolsó 7 nap, cél-vonallal). */
+@Composable
+private fun WeeklyCaloriesCard(data: List<Pair<java.time.LocalDate, Int>>, goal: Int) {
+    BentoCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.weekly_calories),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        if (data.all { it.second == 0 }) {
+            Text(
+                text = stringResource(R.string.food_log_empty),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        } else {
+            SimpleBarChart(
+                values = data.map { it.second.toFloat() },
+                labels = data.map {
+                    it.first.dayOfWeek.getDisplayName(TextStyle.NARROW, Locale.getDefault())
+                },
+                goal = if (goal > 0) goal.toFloat() else null
+            )
+        }
+    }
+}
+
+/** Testsúly trend kártya vonaldiagrammal és hozzáadás gombbal. */
+@Composable
+private fun WeightCard(weights: List<com.nutriplan.app.domain.model.WeightEntry>, onAdd: () -> Unit) {
+    BentoCard(modifier = Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(R.string.weight_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f)
+            )
+            weights.lastOrNull()?.let {
+                Text(
+                    text = "${it.weightKg} kg",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            IconButton(onClick = onAdd) {
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.weight_add))
+            }
+        }
+        if (weights.size >= 2) {
+            SimpleLineChart(points = weights.map { it.weightKg.toFloat() })
+        } else {
+            Text(
+                text = stringResource(R.string.weight_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+/** Testsúly megadó dialógus (kg). */
+@Composable
+private fun WeightDialog(current: Double?, onSubmit: (Double) -> Unit, onDismiss: () -> Unit) {
+    var value by remember { mutableStateOf(current?.toString() ?: "") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.weight_add)) },
+        text = {
+            OutlinedTextField(
+                value = value,
+                onValueChange = { value = it.filter { c -> c.isDigit() || c == '.' }.take(6) },
+                label = { Text(stringResource(R.string.weight_title)) },
+                suffix = { Text("kg") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { onSubmit(value.toDoubleOrNull() ?: 0.0) }) {
+                Text(stringResource(R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        }
+    )
 }
 
 /** A mai naplóbejegyzések kártyája hozzáadás és törlés gombbal. */

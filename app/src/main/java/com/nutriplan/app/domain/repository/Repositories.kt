@@ -6,6 +6,7 @@ import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.Recipe
 import com.nutriplan.app.domain.model.ShoppingItem
 import com.nutriplan.app.domain.model.WeekDay
+import com.nutriplan.app.domain.model.WeightEntry
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -19,6 +20,15 @@ interface FoodLogRepository {
     fun recent(): Flow<List<FoodLogEntry>>
     suspend fun add(entry: FoodLogEntry): Long
     suspend fun delete(id: Long)
+}
+
+/**
+ * Testsúly-napló tároló interfész.
+ */
+interface WeightRepository {
+    fun all(): Flow<List<WeightEntry>>
+    suspend fun set(entry: WeightEntry)
+    suspend fun deleteByDay(date: LocalDate)
 }
 
 /**

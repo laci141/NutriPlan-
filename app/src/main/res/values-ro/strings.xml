@@ -316,4 +316,10 @@
     <string name="log_food">Înregistrează aliment</string>
     <string name="food_name">Numele alimentului</string>
     <string name="grams">Cantitate (g)</string>
+
+    <!-- Grafic săptămânal și greutate -->
+    <string name="weekly_calories">Caloriile săptămânii</string>
+    <string name="weight_title">Greutate</string>
+    <string name="weight_add">Adaugă greutate</string>
+    <string name="weight_hint">Adaugă cel puțin două valori pentru a vedea tendința.</string>
 </resources>

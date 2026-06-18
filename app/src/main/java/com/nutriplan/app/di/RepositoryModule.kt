@@ -5,11 +5,13 @@ import com.nutriplan.app.data.repository.FoodLogRepositoryImpl
 import com.nutriplan.app.data.repository.MealPlanRepositoryImpl
 import com.nutriplan.app.data.repository.RecipeRepositoryImpl
 import com.nutriplan.app.data.repository.ShoppingRepositoryImpl
+import com.nutriplan.app.data.repository.WeightRepositoryImpl
 import com.nutriplan.app.domain.repository.BackupRepository
 import com.nutriplan.app.domain.repository.FoodLogRepository
 import com.nutriplan.app.domain.repository.MealPlanRepository
 import com.nutriplan.app.domain.repository.RecipeRepository
 import com.nutriplan.app.domain.repository.ShoppingRepository
+import com.nutriplan.app.domain.repository.WeightRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -42,4 +44,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindFoodLogRepository(impl: FoodLogRepositoryImpl): FoodLogRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWeightRepository(impl: WeightRepositoryImpl): WeightRepository
 }

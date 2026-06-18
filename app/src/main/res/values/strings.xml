@@ -316,4 +316,10 @@
     <string name="log_food">Log food</string>
     <string name="food_name">Food name</string>
     <string name="grams">Amount (g)</string>
+
+    <!-- Weekly chart and weight tracking -->
+    <string name="weekly_calories">This week\'s calories</string>
+    <string name="weight_title">Weight</string>
+    <string name="weight_add">Add weight</string>
+    <string name="weight_hint">Add at least two entries to see your trend.</string>
 </resources>

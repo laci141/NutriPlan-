@@ -3,6 +3,14 @@ package com.nutriplan.app.domain.model
 import java.time.LocalDate
 
 /**
+ * Egy napi testsúly-bejegyzés.
+ */
+data class WeightEntry(
+    val date: LocalDate,
+    val weightKg: Double
+)
+
+/**
  * Egy elfogyasztott étel naplóbejegyzése egy adott napon.
  */
 data class FoodLogEntry(

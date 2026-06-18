@@ -4,8 +4,10 @@ import com.nutriplan.app.data.local.entity.FoodLogEntity
 import com.nutriplan.app.data.local.entity.IngredientEntity
 import com.nutriplan.app.data.local.entity.RecipeEntity
 import com.nutriplan.app.data.local.entity.ShoppingItemEntity
+import com.nutriplan.app.data.local.entity.WeightEntryEntity
 import com.nutriplan.app.data.local.relation.RecipeWithIngredients
 import com.nutriplan.app.domain.model.FoodLogEntry
+import com.nutriplan.app.domain.model.WeightEntry
 import com.nutriplan.app.domain.model.Ingredient
 import com.nutriplan.app.domain.model.IngredientCategory
 import com.nutriplan.app.domain.model.MealType
@@ -108,4 +110,14 @@ fun FoodLogEntry.toEntity(): FoodLogEntity = FoodLogEntity(
     carbs = carbs,
     fat = fat,
     mealType = mealType.key
+)
+
+fun WeightEntryEntity.toDomain(): WeightEntry = WeightEntry(
+    date = LocalDate.ofEpochDay(epochDay),
+    weightKg = weightKg
+)
+
+fun WeightEntry.toEntity(): WeightEntryEntity = WeightEntryEntity(
+    epochDay = date.toEpochDay(),
+    weightKg = weightKg
 )

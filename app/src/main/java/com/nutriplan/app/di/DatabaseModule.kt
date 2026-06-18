@@ -9,6 +9,7 @@ import com.nutriplan.app.data.local.dao.FoodLogDao
 import com.nutriplan.app.data.local.dao.MealPlanDao
 import com.nutriplan.app.data.local.dao.RecipeDao
 import com.nutriplan.app.data.local.dao.ShoppingDao
+import com.nutriplan.app.data.local.dao.WeightDao
 import com.nutriplan.app.util.Logger
 import dagger.Module
 import dagger.Provides
@@ -49,6 +50,17 @@ object DatabaseModule {
         }
     }
 
+    // 5 -> 6: testsúly-napló tábla létrehozása
+    private val migration5to6 = object : Migration(5, 6) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS weight_log (" +
+                    "epochDay INTEGER NOT NULL PRIMARY KEY, " +
+                    "weightKg REAL NOT NULL)"
+            )
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): NutriPlanDatabase {
@@ -58,7 +70,7 @@ object DatabaseModule {
             NutriPlanDatabase::class.java,
             NutriPlanDatabase.DATABASE_NAME
         )
-            .addMigrations(migration3to4, migration4to5)
+            .addMigrations(migration3to4, migration4to5, migration5to6)
             .fallbackToDestructiveMigration()
             .build()
     }
@@ -74,4 +86,7 @@ object DatabaseModule {
 
     @Provides
     fun provideFoodLogDao(database: NutriPlanDatabase): FoodLogDao = database.foodLogDao()
+
+    @Provides
+    fun provideWeightDao(database: NutriPlanDatabase): WeightDao = database.weightDao()
 }

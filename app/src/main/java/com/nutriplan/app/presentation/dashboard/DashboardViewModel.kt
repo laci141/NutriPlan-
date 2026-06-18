@@ -15,7 +15,9 @@ import com.nutriplan.app.data.remote.ScannedProduct
 import com.nutriplan.app.domain.model.FoodLogEntry
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.NutritionTotals
+import com.nutriplan.app.domain.model.WeightEntry
 import com.nutriplan.app.domain.repository.FoodLogRepository
+import com.nutriplan.app.domain.repository.WeightRepository
 import com.nutriplan.app.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -61,6 +63,7 @@ class DashboardViewModel @Inject constructor(
     settingsManager: SettingsManager,
     private val dashboardPreferences: DashboardPreferences,
     private val foodLogRepository: FoodLogRepository,
+    private val weightRepository: WeightRepository,
     private val openFoodFacts: OpenFoodFactsDataSource
 ) : ViewModel() {
 
@@ -83,6 +86,31 @@ class DashboardViewModel @Inject constructor(
     /** A gyakran/utoljára naplózott ételek a gyors újra-hozzáadáshoz. */
     val recentFoods: StateFlow<List<FoodLogEntry>> = foodLogRepository.recent()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** Az utolsó 7 nap kalória-összege (régebbitől a maiig) a heti diagramhoz. */
+    val weekCalories: StateFlow<List<Pair<LocalDate, Int>>> = recentRange
+        .map { entries ->
+            val sums = entries.groupBy { it.date }
+                .mapValues { (_, list) -> list.sumOf { it.calories } }
+            (6 downTo 0).map { offset ->
+                val d = today.minusDays(offset.toLong())
+                d to (sums[d] ?: 0)
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** A testsúly-bejegyzések időrendben (a trendgrafikonhoz). */
+    val weights: StateFlow<List<WeightEntry>> = weightRepository.all()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** Mai (vagy a megadott) testsúly mentése. */
+    fun addWeight(kg: Double) {
+        if (kg <= 0) return
+        viewModelScope.launch {
+            weightRepository.set(WeightEntry(date = today, weightKg = kg))
+            Logger.i(Logger.Tags.VIEWMODEL, "Testsúly mentve: $kg kg")
+        }
+    }
 
     val uiState: StateFlow<DashboardUiState> = combine(
         todayEntries,
