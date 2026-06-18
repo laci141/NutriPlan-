@@ -7,7 +7,7 @@
     <string name="nav_recipes">Receptek</string>
     <string name="nav_shopping">Bevásárlás</string>
     <string name="nav_nutrition">Tápérték</string>
-    <string name="nav_settings">Beállítások</string>
+    <string name="nav_settings">Beállítás</string>
 
     <!-- Étkezések -->
     <string name="meal_breakfast">Reggeli</string>

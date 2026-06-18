@@ -151,18 +151,23 @@ fun DashboardScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "$consumed",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1
                         )
                         Text(
                             text = "/ $goal ${stringResource(R.string.kcal_unit)}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
                         )
+                        Spacer(Modifier.size(2.dp))
                         Text(
                             text = stringResource(R.string.left_short, left),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1
                         )
                     }
                 }
@@ -183,41 +188,39 @@ fun DashboardScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
-                // Gyűrűk + jelmagyarázat egymás mellett, hogy elférjen a keskeny kártyán
-                Row(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
+                // Gyűrűk felül, középen
+                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
                     ActivityRings(
                         rings = listOf(
                             RingData(fractionOf(state.todayTotals.protein, state.proteinTarget), ProteinColor),
                             RingData(fractionOf(state.todayTotals.carbs, state.carbsTarget), CarbsColor),
                             RingData(fractionOf(state.todayTotals.fat, state.fatTarget), FatColor)
                         ),
-                        modifier = Modifier.fillMaxHeight().aspectRatio(1f)
+                        modifier = Modifier.fillMaxHeight().aspectRatio(1f),
+                        strokeWidth = 7.dp,
+                        gap = 4.dp
                     )
-                    // A három makró egymás alatt, külön színnel, soronként egy sorban
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        MacroLegend(
-                            label = stringResource(R.string.protein),
-                            value = macroValue(state.todayTotals.protein, state.proteinTarget),
-                            color = ProteinColor
-                        )
-                        MacroLegend(
-                            label = stringResource(R.string.carbs),
-                            value = macroValue(state.todayTotals.carbs, state.carbsTarget),
-                            color = CarbsColor
-                        )
-                        MacroLegend(
-                            label = stringResource(R.string.fat),
-                            value = macroValue(state.todayTotals.fat, state.fatTarget),
-                            color = FatColor
-                        )
-                    }
+                }
+                // A három makró egymás alatt, teljes szélességben, soronként egy sorban, külön színnel
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    MacroLegend(
+                        label = stringResource(R.string.protein),
+                        value = macroValue(state.todayTotals.protein, state.proteinTarget),
+                        color = ProteinColor
+                    )
+                    MacroLegend(
+                        label = stringResource(R.string.carbs),
+                        value = macroValue(state.todayTotals.carbs, state.carbsTarget),
+                        color = CarbsColor
+                    )
+                    MacroLegend(
+                        label = stringResource(R.string.fat),
+                        value = macroValue(state.todayTotals.fat, state.fatTarget),
+                        color = FatColor
+                    )
                 }
             }
 
@@ -233,11 +236,20 @@ fun DashboardScreen(
                     )
                 }
                 Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = stringResource(R.string.ml_progress, state.water, state.waterGoal),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "${state.water}",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = "/ ${state.waterGoal} ml",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
+                        )
+                    }
                 }
                 FilledTonalButton(
                     onClick = viewModel::addWater,
