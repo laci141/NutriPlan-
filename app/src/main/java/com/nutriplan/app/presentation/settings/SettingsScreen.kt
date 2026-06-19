@@ -68,9 +68,13 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val carbsGoal by viewModel.carbsGoal.collectAsStateWithLifecycle()
     val fatGoal by viewModel.fatGoal.collectAsStateWithLifecycle()
     val dynamicColor by viewModel.dynamicColor.collectAsStateWithLifecycle()
-    val syncEnabled by viewModel.syncEnabled.collectAsStateWithLifecycle()
-    val hasApiKey by viewModel.hasApiKey.collectAsStateWithLifecycle()
-    val syncProvider by viewModel.syncProvider.collectAsStateWithLifecycle()
+    val aiEnabled by viewModel.aiEnabled.collectAsStateWithLifecycle()
+    val proxyUrl by viewModel.proxyUrl.collectAsStateWithLifecycle()
+    val hasToken by viewModel.hasToken.collectAsStateWithLifecycle()
+    val enabledProviders by viewModel.enabledProviders.collectAsStateWithLifecycle()
+    val defaultProvider by viewModel.defaultProvider.collectAsStateWithLifecycle()
+    val aiBusy by viewModel.aiBusy.collectAsStateWithLifecycle()
+    val aiResult by viewModel.aiResult.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var showPinDialog by remember { mutableStateOf(false) }
@@ -190,16 +194,23 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                 )
             }
 
-            // Szinkron & AI (kísérleti, saját kulccsal) – a kulcs titkosítva tárolódik
-            SettingsSection(title = stringResource(R.string.sync_ai)) {
-                SyncAiContent(
-                    enabled = syncEnabled,
-                    hasKey = hasApiKey,
-                    provider = syncProvider,
-                    onEnabledChange = viewModel::setSyncEnabled,
-                    onProviderChange = viewModel::setSyncProvider,
-                    onSaveKey = viewModel::setApiKey,
-                    onClearKey = viewModel::clearApiKey
+            // AI szolgáltatók (proxy a Cloudflare Workeren át; kulcsok a szerveren)
+            SettingsSection(title = stringResource(R.string.ai_providers)) {
+                AiProvidersContent(
+                    enabled = aiEnabled,
+                    proxyUrl = proxyUrl,
+                    hasToken = hasToken,
+                    enabledProviders = enabledProviders,
+                    defaultProvider = defaultProvider,
+                    busy = aiBusy,
+                    onEnabledChange = viewModel::setAiEnabled,
+                    onProxyUrlChange = viewModel::setProxyUrl,
+                    onSaveToken = viewModel::setToken,
+                    onClearToken = viewModel::clearToken,
+                    onProviderToggle = viewModel::setProviderEnabled,
+                    onDefaultChange = viewModel::setDefaultProvider,
+                    onTest = viewModel::testConnection,
+                    onSuggest = viewModel::suggestDiet
                 )
             }
 
@@ -265,6 +276,22 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                     onConfirm = { pin ->
                         viewModel.setPin(pin)
                         showPinDialog = false
+                    }
+                )
+            }
+
+            // AI művelet eredménye (teszt vagy javaslat)
+            aiResult?.let { result ->
+                AlertDialog(
+                    onDismissRequest = viewModel::dismissAiResult,
+                    confirmButton = {
+                        TextButton(onClick = viewModel::dismissAiResult) { Text(stringResource(R.string.ok)) }
+                    },
+                    title = { Text(stringResource(R.string.ai_providers)) },
+                    text = {
+                        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                            Text(result, style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 )
             }
@@ -378,30 +405,42 @@ private fun MacroGoalField(label: String, value: Int, onValueChange: (Int) -> Un
     )
 }
 
-/** Szinkron & AI szekció tartalma: kapcsoló, szolgáltató és titkosított API-kulcs. */
+// Az elérhető AI-szolgáltatók (kulcs → megjelenített név). Később bővíthető.
+private val AI_PROVIDERS = listOf(
+    "openai" to "ChatGPT (OpenAI)",
+    "gemini" to "Gemini (Google)",
+    "anthropic" to "Claude (Anthropic)"
+)
+
+/** AI szolgáltatók szekció: proxy URL + token (titkosítva), provider-kapcsolók, teszt. */
 @Composable
-private fun SyncAiContent(
+private fun AiProvidersContent(
     enabled: Boolean,
-    hasKey: Boolean,
-    provider: String,
+    proxyUrl: String,
+    hasToken: Boolean,
+    enabledProviders: Set<String>,
+    defaultProvider: String,
+    busy: Boolean,
     onEnabledChange: (Boolean) -> Unit,
-    onProviderChange: (String) -> Unit,
-    onSaveKey: (String) -> Unit,
-    onClearKey: () -> Unit
+    onProxyUrlChange: (String) -> Unit,
+    onSaveToken: (String) -> Unit,
+    onClearToken: () -> Unit,
+    onProviderToggle: (String, Boolean) -> Unit,
+    onDefaultChange: (String) -> Unit,
+    onTest: () -> Unit,
+    onSuggest: () -> Unit
 ) {
-    var keyInput by remember { mutableStateOf("") }
+    var tokenInput by remember { mutableStateOf("") }
+    val configured = proxyUrl.isNotBlank() && hasToken
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         androidx.compose.foundation.layout.Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
+                Text(stringResource(R.string.ai_enable), style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    text = stringResource(R.string.sync_ai_enable),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Text(
-                    text = stringResource(R.string.sync_ai_summary),
+                    text = stringResource(R.string.ai_summary),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -410,16 +449,16 @@ private fun SyncAiContent(
         }
         if (enabled) {
             OutlinedTextField(
-                value = provider,
-                onValueChange = onProviderChange,
-                label = { Text(stringResource(R.string.sync_provider)) },
+                value = proxyUrl,
+                onValueChange = onProxyUrlChange,
+                label = { Text(stringResource(R.string.proxy_url)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
-                value = keyInput,
-                onValueChange = { keyInput = it },
-                label = { Text(stringResource(R.string.api_key)) },
+                value = tokenInput,
+                onValueChange = { tokenInput = it },
+                label = { Text(stringResource(R.string.proxy_token)) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
@@ -429,24 +468,70 @@ private fun SyncAiContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(
-                    onClick = { onSaveKey(keyInput); keyInput = "" },
-                    enabled = keyInput.isNotBlank(),
+                    onClick = { onSaveToken(tokenInput); tokenInput = "" },
+                    enabled = tokenInput.isNotBlank(),
                     modifier = Modifier.weight(1f)
                 ) { Text(stringResource(R.string.save)) }
-                if (hasKey) {
-                    OutlinedButton(onClick = onClearKey, modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.clear_key))
+                if (hasToken) {
+                    OutlinedButton(onClick = onClearToken, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.clear_token))
                     }
                 }
             }
             Text(
-                text = stringResource(if (hasKey) R.string.sync_key_set else R.string.sync_key_none),
+                text = stringResource(if (hasToken) R.string.token_set else R.string.token_none),
                 style = MaterialTheme.typography.bodySmall,
-                color = if (hasKey) MaterialTheme.colorScheme.primary
+                color = if (hasToken) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.onSurfaceVariant
             )
+
+            // Szolgáltatók kapcsolói + alapértelmezett választás
             Text(
-                text = stringResource(R.string.sync_ai_note),
+                text = stringResource(R.string.providers),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+            AI_PROVIDERS.forEach { (key, label) ->
+                val on = key in enabledProviders
+                androidx.compose.foundation.layout.Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = defaultProvider == key,
+                        onClick = { onDefaultChange(key) },
+                        enabled = on
+                    )
+                    Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                    Switch(checked = on, onCheckedChange = { onProviderToggle(key, it) })
+                }
+            }
+
+            androidx.compose.foundation.layout.Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onTest,
+                    enabled = configured && !busy,
+                    modifier = Modifier.weight(1f)
+                ) { Text(stringResource(R.string.test_connection)) }
+                OutlinedButton(
+                    onClick = onSuggest,
+                    enabled = configured && !busy && enabledProviders.isNotEmpty(),
+                    modifier = Modifier.weight(1f)
+                ) { Text(stringResource(R.string.ai_suggest)) }
+            }
+            if (busy) {
+                Text(
+                    text = stringResource(R.string.ai_working),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Text(
+                text = stringResource(R.string.ai_note),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

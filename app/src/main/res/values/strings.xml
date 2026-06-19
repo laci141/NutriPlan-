@@ -334,4 +334,19 @@
     <string name="sync_key_none">No key stored yet.</string>
     <string name="sync_ai_note">Stored encrypted on this device (Keystore) and never included in backups. Actual sync/AI is being finalized.</string>
     <string name="servings">Servings</string>
+
+    <!-- AI providers (proxy) -->
+    <string name="ai_providers">AI providers</string>
+    <string name="ai_enable">Enable AI features</string>
+    <string name="ai_summary">Connect your own Cloudflare Worker proxy (keys stay on the server).</string>
+    <string name="proxy_url">Proxy URL</string>
+    <string name="proxy_token">App token</string>
+    <string name="clear_token">Remove token</string>
+    <string name="token_set">Token stored (encrypted).</string>
+    <string name="token_none">No token stored yet.</string>
+    <string name="providers">Providers</string>
+    <string name="test_connection">Test</string>
+    <string name="ai_suggest">AI meal idea</string>
+    <string name="ai_working">Working…</string>
+    <string name="ai_note">URL + token stored encrypted (Keystore), protected by the app lock. Provider keys live only on your Worker.</string>
 </resources>

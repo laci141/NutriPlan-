@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nutriplan.app.data.preferences.SecureKeyStore
 import com.nutriplan.app.data.preferences.SettingsManager
+import com.nutriplan.app.data.remote.AiProxyClient
 import com.nutriplan.app.domain.model.Language
 import com.nutriplan.app.domain.model.ThemeMode
 import com.nutriplan.app.domain.usecase.ExportDataUseCase
@@ -15,9 +16,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -41,6 +44,7 @@ class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsManager: SettingsManager,
     private val secureKeyStore: SecureKeyStore,
+    private val aiProxyClient: AiProxyClient,
     private val exportDataUseCase: ExportDataUseCase,
     private val importDataUseCase: ImportDataUseCase
 ) : ViewModel() {
@@ -54,9 +58,19 @@ class SettingsViewModel @Inject constructor(
     val carbsGoal: StateFlow<Int> = settingsManager.carbsGoal
     val fatGoal: StateFlow<Int> = settingsManager.fatGoal
     val dynamicColor: StateFlow<Boolean> = settingsManager.dynamicColor
-    val syncEnabled: StateFlow<Boolean> = secureKeyStore.syncEnabled
-    val hasApiKey: StateFlow<Boolean> = secureKeyStore.hasApiKey
-    val syncProvider: StateFlow<String> = secureKeyStore.provider
+
+    // --- AI proxy beállítások ---
+    val aiEnabled: StateFlow<Boolean> = secureKeyStore.aiEnabled
+    val proxyUrl: StateFlow<String> = secureKeyStore.proxyUrl
+    val hasToken: StateFlow<Boolean> = secureKeyStore.hasToken
+    val enabledProviders: StateFlow<Set<String>> = secureKeyStore.enabledProviders
+    val defaultProvider: StateFlow<String> = secureKeyStore.defaultProvider
+
+    private val _aiBusy = MutableStateFlow(false)
+    val aiBusy: StateFlow<Boolean> = _aiBusy.asStateFlow()
+    private val _aiResult = MutableStateFlow<String?>(null)
+    /** Az utolsó AI-művelet (teszt/javaslat) eredménye dialógushoz; null = nincs. */
+    val aiResult: StateFlow<String?> = _aiResult.asStateFlow()
 
     private val _events = MutableSharedFlow<SettingsEvent>()
     val events: SharedFlow<SettingsEvent> = _events.asSharedFlow()
@@ -85,11 +99,51 @@ class SettingsViewModel @Inject constructor(
         settingsManager.setDynamicColor(enabled)
     }
 
-    // --- Szinkron / AI (BYO-key, titkosítva tárolva) ---
-    fun setSyncEnabled(enabled: Boolean) = secureKeyStore.setSyncEnabled(enabled)
-    fun setSyncProvider(name: String) = secureKeyStore.setProvider(name)
-    fun setApiKey(key: String) = secureKeyStore.setApiKey(key)
-    fun clearApiKey() = secureKeyStore.clearApiKey()
+    // --- AI proxy (a kulcsok a Workerben; itt csak URL + token titkosítva) ---
+    fun setAiEnabled(enabled: Boolean) = secureKeyStore.setAiEnabled(enabled)
+    fun setProxyUrl(url: String) = secureKeyStore.setProxyUrl(url)
+    fun setToken(token: String) = secureKeyStore.setToken(token)
+    fun clearToken() = secureKeyStore.clearToken()
+    fun setProviderEnabled(key: String, enabled: Boolean) = secureKeyStore.setProviderEnabled(key, enabled)
+    fun setDefaultProvider(key: String) = secureKeyStore.setDefaultProvider(key)
+    fun dismissAiResult() { _aiResult.value = null }
+
+    /** Kapcsolat-teszt a proxyhoz (ping). */
+    fun testConnection() {
+        if (_aiBusy.value) return
+        _aiBusy.value = true
+        viewModelScope.launch {
+            val result = aiProxyClient.ping()
+            _aiResult.value = result.fold(
+                onSuccess = { "OK · ${it.joinToString(", ").ifBlank { "—" }}" },
+                onFailure = { "Hiba: ${it.message}" }
+            )
+            _aiBusy.value = false
+        }
+    }
+
+    /** AI étrend-javaslat a célok alapján (a kiválasztott alapértelmezett providerrel). */
+    fun suggestDiet() {
+        if (_aiBusy.value) return
+        _aiBusy.value = true
+        viewModelScope.launch {
+            val goal = settingsManager.calorieGoal.value.let { if (it > 0) it else 2000 }
+            val p = settingsManager.proteinGoal.value
+            val c = settingsManager.carbsGoal.value
+            val f = settingsManager.fatGoal.value
+            val macros = if (p > 0 || c > 0 || f > 0) " Makró-célok: fehérje ${p} g, szénhidrát ${c} g, zsír ${f} g." else ""
+            val result = aiProxyClient.chat(
+                systemPrompt = "Tapasztalt táplálkozási tanácsadó vagy. Tömören, magyarul válaszolj.",
+                userPrompt = "Adj egy napi étrend-javaslatot kb. $goal kcal-ra.$macros " +
+                    "Reggeli/ebéd/vacsora/snack bontásban, soronként becsült kcal-lal."
+            )
+            _aiResult.value = result.fold(
+                onSuccess = { it },
+                onFailure = { "Hiba: ${it.message}" }
+            )
+            _aiBusy.value = false
+        }
+    }
 
     /** A biometrikus alkalmazászár ki-/bekapcsolása. */
     fun setAppLock(enabled: Boolean) {

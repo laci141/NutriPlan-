@@ -334,4 +334,19 @@
     <string name="sync_key_none">Nicio cheie salvată încă.</string>
     <string name="sync_ai_note">Stocată criptat pe acest dispozitiv (Keystore) și niciodată inclusă în backup. Sincronizarea/AI reală este în finalizare.</string>
     <string name="servings">Porții</string>
+
+    <!-- AI providers (proxy) -->
+    <string name="ai_providers">Furnizori AI</string>
+    <string name="ai_enable">Activează funcțiile AI</string>
+    <string name="ai_summary">Conectează propriul proxy Cloudflare Worker (cheile rămân pe server).</string>
+    <string name="proxy_url">URL proxy</string>
+    <string name="proxy_token">Token aplicație</string>
+    <string name="clear_token">Șterge tokenul</string>
+    <string name="token_set">Token salvat (criptat).</string>
+    <string name="token_none">Niciun token încă.</string>
+    <string name="providers">Furnizori</string>
+    <string name="test_connection">Test</string>
+    <string name="ai_suggest">Idee de meniu AI</string>
+    <string name="ai_working">Se procesează…</string>
+    <string name="ai_note">URL + token stocate criptat (Keystore), protejate de blocarea aplicației. Cheile furnizorilor sunt doar pe Worker-ul tău.</string>
 </resources>

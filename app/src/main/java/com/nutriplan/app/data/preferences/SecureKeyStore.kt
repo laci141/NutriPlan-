@@ -19,12 +19,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Érzékeny adatok (pl. szinkron-/AI-szolgáltató API-kulcs) biztonságos tárolása.
+ * Az AI-proxy (Cloudflare Worker) eléréséhez szükséges, érzékeny beállítások
+ * biztonságos tárolása.
  *
- * A kulcsot az Android Keystore-ban generált, eszközhöz kötött, nem exportálható
- * AES kulccsal titkosítjuk (AES/GCM), és csak a titkosított szöveget mentjük el.
- * Így a kulcs nyílt szövegként sehol nem szerepel, és a (Keystore-beli) mesterkulcs
- * az eszközről nem menthető ki, így a biztonsági mentésbe sem kerül használható alak.
+ * Architektúra: Telefon → saját Cloudflare Worker → OpenAI/Gemini/Anthropic.
+ * Az appban CSAK a proxy URL-je és egy app-token van; a valódi szolgáltató-kulcsok
+ * a Workerben élnek. A tokent az Android Keystore-ban generált, eszközhöz kötött,
+ * nem exportálható AES kulccsal (AES/GCM) titkosítjuk – nyílt szövegben sehol.
  */
 @Singleton
 class SecureKeyStore @Inject constructor(
@@ -33,50 +34,71 @@ class SecureKeyStore @Inject constructor(
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    private val _syncEnabled = MutableStateFlow(prefs.getBoolean(KEY_ENABLED, false))
-    val syncEnabled: StateFlow<Boolean> = _syncEnabled.asStateFlow()
+    private val _aiEnabled = MutableStateFlow(prefs.getBoolean(KEY_ENABLED, false))
+    val aiEnabled: StateFlow<Boolean> = _aiEnabled.asStateFlow()
 
-    private val _hasApiKey = MutableStateFlow(prefs.contains(KEY_API))
-    /** Igaz, ha van eltárolt (titkosított) API-kulcs. */
-    val hasApiKey: StateFlow<Boolean> = _hasApiKey.asStateFlow()
+    private val _proxyUrl = MutableStateFlow(prefs.getString(KEY_PROXY_URL, "") ?: "")
+    val proxyUrl: StateFlow<String> = _proxyUrl.asStateFlow()
 
-    private val _provider = MutableStateFlow(prefs.getString(KEY_PROVIDER, "") ?: "")
-    /** A kiválasztott szolgáltató megnevezése (szabad szöveg). */
-    val provider: StateFlow<String> = _provider.asStateFlow()
+    private val _hasToken = MutableStateFlow(prefs.contains(KEY_TOKEN))
+    val hasToken: StateFlow<Boolean> = _hasToken.asStateFlow()
 
-    fun setSyncEnabled(enabled: Boolean) {
+    private val _enabledProviders =
+        MutableStateFlow(prefs.getStringSet(KEY_PROVIDERS, emptySet())?.toSet() ?: emptySet())
+    /** Az engedélyezett szolgáltatók kulcsai (pl. "openai", "gemini", "anthropic"). */
+    val enabledProviders: StateFlow<Set<String>> = _enabledProviders.asStateFlow()
+
+    private val _defaultProvider = MutableStateFlow(prefs.getString(KEY_DEFAULT, "openai") ?: "openai")
+    val defaultProvider: StateFlow<String> = _defaultProvider.asStateFlow()
+
+    fun setAiEnabled(enabled: Boolean) {
         prefs.edit().putBoolean(KEY_ENABLED, enabled).apply()
-        _syncEnabled.value = enabled
+        _aiEnabled.value = enabled
     }
 
-    fun setProvider(name: String) {
-        prefs.edit().putString(KEY_PROVIDER, name).apply()
-        _provider.value = name
+    fun setProxyUrl(url: String) {
+        prefs.edit().putString(KEY_PROXY_URL, url.trim()).apply()
+        _proxyUrl.value = url.trim()
     }
 
-    /** API-kulcs titkosított mentése. Üres érték törli a tárolt kulcsot. */
-    fun setApiKey(plain: String) {
+    fun setProviderEnabled(key: String, enabled: Boolean) {
+        val set = _enabledProviders.value.toMutableSet()
+        if (enabled) set.add(key) else set.remove(key)
+        prefs.edit().putStringSet(KEY_PROVIDERS, set).apply()
+        _enabledProviders.value = set
+        // Ha a kikapcsolt volt az alapértelmezett, váltsunk egy elérhetőre
+        if (!enabled && _defaultProvider.value == key) {
+            setDefaultProvider(set.firstOrNull() ?: "openai")
+        }
+    }
+
+    fun setDefaultProvider(key: String) {
+        prefs.edit().putString(KEY_DEFAULT, key).apply()
+        _defaultProvider.value = key
+    }
+
+    /** App-token titkosított mentése. Üres érték törli. */
+    fun setToken(plain: String) {
         if (plain.isBlank()) {
-            clearApiKey()
+            clearToken()
             return
         }
         runCatching {
-            val encrypted = encrypt(plain)
-            prefs.edit().putString(KEY_API, encrypted).apply()
-            _hasApiKey.value = true
-            Logger.i(Logger.Tags.SETTINGS, "API-kulcs titkosítva eltárolva")
-        }.onFailure { Logger.w(Logger.Tags.SETTINGS, "API-kulcs mentési hiba: ${it.message}") }
+            prefs.edit().putString(KEY_TOKEN, encrypt(plain)).apply()
+            _hasToken.value = true
+            Logger.i(Logger.Tags.SETTINGS, "AI proxy token titkosítva eltárolva")
+        }.onFailure { Logger.w(Logger.Tags.SETTINGS, "Token mentési hiba: ${it.message}") }
     }
 
-    /** A tárolt API-kulcs visszafejtése (a tényleges szinkron/AI hívásokhoz). */
-    fun getApiKey(): String? {
-        val stored = prefs.getString(KEY_API, null) ?: return null
+    /** A tárolt app-token visszafejtése a proxy-híváshoz. */
+    fun getToken(): String? {
+        val stored = prefs.getString(KEY_TOKEN, null) ?: return null
         return runCatching { decrypt(stored) }.getOrNull()
     }
 
-    fun clearApiKey() {
-        prefs.edit().remove(KEY_API).apply()
-        _hasApiKey.value = false
+    fun clearToken() {
+        prefs.edit().remove(KEY_TOKEN).apply()
+        _hasToken.value = false
     }
 
     // --- AES/GCM az Android Keystore mesterkulccsal ---
@@ -102,9 +124,7 @@ class SecureKeyStore @Inject constructor(
     private fun encrypt(plain: String): String {
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey())
-        val iv = cipher.iv
-        val ciphertext = cipher.doFinal(plain.toByteArray(Charsets.UTF_8))
-        val combined = iv + ciphertext
+        val combined = cipher.iv + cipher.doFinal(plain.toByteArray(Charsets.UTF_8))
         return Base64.encodeToString(combined, Base64.NO_WRAP)
     }
 
@@ -119,9 +139,11 @@ class SecureKeyStore @Inject constructor(
 
     companion object {
         private const val PREFS_NAME = "nutriplan_secure"
-        private const val KEY_ENABLED = "sync_enabled"
-        private const val KEY_API = "api_key_enc"
-        private const val KEY_PROVIDER = "provider"
+        private const val KEY_ENABLED = "ai_enabled"
+        private const val KEY_PROXY_URL = "proxy_url"
+        private const val KEY_TOKEN = "proxy_token_enc"
+        private const val KEY_PROVIDERS = "ai_providers"
+        private const val KEY_DEFAULT = "ai_default_provider"
         private const val ANDROID_KEYSTORE = "AndroidKeyStore"
         private const val MASTER_ALIAS = "nutriplan_master_key"
         private const val TRANSFORMATION = "AES/GCM/NoPadding"

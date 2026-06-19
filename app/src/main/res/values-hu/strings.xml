@@ -334,4 +334,19 @@
     <string name="sync_key_none">Még nincs eltárolt kulcs.</string>
     <string name="sync_ai_note">Az eszközön titkosítva tárolva (Keystore), és sosem kerül a mentésbe. A tényleges szinkron/AI még véglegesítés alatt.</string>
     <string name="servings">Adagok</string>
+
+    <!-- AI providers (proxy) -->
+    <string name="ai_providers">AI szolgáltatók</string>
+    <string name="ai_enable">AI funkciók bekapcsolása</string>
+    <string name="ai_summary">Kösd be a saját Cloudflare Worker proxydat (a kulcsok a szerveren maradnak).</string>
+    <string name="proxy_url">Proxy URL</string>
+    <string name="proxy_token">App-token</string>
+    <string name="clear_token">Token törlése</string>
+    <string name="token_set">Token eltárolva (titkosítva).</string>
+    <string name="token_none">Még nincs token.</string>
+    <string name="providers">Szolgáltatók</string>
+    <string name="test_connection">Teszt</string>
+    <string name="ai_suggest">AI étrend-ötlet</string>
+    <string name="ai_working">Folyamatban…</string>
+    <string name="ai_note">Az URL + token titkosítva tárolva (Keystore), az app-zár védi. A szolgáltató-kulcsok csak a Workereden vannak.</string>
 </resources>
