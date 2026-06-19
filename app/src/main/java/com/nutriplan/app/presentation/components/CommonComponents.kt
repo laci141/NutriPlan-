@@ -25,13 +25,13 @@ import com.nutriplan.app.domain.model.NutritionTotals
 import com.nutriplan.app.presentation.theme.Accent
 import androidx.compose.ui.res.stringResource
 
-/** Neon zöld képernyőcím – egységes, „márkás" fejléc a fő oldalak felső sávjában. */
+/** Fehér képernyőcím – egységes, tiszta, jól olvasható fejléc a fő oldalak felső sávjában. */
 @Composable
 fun ScreenTitle(text: String) {
     Text(
         text = text,
         fontWeight = FontWeight.Bold,
-        color = Accent.Neon
+        color = Accent.Title
     )
 }
 
@@ -90,12 +90,12 @@ fun NutritionSummary(totals: NutritionTotals, modifier: Modifier = Modifier) {
     }
 }
 
-// A kezdőlapi makró-kártyával egyező színek, hogy egységes legyen az egész app.
-private val NutriCalorieColor = Color(0xFFF97316) // narancs – kalória
-private val NutriProteinColor = Color(0xFF34D399) // almazöld – fehérje
-private val NutriCarbsColor = Color(0xFFF59E0B)   // borostyán – szénhidrát
-private val NutriFatColor = Color(0xFF3B82F6)     // kék – zsír
-private val NutriFiberColor = Color(0xFF22C55E)   // zöld – rost
+// A kezdőlapi makró-kártyával egyező, tompított (szemkímélő) színek.
+private val NutriCalorieColor = Color(0xFFC2622A) // tompított narancs – kalória
+private val NutriProteinColor = Color(0xFF2A9E76) // mély zöld – fehérje
+private val NutriCarbsColor = Color(0xFFB87A10)   // mély borostyán – szénhidrát
+private val NutriFatColor = Color(0xFF2D61C2)     // mély kék – zsír
+private val NutriFiberColor = Color(0xFF1A9447)   // erdőzöld – rost
 
 /**
  * Egyetlen tápérték-sor: színes pötty + címke (balra) + érték (jobbra).

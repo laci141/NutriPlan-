@@ -16,8 +16,8 @@ val LightBackground = Color(0xFFF6F8F7)
 val LightSurface = Color(0xFFFFFFFF)
 val LightSurfaceVariant = Color(0xFFE7EDEA)
 
-// Sötét téma színek
-val GreenPrimaryLight = Color(0xFF34D399)
+// Sötét téma színek – tompított, szemkímélő elsődleges zöld
+val GreenPrimaryLight = Color(0xFF2A9E76)
 val DarkGreenContainer = Color(0xFF065F46)
 val OnDarkGreenContainer = Color(0xFFA7F3D0)
 // Mély, organikus olíva-szürke tónusok (NEM tiszta fekete, NEM rideg kék)

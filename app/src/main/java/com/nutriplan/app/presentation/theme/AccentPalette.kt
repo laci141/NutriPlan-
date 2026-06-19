@@ -5,25 +5,28 @@ import com.nutriplan.app.domain.model.WeekDay
 import com.nutriplan.app.presentation.navigation.Routes
 
 /**
- * Élénk, 2026-os akcentus-paletta: neon kiemelés sötét háttéren.
+ * Visszafogott, szemkímélő ("kék fény szűrő" jellegű) akcentus-paletta sötét háttéren.
  *
- * A fő képernyőcímek neon zöldek, a hét napjai és az alsó navigáció füljei
- * pedig saját, jól megkülönböztethető színt kapnak – így a felület színesebb,
- * nem egyhangú, de a szín mindig csak kiemelésként (akcentusként) jelenik meg.
+ * A fő képernyőcímek mindig fehérek (tiszta, jól olvasható), a hét napjai és az
+ * alsó navigáció füljei pedig saját, de tompított (kevésbé élénk) színt kapnak –
+ * így a felület színes és nem egyhangú, de hosszú használat mellett sem fárasztja a szemet.
  */
 object Accent {
 
-    /** Neon zöld – a fő képernyőcímek és a Kezdőlap (Dashboard) fül színe. */
-    val Neon = Color(0xFF2DD36F)
+    /** A fő képernyőcímek színe – mindig tiszta fehér. */
+    val Title = Color(0xFFFFFFFF)
 
-    // A hét napjainak szivárvány-színei (hétfőtől vasárnapig).
-    private val coral = Color(0xFFFB7185)   // korall
-    private val orange = Color(0xFFFB923C)  // narancs
-    private val amber = Color(0xFFFBBF24)   // borostyán
-    private val green = Color(0xFF34D399)   // zöld
-    private val teal = Color(0xFF2DD4BF)    // türkiz
-    private val blue = Color(0xFF60A5FA)    // kék
-    private val violet = Color(0xFFA78BFA)  // lila
+    /** Tompított zöld – a Kezdőlap (Dashboard) fül színe. */
+    val Neon = Color(0xFF2A9E76)
+
+    // A hét napjainak tompított szivárvány-színei (hétfőtől vasárnapig).
+    private val coral = Color(0xFFC25067)   // mély korall
+    private val orange = Color(0xFFC2682A)  // terrakotta
+    private val amber = Color(0xFFB8921A)   // mély borostyán
+    private val green = Color(0xFF2A9E76)   // mély zöld
+    private val teal = Color(0xFF22A396)    // mély türkiz
+    private val blue = Color(0xFF4279CC)    // mély kék
+    private val violet = Color(0xFF7A65C2)  // tompított lila
 
     private val dayColors = listOf(coral, orange, amber, green, teal, blue, violet)
 
@@ -40,6 +43,6 @@ object Accent {
         Routes.SETTINGS to blue
     )
 
-    /** Egy adott navigációs útvonalhoz tartozó szín (ismeretlen esetén neon zöld). */
+    /** Egy adott navigációs útvonalhoz tartozó szín (ismeretlen esetén tompított zöld). */
     fun forRoute(route: String?): Color = routeColors[route] ?: Neon
 }

@@ -111,10 +111,10 @@ import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
-// A makró-gyűrűk színei (egészséget sugárzó tónusok)
-private val ProteinColor = Color(0xFF34D399) // almazöld
-private val CarbsColor = Color(0xFFF59E0B)   // narancs
-private val FatColor = Color(0xFF3B82F6)      // élénk kék
+// A makró-gyűrűk tompított, szemkímélő színei
+private val ProteinColor = Color(0xFF2A9E76) // mély zöld
+private val CarbsColor = Color(0xFFB87A10)   // mély borostyán
+private val FatColor = Color(0xFF2D61C2)      // mély kék
 
 /**
  * Kezdőlap (Dashboard) – modern "Bento Box" elrendezés:
@@ -224,7 +224,7 @@ fun DashboardScreen(
                 text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = Accent.Neon
+                color = Accent.Title
             )
             Text(
                 text = stringResource(greetingRes),
@@ -530,7 +530,7 @@ private fun WaterCard(
 
 // ── Tápérték (makrók) – napi/heti váltóval, egymás alatti színes sorok ───────
 
-private val CalorieColor = Color(0xFFF97316)   // narancs – kalória
+private val CalorieColor = Color(0xFFC2622A)   // tompított narancs – kalória
 
 @Composable
 private fun MacroNutritionCard(
@@ -782,13 +782,13 @@ private fun WeeklyCaloriesCard(data: List<Pair<java.time.LocalDate, Int>>, goal:
 
 // ── Mikrotápanyag kártya ──────────────────────────────────────────────────────
 
-private val FiberColor   = Color(0xFF22C55E)   // zöld
-private val VitCColor    = Color(0xFFF97316)   // narancs
-private val IronColor    = Color(0xFFEF4444)   // piros
-private val CalciumColor = Color(0xFF3B82F6)   // kék
-private val VitDColor    = Color(0xFFF59E0B)   // sárga
-private val B12Color     = Color(0xFF8B5CF6)   // lila
-private val MagColor     = Color(0xFF14B8A6)   // türkiz
+private val FiberColor   = Color(0xFF1A9447)   // erdőzöld
+private val VitCColor    = Color(0xFFC2622A)   // tompított narancs
+private val IronColor    = Color(0xFFB83535)   // mély rózsapiros
+private val CalciumColor = Color(0xFF2D61C2)   // mély kék
+private val VitDColor    = Color(0xFFB87A10)   // mély arany
+private val B12Color     = Color(0xFF6A45C2)   // mély lila
+private val MagColor     = Color(0xFF0F8C7E)   // mély türkiz
 
 @Composable
 private fun MicroNutrientCard(totals: NutritionTotals) {
