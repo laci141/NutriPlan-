@@ -371,6 +371,15 @@
     <string name="local_foods">Alimente locale (HU/RO)</string>
     <string name="search_foods">Caută alimente locale…</string>
 
+    <!-- Cronometru post intermitent -->
+    <string name="fasting_title">Cronometru post (16:8)</string>
+    <string name="fasting_idle">Nu postești — apasă Start pentru un post de 16 ore</string>
+    <string name="fasting_active">Timp scurs: %1$s · Rămas: %2$s</string>
+    <string name="fasting_complete">Post complet! Poți mânca acum.</string>
+    <string name="fasting_start">Start</string>
+    <string name="fasting_stop">Stop</string>
+    <string name="fasting_window">Fereastră: %1$s (post intermitent)</string>
+
     <!-- Înregistrare vocală -->
     <string name="voice_log">Înregistrare vocală</string>
 

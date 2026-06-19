@@ -48,7 +48,8 @@ data class DashboardUiState(
     val fatTarget: Int = 0,
     val water: Int = 0,
     val waterGoal: Int = WATER_GOAL_ML,
-    val stepGoal: Int = STEP_GOAL
+    val stepGoal: Int = STEP_GOAL,
+    val fastingStartMs: Long = -1L
 ) {
     companion object {
         const val WATER_GOAL_ML = 2000
@@ -122,12 +123,9 @@ class DashboardViewModel @Inject constructor(
     }
 
     val uiState: StateFlow<DashboardUiState> = combine(
-        todayEntries,
-        settingsManager.calorieGoal,
-        dashboardPreferences.waterToday,
-        macroGoals,
-        recentRange
-    ) { entries, goal, water, macros, range ->
+        combine(todayEntries, settingsManager.calorieGoal, dashboardPreferences.waterToday) { e, g, w -> Triple(e, g, w) },
+        combine(macroGoals, recentRange, dashboardPreferences.fastingStartMs) { m, r, f -> Triple(m, r, f) }
+    ) { (entries, goal, water), (macros, range, fastingMs) ->
         val totals = entries.fold(NutritionTotals()) { acc, e ->
             acc + NutritionTotals(
                 e.calories, e.protein, e.carbs, e.fat,
@@ -144,7 +142,8 @@ class DashboardViewModel @Inject constructor(
             proteinTarget = if (customP > 0) customP else (effectiveGoal * 0.30 / 4).roundToInt(),
             carbsTarget = if (customC > 0) customC else (effectiveGoal * 0.40 / 4).roundToInt(),
             fatTarget = if (customF > 0) customF else (effectiveGoal * 0.30 / 9).roundToInt(),
-            water = water
+            water = water,
+            fastingStartMs = fastingMs
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DashboardUiState())
 
@@ -270,6 +269,16 @@ class DashboardViewModel @Inject constructor(
     /** +/- ml víz módosítása (negatív = elvétel). */
     fun changeWater(delta: Int) {
         viewModelScope.launch { dashboardPreferences.addWater(delta) }
+    }
+
+    /** Böjt indítása. */
+    fun startFasting() {
+        viewModelScope.launch { dashboardPreferences.startFasting() }
+    }
+
+    /** Böjt leállítása. */
+    fun stopFasting() {
+        viewModelScope.launch { dashboardPreferences.stopFasting() }
     }
 
     init {

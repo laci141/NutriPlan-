@@ -371,6 +371,15 @@
     <string name="local_foods">Helyi ételek (HU/RO)</string>
     <string name="search_foods">Helyi ételek keresése…</string>
 
+    <!-- Időszakos böjt időzítő -->
+    <string name="fasting_title">Böjt-időzítő (16:8)</string>
+    <string name="fasting_idle">Nem böjtölsz — nyomj Start-ot egy 16 órás böjthöz</string>
+    <string name="fasting_active">Eltelt: %1$s · Hátralévő: %2$s</string>
+    <string name="fasting_complete">Böjt kész! Most megszakíthatod a böjtöt.</string>
+    <string name="fasting_start">Indítás</string>
+    <string name="fasting_stop">Leállítás</string>
+    <string name="fasting_window">Ablak: %1$s (időszakos böjt)</string>
+
     <!-- Hangnaplózás -->
     <string name="voice_log">Hangnaplózás</string>
 

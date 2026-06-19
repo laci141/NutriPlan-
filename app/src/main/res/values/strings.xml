@@ -371,6 +371,15 @@
     <string name="local_foods">Local foods (HU/RO)</string>
     <string name="search_foods">Search local foods…</string>
 
+    <!-- Intermittent fasting timer -->
+    <string name="fasting_title">Fasting Timer (16:8)</string>
+    <string name="fasting_idle">Not fasting — tap Start to begin a 16-hour fast</string>
+    <string name="fasting_active">Elapsed: %1$s · Remaining: %2$s</string>
+    <string name="fasting_complete">Fast complete! You can break your fast now.</string>
+    <string name="fasting_start">Start</string>
+    <string name="fasting_stop">Stop</string>
+    <string name="fasting_window">Window: %1$s (intermittent fasting)</string>
+
     <!-- Voice logging -->
     <string name="voice_log">Voice log</string>
 

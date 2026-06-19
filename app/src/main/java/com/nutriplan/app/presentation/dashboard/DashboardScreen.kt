@@ -372,6 +372,13 @@ fun DashboardScreen(
 
         // Szezonális ételek az aktuális hónapban
         SeasonalCard()
+
+        // Böjt-időzítő (időszakos böjt, pl. 16:8)
+        FastingCard(
+            fastingStartMs = state.fastingStartMs,
+            onStart = { viewModel.startFasting() },
+            onStop = { viewModel.stopFasting() }
+        )
     }
 
     // Étel hozzáadása dialógus (kézi, gyakori, vagy vonalkódról adagolással)
@@ -1209,6 +1216,91 @@ private fun BentoCard(
             content = content
         )
     }
+}
+
+// ── Böjt-időzítő kártya ──────────────────────────────────────────────────────
+
+/** Időszakos böjt (IF) időzítő kártya. 16h böjt / 8h étkezési ablak az alapértelmezett. */
+@Composable
+private fun FastingCard(
+    fastingStartMs: Long,
+    onStart: () -> Unit,
+    onStop: () -> Unit
+) {
+    val isFasting = fastingStartMs > 0L
+    var nowMs by remember { mutableStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(isFasting) {
+        if (isFasting) {
+            while (true) {
+                kotlinx.coroutines.delay(1000)
+                nowMs = System.currentTimeMillis()
+            }
+        }
+    }
+
+    val fastWindowMs = 16L * 3600_000L
+    val elapsedMs = if (isFasting) (nowMs - fastingStartMs).coerceAtLeast(0L) else 0L
+    val remainingMs = (fastWindowMs - elapsedMs).coerceAtLeast(0L)
+    val fraction = if (isFasting) (elapsedMs.toFloat() / fastWindowMs).coerceIn(0f, 1f) else 0f
+    val fastDone = isFasting && elapsedMs >= fastWindowMs
+
+    BentoCard(modifier = Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.fasting_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = if (!isFasting) stringResource(R.string.fasting_idle)
+                    else if (fastDone) stringResource(R.string.fasting_complete)
+                    else stringResource(R.string.fasting_active, formatHms(elapsedMs), formatHms(remainingMs)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (fastDone) ProteinColor else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            if (isFasting) {
+                FilledTonalButton(
+                    onClick = onStop,
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                ) { Text(stringResource(R.string.fasting_stop)) }
+            } else {
+                FilledTonalButton(
+                    onClick = onStart,
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = ProteinColor.copy(alpha = 0.15f),
+                        contentColor = ProteinColor
+                    )
+                ) { Text(stringResource(R.string.fasting_start)) }
+            }
+        }
+        if (isFasting) {
+            LinearProgressIndicator(
+                progress = { fraction },
+                modifier = Modifier.fillMaxWidth().height(6.dp),
+                color = if (fastDone) ProteinColor else MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                strokeCap = StrokeCap.Round
+            )
+            Text(
+                text = stringResource(R.string.fasting_window, "16:8"),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+private fun formatHms(ms: Long): String {
+    val totalSeconds = ms / 1000
+    val h = totalSeconds / 3600
+    val m = (totalSeconds % 3600) / 60
+    val s = totalSeconds % 60
+    return if (h > 0) String.format("%dh %02dm", h, m) else String.format("%dm %02ds", m, s)
 }
 
 // ── Szezonális ételek kártya ──────────────────────────────────────────────────
