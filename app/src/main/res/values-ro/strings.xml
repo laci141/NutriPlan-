@@ -370,4 +370,11 @@
     <!-- Baza de date alimentară locală -->
     <string name="local_foods">Alimente locale (HU/RO)</string>
     <string name="search_foods">Caută alimente locale…</string>
+
+    <!-- Înregistrare vocală -->
+    <string name="voice_log">Înregistrare vocală</string>
+
+    <!-- Alimente de sezon -->
+    <string name="seasonal_foods">De sezon în această lună</string>
+    <string name="seasonal_tip">Produse locale proaspete disponibile în sezon în Ungaria/România</string>
 </resources>

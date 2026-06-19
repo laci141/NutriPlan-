@@ -370,4 +370,11 @@
     <!-- Local food database -->
     <string name="local_foods">Local foods (HU/RO)</string>
     <string name="search_foods">Search local foods…</string>
+
+    <!-- Voice logging -->
+    <string name="voice_log">Voice log</string>
+
+    <!-- Seasonal foods -->
+    <string name="seasonal_foods">In season this month</string>
+    <string name="seasonal_tip">Fresh, local produce currently in season in Hungary/Romania</string>
 </resources>

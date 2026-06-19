@@ -1,8 +1,10 @@
 package com.nutriplan.app.presentation.dashboard
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.speech.RecognizerIntent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -30,6 +32,7 @@ import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.foundation.background
@@ -133,6 +136,32 @@ fun DashboardScreen(
     var showAddFood by remember { mutableStateOf(false) }
     var showScanner by remember { mutableStateOf(false) }
     var showWeightDialog by remember { mutableStateOf(false) }
+    var voiceInitialText by remember { mutableStateOf("") }
+
+    // Hangnaplózás – rendszer speech intent (nem kell RECORD_AUDIO engedély)
+    val speechLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            val text = result.data
+                ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                ?.firstOrNull().orEmpty()
+            if (text.isNotBlank()) {
+                voiceInitialText = text
+                showAddFood = true
+            }
+        }
+    }
+    fun startVoiceInput() {
+        runCatching {
+            speechLauncher.launch(
+                Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+                }
+            )
+        }
+    }
 
     // Kamera-engedély a napló vonalkód-olvasójához
     val scannerPermissionLauncher = rememberLauncherForActivityResult(
@@ -323,7 +352,8 @@ fun DashboardScreen(
         // Mai étkezés-napló
         FoodLogCard(
             entries = state.todayEntries,
-            onAdd = { showAddFood = true },
+            onAdd = { voiceInitialText = ""; showAddFood = true },
+            onVoiceLog = { startVoiceInput() },
             onDelete = { viewModel.deleteFood(it) }
         )
 
@@ -339,6 +369,9 @@ fun DashboardScreen(
             onAdd = { showWeightDialog = true },
             onDelete = { date -> viewModel.deleteWeight(date) }
         )
+
+        // Szezonális ételek az aktuális hónapban
+        SeasonalCard()
     }
 
     // Étel hozzáadása dialógus (kézi, gyakori, vagy vonalkódról adagolással)
@@ -346,6 +379,7 @@ fun DashboardScreen(
         AddFoodDialog(
             recentFoods = recentFoods,
             scanned = scannedProduct,
+            initialText = voiceInitialText,
             localFoodSearch = { query -> viewModel.searchLocalFoods(query) },
             onScan = {
                 showAddFood = false
@@ -354,10 +388,12 @@ fun DashboardScreen(
             onSubmit = { name, kcal, p, c, f, meal, fiber, vitC, iron, calcium, vitD, b12, mg ->
                 viewModel.addFood(name, kcal, p, c, f, meal, fiber, vitC, iron, calcium, vitD, b12, mg)
                 viewModel.consumeScan()
+                voiceInitialText = ""
                 showAddFood = false
             },
             onDismiss = {
                 viewModel.consumeScan()
+                voiceInitialText = ""
                 showAddFood = false
             }
         )
@@ -859,11 +895,12 @@ private fun WeightDialog(
     }
 }
 
-/** A mai naplóbejegyzések kártyája hozzáadás és törlés gombbal. */
+/** A mai naplóbejegyzések kártyája hozzáadás, hangbevitel és törlés gombbal. */
 @Composable
 private fun FoodLogCard(
     entries: List<FoodLogEntry>,
     onAdd: () -> Unit,
+    onVoiceLog: () -> Unit,
     onDelete: (Long) -> Unit
 ) {
     BentoCard(modifier = Modifier.fillMaxWidth()) {
@@ -876,6 +913,10 @@ private fun FoodLogCard(
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.weight(1f)
             )
+            IconButton(onClick = onVoiceLog) {
+                Icon(Icons.Filled.Mic, contentDescription = stringResource(R.string.voice_log),
+                    tint = MaterialTheme.colorScheme.primary)
+            }
             IconButton(onClick = onAdd) {
                 Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.log_food))
             }
@@ -926,6 +967,7 @@ private fun FoodLogCard(
 private fun AddFoodDialog(
     recentFoods: List<FoodLogEntry>,
     scanned: com.nutriplan.app.data.remote.ScannedProduct?,
+    initialText: String = "",
     localFoodSearch: (String) -> List<LocalFood>,
     onScan: () -> Unit,
     onSubmit: (String, Int, Double, Double, Double, MealType, Double, Double, Double, Double, Double, Double, Double) -> Unit,
@@ -973,6 +1015,27 @@ private fun AddFoodDialog(
             if (name.isBlank()) name = scanned.name
             grams = "100"
             applyGrams(100.0)
+        }
+    }
+
+    // Hangbevitel feldolgozása: gramm kinyerése + helyi adatbázis-keresés
+    LaunchedEffect(initialText) {
+        if (initialText.isBlank()) return@LaunchedEffect
+        val gramsRegex = Regex("""(\d+)\s*(?:g(?:ramm?)?|dkg?|kg)""", RegexOption.IGNORE_CASE)
+        val gramsMatch = gramsRegex.find(initialText)
+        val parsedGrams = gramsMatch?.groupValues?.get(1)?.toDoubleOrNull()
+        val cleanedName = initialText.replace(gramsRegex, "").trim()
+        val lookupText = if (cleanedName.isNotBlank()) cleanedName else initialText
+        val match = localFoodSearch(lookupText).firstOrNull()
+        if (match != null) {
+            val prod = match.toScannedProduct()
+            basis = prod
+            name = match.name
+            val g = parsedGrams ?: 100.0
+            grams = g.toInt().toString()
+            applyGrams(g)
+        } else {
+            name = initialText
         }
     }
 
@@ -1145,6 +1208,55 @@ private fun BentoCard(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             content = content
         )
+    }
+}
+
+// ── Szezonális ételek kártya ──────────────────────────────────────────────────
+
+/** Magyar/Román szezonális zöldség- és gyümölcsnaptár hónapok szerint (1-12). */
+private val SEASONAL_BY_MONTH: Map<Int, List<String>> = mapOf(
+    1 to listOf("Alma", "Körte", "Savanyúkáposzta", "Cékla", "Sárgarépa"),
+    2 to listOf("Alma", "Körte", "Burgonya", "Kelkáposzta", "Cékla"),
+    3 to listOf("Spenót", "Medvehagyma", "Paraj", "Retek", "Zöldhagyma"),
+    4 to listOf("Spárga", "Retek", "Saláta", "Spenót", "Zöldhagyma"),
+    5 to listOf("Eper", "Spárga", "Zöldborsó", "Saláta", "Retek"),
+    6 to listOf("Cseresznye", "Meggy", "Eper", "Spárga", "Bab", "Uborka"),
+    7 to listOf("Málna", "Eper", "Cseresznye", "Uborka", "Paradicsom", "Paprika", "Dinnye"),
+    8 to listOf("Paradicsom", "Paprika", "Uborka", "Szilva", "Őszibarack", "Dinnye", "Málna"),
+    9 to listOf("Szilva", "Körte", "Alma", "Szőlő", "Paradicsom", "Gomba", "Paprika"),
+    10 to listOf("Alma", "Körte", "Szőlő", "Gomba", "Sütőtök", "Kukorica", "Cékla"),
+    11 to listOf("Alma", "Körte", "Cékla", "Sárgarépa", "Kelkáposzta", "Savanyúkáposzta"),
+    12 to listOf("Alma", "Körte", "Savanyúkáposzta", "Sárgarépa", "Cékla", "Burgonya")
+)
+
+@Composable
+private fun SeasonalCard() {
+    val month = remember { LocalDate.now().monthValue }
+    val foods = SEASONAL_BY_MONTH[month] ?: return
+    BentoCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.seasonal_foods),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            text = stringResource(R.string.seasonal_tip),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            foods.forEach { food ->
+                AssistChip(
+                    onClick = {},
+                    label = { Text(food, maxLines = 1) }
+                )
+            }
+        }
     }
 }
 

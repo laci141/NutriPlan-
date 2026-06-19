@@ -370,4 +370,11 @@
     <!-- Helyi ételadatbázis -->
     <string name="local_foods">Helyi ételek (HU/RO)</string>
     <string name="search_foods">Helyi ételek keresése…</string>
+
+    <!-- Hangnaplózás -->
+    <string name="voice_log">Hangnaplózás</string>
+
+    <!-- Szezonális ételek -->
+    <string name="seasonal_foods">Ez havi szezonális ételek</string>
+    <string name="seasonal_tip">Friss, helyi termények, amelyek most szezonban vannak Magyarországon/Romániában</string>
 </resources>
