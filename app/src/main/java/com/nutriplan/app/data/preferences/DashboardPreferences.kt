@@ -34,7 +34,7 @@ class DashboardPreferences @Inject constructor(
         if (prefs[Keys.WATER_DATE] == today()) prefs[Keys.WATER_ML] ?: 0 else 0
     }
 
-    /** Hozzáad a mai vízmennyiséghez (új nap esetén nulláról indul). */
+    /** Hozzáad (vagy kivon, ha negatív) a mai vízmennyiségből. Új nap esetén nulláról indul. */
     suspend fun addWater(milliliters: Int) {
         context.dashboardDataStore.edit { prefs ->
             val isToday = prefs[Keys.WATER_DATE] == today()
@@ -42,7 +42,7 @@ class DashboardPreferences @Inject constructor(
             prefs[Keys.WATER_ML] = (current + milliliters).coerceAtLeast(0)
             prefs[Keys.WATER_DATE] = today()
         }
-        Logger.i(Logger.Tags.SETTINGS, "Víz hozzáadva: +$milliliters ml")
+        Logger.i(Logger.Tags.SETTINGS, "Víz megváltozott: ${if (milliliters >= 0) "+" else ""}$milliliters ml")
     }
 
     private fun today(): String = LocalDate.now().toString()

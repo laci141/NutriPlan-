@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -47,6 +49,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nutriplan.app.R
 import com.nutriplan.app.domain.model.Language
@@ -539,37 +543,45 @@ private fun AiProvidersContent(
     }
 }
 
-/** PIN beállító párbeszéd: kód megadása és megerősítése (min. 4 számjegy). */
+/** PIN beállító párbeszéd – egyedi numerikus billentyűzet, két lépéses megerősítés. */
 @Composable
 private fun PinSetupDialog(
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit
 ) {
     var pin by remember { mutableStateOf("") }
-    var confirm by remember { mutableStateOf("") }
+    var isConfirmStep by remember { mutableStateOf(false) }
+    var confirmPin by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<Int?>(null) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.set_pin)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = pin,
-                    onValueChange = { pin = it.filter { c -> c.isDigit() }.take(8); error = null },
-                    label = { Text(stringResource(R.string.pin_label)) },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+    val activeValue = if (isConfirmStep) confirmPin else pin
+    val dots = "●".repeat(activeValue.length) + "○".repeat((6 - activeValue.length).coerceAtLeast(0))
+
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 4.dp
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp).fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(if (isConfirmStep) R.string.pin_confirm_label else R.string.set_pin),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
-                OutlinedTextField(
-                    value = confirm,
-                    onValueChange = { confirm = it.filter { c -> c.isDigit() }.take(8); error = null },
-                    label = { Text(stringResource(R.string.pin_confirm_label)) },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                // Pontok kijelző
+                Text(
+                    text = dots,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 8.sp,
+                    color = MaterialTheme.colorScheme.primary
                 )
+                // Hiba
                 error?.let {
                     Text(
                         text = stringResource(it),
@@ -577,21 +589,41 @@ private fun PinSetupDialog(
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                when {
-                    pin.length < 4 -> error = R.string.pin_too_short
-                    pin != confirm -> error = R.string.pin_mismatch
-                    else -> onConfirm(pin)
+                // Egyedi billentyűzet
+                com.nutriplan.app.presentation.components.NumericKeypad(
+                    onDigit = { d ->
+                        error = null
+                        if (isConfirmStep) { if (confirmPin.length < 8) confirmPin += d }
+                        else { if (pin.length < 8) pin += d }
+                    },
+                    onBackspace = {
+                        error = null
+                        if (isConfirmStep) confirmPin = confirmPin.dropLast(1)
+                        else pin = pin.dropLast(1)
+                    },
+                    onConfirm = {
+                        if (!isConfirmStep) {
+                            if (pin.length < 4) { error = R.string.pin_too_short; return@NumericKeypad }
+                            isConfirmStep = true
+                        } else {
+                            if (confirmPin != pin) {
+                                error = R.string.pin_mismatch
+                                confirmPin = ""
+                                pin = ""
+                                isConfirmStep = false
+                            } else {
+                                onConfirm(pin)
+                            }
+                        }
+                    },
+                    allowDecimal = false,
+                    confirmEnabled = activeValue.length >= 4,
+                    accentColor = MaterialTheme.colorScheme.primary
+                )
+                TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.cancel))
                 }
-            }) {
-                Text(stringResource(R.string.save))
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
         }
-    )
+    }
 }

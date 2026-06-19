@@ -104,13 +104,18 @@ class DashboardViewModel @Inject constructor(
     val weights: StateFlow<List<WeightEntry>> = weightRepository.all()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    /** Mai (vagy a megadott) testsúly mentése. */
-    fun addWeight(kg: Double) {
+    /** Testsúly mentése tetszőleges dátumra (alapértelmezett: ma). */
+    fun addWeight(kg: Double, date: LocalDate = today) {
         if (kg <= 0) return
         viewModelScope.launch {
-            weightRepository.set(WeightEntry(date = today, weightKg = kg))
-            Logger.i(Logger.Tags.VIEWMODEL, "Testsúly mentve: $kg kg")
+            weightRepository.set(WeightEntry(date = date, weightKg = kg))
+            Logger.i(Logger.Tags.VIEWMODEL, "Testsúly mentve: $kg kg ($date)")
         }
+    }
+
+    /** Testsúly törlése adott napra. */
+    fun deleteWeight(date: LocalDate) {
+        viewModelScope.launch { weightRepository.deleteByDay(date) }
     }
 
     val uiState: StateFlow<DashboardUiState> = combine(
@@ -240,9 +245,9 @@ class DashboardViewModel @Inject constructor(
         sensorManager?.unregisterListener(stepListener)
     }
 
-    /** +250 ml víz hozzáadása a mai naphoz. */
-    fun addWater() {
-        viewModelScope.launch { dashboardPreferences.addWater(250) }
+    /** +/- ml víz módosítása (negatív = elvétel). */
+    fun changeWater(delta: Int) {
+        viewModelScope.launch { dashboardPreferences.addWater(delta) }
     }
 
     init {

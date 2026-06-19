@@ -349,4 +349,11 @@
     <string name="ai_suggest">AI meal idea</string>
     <string name="ai_working">Working…</string>
     <string name="ai_note">URL + token stored encrypted (Keystore), protected by the app lock. Provider keys live only on your Worker.</string>
+
+    <!-- Dashboard UI extras -->
+    <string name="tab_daily">Today</string>
+    <string name="tab_weekly">Weekly</string>
+    <string name="weight_previous">Previous</string>
+    <string name="date_today">Today</string>
+    <string name="date_yesterday">Yesterday</string>
 </resources>

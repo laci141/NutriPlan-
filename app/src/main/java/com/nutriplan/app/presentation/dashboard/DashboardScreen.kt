@@ -30,20 +30,39 @@ import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.RestaurantMenu
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.window.Dialog
+import com.nutriplan.app.presentation.components.NumericKeypad
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -54,12 +73,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import kotlin.math.roundToInt
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -242,92 +267,20 @@ fun DashboardScreen(
             }
         }
 
-        // Két kisebb kártya egymás mellett: Makrók | Víz
-        Row(
-            modifier = Modifier.fillMaxWidth().height(190.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Makró aktivitási gyűrűk
-            BentoCard(
-                modifier = Modifier.weight(1f).fillMaxSize().clickable { onOpenNutrition() }
-            ) {
-                Text(
-                    text = stringResource(R.string.dashboard_macros),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-                // Gyűrűk felül, középen
-                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    ActivityRings(
-                        rings = listOf(
-                            RingData(fractionOf(state.todayTotals.protein, state.proteinTarget), ProteinColor),
-                            RingData(fractionOf(state.todayTotals.carbs, state.carbsTarget), CarbsColor),
-                            RingData(fractionOf(state.todayTotals.fat, state.fatTarget), FatColor)
-                        ),
-                        modifier = Modifier.fillMaxHeight().aspectRatio(1f),
-                        strokeWidth = 7.dp,
-                        gap = 4.dp
-                    )
-                }
-                // A három makró egymás alatt, teljes szélességben, soronként egy sorban, külön színnel
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    MacroLegend(
-                        label = stringResource(R.string.protein),
-                        value = macroValue(state.todayTotals.protein, state.proteinTarget),
-                        color = ProteinColor
-                    )
-                    MacroLegend(
-                        label = stringResource(R.string.carbs),
-                        value = macroValue(state.todayTotals.carbs, state.carbsTarget),
-                        color = CarbsColor
-                    )
-                    MacroLegend(
-                        label = stringResource(R.string.fat),
-                        value = macroValue(state.todayTotals.fat, state.fatTarget),
-                        color = FatColor
-                    )
-                }
-            }
+        // Tápérték (makrók) kártya – egymás alatti színes sorok, napi/heti váltóval
+        MacroNutritionCard(
+            state = state,
+            weekCalories = weekCalories,
+            onOpenNutrition = onOpenNutrition
+        )
 
-            // Víz kártya +250 ml gombbal
-            BentoCard(modifier = Modifier.weight(1f).fillMaxSize()) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Filled.LocalDrink, contentDescription = null, tint = FatColor)
-                    Spacer(Modifier.size(6.dp))
-                    Text(
-                        text = stringResource(R.string.dashboard_water),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "${state.water}",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1
-                        )
-                        Text(
-                            text = "/ ${state.waterGoal} ml",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1
-                        )
-                    }
-                }
-                FilledTonalButton(
-                    onClick = viewModel::addWater,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Filled.Add, contentDescription = null)
-                    Text(stringResource(R.string.water_add))
-                }
-            }
-        }
+        // Víz panel – teljes szélességű, nagy, +250 / -250 ml gombok
+        WaterCard(
+            water = state.water,
+            waterGoal = state.waterGoal,
+            onAdd = { viewModel.changeWater(250) },
+            onRemove = { viewModel.changeWater(-250) }
+        )
 
         // Lépés kártya (teljes szélesség)
         BentoCard(modifier = Modifier.fillMaxWidth().height(120.dp)) {
@@ -375,10 +328,11 @@ fun DashboardScreen(
             goal = state.calorieGoal
         )
 
-        // Testsúly trend
+        // Testsúly trend (dátumos bejegyzések + grafikon felül)
         WeightCard(
             weights = weights,
-            onAdd = { showWeightDialog = true }
+            onAdd = { showWeightDialog = true },
+            onDelete = { date -> viewModel.deleteWeight(date) }
         )
     }
 
@@ -414,12 +368,12 @@ fun DashboardScreen(
         )
     }
 
-    // Testsúly megadása
+    // Testsúly megadása (dátummal, custom billentyűzet)
     if (showWeightDialog) {
         WeightDialog(
-            current = weights.lastOrNull()?.weightKg,
-            onSubmit = { kg ->
-                viewModel.addWeight(kg)
+            previous = weights.lastOrNull(),
+            onSubmit = { kg, date ->
+                viewModel.addWeight(kg, date)
                 showWeightDialog = false
             },
             onDismiss = { showWeightDialog = false }
@@ -427,6 +381,195 @@ fun DashboardScreen(
     }
     }
 }
+
+// ── Víz panel (teljes szélesség, ~25% magasság) ─────────────────────────────
+
+@Composable
+private fun WaterCard(
+    water: Int,
+    waterGoal: Int,
+    onAdd: () -> Unit,
+    onRemove: () -> Unit
+) {
+    val fraction = if (waterGoal > 0) (water.toFloat() / waterGoal).coerceIn(0f, 1f) else 0f
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 0.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Fejléc
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Filled.LocalDrink, contentDescription = null, tint = FatColor, modifier = Modifier.size(22.dp))
+                Spacer(Modifier.size(8.dp))
+                Text(
+                    text = stringResource(R.string.dashboard_water),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "$water / $waterGoal ml",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = FatColor
+                )
+            }
+            // Progress sáv
+            LinearProgressIndicator(
+                progress = { fraction },
+                modifier = Modifier.fillMaxWidth().height(10.dp),
+                color = FatColor,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                strokeCap = StrokeCap.Round
+            )
+            // Gombok egy sorban
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                FilledTonalButton(
+                    onClick = onAdd,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = FatColor.copy(alpha = 0.15f),
+                        contentColor = FatColor
+                    )
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.size(4.dp))
+                    Text("+250 ml", fontWeight = FontWeight.SemiBold)
+                }
+                FilledTonalButton(
+                    onClick = onRemove,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                ) {
+                    Icon(Icons.Filled.Remove, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.size(4.dp))
+                    Text("−250 ml", fontWeight = FontWeight.SemiBold)
+                }
+            }
+        }
+    }
+}
+
+// ── Tápérték (makrók) – napi/heti váltóval, egymás alatti színes sorok ───────
+
+private val CalorieColor = Color(0xFFF97316)   // narancs – kalória
+
+@Composable
+private fun MacroNutritionCard(
+    state: DashboardUiState,
+    weekCalories: List<Pair<java.time.LocalDate, Int>>,
+    onOpenNutrition: () -> Unit
+) {
+    var tabIndex by remember { mutableStateOf(0) }
+    val isWeekly = tabIndex == 1
+    val weekKcal = weekCalories.sumOf { it.second }
+    val goal = if (state.calorieGoal > 0) state.calorieGoal else 2000
+    BentoCard(modifier = Modifier.fillMaxWidth().clickable { onOpenNutrition() }) {
+        Text(
+            text = stringResource(R.string.dashboard_macros),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        TabRow(
+            selectedTabIndex = tabIndex,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Tab(selected = tabIndex == 0, onClick = { tabIndex = 0 }) {
+                Text(stringResource(R.string.tab_daily), modifier = Modifier.padding(vertical = 8.dp))
+            }
+            Tab(selected = tabIndex == 1, onClick = { tabIndex = 1 }) {
+                Text(stringResource(R.string.tab_weekly), modifier = Modifier.padding(vertical = 8.dp))
+            }
+        }
+        Spacer(Modifier.size(8.dp))
+        // Kalória sor
+        if (isWeekly) {
+            MacroRow(
+                label = stringResource(R.string.dashboard_calories_today),
+                value = "$weekKcal kcal",
+                fraction = if (goal > 0) (weekKcal.toFloat() / (goal * 7)).coerceIn(0f, 1f) else 0f,
+                color = CalorieColor
+            )
+        } else {
+            MacroRow(
+                label = stringResource(R.string.dashboard_calories_today),
+                value = "${state.todayTotals.calories} kcal",
+                fraction = if (goal > 0) (state.todayTotals.calories.toFloat() / goal).coerceIn(0f, 1f) else 0f,
+                color = CalorieColor
+            )
+        }
+        MacroRow(
+            label = stringResource(R.string.protein),
+            value = "${(if (isWeekly) state.todayTotals.protein * 7 else state.todayTotals.protein).roundToInt()} g",
+            fraction = fractionOf(state.todayTotals.protein * (if (isWeekly) 7.0 else 1.0), state.proteinTarget * if (isWeekly) 7 else 1),
+            color = ProteinColor
+        )
+        MacroRow(
+            label = stringResource(R.string.carbs),
+            value = "${(if (isWeekly) state.todayTotals.carbs * 7 else state.todayTotals.carbs).roundToInt()} g",
+            fraction = fractionOf(state.todayTotals.carbs * (if (isWeekly) 7.0 else 1.0), state.carbsTarget * if (isWeekly) 7 else 1),
+            color = CarbsColor
+        )
+        MacroRow(
+            label = stringResource(R.string.fat),
+            value = "${(if (isWeekly) state.todayTotals.fat * 7 else state.todayTotals.fat).roundToInt()} g",
+            fraction = fractionOf(state.todayTotals.fat * (if (isWeekly) 7.0 else 1.0), state.fatTarget * if (isWeekly) 7 else 1),
+            color = FatColor
+        )
+    }
+}
+
+@Composable
+private fun MacroRow(label: String, value: String, fraction: Float, color: Color) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(10.dp)
+                    .background(color, shape = RoundedCornerShape(2.dp))
+            )
+            Spacer(Modifier.size(8.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+        }
+        LinearProgressIndicator(
+            progress = { fraction },
+            modifier = Modifier.fillMaxWidth().height(5.dp),
+            color = color,
+            trackColor = color.copy(alpha = 0.15f),
+            strokeCap = StrokeCap.Round
+        )
+    }
+}
+
+// ── Heti kalória diagram ──────────────────────────────────────────────────────
 
 /** Heti kalória oszlopdiagram kártya (utolsó 7 nap, cél-vonallal). */
 @Composable
@@ -455,9 +598,15 @@ private fun WeeklyCaloriesCard(data: List<Pair<java.time.LocalDate, Int>>, goal:
     }
 }
 
-/** Testsúly trend kártya vonaldiagrammal és hozzáadás gombbal. */
+// ── Testsúly kártya + dialógus ────────────────────────────────────────────────
+
+/** Testsúly kártya: grafikon felül, dátumos bejegyzések lista, törlés hosszú nyomásra. */
 @Composable
-private fun WeightCard(weights: List<com.nutriplan.app.domain.model.WeightEntry>, onAdd: () -> Unit) {
+private fun WeightCard(
+    weights: List<com.nutriplan.app.domain.model.WeightEntry>,
+    onAdd: () -> Unit,
+    onDelete: (LocalDate) -> Unit
+) {
     BentoCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -468,17 +617,20 @@ private fun WeightCard(weights: List<com.nutriplan.app.domain.model.WeightEntry>
             )
             weights.lastOrNull()?.let {
                 Text(
-                    text = "${it.weightKg} kg",
+                    text = String.format("%.1f kg", it.weightKg),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
                 )
             }
             IconButton(onClick = onAdd) {
                 Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.weight_add))
             }
         }
+        // Grafikon (ha van legalább 2 adat)
         if (weights.size >= 2) {
-            SimpleLineChart(points = weights.map { it.weightKg.toFloat() })
+            SimpleLineChart(points = weights.takeLast(30).map { it.weightKg.toFloat() })
+            Spacer(Modifier.size(8.dp))
         } else {
             Text(
                 text = stringResource(R.string.weight_hint),
@@ -486,35 +638,146 @@ private fun WeightCard(weights: List<com.nutriplan.app.domain.model.WeightEntry>
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+        // Bejegyzések listája (legutóbbi 5, legújabb elöl)
+        val recent = weights.sortedByDescending { it.date }.take(5)
+        if (recent.isNotEmpty()) {
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            recent.forEachIndexed { idx, entry ->
+                val prev = recent.getOrNull(idx + 1)
+                val diff = prev?.let { entry.weightKg - it.weightKg }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = entry.date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.width(70.dp)
+                    )
+                    Text(
+                        text = String.format("%.1f kg", entry.weightKg),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f)
+                    )
+                    diff?.let {
+                        val arrow = if (it < 0) "▼" else "▲"
+                        val color = if (it < 0) ProteinColor else MaterialTheme.colorScheme.error
+                        Text(
+                            text = "$arrow ${String.format("%.1f", kotlin.math.abs(it))} kg",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = color,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    IconButton(
+                        onClick = { onDelete(entry.date) },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
-/** Testsúly megadó dialógus (kg). */
+/** Testsúly megadó dialógus – egyedi billentyűzet, dátum választó, előző érték. */
 @Composable
-private fun WeightDialog(current: Double?, onSubmit: (Double) -> Unit, onDismiss: () -> Unit) {
-    var value by remember { mutableStateOf(current?.toString() ?: "") }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.weight_add)) },
-        text = {
-            OutlinedTextField(
-                value = value,
-                onValueChange = { value = it.filter { c -> c.isDigit() || c == '.' }.take(6) },
-                label = { Text(stringResource(R.string.weight_title)) },
-                suffix = { Text("kg") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = { onSubmit(value.toDoubleOrNull() ?: 0.0) }) {
-                Text(stringResource(R.string.save))
+private fun WeightDialog(
+    previous: com.nutriplan.app.domain.model.WeightEntry?,
+    onSubmit: (Double, LocalDate) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var value by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val today = remember { LocalDate.now() }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 4.dp
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp).fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(stringResource(R.string.weight_add), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+
+                // Előző érték referencia
+                previous?.let {
+                    Text(
+                        text = "${stringResource(R.string.weight_previous)}: ${String.format("%.1f", it.weightKg)} kg  (${it.date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))})",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                // Dátum picker (ma / tegnap / válasz)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(today to stringResource(R.string.date_today), today.minusDays(1) to stringResource(R.string.date_yesterday)).forEach { (date, label) ->
+                        OutlinedButton(
+                            onClick = { selectedDate = date },
+                            modifier = Modifier.weight(1f),
+                            colors = if (selectedDate == date)
+                                ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                            else ButtonDefaults.outlinedButtonColors()
+                        ) { Text(label, fontSize = 12.sp) }
+                    }
+                }
+                Text(
+                    text = selectedDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                // Kijelző
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
+                        .padding(vertical = 14.dp, horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (value.isEmpty()) "– kg" else "$value kg",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = if (value.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant
+                        else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                // Egyedi billentyűzet
+                NumericKeypad(
+                    onDigit = { d ->
+                        if (d == "." && value.contains(".")) return@NumericKeypad
+                        if (value.length < 6) value += d
+                    },
+                    onBackspace = { if (value.isNotEmpty()) value = value.dropLast(1) },
+                    onConfirm = {
+                        val kg = value.toDoubleOrNull() ?: 0.0
+                        if (kg > 0) onSubmit(kg, selectedDate)
+                    },
+                    allowDecimal = true,
+                    confirmEnabled = (value.toDoubleOrNull() ?: 0.0) > 0,
+                    accentColor = MaterialTheme.colorScheme.primary
+                )
+
+                TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.cancel))
+                }
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
         }
-    )
+    }
 }
 
 /** A mai naplóbejegyzések kártyája hozzáadás és törlés gombbal. */

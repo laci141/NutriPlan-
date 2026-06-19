@@ -349,4 +349,11 @@
     <string name="ai_suggest">AI étrend-ötlet</string>
     <string name="ai_working">Folyamatban…</string>
     <string name="ai_note">Az URL + token titkosítva tárolva (Keystore), az app-zár védi. A szolgáltató-kulcsok csak a Workereden vannak.</string>
+
+    <!-- Dashboard UI extras -->
+    <string name="tab_daily">Mai</string>
+    <string name="tab_weekly">Heti</string>
+    <string name="weight_previous">Előző</string>
+    <string name="date_today">Ma</string>
+    <string name="date_yesterday">Tegnap</string>
 </resources>

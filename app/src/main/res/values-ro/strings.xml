@@ -349,4 +349,11 @@
     <string name="ai_suggest">Idee de meniu AI</string>
     <string name="ai_working">Se procesează…</string>
     <string name="ai_note">URL + token stocate criptat (Keystore), protejate de blocarea aplicației. Cheile furnizorilor sunt doar pe Worker-ul tău.</string>
+
+    <!-- Dashboard UI extras -->
+    <string name="tab_daily">Azi</string>
+    <string name="tab_weekly">Săptămânal</string>
+    <string name="weight_previous">Anterior</string>
+    <string name="date_today">Azi</string>
+    <string name="date_yesterday">Ieri</string>
 </resources>
