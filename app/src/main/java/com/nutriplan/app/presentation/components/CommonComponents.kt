@@ -1,19 +1,22 @@
 package com.nutriplan.app.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,59 +44,75 @@ fun EmptyState(message: String, modifier: Modifier = Modifier) {
     }
 }
 
-/** Egyetlen tápérték adat (címke + érték) egy kis kártyában. */
+/** A fő tápértékek (kalória, fehérje, szénhidrát, zsír, rost) egymás alatti, színes összesítője. */
 @Composable
-fun MacroChip(label: String, value: String, modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = RoundedCornerShape(12.dp)
+fun NutritionSummary(totals: NutritionTotals, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        MacroLine(
+            label = stringResource(R.string.calories),
+            value = "${totals.calories} ${stringResource(R.string.kcal_unit)}",
+            color = NutriCalorieColor
+        )
+        MacroLine(
+            label = stringResource(R.string.protein),
+            value = "${totals.protein.toInt()} g",
+            color = NutriProteinColor
+        )
+        MacroLine(
+            label = stringResource(R.string.carbs),
+            value = "${totals.carbs.toInt()} g",
+            color = NutriCarbsColor
+        )
+        MacroLine(
+            label = stringResource(R.string.fat),
+            value = "${totals.fat.toInt()} g",
+            color = NutriFatColor
+        )
+        MacroLine(
+            label = stringResource(R.string.fiber),
+            value = "${totals.fiberG.toInt()} g",
+            color = NutriFiberColor
+        )
     }
 }
 
-/** A négy fő tápérték (kalória, fehérje, szénhidrát, zsír) vízszintes összesítője. */
+// A kezdőlapi makró-kártyával egyező színek, hogy egységes legyen az egész app.
+private val NutriCalorieColor = Color(0xFFF97316) // narancs – kalória
+private val NutriProteinColor = Color(0xFF34D399) // almazöld – fehérje
+private val NutriCarbsColor = Color(0xFFF59E0B)   // borostyán – szénhidrát
+private val NutriFatColor = Color(0xFF3B82F6)     // kék – zsír
+private val NutriFiberColor = Color(0xFF22C55E)   // zöld – rost
+
+/**
+ * Egyetlen tápérték-sor: színes pötty + címke (balra) + érték (jobbra).
+ * A kezdőlapon használt elrendezést tükrözi, hogy egymás alatt, jól olvashatóan jelenjen meg.
+ */
 @Composable
-fun NutritionSummary(totals: NutritionTotals, modifier: Modifier = Modifier) {
+private fun MacroLine(label: String, value: String, color: Color) {
     Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        MacroChip(
-            label = stringResource(R.string.calories),
-            value = "${totals.calories} ${stringResource(R.string.kcal_unit)}",
-            modifier = Modifier.weight(1f)
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(color, shape = RoundedCornerShape(2.dp))
         )
-        MacroChip(
-            label = stringResource(R.string.protein),
-            value = "${totals.protein.toInt()}g",
-            modifier = Modifier.weight(1f)
+        Spacer(Modifier.size(8.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        MacroChip(
-            label = stringResource(R.string.carbs),
-            value = "${totals.carbs.toInt()}g",
-            modifier = Modifier.weight(1f)
-        )
-        MacroChip(
-            label = stringResource(R.string.fat),
-            value = "${totals.fat.toInt()}g",
-            modifier = Modifier.weight(1f)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            color = color
         )
     }
 }
