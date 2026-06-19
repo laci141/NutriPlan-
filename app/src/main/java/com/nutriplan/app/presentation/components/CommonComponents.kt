@@ -22,7 +22,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.nutriplan.app.R
 import com.nutriplan.app.domain.model.NutritionTotals
+import com.nutriplan.app.presentation.theme.Accent
 import androidx.compose.ui.res.stringResource
+
+/** Neon zöld képernyőcím – egységes, „márkás" fejléc a fő oldalak felső sávjában. */
+@Composable
+fun ScreenTitle(text: String) {
+    Text(
+        text = text,
+        fontWeight = FontWeight.Bold,
+        color = Accent.Neon
+    )
+}
 
 /**
  * Újrahasznosítható megjelenítési komponensek.

@@ -74,6 +74,7 @@ import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.Recipe
 import com.nutriplan.app.presentation.components.EmptyState
 import com.nutriplan.app.presentation.components.NutritionSummary
+import com.nutriplan.app.presentation.components.ScreenTitle
 import com.nutriplan.app.domain.model.NutritionTotals
 import com.nutriplan.app.presentation.util.ConfirmDeleteDialog
 import com.nutriplan.app.presentation.util.displayName
@@ -128,7 +129,7 @@ fun RecipeListScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.recipes_title)) },
+                title = { ScreenTitle(stringResource(R.string.recipes_title)) },
                 actions = {
                     if (selected == null) {
                         IconButton(onClick = {

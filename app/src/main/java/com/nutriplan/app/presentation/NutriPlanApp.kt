@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import com.nutriplan.app.presentation.recipe.RecipeEditScreen
 import com.nutriplan.app.presentation.recipe.RecipeListScreen
 import com.nutriplan.app.presentation.settings.SettingsScreen
 import com.nutriplan.app.presentation.shopping.ShoppingScreen
+import com.nutriplan.app.presentation.theme.Accent
 import com.nutriplan.app.util.Logger
 
 /**
@@ -49,6 +51,9 @@ fun NutriPlanApp() {
             if (currentRoute in BottomNavItem.entries.map { it.route }) {
                 NavigationBar {
                     BottomNavItem.entries.forEach { item ->
+                        // Minden fül a saját akcentus-színét kapja: az aktív telített,
+                        // színes "pirula" háttérrel, az inaktívak halványabb saját árnyalattal.
+                        val itemColor = Accent.forRoute(item.route)
                         NavigationBarItem(
                             selected = currentRoute == item.route,
                             onClick = {
@@ -70,7 +75,14 @@ fun NutriPlanApp() {
                                     softWrap = false,
                                     overflow = TextOverflow.Ellipsis
                                 )
-                            }
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = itemColor,
+                                selectedTextColor = itemColor,
+                                indicatorColor = itemColor.copy(alpha = 0.20f),
+                                unselectedIconColor = itemColor.copy(alpha = 0.55f),
+                                unselectedTextColor = itemColor.copy(alpha = 0.55f)
+                            )
                         )
                     }
                 }

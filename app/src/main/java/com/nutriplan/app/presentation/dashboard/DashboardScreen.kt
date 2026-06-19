@@ -94,6 +94,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nutriplan.app.R
+import com.nutriplan.app.presentation.theme.Accent
 import com.nutriplan.app.data.local.LocalFood
 import com.nutriplan.app.domain.model.FoodLogEntry
 import com.nutriplan.app.domain.model.MealType
@@ -222,7 +223,8 @@ fun DashboardScreen(
             Text(
                 text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Accent.Neon
             )
             Text(
                 text = stringResource(greetingRes),

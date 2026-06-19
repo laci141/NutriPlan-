@@ -44,6 +44,7 @@ import com.nutriplan.app.R
 import com.nutriplan.app.domain.model.IngredientCategory
 import com.nutriplan.app.domain.model.ShoppingItem
 import com.nutriplan.app.presentation.components.EmptyState
+import com.nutriplan.app.presentation.components.ScreenTitle
 import com.nutriplan.app.presentation.util.ShoppingShare
 import com.nutriplan.app.presentation.util.displayName
 import com.nutriplan.app.presentation.util.formatQuantity
@@ -71,7 +72,7 @@ fun ShoppingScreen(viewModel: ShoppingViewModel = hiltViewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.shopping_title)) },
+                title = { ScreenTitle(stringResource(R.string.shopping_title)) },
                 actions = {
                     IconButton(
                         onClick = {

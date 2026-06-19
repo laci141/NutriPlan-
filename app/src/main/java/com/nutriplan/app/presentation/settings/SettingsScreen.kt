@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nutriplan.app.R
+import com.nutriplan.app.presentation.components.ScreenTitle
 import com.nutriplan.app.domain.model.Language
 import com.nutriplan.app.domain.model.ThemeMode
 import com.nutriplan.app.presentation.util.label
@@ -111,7 +112,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.settings_title)) }) },
+        topBar = { TopAppBar(title = { ScreenTitle(stringResource(R.string.settings_title)) }) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Column(

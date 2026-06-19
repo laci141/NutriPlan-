@@ -30,6 +30,7 @@ import com.nutriplan.app.R
 import com.nutriplan.app.domain.model.WeekDay
 import com.nutriplan.app.presentation.components.EmptyState
 import com.nutriplan.app.presentation.components.NutritionSummary
+import com.nutriplan.app.presentation.components.ScreenTitle
 import com.nutriplan.app.presentation.util.label
 
 /**
@@ -41,7 +42,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.nutrition_title)) }) }
+        topBar = { TopAppBar(title = { ScreenTitle(stringResource(R.string.nutrition_title)) }) }
     ) { padding ->
         if (!state.hasData) {
             EmptyState(
