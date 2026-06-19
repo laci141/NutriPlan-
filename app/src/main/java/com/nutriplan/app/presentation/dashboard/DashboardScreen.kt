@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -137,6 +138,7 @@ fun DashboardScreen(
     var showScanner by remember { mutableStateOf(false) }
     var showWeightDialog by remember { mutableStateOf(false) }
     var voiceInitialText by remember { mutableStateOf("") }
+    var swapEntry by remember { mutableStateOf<FoodLogEntry?>(null) }
 
     // Hangnaplózás – rendszer speech intent (nem kell RECORD_AUDIO engedély)
     val speechLauncher = rememberLauncherForActivityResult(
@@ -354,7 +356,8 @@ fun DashboardScreen(
             entries = state.todayEntries,
             onAdd = { voiceInitialText = ""; showAddFood = true },
             onVoiceLog = { startVoiceInput() },
-            onDelete = { viewModel.deleteFood(it) }
+            onDelete = { viewModel.deleteFood(it) },
+            onSwap = { entry -> swapEntry = entry }
         )
 
         // Heti kalória oszlopdiagram
@@ -426,6 +429,15 @@ fun DashboardScreen(
                 showWeightDialog = false
             },
             onDismiss = { showWeightDialog = false }
+        )
+    }
+
+    // Csere-javaslat dialógus
+    swapEntry?.let { entry ->
+        SwapFoodDialog(
+            entry = entry,
+            alternatives = remember(entry) { viewModel.findSimilarFoods(entry.calories, entry.protein) },
+            onDismiss = { swapEntry = null }
         )
     }
     }
@@ -616,6 +628,49 @@ private fun MacroRow(label: String, value: String, fraction: Float, color: Color
             strokeCap = StrokeCap.Round
         )
     }
+}
+
+// ── Csere-javaslat dialógus ──────────────────────────────────────────────────
+
+/** Hasonló tápértékű ételek javaslata a naplózott étel alternatíváiként. */
+@Composable
+private fun SwapFoodDialog(
+    entry: FoodLogEntry,
+    alternatives: List<LocalFood>,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.swap_food)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(R.string.swap_desc, entry.name),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                alternatives.forEach { food ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(food.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                            Text(
+                                "${food.kcal} kcal · F${food.protein.roundToInt()} Sz${food.carbs.roundToInt()} Zs${food.fat.roundToInt()} g/100g",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    HorizontalDivider()
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.ok)) }
+        }
+    )
 }
 
 // ── Heti kalória diagram ──────────────────────────────────────────────────────
@@ -902,13 +957,14 @@ private fun WeightDialog(
     }
 }
 
-/** A mai naplóbejegyzések kártyája hozzáadás, hangbevitel és törlés gombbal. */
+/** A mai naplóbejegyzések kártyája hozzáadás, hangbevitel, törlés és csere gombbal. */
 @Composable
 private fun FoodLogCard(
     entries: List<FoodLogEntry>,
     onAdd: () -> Unit,
     onVoiceLog: () -> Unit,
-    onDelete: (Long) -> Unit
+    onDelete: (Long) -> Unit,
+    onSwap: (FoodLogEntry) -> Unit = {}
 ) {
     BentoCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -951,6 +1007,14 @@ private fun FoodLogCard(
                                 "F ${e.protein.roundToInt()} · Sz ${e.carbs.roundToInt()} · Zs ${e.fat.roundToInt()} g",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    IconButton(onClick = { onSwap(e) }) {
+                        Icon(
+                            Icons.Filled.SwapHoriz,
+                            contentDescription = stringResource(R.string.swap_food),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                     IconButton(onClick = { onDelete(e.id) }) {

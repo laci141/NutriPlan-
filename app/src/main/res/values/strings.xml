@@ -380,6 +380,10 @@
     <string name="fasting_stop">Stop</string>
     <string name="fasting_window">Window: %1$s (intermittent fasting)</string>
 
+    <!-- Nutritional swap suggestions -->
+    <string name="swap_food">Swap suggestions</string>
+    <string name="swap_desc">Similar protein-to-calorie ratio alternatives for "%1$s"</string>
+
     <!-- Voice logging -->
     <string name="voice_log">Voice log</string>
 

@@ -68,4 +68,18 @@ class LocalFoodDatabase @Inject constructor(
         val q = query.trim().lowercase()
         return all.filter { it.name.lowercase().contains(q) }.take(15)
     }
+
+    /**
+     * Hasonló tápértékű ételek keresése (fehérje/kalória arány alapján).
+     * A naplózott étel alternatíváinak megjelenítéséhez.
+     */
+    fun findSimilar(calories: Int, protein: Double): List<LocalFood> {
+        val targetRatio = if (calories > 0) protein / calories.toDouble() else 0.0
+        return all
+            .sortedBy { food ->
+                val r = if (food.kcal > 0) food.protein / food.kcal.toDouble() else 0.0
+                kotlin.math.abs(r - targetRatio)
+            }
+            .take(6)
+    }
 }

@@ -225,6 +225,10 @@ class DashboardViewModel @Inject constructor(
     /** Helyi ételadatbázis keresés – a dialógusban a gyorsválasztáshoz. */
     fun searchLocalFoods(query: String): List<LocalFood> = localFoodDatabase.search(query)
 
+    /** Hasonló fehérje/kalória arányú ételek – a csere-javaslat dialógushoz. */
+    fun findSimilarFoods(calories: Int, protein: Double): List<LocalFood> =
+        localFoodDatabase.findSimilar(calories, protein)
+
     /** A beolvasott termék / hiba nyugtázása a dialógus után. */
     fun consumeScan() {
         _scannedProduct.value = null

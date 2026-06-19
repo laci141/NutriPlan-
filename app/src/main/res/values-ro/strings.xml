@@ -380,6 +380,10 @@
     <string name="fasting_stop">Stop</string>
     <string name="fasting_window">Fereastră: %1$s (post intermitent)</string>
 
+    <!-- Sugestii de înlocuire -->
+    <string name="swap_food">Sugestii înlocuire</string>
+    <string name="swap_desc">Alternative cu raport proteină/calorii similar pentru "%1$s"</string>
+
     <!-- Înregistrare vocală -->
     <string name="voice_log">Înregistrare vocală</string>
 

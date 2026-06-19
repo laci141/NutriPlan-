@@ -380,6 +380,10 @@
     <string name="fasting_stop">Leállítás</string>
     <string name="fasting_window">Ablak: %1$s (időszakos böjt)</string>
 
+    <!-- Tápértékcserék -->
+    <string name="swap_food">Csere-javaslatok</string>
+    <string name="swap_desc">Hasonló fehérje/kalória arányú alternatívák a(z) "%1$s" helyett</string>
+
     <!-- Hangnaplózás -->
     <string name="voice_log">Hangnaplózás</string>
 
