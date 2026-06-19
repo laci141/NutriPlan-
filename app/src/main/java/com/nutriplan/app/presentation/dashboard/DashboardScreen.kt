@@ -37,10 +37,10 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
@@ -593,6 +593,82 @@ private fun MacroNutritionCard(
             value = "${(if (isWeekly) state.todayTotals.fat * 7 else state.todayTotals.fat).roundToInt()} g",
             fraction = fractionOf(state.todayTotals.fat * (if (isWeekly) 7.0 else 1.0), state.fatTarget * if (isWeekly) 7 else 1),
             color = FatColor
+        )
+        // Tányér-összetétel: a mai kalóriák makró-eloszlása (cél 30/40/30)
+        if (!isWeekly && state.todayTotals.calories > 0) {
+            PlateCompositionRow(state.todayTotals)
+        }
+    }
+}
+
+/**
+ * "Tányér-validátor": a ténylegesen elfogyasztott kalóriák fehérje/szénhidrát/zsír
+ * arányát mutatja a javasolt 30/40/30 eloszláshoz képest.
+ */
+@Composable
+private fun PlateCompositionRow(totals: NutritionTotals) {
+    val proteinKcal = totals.protein * 4.0
+    val carbsKcal = totals.carbs * 4.0
+    val fatKcal = totals.fat * 9.0
+    val sum = proteinKcal + carbsKcal + fatKcal
+    if (sum <= 0) return
+    val pPct = (proteinKcal / sum * 100).roundToInt()
+    val cPct = (carbsKcal / sum * 100).roundToInt()
+    val fPct = (fatKcal / sum * 100).roundToInt()
+
+    Spacer(Modifier.size(10.dp))
+    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+    Spacer(Modifier.size(8.dp))
+    Text(
+        text = stringResource(R.string.plate_composition),
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onSurface
+    )
+    Spacer(Modifier.size(6.dp))
+    // Egyetlen, arányosan kitöltött sáv a három makróval
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(14.dp)
+            .clip(RoundedCornerShape(7.dp))
+    ) {
+        if (pPct > 0) Box(Modifier.weight(pPct.toFloat()).fillMaxHeight().background(ProteinColor))
+        if (cPct > 0) Box(Modifier.weight(cPct.toFloat()).fillMaxHeight().background(CarbsColor))
+        if (fPct > 0) Box(Modifier.weight(fPct.toFloat()).fillMaxHeight().background(FatColor))
+    }
+    Spacer(Modifier.size(8.dp))
+    PlatePctLine(stringResource(R.string.protein), pPct, 30, ProteinColor)
+    PlatePctLine(stringResource(R.string.carbs), cPct, 40, CarbsColor)
+    PlatePctLine(stringResource(R.string.fat), fPct, 30, FatColor)
+}
+
+@Composable
+private fun PlatePctLine(label: String, actualPct: Int, targetPct: Int, color: Color) {
+    val off = kotlin.math.abs(actualPct - targetPct) > 10
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(modifier = Modifier.size(8.dp).background(color, shape = RoundedCornerShape(2.dp)))
+        Spacer(Modifier.size(8.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(1f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = "$actualPct%",
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Bold,
+            color = if (off) MaterialTheme.colorScheme.error else color
+        )
+        Spacer(Modifier.size(6.dp))
+        Text(
+            text = "/ $targetPct%",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

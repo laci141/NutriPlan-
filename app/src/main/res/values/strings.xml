@@ -390,4 +390,7 @@
     <!-- Seasonal foods -->
     <string name="seasonal_foods">In season this month</string>
     <string name="seasonal_tip">Fresh, local produce currently in season in Hungary/Romania</string>
+
+    <!-- Plate composition validator -->
+    <string name="plate_composition">Plate balance (vs 30/40/30)</string>
 </resources>

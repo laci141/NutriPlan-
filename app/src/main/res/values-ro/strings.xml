@@ -390,4 +390,7 @@
     <!-- Alimente de sezon -->
     <string name="seasonal_foods">De sezon în această lună</string>
     <string name="seasonal_tip">Produse locale proaspete disponibile în sezon în Ungaria/România</string>
+
+    <!-- Validator compoziție farfurie -->
+    <string name="plate_composition">Echilibrul farfuriei (față de 30/40/30)</string>
 </resources>

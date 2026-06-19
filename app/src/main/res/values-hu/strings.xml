@@ -390,4 +390,7 @@
     <!-- Szezonális ételek -->
     <string name="seasonal_foods">Ez havi szezonális ételek</string>
     <string name="seasonal_tip">Friss, helyi termények, amelyek most szezonban vannak Magyarországon/Romániában</string>
+
+    <!-- Tányér-validátor -->
+    <string name="plate_composition">Tányér-egyensúly (cél 30/40/30)</string>
 </resources>
