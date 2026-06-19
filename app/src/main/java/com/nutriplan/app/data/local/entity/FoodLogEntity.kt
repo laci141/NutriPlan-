@@ -18,6 +18,13 @@ data class FoodLogEntity(
     val protein: Double,
     val carbs: Double,
     val fat: Double,
-    // Étkezés típusa (csoportosításhoz), enum kulcs szövegként
-    val mealType: String
+    val mealType: String,
+    // Mikrotápanyagok (0.0 = nincs adat)
+    val fiberG: Double = 0.0,
+    val vitaminCMg: Double = 0.0,
+    val ironMg: Double = 0.0,
+    val calciumMg: Double = 0.0,
+    val vitaminDUg: Double = 0.0,
+    val b12Ug: Double = 0.0,
+    val magnesiumMg: Double = 0.0
 )

@@ -27,7 +27,7 @@ import com.nutriplan.app.data.local.entity.WeightEntryEntity
         FoodLogEntity::class,
         WeightEntryEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class NutriPlanDatabase : RoomDatabase() {

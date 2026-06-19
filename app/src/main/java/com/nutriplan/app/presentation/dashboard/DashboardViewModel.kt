@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nutriplan.app.data.preferences.DashboardPreferences
 import com.nutriplan.app.data.preferences.SettingsManager
+import com.nutriplan.app.data.local.LocalFood
+import com.nutriplan.app.data.local.LocalFoodDatabase
 import com.nutriplan.app.data.remote.OpenFoodFactsDataSource
 import com.nutriplan.app.data.remote.ProductLookupResult
 import com.nutriplan.app.data.remote.ScannedProduct
@@ -65,7 +67,8 @@ class DashboardViewModel @Inject constructor(
     private val dashboardPreferences: DashboardPreferences,
     private val foodLogRepository: FoodLogRepository,
     private val weightRepository: WeightRepository,
-    private val openFoodFacts: OpenFoodFactsDataSource
+    private val openFoodFacts: OpenFoodFactsDataSource,
+    private val localFoodDatabase: LocalFoodDatabase
 ) : ViewModel() {
 
     private val today: LocalDate = LocalDate.now()
@@ -126,7 +129,10 @@ class DashboardViewModel @Inject constructor(
         recentRange
     ) { entries, goal, water, macros, range ->
         val totals = entries.fold(NutritionTotals()) { acc, e ->
-            acc + NutritionTotals(e.calories, e.protein, e.carbs, e.fat)
+            acc + NutritionTotals(
+                e.calories, e.protein, e.carbs, e.fat,
+                e.fiberG, e.vitaminCMg, e.ironMg, e.calciumMg, e.vitaminDUg, e.b12Ug, e.magnesiumMg
+            )
         }
         val effectiveGoal = if (goal > 0) goal else 2000
         val (customP, customC, customF) = macros
@@ -163,8 +169,14 @@ class DashboardViewModel @Inject constructor(
         return streak
     }
 
-    /** Új naplóbejegyzés hozzáadása a mai naphoz. */
-    fun addFood(name: String, calories: Int, protein: Double, carbs: Double, fat: Double, mealType: MealType) {
+    /** Új naplóbejegyzés hozzáadása a mai naphoz (mikrotápanyagokkal). */
+    fun addFood(
+        name: String, calories: Int, protein: Double, carbs: Double, fat: Double,
+        mealType: MealType,
+        fiberG: Double = 0.0, vitaminCMg: Double = 0.0, ironMg: Double = 0.0,
+        calciumMg: Double = 0.0, vitaminDUg: Double = 0.0, b12Ug: Double = 0.0,
+        magnesiumMg: Double = 0.0
+    ) {
         if (name.isBlank()) return
         viewModelScope.launch {
             foodLogRepository.add(
@@ -175,7 +187,14 @@ class DashboardViewModel @Inject constructor(
                     protein = protein,
                     carbs = carbs,
                     fat = fat,
-                    mealType = mealType
+                    mealType = mealType,
+                    fiberG = fiberG,
+                    vitaminCMg = vitaminCMg,
+                    ironMg = ironMg,
+                    calciumMg = calciumMg,
+                    vitaminDUg = vitaminDUg,
+                    b12Ug = b12Ug,
+                    magnesiumMg = magnesiumMg
                 )
             )
             Logger.i(Logger.Tags.VIEWMODEL, "Étel naplózva: '$name' ($calories kcal)")
@@ -203,6 +222,9 @@ class DashboardViewModel @Inject constructor(
             }
         }
     }
+
+    /** Helyi ételadatbázis keresés – a dialógusban a gyorsválasztáshoz. */
+    fun searchLocalFoods(query: String): List<LocalFood> = localFoodDatabase.search(query)
 
     /** A beolvasott termék / hiba nyugtázása a dialógus után. */
     fun consumeScan() {

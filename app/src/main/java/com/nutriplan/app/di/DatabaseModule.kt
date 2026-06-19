@@ -61,6 +61,15 @@ object DatabaseModule {
         }
     }
 
+    // 6 -> 7: mikrotápanyag oszlopok hozzáadása a food_log táblához
+    private val migration6to7 = object : Migration(6, 7) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            listOf("fiberG","vitaminCMg","ironMg","calciumMg","vitaminDUg","b12Ug","magnesiumMg").forEach { col ->
+                db.execSQL("ALTER TABLE food_log ADD COLUMN $col REAL NOT NULL DEFAULT 0")
+            }
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): NutriPlanDatabase {
@@ -70,7 +79,7 @@ object DatabaseModule {
             NutriPlanDatabase::class.java,
             NutriPlanDatabase.DATABASE_NAME
         )
-            .addMigrations(migration3to4, migration4to5, migration5to6)
+            .addMigrations(migration3to4, migration4to5, migration5to6, migration6to7)
             .fallbackToDestructiveMigration()
             .build()
     }

@@ -356,4 +356,18 @@
     <string name="weight_previous">Previous</string>
     <string name="date_today">Today</string>
     <string name="date_yesterday">Yesterday</string>
+
+    <!-- Micronutrients -->
+    <string name="micro_nutrients">Micronutrients</string>
+    <string name="fiber">Fiber</string>
+    <string name="vitamin_c">Vitamin C</string>
+    <string name="iron">Iron</string>
+    <string name="calcium">Calcium</string>
+    <string name="vitamin_d">Vitamin D</string>
+    <string name="vitamin_b12">Vitamin B12</string>
+    <string name="magnesium">Magnesium</string>
+
+    <!-- Local food database -->
+    <string name="local_foods">Local foods (HU/RO)</string>
+    <string name="search_foods">Search local foods…</string>
 </resources>

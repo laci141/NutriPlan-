@@ -356,4 +356,18 @@
     <string name="weight_previous">Anterior</string>
     <string name="date_today">Azi</string>
     <string name="date_yesterday">Ieri</string>
+
+    <!-- Micronutrienți -->
+    <string name="micro_nutrients">Micronutrienți</string>
+    <string name="fiber">Fibre</string>
+    <string name="vitamin_c">Vitamina C</string>
+    <string name="iron">Fier</string>
+    <string name="calcium">Calciu</string>
+    <string name="vitamin_d">Vitamina D</string>
+    <string name="vitamin_b12">Vitamina B12</string>
+    <string name="magnesium">Magneziu</string>
+
+    <!-- Baza de date alimentară locală -->
+    <string name="local_foods">Alimente locale (HU/RO)</string>
+    <string name="search_foods">Caută alimente locale…</string>
 </resources>

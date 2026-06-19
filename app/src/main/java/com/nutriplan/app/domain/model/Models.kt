@@ -21,7 +21,14 @@ data class FoodLogEntry(
     val protein: Double,
     val carbs: Double,
     val fat: Double,
-    val mealType: MealType = MealType.LUNCH
+    val mealType: MealType = MealType.LUNCH,
+    val fiberG: Double = 0.0,
+    val vitaminCMg: Double = 0.0,
+    val ironMg: Double = 0.0,
+    val calciumMg: Double = 0.0,
+    val vitaminDUg: Double = 0.0,
+    val b12Ug: Double = 0.0,
+    val magnesiumMg: Double = 0.0
 )
 
 /**
@@ -92,13 +99,36 @@ data class NutritionTotals(
     val calories: Int = 0,
     val protein: Double = 0.0,
     val carbs: Double = 0.0,
-    val fat: Double = 0.0
+    val fat: Double = 0.0,
+    // Mikrotápanyagok
+    val fiberG: Double = 0.0,
+    val vitaminCMg: Double = 0.0,
+    val ironMg: Double = 0.0,
+    val calciumMg: Double = 0.0,
+    val vitaminDUg: Double = 0.0,
+    val b12Ug: Double = 0.0,
+    val magnesiumMg: Double = 0.0
 ) {
-    /** Két összesítés összeadása – napi és heti aggregációhoz. */
     operator fun plus(other: NutritionTotals): NutritionTotals = NutritionTotals(
         calories = calories + other.calories,
         protein = protein + other.protein,
         carbs = carbs + other.carbs,
-        fat = fat + other.fat
+        fat = fat + other.fat,
+        fiberG = fiberG + other.fiberG,
+        vitaminCMg = vitaminCMg + other.vitaminCMg,
+        ironMg = ironMg + other.ironMg,
+        calciumMg = calciumMg + other.calciumMg,
+        vitaminDUg = vitaminDUg + other.vitaminDUg,
+        b12Ug = b12Ug + other.b12Ug,
+        magnesiumMg = magnesiumMg + other.magnesiumMg
     )
+
+    /** Napi ajánlott bevitel (RDI) hányada – hiány-figyelmeztetéshez. */
+    companion object {
+        val DAILY_RDI = NutritionTotals(
+            calories = 2000, protein = 50.0, carbs = 260.0, fat = 70.0,
+            fiberG = 25.0, vitaminCMg = 80.0, ironMg = 14.0,
+            calciumMg = 800.0, vitaminDUg = 15.0, b12Ug = 2.5, magnesiumMg = 375.0
+        )
+    }
 }

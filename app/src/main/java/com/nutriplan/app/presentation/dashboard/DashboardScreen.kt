@@ -90,8 +90,10 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nutriplan.app.R
+import com.nutriplan.app.data.local.LocalFood
 import com.nutriplan.app.domain.model.FoodLogEntry
 import com.nutriplan.app.domain.model.MealType
+import com.nutriplan.app.domain.model.NutritionTotals
 import com.nutriplan.app.presentation.components.ActivityRings
 import com.nutriplan.app.presentation.components.CalorieRing
 import com.nutriplan.app.presentation.components.LabeledDropdown
@@ -274,6 +276,9 @@ fun DashboardScreen(
             onOpenNutrition = onOpenNutrition
         )
 
+        // Mikrotápanyag kártya (ma elfogyasztott mikrotápanyagok az ajánlott napi bevitellel)
+        MicroNutrientCard(totals = state.todayTotals)
+
         // Víz panel – teljes szélességű, nagy, +250 / -250 ml gombok
         WaterCard(
             water = state.water,
@@ -341,12 +346,13 @@ fun DashboardScreen(
         AddFoodDialog(
             recentFoods = recentFoods,
             scanned = scannedProduct,
+            localFoodSearch = { query -> viewModel.searchLocalFoods(query) },
             onScan = {
                 showAddFood = false
                 openScanner()
             },
-            onSubmit = { name, kcal, p, c, f, meal ->
-                viewModel.addFood(name, kcal, p, c, f, meal)
+            onSubmit = { name, kcal, p, c, f, meal, fiber, vitC, iron, calcium, vitD, b12, mg ->
+                viewModel.addFood(name, kcal, p, c, f, meal, fiber, vitC, iron, calcium, vitD, b12, mg)
                 viewModel.consumeScan()
                 showAddFood = false
             },
@@ -598,6 +604,79 @@ private fun WeeklyCaloriesCard(data: List<Pair<java.time.LocalDate, Int>>, goal:
     }
 }
 
+// ── Mikrotápanyag kártya ──────────────────────────────────────────────────────
+
+private val FiberColor   = Color(0xFF22C55E)   // zöld
+private val VitCColor    = Color(0xFFF97316)   // narancs
+private val IronColor    = Color(0xFFEF4444)   // piros
+private val CalciumColor = Color(0xFF3B82F6)   // kék
+private val VitDColor    = Color(0xFFF59E0B)   // sárga
+private val B12Color     = Color(0xFF8B5CF6)   // lila
+private val MagColor     = Color(0xFF14B8A6)   // türkiz
+
+@Composable
+private fun MicroNutrientCard(totals: NutritionTotals) {
+    val rdi = NutritionTotals.DAILY_RDI
+    BentoCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.micro_nutrients),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        MicroRow(stringResource(R.string.fiber),      totals.fiberG,     rdi.fiberG,     "g",  FiberColor)
+        MicroRow(stringResource(R.string.vitamin_c),  totals.vitaminCMg, rdi.vitaminCMg, "mg", VitCColor)
+        MicroRow(stringResource(R.string.iron),       totals.ironMg,     rdi.ironMg,     "mg", IronColor)
+        MicroRow(stringResource(R.string.calcium),    totals.calciumMg,  rdi.calciumMg,  "mg", CalciumColor)
+        MicroRow(stringResource(R.string.vitamin_d),  totals.vitaminDUg, rdi.vitaminDUg, "μg", VitDColor)
+        MicroRow(stringResource(R.string.vitamin_b12),totals.b12Ug,      rdi.b12Ug,      "μg", B12Color)
+        MicroRow(stringResource(R.string.magnesium),  totals.magnesiumMg,rdi.magnesiumMg,"mg", MagColor)
+    }
+}
+
+@Composable
+private fun MicroRow(label: String, value: Double, rdiVal: Double, unit: String, color: Color) {
+    val fraction = if (rdiVal > 0) (value / rdiVal).toFloat().coerceIn(0f, 1f) else 0f
+    val low = value > 0 && fraction < 0.5f
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier
+                .size(8.dp)
+                .background(color, RoundedCornerShape(2.dp)))
+            Spacer(Modifier.size(6.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (low) {
+                Text(
+                    text = "▲",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+                Spacer(Modifier.size(4.dp))
+            }
+            Text(
+                text = "${formatMicro(value)} / ${formatMicro(rdiVal)} $unit",
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.SemiBold,
+                color = color
+            )
+        }
+        LinearProgressIndicator(
+            progress = { fraction },
+            modifier = Modifier.fillMaxWidth().height(4.dp),
+            color = color,
+            trackColor = color.copy(alpha = 0.15f),
+            strokeCap = StrokeCap.Round
+        )
+    }
+}
+
+private fun formatMicro(value: Double): String =
+    if (value < 10.0) String.format("%.1f", value) else value.toInt().toString()
+
 // ── Testsúly kártya + dialógus ────────────────────────────────────────────────
 
 /** Testsúly kártya: grafikon felül, dátumos bejegyzések lista, törlés hosszú nyomásra. */
@@ -847,8 +926,9 @@ private fun FoodLogCard(
 private fun AddFoodDialog(
     recentFoods: List<FoodLogEntry>,
     scanned: com.nutriplan.app.data.remote.ScannedProduct?,
+    localFoodSearch: (String) -> List<LocalFood>,
     onScan: () -> Unit,
-    onSubmit: (String, Int, Double, Double, Double, MealType) -> Unit,
+    onSubmit: (String, Int, Double, Double, Double, MealType, Double, Double, Double, Double, Double, Double, Double) -> Unit,
     onDismiss: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
@@ -858,8 +938,17 @@ private fun AddFoodDialog(
     var carbs by remember { mutableStateOf("") }
     var fat by remember { mutableStateOf("") }
     var mealType by remember { mutableStateOf(MealType.LUNCH) }
-    // 100 g-os alap a vonalkódról (skálázáshoz); null = kézi mód
     var basis by remember { mutableStateOf<com.nutriplan.app.data.remote.ScannedProduct?>(null) }
+    var localQuery by remember { mutableStateOf("") }
+    val localResults = remember(localQuery) { localFoodSearch(localQuery) }
+    // Mikrotápanyagok (opcionális, 0 = nincs adat)
+    var fiberG by remember { mutableStateOf(0.0) }
+    var vitaminCMg by remember { mutableStateOf(0.0) }
+    var ironMg by remember { mutableStateOf(0.0) }
+    var calciumMg by remember { mutableStateOf(0.0) }
+    var vitaminDUg by remember { mutableStateOf(0.0) }
+    var b12Ug by remember { mutableStateOf(0.0) }
+    var magnesiumMg by remember { mutableStateOf(0.0) }
 
     fun applyGrams(g: Double) {
         val b = basis ?: return
@@ -868,6 +957,13 @@ private fun AddFoodDialog(
         protein = (b.proteinPer100g * factor).roundToInt().toString()
         carbs = (b.carbsPer100g * factor).roundToInt().toString()
         fat = (b.fatPer100g * factor).roundToInt().toString()
+        fiberG = b.fiberPer100g * factor
+        vitaminCMg = b.vitaminCPer100gMg * factor
+        ironMg = b.ironPer100gMg * factor
+        calciumMg = b.calciumPer100gMg * factor
+        vitaminDUg = b.vitaminDPer100gUg * factor
+        b12Ug = b.b12Per100gUg * factor
+        magnesiumMg = b.magnesiumPer100gMg * factor
     }
 
     // Beolvasott termék betöltése (100 g-os alapként)
@@ -917,6 +1013,43 @@ private fun AddFoodDialog(
                         }
                     }
                 }
+                // Helyi ételek (HU/RO adatbázis)
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                Text(
+                    text = stringResource(R.string.local_foods),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                OutlinedTextField(
+                    value = localQuery,
+                    onValueChange = { localQuery = it },
+                    placeholder = { Text(stringResource(R.string.search_foods)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (localResults.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        localResults.forEach { food ->
+                            AssistChip(
+                                onClick = {
+                                    val prod = food.toScannedProduct()
+                                    basis = prod
+                                    name = food.name
+                                    grams = "100"
+                                    applyGrams(100.0)
+                                },
+                                label = { Text("${food.name} (${food.kcal})", maxLines = 1) }
+                            )
+                        }
+                    }
+                }
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -963,7 +1096,8 @@ private fun AddFoodDialog(
                     protein.toDoubleOrNull() ?: 0.0,
                     carbs.toDoubleOrNull() ?: 0.0,
                     fat.toDoubleOrNull() ?: 0.0,
-                    mealType
+                    mealType,
+                    fiberG, vitaminCMg, ironMg, calciumMg, vitaminDUg, b12Ug, magnesiumMg
                 )
             }) { Text(stringResource(R.string.save)) }
         },

@@ -22,7 +22,14 @@ data class ScannedProduct(
     val caloriesPer100g: Int,
     val proteinPer100g: Double,
     val carbsPer100g: Double,
-    val fatPer100g: Double
+    val fatPer100g: Double,
+    val fiberPer100g: Double = 0.0,
+    val vitaminCPer100gMg: Double = 0.0,
+    val ironPer100gMg: Double = 0.0,
+    val calciumPer100gMg: Double = 0.0,
+    val vitaminDPer100gUg: Double = 0.0,
+    val b12Per100gUg: Double = 0.0,
+    val magnesiumPer100gMg: Double = 0.0
 )
 
 /**
@@ -102,7 +109,14 @@ class OpenFoodFactsDataSource @Inject constructor() {
                     caloriesPer100g = (n?.energyKcal ?: 0.0).roundToInt(),
                     proteinPer100g = n?.proteins ?: 0.0,
                     carbsPer100g = n?.carbohydrates ?: 0.0,
-                    fatPer100g = n?.fat ?: 0.0
+                    fatPer100g = n?.fat ?: 0.0,
+                    fiberPer100g = n?.fiber ?: 0.0,
+                    vitaminCPer100gMg = n?.vitaminC ?: 0.0,
+                    ironPer100gMg = (n?.iron ?: 0.0) * 1000.0,
+                    calciumPer100gMg = (n?.calcium ?: 0.0) * 1000.0,
+                    vitaminDPer100gUg = (n?.vitaminD ?: 0.0) * 1000000.0,
+                    b12Per100gUg = (n?.vitaminB12 ?: 0.0) * 1000000.0,
+                    magnesiumPer100gMg = (n?.magnesium ?: 0.0) * 1000.0
                 )
             )
         } catch (e: Exception) {
@@ -136,5 +150,12 @@ private data class OffNutriments(
     @SerialName("energy-kcal_100g") val energyKcal: Double? = null,
     @SerialName("proteins_100g") val proteins: Double? = null,
     @SerialName("carbohydrates_100g") val carbohydrates: Double? = null,
-    @SerialName("fat_100g") val fat: Double? = null
+    @SerialName("fat_100g") val fat: Double? = null,
+    @SerialName("fiber_100g") val fiber: Double? = null,
+    @SerialName("vitamin-c_100g") val vitaminC: Double? = null,
+    @SerialName("iron_100g") val iron: Double? = null,
+    @SerialName("calcium_100g") val calcium: Double? = null,
+    @SerialName("vitamin-d_100g") val vitaminD: Double? = null,
+    @SerialName("vitamin-b12_100g") val vitaminB12: Double? = null,
+    @SerialName("magnesium_100g") val magnesium: Double? = null
 )

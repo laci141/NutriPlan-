@@ -98,7 +98,14 @@ fun FoodLogEntity.toDomain(): FoodLogEntry = FoodLogEntry(
     protein = protein,
     carbs = carbs,
     fat = fat,
-    mealType = MealType.fromKey(mealType)
+    mealType = MealType.fromKey(mealType),
+    fiberG = fiberG,
+    vitaminCMg = vitaminCMg,
+    ironMg = ironMg,
+    calciumMg = calciumMg,
+    vitaminDUg = vitaminDUg,
+    b12Ug = b12Ug,
+    magnesiumMg = magnesiumMg
 )
 
 fun FoodLogEntry.toEntity(): FoodLogEntity = FoodLogEntity(
@@ -109,7 +116,14 @@ fun FoodLogEntry.toEntity(): FoodLogEntity = FoodLogEntity(
     protein = protein,
     carbs = carbs,
     fat = fat,
-    mealType = mealType.key
+    mealType = mealType.key,
+    fiberG = fiberG,
+    vitaminCMg = vitaminCMg,
+    ironMg = ironMg,
+    calciumMg = calciumMg,
+    vitaminDUg = vitaminDUg,
+    b12Ug = b12Ug,
+    magnesiumMg = magnesiumMg
 )
 
 fun WeightEntryEntity.toDomain(): WeightEntry = WeightEntry(

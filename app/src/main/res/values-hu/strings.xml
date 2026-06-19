@@ -356,4 +356,18 @@
     <string name="weight_previous">Előző</string>
     <string name="date_today">Ma</string>
     <string name="date_yesterday">Tegnap</string>
+
+    <!-- Mikrotápanyagok -->
+    <string name="micro_nutrients">Mikrotápanyagok</string>
+    <string name="fiber">Rostanyag</string>
+    <string name="vitamin_c">C-vitamin</string>
+    <string name="iron">Vas</string>
+    <string name="calcium">Kalcium</string>
+    <string name="vitamin_d">D-vitamin</string>
+    <string name="vitamin_b12">B12-vitamin</string>
+    <string name="magnesium">Magnézium</string>
+
+    <!-- Helyi ételadatbázis -->
+    <string name="local_foods">Helyi ételek (HU/RO)</string>
+    <string name="search_foods">Helyi ételek keresése…</string>
 </resources>
