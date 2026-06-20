@@ -8,6 +8,9 @@ import com.nutriplan.app.data.preferences.SecureKeyStore
 import com.nutriplan.app.data.preferences.SettingsManager
 import com.nutriplan.app.data.remote.AiProxyClient
 import com.nutriplan.app.domain.model.Language
+import com.nutriplan.app.domain.model.LengthUnit
+import com.nutriplan.app.domain.model.MassUnit
+import com.nutriplan.app.domain.model.SeasonalRegion
 import com.nutriplan.app.domain.model.ThemeMode
 import com.nutriplan.app.domain.usecase.ExportDataUseCase
 import com.nutriplan.app.domain.usecase.ImportDataUseCase
@@ -58,6 +61,9 @@ class SettingsViewModel @Inject constructor(
     val carbsGoal: StateFlow<Int> = settingsManager.carbsGoal
     val fatGoal: StateFlow<Int> = settingsManager.fatGoal
     val dynamicColor: StateFlow<Boolean> = settingsManager.dynamicColor
+    val massUnit: StateFlow<MassUnit> = settingsManager.massUnit
+    val lengthUnit: StateFlow<LengthUnit> = settingsManager.lengthUnit
+    val seasonalRegion: StateFlow<SeasonalRegion> = settingsManager.seasonalRegion
 
     // --- AI proxy beállítások ---
     val aiEnabled: StateFlow<Boolean> = secureKeyStore.aiEnabled
@@ -97,6 +103,21 @@ class SettingsViewModel @Inject constructor(
     /** A Material You dinamikus színek ki-/bekapcsolása. */
     fun setDynamicColor(enabled: Boolean) {
         settingsManager.setDynamicColor(enabled)
+    }
+
+    /** Tömeg-mértékegység (kg/lb) módosítása. */
+    fun setMassUnit(unit: MassUnit) {
+        settingsManager.setMassUnit(unit)
+    }
+
+    /** Hossz-mértékegység (cm/inch) módosítása. */
+    fun setLengthUnit(unit: LengthUnit) {
+        settingsManager.setLengthUnit(unit)
+    }
+
+    /** Idény-régió módosítása. */
+    fun setSeasonalRegion(region: SeasonalRegion) {
+        settingsManager.setSeasonalRegion(region)
     }
 
     // --- AI proxy (a kulcsok a Workerben; itt csak URL + token titkosítva) ---

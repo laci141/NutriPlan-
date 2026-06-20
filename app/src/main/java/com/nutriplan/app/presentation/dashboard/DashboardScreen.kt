@@ -97,8 +97,11 @@ import com.nutriplan.app.R
 import com.nutriplan.app.presentation.theme.Accent
 import com.nutriplan.app.data.local.LocalFood
 import com.nutriplan.app.domain.model.FoodLogEntry
+import com.nutriplan.app.domain.model.MassUnit
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.NutritionTotals
+import com.nutriplan.app.domain.model.SeasonalRegion
+import com.nutriplan.app.domain.model.UnitFormatter
 import com.nutriplan.app.presentation.components.ActivityRings
 import com.nutriplan.app.presentation.components.CalorieRing
 import com.nutriplan.app.presentation.components.LabeledDropdown
@@ -133,6 +136,8 @@ fun DashboardScreen(
     val scannedProduct by viewModel.scannedProduct.collectAsStateWithLifecycle()
     val weekCalories by viewModel.weekCalories.collectAsStateWithLifecycle()
     val weights by viewModel.weights.collectAsStateWithLifecycle()
+    val massUnit by viewModel.massUnit.collectAsStateWithLifecycle()
+    val seasonalRegion by viewModel.seasonalRegion.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     var showAddFood by remember { mutableStateOf(false) }
@@ -371,12 +376,13 @@ fun DashboardScreen(
         // Testsúly trend (dátumos bejegyzések + grafikon felül)
         WeightCard(
             weights = weights,
+            massUnit = massUnit,
             onAdd = { showWeightDialog = true },
             onDelete = { date -> viewModel.deleteWeight(date) }
         )
 
-        // Szezonális ételek az aktuális hónapban
-        SeasonalCard()
+        // Szezonális ételek az aktuális hónapban, a választott régió szerint
+        SeasonalCard(region = seasonalRegion)
 
         // Böjt-időzítő (időszakos böjt, pl. 16:8)
         FastingCard(
@@ -426,6 +432,7 @@ fun DashboardScreen(
     if (showWeightDialog) {
         WeightDialog(
             previous = weights.lastOrNull(),
+            massUnit = massUnit,
             onSubmit = { kg, date ->
                 viewModel.addWeight(kg, date)
                 showWeightDialog = false
@@ -507,9 +514,12 @@ private fun WaterCard(
                         contentColor = FatColor
                     )
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.size(4.dp))
-                    Text("+250 ml", fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "+250 ml",
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        softWrap = false
+                    )
                 }
                 FilledTonalButton(
                     onClick = onRemove,
@@ -519,9 +529,12 @@ private fun WaterCard(
                         contentColor = MaterialTheme.colorScheme.onErrorContainer
                     )
                 ) {
-                    Icon(Icons.Filled.Remove, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.size(4.dp))
-                    Text("−250 ml", fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "−250 ml",
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        softWrap = false
+                    )
                 }
             }
         }
@@ -859,6 +872,7 @@ private fun formatMicro(value: Double): String =
 @Composable
 private fun WeightCard(
     weights: List<com.nutriplan.app.domain.model.WeightEntry>,
+    massUnit: MassUnit,
     onAdd: () -> Unit,
     onDelete: (LocalDate) -> Unit
 ) {
@@ -872,7 +886,7 @@ private fun WeightCard(
             )
             weights.lastOrNull()?.let {
                 Text(
-                    text = String.format("%.1f kg", it.weightKg),
+                    text = UnitFormatter.formatMass(it.weightKg, massUnit),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -893,51 +907,58 @@ private fun WeightCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        // Bejegyzések listája (legutóbbi 5, legújabb elöl)
+        // Bejegyzések listája (legutóbbi 5, legújabb elöl): dátum fejléc, alatta a súly
         val recent = weights.sortedByDescending { it.date }.take(5)
         if (recent.isNotEmpty()) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
             recent.forEachIndexed { idx, entry ->
                 val prev = recent.getOrNull(idx + 1)
                 val diff = prev?.let { entry.weightKg - it.weightKg }
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = entry.date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.width(70.dp)
-                    )
-                    Text(
-                        text = String.format("%.1f kg", entry.weightKg),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    diff?.let {
-                        val arrow = if (it < 0) "▼" else "▲"
-                        val color = if (it < 0) ProteinColor else MaterialTheme.colorScheme.error
+                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                    // Dátum fejléc-sor (akcentus színnel) + törlés
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "$arrow ${String.format("%.1f", kotlin.math.abs(it))} kg",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = color,
-                            fontWeight = FontWeight.SemiBold
+                            text = entry.date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f)
                         )
+                        IconButton(
+                            onClick = { onDelete(entry.date) },
+                            modifier = Modifier.size(28.dp)
+                        ) {
+                            Icon(
+                                Icons.Filled.Delete,
+                                contentDescription = stringResource(R.string.delete),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
-                    IconButton(
-                        onClick = { onDelete(entry.date) },
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            Icons.Filled.Delete,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(16.dp)
+                    // Súly nagyobb betűvel, mellette a változás
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = UnitFormatter.formatMass(entry.weightKg, massUnit),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.weight(1f)
                         )
+                        diff?.let {
+                            val arrow = if (it < 0) "▼" else "▲"
+                            val color = if (it < 0) ProteinColor else MaterialTheme.colorScheme.error
+                            Text(
+                                text = "$arrow ${UnitFormatter.formatMassNumber(kotlin.math.abs(it), massUnit)} ${UnitFormatter.massLabel(massUnit)}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = color,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
                 }
+                if (idx < recent.lastIndex) HorizontalDivider()
             }
         }
     }
@@ -947,9 +968,11 @@ private fun WeightCard(
 @Composable
 private fun WeightDialog(
     previous: com.nutriplan.app.domain.model.WeightEntry?,
+    massUnit: MassUnit,
     onSubmit: (Double, LocalDate) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val unitLabel = UnitFormatter.massLabel(massUnit)
     var value by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val today = remember { LocalDate.now() }
@@ -970,7 +993,7 @@ private fun WeightDialog(
                 // Előző érték referencia
                 previous?.let {
                     Text(
-                        text = "${stringResource(R.string.weight_previous)}: ${String.format("%.1f", it.weightKg)} kg  (${it.date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))})",
+                        text = "${stringResource(R.string.weight_previous)}: ${UnitFormatter.formatMass(it.weightKg, massUnit)}  (${it.date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))})",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1003,7 +1026,7 @@ private fun WeightDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (value.isEmpty()) "– kg" else "$value kg",
+                        text = if (value.isEmpty()) "– $unitLabel" else "$value $unitLabel",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = if (value.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant
@@ -1019,7 +1042,8 @@ private fun WeightDialog(
                     },
                     onBackspace = { if (value.isNotEmpty()) value = value.dropLast(1) },
                     onConfirm = {
-                        val kg = value.toDoubleOrNull() ?: 0.0
+                        val entered = value.toDoubleOrNull() ?: 0.0
+                        val kg = UnitFormatter.massToKg(entered, massUnit)
                         if (kg > 0) onSubmit(kg, selectedDate)
                     },
                     allowDecimal = true,
@@ -1447,26 +1471,11 @@ private fun formatHms(ms: Long): String {
 
 // ── Szezonális ételek kártya ──────────────────────────────────────────────────
 
-/** Magyar/Román szezonális zöldség- és gyümölcsnaptár hónapok szerint (1-12). */
-private val SEASONAL_BY_MONTH: Map<Int, List<String>> = mapOf(
-    1 to listOf("Alma", "Körte", "Savanyúkáposzta", "Cékla", "Sárgarépa"),
-    2 to listOf("Alma", "Körte", "Burgonya", "Kelkáposzta", "Cékla"),
-    3 to listOf("Spenót", "Medvehagyma", "Paraj", "Retek", "Zöldhagyma"),
-    4 to listOf("Spárga", "Retek", "Saláta", "Spenót", "Zöldhagyma"),
-    5 to listOf("Eper", "Spárga", "Zöldborsó", "Saláta", "Retek"),
-    6 to listOf("Cseresznye", "Meggy", "Eper", "Spárga", "Bab", "Uborka"),
-    7 to listOf("Málna", "Eper", "Cseresznye", "Uborka", "Paradicsom", "Paprika", "Dinnye"),
-    8 to listOf("Paradicsom", "Paprika", "Uborka", "Szilva", "Őszibarack", "Dinnye", "Málna"),
-    9 to listOf("Szilva", "Körte", "Alma", "Szőlő", "Paradicsom", "Gomba", "Paprika"),
-    10 to listOf("Alma", "Körte", "Szőlő", "Gomba", "Sütőtök", "Kukorica", "Cékla"),
-    11 to listOf("Alma", "Körte", "Cékla", "Sárgarépa", "Kelkáposzta", "Savanyúkáposzta"),
-    12 to listOf("Alma", "Körte", "Savanyúkáposzta", "Sárgarépa", "Cékla", "Burgonya")
-)
-
 @Composable
-private fun SeasonalCard() {
+private fun SeasonalCard(region: SeasonalRegion) {
     val month = remember { LocalDate.now().monthValue }
-    val foods = SEASONAL_BY_MONTH[month] ?: return
+    val foods = remember(region, month) { region.produceFor(month) }
+    if (foods.isEmpty()) return
     BentoCard(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.seasonal_foods),
@@ -1476,7 +1485,10 @@ private fun SeasonalCard() {
         Text(
             text = stringResource(R.string.seasonal_tip),
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 3.dp)
         )
         Row(
             modifier = Modifier

@@ -55,6 +55,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nutriplan.app.R
 import com.nutriplan.app.presentation.components.ScreenTitle
 import com.nutriplan.app.domain.model.Language
+import com.nutriplan.app.domain.model.LengthUnit
+import com.nutriplan.app.domain.model.MassUnit
+import com.nutriplan.app.domain.model.SeasonalRegion
 import com.nutriplan.app.domain.model.ThemeMode
 import com.nutriplan.app.presentation.util.label
 
@@ -73,6 +76,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val carbsGoal by viewModel.carbsGoal.collectAsStateWithLifecycle()
     val fatGoal by viewModel.fatGoal.collectAsStateWithLifecycle()
     val dynamicColor by viewModel.dynamicColor.collectAsStateWithLifecycle()
+    val massUnit by viewModel.massUnit.collectAsStateWithLifecycle()
+    val lengthUnit by viewModel.lengthUnit.collectAsStateWithLifecycle()
+    val seasonalRegion by viewModel.seasonalRegion.collectAsStateWithLifecycle()
     val aiEnabled by viewModel.aiEnabled.collectAsStateWithLifecycle()
     val proxyUrl by viewModel.proxyUrl.collectAsStateWithLifecycle()
     val hasToken by viewModel.hasToken.collectAsStateWithLifecycle()
@@ -160,6 +166,53 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                     }
                     Switch(checked = dynamicColor, onCheckedChange = viewModel::setDynamicColor)
                 }
+            }
+
+            // Mértékegység szekció (a tárolás mindig metrikus marad)
+            SettingsSection(title = stringResource(R.string.units)) {
+                Text(
+                    text = stringResource(R.string.unit_mass),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                MassUnit.entries.forEach { unit ->
+                    OptionRow(
+                        text = unit.label(),
+                        selected = unit == massUnit,
+                        onClick = { if (unit != massUnit) viewModel.setMassUnit(unit) }
+                    )
+                }
+                Text(
+                    text = stringResource(R.string.unit_length),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                LengthUnit.entries.forEach { unit ->
+                    OptionRow(
+                        text = unit.label(),
+                        selected = unit == lengthUnit,
+                        onClick = { if (unit != lengthUnit) viewModel.setLengthUnit(unit) }
+                    )
+                }
+            }
+
+            // Idény-régió szekció (a kezdőlapi idény-termékekhez)
+            SettingsSection(title = stringResource(R.string.seasonal_region)) {
+                SeasonalRegion.entries.forEach { region ->
+                    OptionRow(
+                        text = region.label(),
+                        selected = region == seasonalRegion,
+                        onClick = { if (region != seasonalRegion) viewModel.setSeasonalRegion(region) }
+                    )
+                }
+                Text(
+                    text = stringResource(R.string.seasonal_region_summary),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
 
             // Napi kalóriacél szekció

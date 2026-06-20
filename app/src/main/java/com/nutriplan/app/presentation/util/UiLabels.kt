@@ -5,8 +5,11 @@ import androidx.compose.ui.res.stringResource
 import com.nutriplan.app.R
 import com.nutriplan.app.domain.model.IngredientCategory
 import com.nutriplan.app.domain.model.Language
+import com.nutriplan.app.domain.model.LengthUnit
+import com.nutriplan.app.domain.model.MassUnit
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.MeasurementUnit
+import com.nutriplan.app.domain.model.SeasonalRegion
 import com.nutriplan.app.domain.model.ThemeMode
 import com.nutriplan.app.domain.model.WeekDay
 
@@ -80,6 +83,32 @@ fun Language.label(): String = stringResource(
         Language.HUNGARIAN -> R.string.lang_hungarian
         Language.ENGLISH -> R.string.lang_english
         Language.ROMANIAN -> R.string.lang_romanian
+    }
+)
+
+@Composable
+fun MassUnit.label(): String = stringResource(
+    when (this) {
+        MassUnit.KG -> R.string.unit_mass_kg
+        MassUnit.LB -> R.string.unit_mass_lb
+    }
+)
+
+@Composable
+fun LengthUnit.label(): String = stringResource(
+    when (this) {
+        LengthUnit.CM -> R.string.unit_length_cm
+        LengthUnit.INCH -> R.string.unit_length_inch
+    }
+)
+
+@Composable
+fun SeasonalRegion.label(): String = stringResource(
+    when (this) {
+        SeasonalRegion.CENTRAL_EUROPE -> R.string.region_central_europe
+        SeasonalRegion.MEDITERRANEAN -> R.string.region_mediterranean
+        SeasonalRegion.NORTHERN_EUROPE -> R.string.region_northern_europe
+        SeasonalRegion.NORTH_AMERICA -> R.string.region_north_america
     }
 )
 

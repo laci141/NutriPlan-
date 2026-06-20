@@ -389,7 +389,24 @@
 
     <!-- Alimente de sezon -->
     <string name="seasonal_foods">De sezon în această lună</string>
-    <string name="seasonal_tip">Produse locale proaspete disponibile în sezon în Ungaria/România</string>
+    <string name="seasonal_tip">Produse proaspete de sezon acum</string>
+
+    <!-- Unități de măsură -->
+    <string name="units">Unități</string>
+    <string name="unit_mass">Greutate</string>
+    <string name="unit_length">Înălțime / lungime</string>
+    <string name="unit_mass_kg">Kilogram (kg)</string>
+    <string name="unit_mass_lb">Livră (lb)</string>
+    <string name="unit_length_cm">Centimetru (cm)</string>
+    <string name="unit_length_inch">Inch (in)</string>
+
+    <!-- Regiune de sezon -->
+    <string name="seasonal_region">Regiune de sezon</string>
+    <string name="seasonal_region_summary">Alege regiunea pentru produse de sezon corecte.</string>
+    <string name="region_central_europe">Europa Centrală</string>
+    <string name="region_mediterranean">Mediteraneean</string>
+    <string name="region_northern_europe">Europa de Nord</string>
+    <string name="region_north_america">America de Nord</string>
 
     <!-- Validator compoziție farfurie -->
     <string name="plate_composition">Echilibrul farfuriei (față de 30/40/30)</string>

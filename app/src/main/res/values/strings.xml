@@ -389,7 +389,24 @@
 
     <!-- Seasonal foods -->
     <string name="seasonal_foods">In season this month</string>
-    <string name="seasonal_tip">Fresh, local produce currently in season in Hungary/Romania</string>
+    <string name="seasonal_tip">Fresh produce in season now</string>
+
+    <!-- Units -->
+    <string name="units">Units</string>
+    <string name="unit_mass">Weight</string>
+    <string name="unit_length">Height / length</string>
+    <string name="unit_mass_kg">Kilogram (kg)</string>
+    <string name="unit_mass_lb">Pound (lb)</string>
+    <string name="unit_length_cm">Centimeter (cm)</string>
+    <string name="unit_length_inch">Inch (in)</string>
+
+    <!-- Seasonal region -->
+    <string name="seasonal_region">Seasonal region</string>
+    <string name="seasonal_region_summary">Pick your region for accurate in-season produce.</string>
+    <string name="region_central_europe">Central Europe</string>
+    <string name="region_mediterranean">Mediterranean</string>
+    <string name="region_northern_europe">Northern Europe</string>
+    <string name="region_north_america">North America</string>
 
     <!-- Plate composition validator -->
     <string name="plate_composition">Plate balance (vs 30/40/30)</string>

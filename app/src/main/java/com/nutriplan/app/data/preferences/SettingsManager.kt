@@ -3,6 +3,9 @@ package com.nutriplan.app.data.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import com.nutriplan.app.domain.model.Language
+import com.nutriplan.app.domain.model.LengthUnit
+import com.nutriplan.app.domain.model.MassUnit
+import com.nutriplan.app.domain.model.SeasonalRegion
 import com.nutriplan.app.domain.model.ThemeMode
 import com.nutriplan.app.util.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -57,6 +60,18 @@ class SettingsManager @Inject constructor(
     private val _pinSet = MutableStateFlow(readPinSet())
     /** Igaz, ha a felhasználó beállított feloldó PIN-kódot. */
     val pinSet: StateFlow<Boolean> = _pinSet.asStateFlow()
+
+    private val _massUnit = MutableStateFlow(MassUnit.fromKey(prefs.getString(KEY_MASS_UNIT, null)))
+    /** Tömeg-mértékegység (kg/lb) a testsúly megjelenítéséhez és beviteléhez. */
+    val massUnit: StateFlow<MassUnit> = _massUnit.asStateFlow()
+
+    private val _lengthUnit = MutableStateFlow(LengthUnit.fromKey(prefs.getString(KEY_LENGTH_UNIT, null)))
+    /** Hossz-mértékegység (cm/inch) a méretek megjelenítéséhez. */
+    val lengthUnit: StateFlow<LengthUnit> = _lengthUnit.asStateFlow()
+
+    private val _seasonalRegion = MutableStateFlow(SeasonalRegion.fromKey(prefs.getString(KEY_SEASONAL_REGION, null)))
+    /** Az idény-termékek listájához választott éghajlati régió. */
+    val seasonalRegion: StateFlow<SeasonalRegion> = _seasonalRegion.asStateFlow()
 
     private fun readAppLock(): Boolean = prefs.getBoolean(KEY_APP_LOCK, false)
 
@@ -169,6 +184,27 @@ class SettingsManager @Inject constructor(
         Logger.i(Logger.Tags.SETTINGS, "Dinamikus színek: $enabled")
     }
 
+    /** Tömeg-mértékegység (kg/lb) beállítása. A tárolás kilogrammban marad. */
+    fun setMassUnit(unit: MassUnit) {
+        prefs.edit().putString(KEY_MASS_UNIT, unit.key).apply()
+        _massUnit.value = unit
+        Logger.i(Logger.Tags.SETTINGS, "Tömeg-mértékegység: ${unit.key}")
+    }
+
+    /** Hossz-mértékegység (cm/inch) beállítása. A tárolás centiméterben marad. */
+    fun setLengthUnit(unit: LengthUnit) {
+        prefs.edit().putString(KEY_LENGTH_UNIT, unit.key).apply()
+        _lengthUnit.value = unit
+        Logger.i(Logger.Tags.SETTINGS, "Hossz-mértékegység: ${unit.key}")
+    }
+
+    /** Az idény-termékekhez tartozó régió beállítása. */
+    fun setSeasonalRegion(region: SeasonalRegion) {
+        prefs.edit().putString(KEY_SEASONAL_REGION, region.key).apply()
+        _seasonalRegion.value = region
+        Logger.i(Logger.Tags.SETTINGS, "Idény-régió: ${region.key}")
+    }
+
     /** Szinkron nyelvi kód lekérés (a Context becsomagolásához használjuk). */
     fun currentLanguageCode(): String = readLanguage().code
 
@@ -184,6 +220,9 @@ class SettingsManager @Inject constructor(
         private const val KEY_CARBS_GOAL = "carbs_goal"
         private const val KEY_FAT_GOAL = "fat_goal"
         private const val KEY_DYNAMIC_COLOR = "dynamic_color"
+        private const val KEY_MASS_UNIT = "mass_unit"
+        private const val KEY_LENGTH_UNIT = "length_unit"
+        private const val KEY_SEASONAL_REGION = "seasonal_region"
         const val DEFAULT_CALORIE_GOAL = 2000
         const val MAX_CALORIE_GOAL = 10000
 

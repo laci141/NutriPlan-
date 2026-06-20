@@ -15,8 +15,10 @@ import com.nutriplan.app.data.remote.OpenFoodFactsDataSource
 import com.nutriplan.app.data.remote.ProductLookupResult
 import com.nutriplan.app.data.remote.ScannedProduct
 import com.nutriplan.app.domain.model.FoodLogEntry
+import com.nutriplan.app.domain.model.MassUnit
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.NutritionTotals
+import com.nutriplan.app.domain.model.SeasonalRegion
 import com.nutriplan.app.domain.model.WeightEntry
 import com.nutriplan.app.domain.repository.FoodLogRepository
 import com.nutriplan.app.domain.repository.WeightRepository
@@ -107,6 +109,12 @@ class DashboardViewModel @Inject constructor(
     /** A testsúly-bejegyzések időrendben (a trendgrafikonhoz). */
     val weights: StateFlow<List<WeightEntry>> = weightRepository.all()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** A választott tömeg-mértékegység (kg/lb) a testsúly megjelenítéséhez. */
+    val massUnit: StateFlow<MassUnit> = settingsManager.massUnit
+
+    /** A választott idény-régió a kezdőlapi idény-termékekhez. */
+    val seasonalRegion: StateFlow<SeasonalRegion> = settingsManager.seasonalRegion
 
     /** Testsúly mentése tetszőleges dátumra (alapértelmezett: ma). */
     fun addWeight(kg: Double, date: LocalDate = today) {
