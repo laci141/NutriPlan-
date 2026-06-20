@@ -130,6 +130,12 @@
     <string name="enable">Enable</string>
     <string name="left_short">%1$d left</string>
 
+    <!-- Wearable (smartwatch) sync via Health Connect -->
+    <string name="wearable_connect">Connect watch</string>
+    <string name="wearable_source">Watch</string>
+    <string name="heart_rate">Heart rate</string>
+    <string name="heart_rate_bpm">%1$d bpm</string>
+
     <!-- Security / app lock -->
     <string name="security">Security</string>
     <string name="app_lock">App lock</string>

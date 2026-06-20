@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsWalk
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.PhotoCamera
@@ -71,6 +72,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.window.Dialog
+import androidx.health.connect.client.PermissionController
 import com.nutriplan.app.presentation.components.NumericKeypad
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -143,6 +145,9 @@ fun DashboardScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val steps by viewModel.steps.collectAsStateWithLifecycle()
+    val wearableSteps by viewModel.wearableSteps.collectAsStateWithLifecycle()
+    val heartRate by viewModel.heartRate.collectAsStateWithLifecycle()
+    val wearableConnected by viewModel.wearableConnected.collectAsStateWithLifecycle()
     val recentFoods by viewModel.recentFoods.collectAsStateWithLifecycle()
     val scannedProduct by viewModel.scannedProduct.collectAsStateWithLifecycle()
     val weekCalories by viewModel.weekCalories.collectAsStateWithLifecycle()
@@ -242,6 +247,18 @@ fun DashboardScreen(
     DisposableEffect(hasStepPermission) {
         if (hasStepPermission) viewModel.startStepTracking()
         onDispose { viewModel.stopStepTracking() }
+    }
+
+    // Wearable (okosóra) szinkron a Health Connecten keresztül.
+    // A megnyitáskor frissítjük az engedély-állapotot; a képernyő elhagyásakor leállítjuk.
+    val healthPermissionLauncher = rememberLauncherForActivityResult(
+        PermissionController.createRequestPermissionResultContract()
+    ) { granted ->
+        if (granted.containsAll(viewModel.healthPermissions)) viewModel.startWearableSync()
+    }
+    DisposableEffect(Unit) {
+        viewModel.refreshWearableState()
+        onDispose { viewModel.stopWearableSync() }
     }
 
     // Napszaknak megfelelő üdvözlés
@@ -369,34 +386,88 @@ fun DashboardScreen(
             onSelect = { viewModel.setMood(it) }
         )
 
-        // Lépés kártya (teljes szélesség)
-        BentoCard(modifier = Modifier.fillMaxWidth().height(120.dp)) {
-            Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Filled.DirectionsWalk,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(36.dp)
-                )
-                Spacer(Modifier.size(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(R.string.dashboard_steps),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
+        // Lépés kártya (teljes szélesség). Ha az óráról (Health Connect) van adat,
+        // azt mutatjuk a telefon-szenzor helyett, és megjelenítjük a pulzust is.
+        val displaySteps = wearableSteps ?: steps
+        BentoCard(modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp)) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Filled.DirectionsWalk,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(36.dp)
                     )
-                    Text(
-                        text = stringResource(R.string.steps_progress, steps, state.stepGoal),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Spacer(Modifier.size(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = stringResource(R.string.dashboard_steps),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            // Forrásjelölő: óráról érkezett-e az adat
+                            if (wearableConnected && wearableSteps != null) {
+                                Spacer(Modifier.size(8.dp))
+                                AssistChip(
+                                    onClick = {},
+                                    enabled = false,
+                                    label = { Text(stringResource(R.string.wearable_source)) }
+                                )
+                            }
+                        }
+                        Text(
+                            text = stringResource(R.string.steps_progress, displaySteps, state.stepGoal),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    // Ha kell engedély a szenzorhoz, gomb kéri be
+                    if (viewModel.stepSensorAvailable && !hasStepPermission && !wearableConnected) {
+                        FilledTonalButton(onClick = {
+                            permissionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+                        }) {
+                            Text(stringResource(R.string.enable))
+                        }
+                    }
                 }
-                // Ha kell engedély a szenzorhoz, gomb kéri be
-                if (viewModel.stepSensorAvailable && !hasStepPermission) {
-                    FilledTonalButton(onClick = {
-                        permissionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION)
-                    }) {
-                        Text(stringResource(R.string.enable))
+
+                // Pulzus sor – csak ha az óráról van érték
+                if (wearableConnected && heartRate != null) {
+                    Spacer(Modifier.size(12.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Filled.Favorite,
+                            contentDescription = null,
+                            tint = Color(0xFFE53935),
+                            modifier = Modifier.size(28.dp)
+                        )
+                        Spacer(Modifier.size(12.dp))
+                        Column {
+                            Text(
+                                text = stringResource(R.string.heart_rate),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = stringResource(R.string.heart_rate_bpm, heartRate ?: 0),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
+                // "Óra csatlakoztatása" – ha elérhető a Health Connect, de még nincs engedély
+                if (viewModel.healthConnectAvailable && !wearableConnected) {
+                    Spacer(Modifier.size(12.dp))
+                    FilledTonalButton(
+                        onClick = { healthPermissionLauncher.launch(viewModel.healthPermissions) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Filled.Favorite, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.size(8.dp))
+                        Text(stringResource(R.string.wearable_connect))
                     }
                 }
             }

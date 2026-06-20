@@ -16,6 +16,18 @@
         android:name="android.hardware.camera.any"
         android:required="false" />
 
+    <!-- Wearable (okosóra) szinkron a Health Connecten keresztül: lépés és pulzus olvasása. -->
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
+
+    <!-- A Health Connect szolgáltatás elérhetőségének lekérdezéséhez (Android 13 és régebbi). -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+        <intent>
+            <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+        </intent>
+    </queries>
+
     <application
         android:name=".NutriPlanApplication"
         android:allowBackup="true"
@@ -36,7 +48,24 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Health Connect engedély-indoklás (Android 13 és régebbi: külön HC app). -->
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
         </activity>
+
+        <!-- Health Connect engedély-indoklás Android 14+ (a HC a rendszer része). -->
+        <activity-alias
+            android:name="ViewPermissionUsageActivity"
+            android:exported="true"
+            android:targetActivity=".MainActivity"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+            </intent-filter>
+        </activity-alias>
 
         <!-- Recept-fotók megosztása a kamera alkalmazással -->
         <provider

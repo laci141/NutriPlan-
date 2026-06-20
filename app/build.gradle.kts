@@ -153,6 +153,9 @@ dependencies {
     // ML Kit – vonalkód-felismerés (offline, beágyazott modell)
     implementation(libs.mlkit.barcode.scanning)
 
+    // Health Connect – wearable (okosóra) lépés- és pulzusadatok szinkronizálása
+    implementation(libs.androidx.health.connect.client)
+
     // Timber – naplózás
     implementation(libs.timber)
 

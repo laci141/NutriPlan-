@@ -13,6 +13,7 @@ import com.nutriplan.app.data.preferences.SettingsManager
 import com.nutriplan.app.data.local.LocalFood
 import com.nutriplan.app.data.local.LocalFoodDatabase
 import com.nutriplan.app.data.remote.AiProxyClient
+import com.nutriplan.app.data.health.HealthConnectManager
 import com.nutriplan.app.data.remote.OpenFoodFactsDataSource
 import com.nutriplan.app.data.remote.ProductLookupResult
 import com.nutriplan.app.data.remote.ScannedProduct
@@ -32,6 +33,8 @@ import com.nutriplan.app.domain.repository.WeightRepository
 import com.nutriplan.app.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +42,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -109,6 +113,7 @@ class DashboardViewModel @Inject constructor(
     private val openFoodFacts: OpenFoodFactsDataSource,
     private val localFoodDatabase: LocalFoodDatabase,
     private val aiProxyClient: AiProxyClient,
+    private val healthConnectManager: HealthConnectManager,
     secureKeyStore: SecureKeyStore
 ) : ViewModel() {
 
@@ -458,6 +463,70 @@ class DashboardViewModel @Inject constructor(
         sensorManager?.unregisterListener(stepListener)
     }
 
+    // --- Wearable (okosóra) szinkron a Health Connecten keresztül ---
+
+    /** Telepítve és használható-e a Health Connect (a "Óra csatlakoztatása" gombhoz). */
+    val healthConnectAvailable: Boolean get() = healthConnectManager.isAvailable
+
+    /** A Health Connecthez bekérendő olvasási engedélyek (lépés + pulzus). */
+    val healthPermissions: Set<String> get() = healthConnectManager.permissions
+
+    /** Igaz, ha a wearable forrás csatlakozik (megvan minden engedély). */
+    private val _wearableConnected = MutableStateFlow(false)
+    val wearableConnected: StateFlow<Boolean> = _wearableConnected.asStateFlow()
+
+    /** A mai lépésszám az óráról (null, ha nincs wearable adat – ekkor a szenzort mutatjuk). */
+    private val _wearableSteps = MutableStateFlow<Int?>(null)
+    val wearableSteps: StateFlow<Int?> = _wearableSteps.asStateFlow()
+
+    /** A legutóbbi pulzus (bpm) az óráról, vagy null, ha nincs adat. */
+    private val _heartRate = MutableStateFlow<Int?>(null)
+    val heartRate: StateFlow<Int?> = _heartRate.asStateFlow()
+
+    private var wearableJob: Job? = null
+
+    /** Az engedély-állapot frissítése (a képernyő megnyitásakor hívandó). */
+    fun refreshWearableState() {
+        if (!healthConnectManager.isAvailable) return
+        viewModelScope.launch {
+            if (healthConnectManager.hasAllPermissions()) startWearableSync()
+            else _wearableConnected.value = false
+        }
+    }
+
+    /**
+     * Wearable szinkron indítása: ha minden engedély megvan, periodikusan (30 mp-enként)
+     * beolvassa az óra mai lépéseit és legutóbbi pulzusát.
+     */
+    fun startWearableSync() {
+        if (!healthConnectManager.isAvailable) return
+        if (wearableJob?.isActive == true) return
+        wearableJob = viewModelScope.launch {
+            if (!healthConnectManager.hasAllPermissions()) {
+                _wearableConnected.value = false
+                return@launch
+            }
+            _wearableConnected.value = true
+            Logger.i(Logger.Tags.VIEWMODEL, "Wearable szinkron elindítva (Health Connect)")
+            while (isActive) {
+                refreshWearableData()
+                delay(WEARABLE_REFRESH_MS)
+            }
+        }
+    }
+
+    /** Egyszeri adatlekérés a Health Connectből (lépés + pulzus). */
+    private suspend fun refreshWearableData() {
+        healthConnectManager.readTodaySteps()?.let { _wearableSteps.value = it.toInt() }
+        _heartRate.value = healthConnectManager.readLatestHeartRate()?.toInt()
+    }
+
+    /** Wearable szinkron leállítása. */
+    fun stopWearableSync() {
+        wearableJob?.cancel()
+        wearableJob = null
+    }
+
     /** +/- ml víz módosítása (negatív = elvétel). */
     fun changeWater(delta: Int) {
         viewModelScope.launch { dashboardPreferences.addWater(delta) }
@@ -479,6 +548,12 @@ class DashboardViewModel @Inject constructor(
 
     override fun onCleared() {
         stopStepTracking()
+        stopWearableSync()
         super.onCleared()
+    }
+
+    private companion object {
+        /** A wearable adatok újraolvasásának időköze (ms). */
+        const val WEARABLE_REFRESH_MS = 30_000L
     }
 }

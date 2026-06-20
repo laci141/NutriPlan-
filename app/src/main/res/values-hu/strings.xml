@@ -130,6 +130,12 @@
     <string name="enable">Bekapcsolás</string>
     <string name="left_short">még %1$d</string>
 
+    <!-- Wearable (okosóra) szinkron a Health Connecten keresztül -->
+    <string name="wearable_connect">Óra csatlakoztatása</string>
+    <string name="wearable_source">Óra</string>
+    <string name="heart_rate">Pulzus</string>
+    <string name="heart_rate_bpm">%1$d bpm</string>
+
     <!-- Biztonság / alkalmazászár -->
     <string name="security">Biztonság</string>
     <string name="app_lock">Alkalmazászár</string>

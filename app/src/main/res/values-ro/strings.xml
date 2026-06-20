@@ -130,6 +130,12 @@
     <string name="enable">Activează</string>
     <string name="left_short">încă %1$d</string>
 
+    <!-- Sincronizare wearable (smartwatch) prin Health Connect -->
+    <string name="wearable_connect">Conectează ceasul</string>
+    <string name="wearable_source">Ceas</string>
+    <string name="heart_rate">Puls</string>
+    <string name="heart_rate_bpm">%1$d bpm</string>
+
     <!-- Securitate / blocare aplicație -->
     <string name="security">Securitate</string>
     <string name="app_lock">Blocare aplicație</string>
