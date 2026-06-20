@@ -93,7 +93,7 @@ async function callAnthropic(env, model, messages, maxTokens) {
   const system = messages.filter((m) => m.role === "system").map((m) => m.content).join("\n");
   const chat = messages
     .filter((m) => m.role === "user" || m.role === "assistant")
-    .map((m) => ({ role: m.role, content: m.content }));
+    .map((m) => ({ role: m.role, content: toAnthropicContent(m.content) }));
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -112,7 +112,7 @@ async function callGemini(env, model, messages, maxTokens) {
   if (!env.GEMINI_API_KEY) throw new Error("gemini_not_configured");
   const contents = messages
     .filter((m) => m.role === "user" || m.role === "assistant")
-    .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
+    .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: toGeminiParts(m.content) }));
   const sys = messages.filter((m) => m.role === "system").map((m) => m.content).join("\n");
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
   const payload = {
@@ -128,6 +128,52 @@ async function callGemini(env, model, messages, maxTokens) {
   if (!res.ok) throw new Error(`gemini_${res.status}`);
   const data = await res.json();
   return data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+}
+
+// ---- Konverziós segédfüggvények (vision) ----
+
+/**
+ * OpenAI content (string vagy content-array) → Anthropic content-array.
+ * image_url block: { type:"image_url", image_url:{ url:"data:image/jpeg;base64,..." } }
+ *   → { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:"..." } }
+ */
+function toAnthropicContent(content) {
+  if (typeof content === "string") return content;
+  if (!Array.isArray(content)) return String(content);
+  return content.map((block) => {
+    if (block.type === "text") return { type: "text", text: block.text };
+    if (block.type === "image_url") {
+      const url = block.image_url?.url ?? "";
+      const match = url.match(/^data:([^;]+);base64,(.+)$/s);
+      if (match) {
+        return { type: "image", source: { type: "base64", media_type: match[1], data: match[2] } };
+      }
+      // URL (nem base64) → Anthropic nem támogatja URL-alapú képet; küldjük szövegként
+      return { type: "text", text: `[image: ${url}]` };
+    }
+    return block;
+  });
+}
+
+/**
+ * OpenAI content (string vagy content-array) → Gemini parts-array.
+ * image_url block → { inlineData:{ mimeType:"image/jpeg", data:"..." } }
+ */
+function toGeminiParts(content) {
+  if (typeof content === "string") return [{ text: content }];
+  if (!Array.isArray(content)) return [{ text: String(content) }];
+  return content.map((block) => {
+    if (block.type === "text") return { text: block.text };
+    if (block.type === "image_url") {
+      const url = block.image_url?.url ?? "";
+      const match = url.match(/^data:([^;]+);base64,(.+)$/s);
+      if (match) {
+        return { inlineData: { mimeType: match[1], data: match[2] } };
+      }
+      return { text: `[image: ${url}]` };
+    }
+    return { text: JSON.stringify(block) };
+  });
 }
 
 // ---- Segédfüggvények ----
