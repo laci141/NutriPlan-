@@ -97,6 +97,7 @@ import com.nutriplan.app.R
 import com.nutriplan.app.presentation.theme.Accent
 import com.nutriplan.app.data.local.LocalFood
 import com.nutriplan.app.domain.model.FoodLogEntry
+import com.nutriplan.app.domain.model.Language
 import com.nutriplan.app.domain.model.MassUnit
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.NutritionTotals
@@ -138,6 +139,7 @@ fun DashboardScreen(
     val weights by viewModel.weights.collectAsStateWithLifecycle()
     val massUnit by viewModel.massUnit.collectAsStateWithLifecycle()
     val seasonalRegion by viewModel.seasonalRegion.collectAsStateWithLifecycle()
+    val seasonalLanguage by viewModel.language.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     var showAddFood by remember { mutableStateOf(false) }
@@ -382,7 +384,7 @@ fun DashboardScreen(
         )
 
         // Szezonális ételek az aktuális hónapban, a választott régió szerint
-        SeasonalCard(region = seasonalRegion)
+        SeasonalCard(region = seasonalRegion, language = seasonalLanguage)
 
         // Böjt-időzítő (időszakos böjt, pl. 16:8)
         FastingCard(
@@ -1472,9 +1474,9 @@ private fun formatHms(ms: Long): String {
 // ── Szezonális ételek kártya ──────────────────────────────────────────────────
 
 @Composable
-private fun SeasonalCard(region: SeasonalRegion) {
+private fun SeasonalCard(region: SeasonalRegion, language: Language) {
     val month = remember { LocalDate.now().monthValue }
-    val foods = remember(region, month) { region.produceFor(month) }
+    val foods = remember(region, month, language) { region.produceFor(month, language) }
     if (foods.isEmpty()) return
     BentoCard(modifier = Modifier.fillMaxWidth()) {
         Text(

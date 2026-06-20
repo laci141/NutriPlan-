@@ -15,6 +15,7 @@ import com.nutriplan.app.data.remote.OpenFoodFactsDataSource
 import com.nutriplan.app.data.remote.ProductLookupResult
 import com.nutriplan.app.data.remote.ScannedProduct
 import com.nutriplan.app.domain.model.FoodLogEntry
+import com.nutriplan.app.domain.model.Language
 import com.nutriplan.app.domain.model.MassUnit
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.NutritionTotals
@@ -115,6 +116,9 @@ class DashboardViewModel @Inject constructor(
 
     /** A választott idény-régió a kezdőlapi idény-termékekhez. */
     val seasonalRegion: StateFlow<SeasonalRegion> = settingsManager.seasonalRegion
+
+    /** Az aktuális nyelv az idény-termékek lefordított nevéhez. */
+    val language: StateFlow<Language> = settingsManager.language
 
     /** Testsúly mentése tetszőleges dátumra (alapértelmezett: ma). */
     fun addWeight(kg: Double, date: LocalDate = today) {
