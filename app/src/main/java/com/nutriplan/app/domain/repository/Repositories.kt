@@ -3,6 +3,7 @@ package com.nutriplan.app.domain.repository
 import com.nutriplan.app.domain.model.FoodLogEntry
 import com.nutriplan.app.domain.model.MealAssignment
 import com.nutriplan.app.domain.model.MealType
+import com.nutriplan.app.domain.model.MoodEntry
 import com.nutriplan.app.domain.model.Recipe
 import com.nutriplan.app.domain.model.ShoppingItem
 import com.nutriplan.app.domain.model.WeekDay
@@ -28,6 +29,15 @@ interface FoodLogRepository {
 interface WeightRepository {
     fun all(): Flow<List<WeightEntry>>
     suspend fun set(entry: WeightEntry)
+    suspend fun deleteByDay(date: LocalDate)
+}
+
+/**
+ * Hangulat-napló tároló interfész.
+ */
+interface MoodRepository {
+    fun all(): Flow<List<MoodEntry>>
+    suspend fun set(entry: MoodEntry)
     suspend fun deleteByDay(date: LocalDate)
 }
 

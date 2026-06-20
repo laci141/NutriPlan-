@@ -328,6 +328,20 @@
     <string name="insight_avg_protein">Proteine medii/zi</string>
     <string name="insight_gram_value">%1$d g</string>
     <string name="insight_top_food">Cel mai logat</string>
+    <!-- Jurnal de dispoziție -->
+    <string name="mood_title">Dispoziție</string>
+    <string name="mood_prompt">Cum te simți astăzi?</string>
+    <!-- Serie și insigne -->
+    <string name="streak_badges_title">Serie și insigne</string>
+    <string name="streak_current">Serie de %1$d zile</string>
+    <string name="streak_best">Cea mai lungă: %1$d zile</string>
+    <string name="badge_streak_3">3 zile</string>
+    <string name="badge_streak_7">7 zile</string>
+    <string name="badge_streak_14">14 zile</string>
+    <string name="badge_streak_30">30 de zile</string>
+    <string name="badge_first_log">Prima logare</string>
+    <string name="badge_log_30_days">30 de zile logate</string>
+    <string name="badge_weight_tracker">Monitor greutate</string>
     <string name="weight_title">Greutate</string>
     <string name="weight_add">Adaugă greutate</string>
     <string name="weight_hint">Adaugă cel puțin două valori pentru a vedea tendința.</string>

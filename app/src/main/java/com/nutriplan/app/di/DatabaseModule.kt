@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.nutriplan.app.data.local.NutriPlanDatabase
 import com.nutriplan.app.data.local.dao.FoodLogDao
 import com.nutriplan.app.data.local.dao.MealPlanDao
+import com.nutriplan.app.data.local.dao.MoodDao
 import com.nutriplan.app.data.local.dao.RecipeDao
 import com.nutriplan.app.data.local.dao.ShoppingDao
 import com.nutriplan.app.data.local.dao.WeightDao
@@ -70,6 +71,17 @@ object DatabaseModule {
         }
     }
 
+    // 7 -> 8: hangulat-napló tábla létrehozása
+    private val migration7to8 = object : Migration(7, 8) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS mood_log (" +
+                    "epochDay INTEGER NOT NULL PRIMARY KEY, " +
+                    "mood TEXT NOT NULL)"
+            )
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): NutriPlanDatabase {
@@ -79,7 +91,7 @@ object DatabaseModule {
             NutriPlanDatabase::class.java,
             NutriPlanDatabase.DATABASE_NAME
         )
-            .addMigrations(migration3to4, migration4to5, migration5to6, migration6to7)
+            .addMigrations(migration3to4, migration4to5, migration5to6, migration6to7, migration7to8)
             .fallbackToDestructiveMigration()
             .build()
     }
@@ -98,4 +110,7 @@ object DatabaseModule {
 
     @Provides
     fun provideWeightDao(database: NutriPlanDatabase): WeightDao = database.weightDao()
+
+    @Provides
+    fun provideMoodDao(database: NutriPlanDatabase): MoodDao = database.moodDao()
 }

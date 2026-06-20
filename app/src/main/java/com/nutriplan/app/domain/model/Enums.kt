@@ -100,3 +100,34 @@ enum class ThemeMode(val key: String) {
             entries.firstOrNull { it.key == key } ?: SYSTEM
     }
 }
+
+/**
+ * Napi hangulat-szintek a hangulat-naplóhoz. A [key] stabil (adatbázis),
+ * az [emoji] a felületen jelenik meg.
+ */
+enum class MoodLevel(val key: String, val emoji: String) {
+    VERY_BAD("very_bad", "😣"),
+    BAD("bad", "🙁"),
+    NEUTRAL("neutral", "😐"),
+    GOOD("good", "🙂"),
+    GREAT("great", "😄");
+
+    companion object {
+        fun fromKey(key: String?): MoodLevel? =
+            entries.firstOrNull { it.key == key }
+    }
+}
+
+/**
+ * Megszerezhető jelvények (gamifikáció). A teljesülésüket a naplóadatokból
+ * számoljuk, így nincs külön tárolás. Az [emoji] a felületen jelenik meg.
+ */
+enum class Badge(val emoji: String) {
+    STREAK_3("🔥"),
+    STREAK_7("⭐"),
+    STREAK_14("🌟"),
+    STREAK_30("🏆"),
+    FIRST_LOG("📝"),
+    LOG_30_DAYS("📚"),
+    WEIGHT_TRACKER("⚖️")
+}

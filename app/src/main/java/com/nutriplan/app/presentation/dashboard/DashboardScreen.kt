@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
@@ -76,6 +78,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
@@ -97,8 +100,11 @@ import com.nutriplan.app.R
 import com.nutriplan.app.presentation.theme.Accent
 import com.nutriplan.app.data.local.LocalFood
 import com.nutriplan.app.domain.model.FoodLogEntry
+import com.nutriplan.app.domain.model.Badge
 import com.nutriplan.app.domain.model.Language
 import com.nutriplan.app.domain.model.MassUnit
+import com.nutriplan.app.domain.model.MoodEntry
+import com.nutriplan.app.domain.model.MoodLevel
 import com.nutriplan.app.domain.model.MealType
 import com.nutriplan.app.domain.model.NutritionTotals
 import com.nutriplan.app.domain.model.SeasonalRegion
@@ -137,6 +143,9 @@ fun DashboardScreen(
     val scannedProduct by viewModel.scannedProduct.collectAsStateWithLifecycle()
     val weekCalories by viewModel.weekCalories.collectAsStateWithLifecycle()
     val weeklyInsights by viewModel.weeklyInsights.collectAsStateWithLifecycle()
+    val streakStats by viewModel.streakStats.collectAsStateWithLifecycle()
+    val moods by viewModel.moods.collectAsStateWithLifecycle()
+    val todayMood by viewModel.todayMood.collectAsStateWithLifecycle()
     val weights by viewModel.weights.collectAsStateWithLifecycle()
     val massUnit by viewModel.massUnit.collectAsStateWithLifecycle()
     val seasonalRegion by viewModel.seasonalRegion.collectAsStateWithLifecycle()
@@ -328,6 +337,13 @@ fun DashboardScreen(
             onRemove = { viewModel.changeWater(-250) }
         )
 
+        // Hangulat-napló (mai hangulat + elmúlt 7 nap)
+        MoodCard(
+            todayMood = todayMood,
+            history = moods,
+            onSelect = { viewModel.setMood(it) }
+        )
+
         // Lépés kártya (teljes szélesség)
         BentoCard(modifier = Modifier.fillMaxWidth().height(120.dp)) {
             Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
@@ -378,6 +394,9 @@ fun DashboardScreen(
 
         // Heti összefoglaló (átlagok + változás az előző héthez képest)
         WeeklyInsightsCard(insights = weeklyInsights)
+
+        // Sorozat és jelvények (gamifikáció)
+        StreakBadgesCard(stats = streakStats)
 
         // Testsúly trend (dátumos bejegyzések + grafikon felül)
         WeightCard(
@@ -881,6 +900,171 @@ private fun InsightRow(label: String, value: String, deltaPct: Int?, color: Colo
         )
     }
 }
+
+// ── Hangulat-napló kártya ─────────────────────────────────────────────────────
+
+/**
+ * Hangulat-napló: a mai hangulat kiválasztása 5 emoji közül (felülírja az aznapit),
+ * alatta az elmúlt 7 nap hangulatának visszanézése.
+ */
+@Composable
+private fun MoodCard(
+    todayMood: MoodLevel?,
+    history: List<MoodEntry>,
+    onSelect: (MoodLevel) -> Unit
+) {
+    val today = remember { LocalDate.now() }
+    val byDay = remember(history) { history.associate { it.date to it.mood } }
+    BentoCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.mood_title),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            text = stringResource(R.string.mood_prompt),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            MoodLevel.entries.forEach { level ->
+                val selected = todayMood == level
+                Surface(
+                    shape = CircleShape,
+                    color = if (selected) MaterialTheme.colorScheme.primaryContainer
+                            else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                    border = if (selected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable { onSelect(level) }
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(text = level.emoji, fontSize = 24.sp)
+                    }
+                }
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            (6 downTo 0).forEach { offset ->
+                val day = today.minusDays(offset.toLong())
+                val mood = byDay[day]
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = day.dayOfWeek.getDisplayName(TextStyle.NARROW, Locale.getDefault()),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = mood?.emoji ?: "·",
+                        fontSize = 18.sp,
+                        color = if (mood == null) MaterialTheme.colorScheme.onSurfaceVariant
+                                else Color.Unspecified
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ── Sorozat és jelvények kártya ───────────────────────────────────────────────
+
+/**
+ * Sorozat és jelvények (gamifikáció): a jelenlegi és leghosszabb sorozat,
+ * alatta a megszerezhető jelvények (a megszerzettek színesek, a többi halvány).
+ */
+@Composable
+private fun StreakBadgesCard(stats: StreakStats) {
+    BentoCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.streak_badges_title),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                Icons.Filled.LocalFireDepartment,
+                contentDescription = null,
+                tint = CarbsColor,
+                modifier = Modifier.size(40.dp)
+            )
+            Spacer(Modifier.size(10.dp))
+            Column {
+                Text(
+                    text = stringResource(R.string.streak_current, stats.currentStreak),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = CarbsColor
+                )
+                Text(
+                    text = stringResource(R.string.streak_best, stats.bestStreak),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Badge.entries.forEach { badge ->
+                BadgeChip(badge = badge, earned = badge in stats.earnedBadges)
+            }
+        }
+    }
+}
+
+@Composable
+private fun BadgeChip(badge: Badge, earned: Boolean) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.width(64.dp)
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = if (earned) MaterialTheme.colorScheme.primaryContainer
+                    else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+            modifier = Modifier.size(44.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = badge.emoji,
+                    fontSize = 22.sp,
+                    modifier = Modifier.alpha(if (earned) 1f else 0.32f)
+                )
+            }
+        }
+        Spacer(Modifier.size(4.dp))
+        Text(
+            text = badgeLabel(badge),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (earned) 1f else 0.6f),
+            maxLines = 2,
+            textAlign = TextAlign.Center,
+            lineHeight = 12.sp
+        )
+    }
+}
+
+@Composable
+private fun badgeLabel(badge: Badge): String = stringResource(
+    when (badge) {
+        Badge.STREAK_3 -> R.string.badge_streak_3
+        Badge.STREAK_7 -> R.string.badge_streak_7
+        Badge.STREAK_14 -> R.string.badge_streak_14
+        Badge.STREAK_30 -> R.string.badge_streak_30
+        Badge.FIRST_LOG -> R.string.badge_first_log
+        Badge.LOG_30_DAYS -> R.string.badge_log_30_days
+        Badge.WEIGHT_TRACKER -> R.string.badge_weight_tracker
+    }
+)
 
 // ── Mikrotápanyag kártya ──────────────────────────────────────────────────────
 

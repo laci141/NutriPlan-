@@ -11,6 +11,14 @@ data class WeightEntry(
 )
 
 /**
+ * Egy napi hangulat-bejegyzés (naponta egy érték).
+ */
+data class MoodEntry(
+    val date: LocalDate,
+    val mood: MoodLevel
+)
+
+/**
  * Egy elfogyasztott étel naplóbejegyzése egy adott napon.
  */
 data class FoodLogEntry(

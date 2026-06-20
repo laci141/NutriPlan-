@@ -14,14 +14,18 @@ import com.nutriplan.app.data.local.LocalFoodDatabase
 import com.nutriplan.app.data.remote.OpenFoodFactsDataSource
 import com.nutriplan.app.data.remote.ProductLookupResult
 import com.nutriplan.app.data.remote.ScannedProduct
+import com.nutriplan.app.domain.model.Badge
 import com.nutriplan.app.domain.model.FoodLogEntry
 import com.nutriplan.app.domain.model.Language
 import com.nutriplan.app.domain.model.MassUnit
 import com.nutriplan.app.domain.model.MealType
+import com.nutriplan.app.domain.model.MoodEntry
+import com.nutriplan.app.domain.model.MoodLevel
 import com.nutriplan.app.domain.model.NutritionTotals
 import com.nutriplan.app.domain.model.SeasonalRegion
 import com.nutriplan.app.domain.model.WeightEntry
 import com.nutriplan.app.domain.repository.FoodLogRepository
+import com.nutriplan.app.domain.repository.MoodRepository
 import com.nutriplan.app.domain.repository.WeightRepository
 import com.nutriplan.app.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -76,6 +80,16 @@ data class WeeklyInsights(
 )
 
 /**
+ * A sorozat-/jelvénykártya adatai: a jelenlegi és a leghosszabb sorozat,
+ * valamint a megszerzett jelvények halmaza (a naplóadatokból számolva).
+ */
+data class StreakStats(
+    val currentStreak: Int = 0,
+    val bestStreak: Int = 0,
+    val earnedBadges: Set<Badge> = emptySet()
+)
+
+/**
  * Dashboard ViewModel. Összegyűjti a mai napra a tápértéket a heti tervből,
  * a kalória- és makró-célokat, a vízfogyasztást (DataStore) és a lépésszámot (szenzor).
  */
@@ -86,6 +100,7 @@ class DashboardViewModel @Inject constructor(
     private val dashboardPreferences: DashboardPreferences,
     private val foodLogRepository: FoodLogRepository,
     private val weightRepository: WeightRepository,
+    private val moodRepository: MoodRepository,
     private val openFoodFacts: OpenFoodFactsDataSource,
     private val localFoodDatabase: LocalFoodDatabase
 ) : ViewModel() {
@@ -130,6 +145,30 @@ class DashboardViewModel @Inject constructor(
     val weeklyInsights: StateFlow<WeeklyInsights?> = recentRange
         .map { computeWeeklyInsights(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    /** A hangulat-bejegyzések időrendben (a hangulat-naplóhoz). */
+    val moods: StateFlow<List<MoodEntry>> = moodRepository.all()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** A mai hangulat (vagy null, ha ma még nincs rögzítve). */
+    val todayMood: StateFlow<MoodLevel?> = moods
+        .map { list -> list.firstOrNull { it.date == today }?.mood }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    /** Sorozat és jelvények a naplóból és a testsúly-bejegyzésekből számolva. */
+    val streakStats: StateFlow<StreakStats> = combine(
+        recentRange, weightRepository.all(), settingsManager.calorieGoal
+    ) { entries, weights, goal ->
+        computeStreakStats(entries, weights.size, goal)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), StreakStats())
+
+    /** A mai hangulat mentése (felülírja az aznapit). */
+    fun setMood(level: MoodLevel) {
+        viewModelScope.launch {
+            moodRepository.set(MoodEntry(date = today, mood = level))
+            Logger.i(Logger.Tags.VIEWMODEL, "Hangulat mentve: ${level.key}")
+        }
+    }
 
     /** A választott tömeg-mértékegység (kg/lb) a testsúly megjelenítéséhez. */
     val massUnit: StateFlow<MassUnit> = settingsManager.massUnit
@@ -190,14 +229,50 @@ class DashboardViewModel @Inject constructor(
         if ((byDay[day] ?: 0) == 0) day = today.minusDays(1)
         var streak = 0
         while (true) {
-            val cal = byDay[day] ?: 0
-            val hit = if (goal > 0) cal in (goal * 0.8).toInt()..(goal * 1.2).toInt() else cal > 0
-            if (hit) {
+            if (dayHitsGoal(byDay[day] ?: 0, goal)) {
                 streak++
                 day = day.minusDays(1)
             } else break
         }
         return streak
+    }
+
+    /** Igaz, ha az adott napi kalória „teljesíti" a célt (cél nélkül: bármi naplózott). */
+    private fun dayHitsGoal(calories: Int, goal: Int): Boolean =
+        if (goal > 0) calories in (goal * 0.8).toInt()..(goal * 1.2).toInt() else calories > 0
+
+    /**
+     * Sorozat-statisztika és jelvények számítása a naplóból (utolsó ~60 nap) és a
+     * testsúly-bejegyzések számából. A leghosszabb sorozatot a tartományon belül keressük.
+     */
+    private fun computeStreakStats(entries: List<FoodLogEntry>, weightCount: Int, goal: Int): StreakStats {
+        val byDay = entries.groupBy { it.date }
+            .mapValues { (_, list) -> list.sumOf { it.calories } }
+        val current = computeStreak(entries, goal)
+
+        // Leghosszabb sorozat: végigpásztázzuk az utolsó 60 napot.
+        var best = 0
+        var run = 0
+        var day = today.minusDays(60)
+        while (!day.isAfter(today)) {
+            run = if (dayHitsGoal(byDay[day] ?: 0, goal)) run + 1 else 0
+            if (run > best) best = run
+            day = day.plusDays(1)
+        }
+
+        val loggedDays = byDay.count { it.value > 0 }
+        val totalEntries = entries.size
+
+        val badges = buildSet {
+            if (best >= 3) add(Badge.STREAK_3)
+            if (best >= 7) add(Badge.STREAK_7)
+            if (best >= 14) add(Badge.STREAK_14)
+            if (best >= 30) add(Badge.STREAK_30)
+            if (totalEntries >= 1) add(Badge.FIRST_LOG)
+            if (loggedDays >= 30) add(Badge.LOG_30_DAYS)
+            if (weightCount >= 3) add(Badge.WEIGHT_TRACKER)
+        }
+        return StreakStats(currentStreak = current, bestStreak = best, earnedBadges = badges)
     }
 
     /**

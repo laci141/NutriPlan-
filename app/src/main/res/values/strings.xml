@@ -328,6 +328,20 @@
     <string name="insight_avg_protein">Avg. protein/day</string>
     <string name="insight_gram_value">%1$d g</string>
     <string name="insight_top_food">Most logged</string>
+    <!-- Mood log -->
+    <string name="mood_title">Mood</string>
+    <string name="mood_prompt">How do you feel today?</string>
+    <!-- Streak and badges -->
+    <string name="streak_badges_title">Streak &amp; badges</string>
+    <string name="streak_current">%1$d-day streak</string>
+    <string name="streak_best">Best: %1$d days</string>
+    <string name="badge_streak_3">3-day streak</string>
+    <string name="badge_streak_7">7-day streak</string>
+    <string name="badge_streak_14">14-day streak</string>
+    <string name="badge_streak_30">30-day streak</string>
+    <string name="badge_first_log">First log</string>
+    <string name="badge_log_30_days">30 days logged</string>
+    <string name="badge_weight_tracker">Weight tracker</string>
     <string name="weight_title">Weight</string>
     <string name="weight_add">Add weight</string>
     <string name="weight_hint">Add at least two entries to see your trend.</string>

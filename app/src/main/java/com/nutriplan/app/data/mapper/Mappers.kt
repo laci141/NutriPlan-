@@ -2,11 +2,14 @@ package com.nutriplan.app.data.mapper
 
 import com.nutriplan.app.data.local.entity.FoodLogEntity
 import com.nutriplan.app.data.local.entity.IngredientEntity
+import com.nutriplan.app.data.local.entity.MoodEntryEntity
 import com.nutriplan.app.data.local.entity.RecipeEntity
 import com.nutriplan.app.data.local.entity.ShoppingItemEntity
 import com.nutriplan.app.data.local.entity.WeightEntryEntity
 import com.nutriplan.app.data.local.relation.RecipeWithIngredients
 import com.nutriplan.app.domain.model.FoodLogEntry
+import com.nutriplan.app.domain.model.MoodEntry
+import com.nutriplan.app.domain.model.MoodLevel
 import com.nutriplan.app.domain.model.WeightEntry
 import com.nutriplan.app.domain.model.Ingredient
 import com.nutriplan.app.domain.model.IngredientCategory
@@ -134,4 +137,14 @@ fun WeightEntryEntity.toDomain(): WeightEntry = WeightEntry(
 fun WeightEntry.toEntity(): WeightEntryEntity = WeightEntryEntity(
     epochDay = date.toEpochDay(),
     weightKg = weightKg
+)
+
+fun MoodEntryEntity.toDomain(): MoodEntry = MoodEntry(
+    date = LocalDate.ofEpochDay(epochDay),
+    mood = MoodLevel.fromKey(mood) ?: MoodLevel.NEUTRAL
+)
+
+fun MoodEntry.toEntity(): MoodEntryEntity = MoodEntryEntity(
+    epochDay = date.toEpochDay(),
+    mood = mood.key
 )

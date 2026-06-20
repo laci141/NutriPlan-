@@ -328,6 +328,20 @@
     <string name="insight_avg_protein">Átlag fehérje/nap</string>
     <string name="insight_gram_value">%1$d g</string>
     <string name="insight_top_food">Leggyakoribb étel</string>
+    <!-- Hangulat-napló -->
+    <string name="mood_title">Hangulat</string>
+    <string name="mood_prompt">Hogy érzed magad ma?</string>
+    <!-- Sorozat és jelvények -->
+    <string name="streak_badges_title">Sorozat és jelvények</string>
+    <string name="streak_current">%1$d napos sorozat</string>
+    <string name="streak_best">Leghosszabb: %1$d nap</string>
+    <string name="badge_streak_3">3 napos</string>
+    <string name="badge_streak_7">7 napos</string>
+    <string name="badge_streak_14">14 napos</string>
+    <string name="badge_streak_30">30 napos</string>
+    <string name="badge_first_log">Első napló</string>
+    <string name="badge_log_30_days">30 nap naplózva</string>
+    <string name="badge_weight_tracker">Súlykövető</string>
     <string name="weight_title">Testsúly</string>
     <string name="weight_add">Testsúly hozzáadása</string>
     <string name="weight_hint">Adj meg legalább két mérést a trendhez.</string>
