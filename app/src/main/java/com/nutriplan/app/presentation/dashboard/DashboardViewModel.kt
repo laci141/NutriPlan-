@@ -8,9 +8,11 @@ import android.hardware.SensorManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nutriplan.app.data.preferences.DashboardPreferences
+import com.nutriplan.app.data.preferences.SecureKeyStore
 import com.nutriplan.app.data.preferences.SettingsManager
 import com.nutriplan.app.data.local.LocalFood
 import com.nutriplan.app.data.local.LocalFoodDatabase
+import com.nutriplan.app.data.remote.AiProxyClient
 import com.nutriplan.app.data.remote.OpenFoodFactsDataSource
 import com.nutriplan.app.data.remote.ProductLookupResult
 import com.nutriplan.app.data.remote.ScannedProduct
@@ -79,6 +81,9 @@ data class WeeklyInsights(
     val hasComparison: Boolean
 )
 
+/** Az AI fotó-felismerés állapota a kezdőlapon. */
+enum class AiPhotoStatus { IDLE, LOADING, ERROR }
+
 /**
  * A sorozat-/jelvénykártya adatai: a jelenlegi és a leghosszabb sorozat,
  * valamint a megszerzett jelvények halmaza (a naplóadatokból számolva).
@@ -102,8 +107,13 @@ class DashboardViewModel @Inject constructor(
     private val weightRepository: WeightRepository,
     private val moodRepository: MoodRepository,
     private val openFoodFacts: OpenFoodFactsDataSource,
-    private val localFoodDatabase: LocalFoodDatabase
+    private val localFoodDatabase: LocalFoodDatabase,
+    private val aiProxyClient: AiProxyClient,
+    secureKeyStore: SecureKeyStore
 ) : ViewModel() {
+
+    /** Igaz, ha az AI-proxy be van állítva (a fotó-felismerés gomb megjelenítéséhez). */
+    val aiEnabled: StateFlow<Boolean> = secureKeyStore.aiEnabled
 
     private val today: LocalDate = LocalDate.now()
 
@@ -378,6 +388,40 @@ class DashboardViewModel @Inject constructor(
         _scannedProduct.value = null
         _scanLookupFailed.value = false
     }
+
+    // --- AI fotó-felismerés: fotóról becsült étel a proxy-n keresztül ---
+    private val _aiPhotoStatus = MutableStateFlow(AiPhotoStatus.IDLE)
+    /** Az AI fotó-felismerés állapota (tétlen / betöltés / hiba). */
+    val aiPhotoStatus: StateFlow<AiPhotoStatus> = _aiPhotoStatus.asStateFlow()
+
+    /**
+     * A lefotózott étel felismerése a proxy-n keresztül. Sikeres válasznál a becsült
+     * tápértéket a meglévő beolvasott-termék folyamatba töltjük, így a napló-dialógus
+     * 100 g-os alapként megnyílik és kitölthető/igazítható.
+     */
+    fun recognizeFoodPhoto(imageBase64: String) {
+        _aiPhotoStatus.value = AiPhotoStatus.LOADING
+        viewModelScope.launch {
+            aiProxyClient.recognizeFood(imageBase64).fold(
+                onSuccess = { est ->
+                    _scannedProduct.value = ScannedProduct(
+                        barcode = "ai-photo",
+                        name = est.name,
+                        caloriesPer100g = est.caloriesPer100g.roundToInt(),
+                        proteinPer100g = est.proteinPer100g,
+                        carbsPer100g = est.carbsPer100g,
+                        fatPer100g = est.fatPer100g
+                    )
+                    _aiPhotoStatus.value = AiPhotoStatus.IDLE
+                    Logger.i(Logger.Tags.VIEWMODEL, "AI fotó-felismerés kész")
+                },
+                onFailure = { _aiPhotoStatus.value = AiPhotoStatus.ERROR }
+            )
+        }
+    }
+
+    /** Az AI fotó-felismerési hiba nyugtázása. */
+    fun consumeAiPhotoError() { _aiPhotoStatus.value = AiPhotoStatus.IDLE }
 
     // --- Lépésszámláló (hardveres szenzor, biztonságos kezeléssel) ---
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager

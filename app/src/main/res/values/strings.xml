@@ -342,6 +342,12 @@
     <string name="badge_first_log">First log</string>
     <string name="badge_log_30_days">30 days logged</string>
     <string name="badge_weight_tracker">Weight tracker</string>
+    <!-- AI food photo recognition -->
+    <string name="ai_photo_recognize">AI photo recognition</string>
+    <string name="ai_photo_hint">Point at the food and capture</string>
+    <string name="ai_photo_capture">Capture</string>
+    <string name="ai_photo_loading">Recognizing food…</string>
+    <string name="ai_photo_error">Couldn\'t recognize the food. Try again.</string>
     <string name="weight_title">Weight</string>
     <string name="weight_add">Add weight</string>
     <string name="weight_hint">Add at least two entries to see your trend.</string>

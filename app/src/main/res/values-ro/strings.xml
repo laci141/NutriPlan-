@@ -342,6 +342,12 @@
     <string name="badge_first_log">Prima logare</string>
     <string name="badge_log_30_days">30 de zile logate</string>
     <string name="badge_weight_tracker">Monitor greutate</string>
+    <!-- Recunoaștere foto AI -->
+    <string name="ai_photo_recognize">Recunoaștere foto AI</string>
+    <string name="ai_photo_hint">Îndreaptă spre mâncare și fotografiază</string>
+    <string name="ai_photo_capture">Fotografiază</string>
+    <string name="ai_photo_loading">Se recunoaște mâncarea…</string>
+    <string name="ai_photo_error">Mâncarea nu a putut fi recunoscută. Încearcă din nou.</string>
     <string name="weight_title">Greutate</string>
     <string name="weight_add">Adaugă greutate</string>
     <string name="weight_hint">Adaugă cel puțin două valori pentru a vedea tendința.</string>

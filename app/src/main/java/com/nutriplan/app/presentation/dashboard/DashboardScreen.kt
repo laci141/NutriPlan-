@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.speech.RecognizerIntent
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Remove
@@ -54,6 +56,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -116,6 +119,7 @@ import com.nutriplan.app.presentation.components.RingData
 import com.nutriplan.app.presentation.components.SimpleBarChart
 import com.nutriplan.app.presentation.components.SimpleLineChart
 import com.nutriplan.app.presentation.scanner.BarcodeScannerOverlay
+import com.nutriplan.app.presentation.scanner.FoodPhotoCaptureOverlay
 import com.nutriplan.app.presentation.util.label
 import java.time.LocalTime
 import java.time.format.TextStyle
@@ -150,10 +154,13 @@ fun DashboardScreen(
     val massUnit by viewModel.massUnit.collectAsStateWithLifecycle()
     val seasonalRegion by viewModel.seasonalRegion.collectAsStateWithLifecycle()
     val seasonalLanguage by viewModel.language.collectAsStateWithLifecycle()
+    val aiEnabled by viewModel.aiEnabled.collectAsStateWithLifecycle()
+    val aiPhotoStatus by viewModel.aiPhotoStatus.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     var showAddFood by remember { mutableStateOf(false) }
     var showScanner by remember { mutableStateOf(false) }
+    var showPhotoCapture by remember { mutableStateOf(false) }
     var showWeightDialog by remember { mutableStateOf(false) }
     var voiceInitialText by remember { mutableStateOf("") }
     var swapEntry by remember { mutableStateOf<FoodLogEntry?>(null) }
@@ -192,9 +199,27 @@ fun DashboardScreen(
             == PackageManager.PERMISSION_GRANTED
         ) showScanner = true else scannerPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
+
+    // Kamera-engedély az AI fotó-felismeréshez
+    val photoPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted -> if (granted) showPhotoCapture = true }
+    fun openPhotoCapture() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED
+        ) showPhotoCapture = true else photoPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+
     // Ha érkezik beolvasott termék, nyíljon meg a hozzáadó dialógus
     LaunchedEffect(scannedProduct) {
         if (scannedProduct != null) showAddFood = true
+    }
+    // AI fotó-felismerési hiba jelzése
+    LaunchedEffect(aiPhotoStatus) {
+        if (aiPhotoStatus == AiPhotoStatus.ERROR) {
+            Toast.makeText(context, context.getString(R.string.ai_photo_error), Toast.LENGTH_LONG).show()
+            viewModel.consumeAiPhotoError()
+        }
     }
 
     // Lépésszámláló engedély (Android 10+ esetén ACTIVITY_RECOGNITION)
@@ -423,10 +448,15 @@ fun DashboardScreen(
             recentFoods = recentFoods,
             scanned = scannedProduct,
             initialText = voiceInitialText,
+            aiPhotoEnabled = aiEnabled,
             localFoodSearch = { query -> viewModel.searchLocalFoods(query) },
             onScan = {
                 showAddFood = false
                 openScanner()
+            },
+            onAiPhoto = {
+                showAddFood = false
+                openPhotoCapture()
             },
             onSubmit = { name, kcal, p, c, f, meal, fiber, vitC, iron, calcium, vitD, b12, mg ->
                 viewModel.addFood(name, kcal, p, c, f, meal, fiber, vitC, iron, calcium, vitD, b12, mg)
@@ -451,6 +481,22 @@ fun DashboardScreen(
             },
             onClose = { showScanner = false }
         )
+    }
+
+    // AI fotó-felismerő réteg
+    if (showPhotoCapture) {
+        FoodPhotoCaptureOverlay(
+            onCapture = { base64 ->
+                showPhotoCapture = false
+                viewModel.recognizeFoodPhoto(base64)
+            },
+            onClose = { showPhotoCapture = false }
+        )
+    }
+
+    // Töltés-jelző, amíg az AI feldolgozza a fotót
+    if (aiPhotoStatus == AiPhotoStatus.LOADING) {
+        AiPhotoLoadingOverlay()
     }
 
     // Testsúly megadása (dátummal, custom billentyűzet)
@@ -1414,8 +1460,10 @@ private fun AddFoodDialog(
     recentFoods: List<FoodLogEntry>,
     scanned: com.nutriplan.app.data.remote.ScannedProduct?,
     initialText: String = "",
+    aiPhotoEnabled: Boolean = false,
     localFoodSearch: (String) -> List<LocalFood>,
     onScan: () -> Unit,
+    onAiPhoto: () -> Unit = {},
     onSubmit: (String, Int, Double, Double, Double, MealType, Double, Double, Double, Double, Double, Double, Double) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -1496,6 +1544,12 @@ private fun AddFoodDialog(
                 OutlinedButton(onClick = onScan, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Filled.QrCodeScanner, contentDescription = null)
                     Text("  ${stringResource(R.string.scan_barcode)}")
+                }
+                if (aiPhotoEnabled) {
+                    OutlinedButton(onClick = onAiPhoto, modifier = Modifier.fillMaxWidth()) {
+                        Icon(Icons.Filled.PhotoCamera, contentDescription = null)
+                        Text("  ${stringResource(R.string.ai_photo_recognize)}")
+                    }
                 }
                 // Gyakori ételek gyorsválasztása
                 if (recentFoods.isNotEmpty()) {
@@ -1740,6 +1794,30 @@ private fun formatHms(ms: Long): String {
     val m = (totalSeconds % 3600) / 60
     val s = totalSeconds % 60
     return if (h > 0) String.format("%dh %02dm", h, m) else String.format("%dm %02ds", m, s)
+}
+
+// ── AI fotó-felismerés töltőréteg ─────────────────────────────────────────────
+
+/** Teljes képernyős, elnyelő töltőréteg, amíg az AI feldolgozza a fotót. */
+@Composable
+private fun AiPhotoLoadingOverlay() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.6f))
+            .clickable(enabled = false) {},
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CircularProgressIndicator(color = Color.White)
+            Spacer(Modifier.size(12.dp))
+            Text(
+                text = stringResource(R.string.ai_photo_loading),
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
 }
 
 // ── Szezonális ételek kártya ──────────────────────────────────────────────────
