@@ -319,6 +319,15 @@
 
     <!-- Weekly chart and weight tracking -->
     <string name="weekly_calories">This week\'s calories</string>
+    <!-- Weekly insights summary -->
+    <string name="weekly_insights">Weekly summary</string>
+    <string name="insight_days_logged">Days logged</string>
+    <string name="insight_days_value">%1$d / 7</string>
+    <string name="insight_avg_calories">Avg. calories/day</string>
+    <string name="insight_kcal_value">%1$d kcal</string>
+    <string name="insight_avg_protein">Avg. protein/day</string>
+    <string name="insight_gram_value">%1$d g</string>
+    <string name="insight_top_food">Most logged</string>
     <string name="weight_title">Weight</string>
     <string name="weight_add">Add weight</string>
     <string name="weight_hint">Add at least two entries to see your trend.</string>

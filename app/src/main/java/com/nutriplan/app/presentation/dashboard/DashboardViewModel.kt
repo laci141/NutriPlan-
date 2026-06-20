@@ -61,6 +61,21 @@ data class DashboardUiState(
 }
 
 /**
+ * Heti összefoglaló kártya adatai: az elmúlt 7 nap átlagai és a változás
+ * az azt megelőző héthez képest (%-ban). A `hasComparison` jelzi, van-e
+ * előző heti adat az összehasonlításhoz.
+ */
+data class WeeklyInsights(
+    val avgCalories: Int,
+    val caloriesDeltaPct: Int,
+    val avgProtein: Int,
+    val proteinDeltaPct: Int,
+    val daysLogged: Int,
+    val topFood: String?,
+    val hasComparison: Boolean
+)
+
+/**
  * Dashboard ViewModel. Összegyűjti a mai napra a tápértéket a heti tervből,
  * a kalória- és makró-célokat, a vízfogyasztást (DataStore) és a lépésszámot (szenzor).
  */
@@ -110,6 +125,11 @@ class DashboardViewModel @Inject constructor(
     /** A testsúly-bejegyzések időrendben (a trendgrafikonhoz). */
     val weights: StateFlow<List<WeightEntry>> = weightRepository.all()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** Heti összefoglaló: az elmúlt 7 nap az azt megelőző 7 naphoz hasonlítva. */
+    val weeklyInsights: StateFlow<WeeklyInsights?> = recentRange
+        .map { computeWeeklyInsights(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     /** A választott tömeg-mértékegység (kg/lb) a testsúly megjelenítéséhez. */
     val massUnit: StateFlow<MassUnit> = settingsManager.massUnit
@@ -178,6 +198,43 @@ class DashboardViewModel @Inject constructor(
             } else break
         }
         return streak
+    }
+
+    /**
+     * Heti összefoglaló számítása: az elmúlt 7 nap (ma is beleértve) átlagos napi
+     * kalória- és fehérjebevitele, a naplózott napok száma és a leggyakoribb étel,
+     * az azt megelőző 7 naphoz viszonyított százalékos változással.
+     * Az átlagot a ténylegesen naplózott napokra vetítjük (nem a teljes 7 napra).
+     */
+    private fun computeWeeklyInsights(entries: List<FoodLogEntry>): WeeklyInsights? {
+        val thisWeek = entries.filter { !it.date.isBefore(today.minusDays(6)) }
+        if (thisWeek.isEmpty()) return null
+        val prevWeek = entries.filter {
+            !it.date.isBefore(today.minusDays(13)) && it.date.isBefore(today.minusDays(6))
+        }
+
+        val thisDays = thisWeek.map { it.date }.distinct().size.coerceAtLeast(1)
+        val prevDays = prevWeek.map { it.date }.distinct().size
+
+        val thisAvgCal = thisWeek.sumOf { it.calories }.toDouble() / thisDays
+        val thisAvgProt = thisWeek.sumOf { it.protein } / thisDays
+        val prevAvgCal = if (prevDays > 0) prevWeek.sumOf { it.calories }.toDouble() / prevDays else 0.0
+        val prevAvgProt = if (prevDays > 0) prevWeek.sumOf { it.protein } / prevDays else 0.0
+
+        fun deltaPct(now: Double, before: Double): Int =
+            if (before > 0) ((now - before) * 100.0 / before).roundToInt() else 0
+
+        val topFood = thisWeek.groupingBy { it.name }.eachCount().maxByOrNull { it.value }?.key
+
+        return WeeklyInsights(
+            avgCalories = thisAvgCal.roundToInt(),
+            caloriesDeltaPct = deltaPct(thisAvgCal, prevAvgCal),
+            avgProtein = thisAvgProt.roundToInt(),
+            proteinDeltaPct = deltaPct(thisAvgProt, prevAvgProt),
+            daysLogged = thisWeek.map { it.date }.distinct().size,
+            topFood = topFood,
+            hasComparison = prevDays > 0
+        )
     }
 
     /** Új naplóbejegyzés hozzáadása a mai naphoz (mikrotápanyagokkal). */

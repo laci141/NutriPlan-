@@ -136,6 +136,7 @@ fun DashboardScreen(
     val recentFoods by viewModel.recentFoods.collectAsStateWithLifecycle()
     val scannedProduct by viewModel.scannedProduct.collectAsStateWithLifecycle()
     val weekCalories by viewModel.weekCalories.collectAsStateWithLifecycle()
+    val weeklyInsights by viewModel.weeklyInsights.collectAsStateWithLifecycle()
     val weights by viewModel.weights.collectAsStateWithLifecycle()
     val massUnit by viewModel.massUnit.collectAsStateWithLifecycle()
     val seasonalRegion by viewModel.seasonalRegion.collectAsStateWithLifecycle()
@@ -374,6 +375,9 @@ fun DashboardScreen(
             data = weekCalories,
             goal = state.calorieGoal
         )
+
+        // Heti összefoglaló (átlagok + változás az előző héthez képest)
+        WeeklyInsightsCard(insights = weeklyInsights)
 
         // Testsúly trend (dátumos bejegyzések + grafikon felül)
         WeightCard(
@@ -792,6 +796,89 @@ private fun WeeklyCaloriesCard(data: List<Pair<java.time.LocalDate, Int>>, goal:
                 goal = if (goal > 0) goal.toFloat() else null
             )
         }
+    }
+}
+
+// ── Heti összefoglaló kártya ──────────────────────────────────────────────────
+
+private val InsightCalorieColor = Color(0xFFC2622A) // tompított narancs – kalória
+private val InsightProteinColor = Color(0xFF2A9E76) // mély zöld – fehérje
+
+/**
+ * Heti összefoglaló: naplózott napok, átlagos napi kalória és fehérje
+ * (az előző héthez viszonyított százalékos változással), és a leggyakoribb étel.
+ */
+@Composable
+private fun WeeklyInsightsCard(insights: WeeklyInsights?) {
+    if (insights == null) return
+    BentoCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.weekly_insights),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        InsightRow(
+            label = stringResource(R.string.insight_days_logged),
+            value = stringResource(R.string.insight_days_value, insights.daysLogged),
+            deltaPct = null,
+            color = MaterialTheme.colorScheme.primary
+        )
+        InsightRow(
+            label = stringResource(R.string.insight_avg_calories),
+            value = stringResource(R.string.insight_kcal_value, insights.avgCalories),
+            deltaPct = if (insights.hasComparison) insights.caloriesDeltaPct else null,
+            color = InsightCalorieColor
+        )
+        InsightRow(
+            label = stringResource(R.string.insight_avg_protein),
+            value = stringResource(R.string.insight_gram_value, insights.avgProtein),
+            deltaPct = if (insights.hasComparison) insights.proteinDeltaPct else null,
+            color = InsightProteinColor
+        )
+        insights.topFood?.let { food ->
+            InsightRow(
+                label = stringResource(R.string.insight_top_food),
+                value = food,
+                deltaPct = null,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+/**
+ * Egy összefoglaló-sor: címke (balra), opcionális trend-nyíl a %-os változással
+ * (semleges színnel, mert a több/kevesebb nem jelent jót vagy rosszat),
+ * majd az érték a saját színével (jobbra).
+ */
+@Composable
+private fun InsightRow(label: String, value: String, deltaPct: Int?, color: Color) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        if (deltaPct != null && deltaPct != 0) {
+            val magnitude = if (deltaPct > 0) deltaPct else -deltaPct
+            Text(
+                text = (if (deltaPct > 0) "▲ " else "▼ ") + "$magnitude%",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1
+            )
+            Spacer(Modifier.size(8.dp))
+        }
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.SemiBold,
+            color = color,
+            maxLines = 1
+        )
     }
 }
 

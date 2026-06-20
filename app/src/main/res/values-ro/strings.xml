@@ -319,6 +319,15 @@
 
     <!-- Grafic săptămânal și greutate -->
     <string name="weekly_calories">Caloriile săptămânii</string>
+    <!-- Rezumat săptămânal -->
+    <string name="weekly_insights">Rezumat săptămânal</string>
+    <string name="insight_days_logged">Zile înregistrate</string>
+    <string name="insight_days_value">%1$d / 7</string>
+    <string name="insight_avg_calories">Calorii medii/zi</string>
+    <string name="insight_kcal_value">%1$d kcal</string>
+    <string name="insight_avg_protein">Proteine medii/zi</string>
+    <string name="insight_gram_value">%1$d g</string>
+    <string name="insight_top_food">Cel mai logat</string>
     <string name="weight_title">Greutate</string>
     <string name="weight_add">Adaugă greutate</string>
     <string name="weight_hint">Adaugă cel puțin două valori pentru a vedea tendința.</string>

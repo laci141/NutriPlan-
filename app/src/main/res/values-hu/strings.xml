@@ -319,6 +319,15 @@
 
     <!-- Heti diagram és testsúly -->
     <string name="weekly_calories">Heti kalória</string>
+    <!-- Heti összefoglaló -->
+    <string name="weekly_insights">Heti összefoglaló</string>
+    <string name="insight_days_logged">Naplózott napok</string>
+    <string name="insight_days_value">%1$d / 7</string>
+    <string name="insight_avg_calories">Átlag kalória/nap</string>
+    <string name="insight_kcal_value">%1$d kcal</string>
+    <string name="insight_avg_protein">Átlag fehérje/nap</string>
+    <string name="insight_gram_value">%1$d g</string>
+    <string name="insight_top_food">Leggyakoribb étel</string>
     <string name="weight_title">Testsúly</string>
     <string name="weight_add">Testsúly hozzáadása</string>
     <string name="weight_hint">Adj meg legalább két mérést a trendhez.</string>
