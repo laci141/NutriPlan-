@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NutriPlan</string>
+
+    <!-- Navigare -->
+    <string name="nav_planner">Planificator</string>
+    <string name="nav_recipes">Rețete</string>
+    <string name="nav_shopping">Cumpărături</string>
+    <string name="nav_nutrition">Nutriție</string>
+    <string name="nav_settings">Setări</string>
+
+    <!-- Tipuri de mese -->
+    <string name="meal_breakfast">Mic dejun</string>
+    <string name="meal_morning_snack">Gustare de dimineață</string>
+    <string name="meal_lunch">Prânz</string>
+    <string name="meal_afternoon_snack">Gustare de după-amiază</string>
+    <string name="meal_dinner">Cină</string>
+
+    <!-- Zile -->
+    <string name="day_monday">Luni</string>
+    <string name="day_tuesday">Marți</string>
+    <string name="day_wednesday">Miercuri</string>
+    <string name="day_thursday">Joi</string>
+    <string name="day_friday">Vineri</string>
+    <string name="day_saturday">Sâmbătă</string>
+    <string name="day_sunday">Duminică</string>
+
+    <!-- Unități -->
+    <string name="unit_g">g</string>
+    <string name="unit_kg">kg</string>
+    <string name="unit_ml">ml</string>
+    <string name="unit_l">l</string>
+    <string name="unit_piece">buc</string>
+
+    <!-- Categorii -->
+    <string name="cat_vegetables">Legume</string>
+    <string name="cat_fruits">Fructe</string>
+    <string name="cat_meat">Carne</string>
+    <string name="cat_fish">Pește</string>
+    <string name="cat_dairy">Lactate</string>
+    <string name="cat_bakery">Panificație</string>
+    <string name="cat_dry_goods">Produse uscate</string>
+    <string name="cat_nuts">Semințe și nuci</string>
+    <string name="cat_other">Altele</string>
+
+    <!-- Rețete -->
+    <string name="recipes_title">Rețete</string>
+    <string name="search_hint">Caută rețete…</string>
+    <string name="add_recipe">Adaugă rețetă</string>
+    <string name="edit_recipe">Editează rețeta</string>
+    <string name="new_recipe">Rețetă nouă</string>
+    <string name="delete_recipe">Șterge rețeta</string>
+    <string name="no_recipes">Nicio rețetă încă. Apasă + pentru a adăuga.</string>
+    <string name="recipe_name">Numele rețetei</string>
+    <string name="calories">Calorii</string>
+    <string name="protein">Proteine</string>
+    <string name="carbs">Carbohidrați</string>
+    <string name="fat">Grăsimi</string>
+    <string name="ingredients">Ingrediente</string>
+    <string name="add_ingredient">Adaugă ingredient</string>
+    <string name="ingredient_name">Numele ingredientului</string>
+    <string name="quantity">Cantitate</string>
+    <string name="unit">Unitate</string>
+    <string name="category">Categorie</string>
+    <string name="meal_type">Tipul mesei</string>
+    <string name="kcal_unit">kcal</string>
+
+    <!-- Planificator -->
+    <string name="planner_title">Planificator săptămânal</string>
+    <string name="clear_week">Golește săptămâna</string>
+    <string name="add_meal">Adaugă</string>
+    <string name="select_recipe">Selectează rețeta</string>
+    <string name="no_recipes_for_meal">Nicio rețetă disponibilă pentru această masă.</string>
+    <string name="day_total">Total pe zi</string>
+
+    <!-- Cumpărături -->
+    <string name="shopping_title">Listă de cumpărături</string>
+    <string name="generate_list">Generează din plan</string>
+    <string name="clear_purchased">Șterge cumpărate</string>
+    <string name="clear_all">Șterge tot</string>
+    <string name="empty_shopping">Lista de cumpărături este goală. Generează din planul săptămânal.</string>
+    <string name="shopping_generated">Listă generată: %1$d produse</string>
+
+    <!-- Nutriție -->
+    <string name="nutrition_title">Nutriție</string>
+    <string name="weekly_totals">Total săptămânal</string>
+    <string name="daily_breakdown">Detaliere zilnică</string>
+    <string name="no_nutrition_data">Nicio masă planificată încă.</string>
+
+    <!-- Setări -->
+    <string name="settings_title">Setări</string>
+    <string name="language">Limbă</string>
+    <string name="theme">Temă</string>
+    <string name="theme_light">Luminoasă</string>
+    <string name="theme_dark">Întunecată</string>
+    <string name="theme_system">Implicit sistem</string>
+    <string name="lang_hungarian">Maghiară</string>
+    <string name="lang_english">Engleză</string>
+    <string name="lang_romanian">Română</string>
+    <string name="export_data">Exportă date (JSON)</string>
+    <string name="import_data">Importă date (JSON)</string>
+    <string name="data_management">Gestionare date</string>
+    <string name="export_success">Export finalizat</string>
+    <string name="import_success">Import finalizat</string>
+    <string name="import_error">Import eșuat. Fișier invalid.</string>
+    <string name="export_error">Export eșuat.</string>
+    <string name="about">Despre</string>
+    <string name="about_text">NutriPlan – planificator de mese offline. Versiunea 1.0.0</string>
+    <string name="daily_calorie_goal">Obiectiv caloric zilnic</string>
+    <string name="calorie_goal_summary">Folosit în ecranul Nutriție pentru a urmări progresul zilnic.</string>
+
+    <!-- Progres obiectiv caloric -->
+    <string name="goal_progress">%1$d / %2$d kcal</string>
+    <string name="kcal_remaining">încă %1$d kcal</string>
+    <string name="kcal_over_goal">%1$d kcal peste obiectiv</string>
+    <string name="goal_reached">Obiectiv atins</string>
+
+    <!-- Acasă (Dashboard) -->
+    <string name="nav_dashboard">Acasă</string>
+    <string name="greeting_morning">Bună dimineața! Gata pentru un mic dejun sănătos?</string>
+    <string name="greeting_afternoon">Bună ziua! Continuă tot așa.</string>
+    <string name="greeting_evening">Bravo azi! Nu uita să notezi cina.</string>
+    <string name="dashboard_calories_today">Calorii azi</string>
+    <string name="dashboard_macros">Macronutrienți</string>
+    <string name="dashboard_water">Apă</string>
+    <string name="dashboard_steps">Pași</string>
+    <string name="water_add">+250 ml</string>
+    <string name="ml_progress">%1$d / %2$d ml</string>
+    <string name="steps_progress">%1$d / %2$d</string>
+    <string name="enable">Activează</string>
+    <string name="left_short">încă %1$d</string>
+
+    <!-- Sincronizare wearable (smartwatch) prin Health Connect -->
+    <string name="wearable_connect">Conectează ceasul</string>
+    <string name="wearable_source">Ceas</string>
+    <string name="heart_rate">Puls</string>
+    <string name="heart_rate_bpm">%1$d bpm</string>
+
+    <!-- Securitate / blocare aplicație -->
+    <string name="security">Securitate</string>
+    <string name="app_lock">Blocare aplicație</string>
+    <string name="app_lock_summary">Necesită amprentă sau PIN pentru a deschide aplicația.</string>
+    <string name="app_lock_prompt">Autentifică-te pentru a deschide NutriPlan</string>
+    <string name="app_locked">NutriPlan este blocat</string>
+    <string name="unlock">Deblochează</string>
+    <!-- Blocare cu PIN -->
+    <string name="set_pin">Setează PIN</string>
+    <string name="change_pin">Schimbă PIN-ul</string>
+    <string name="remove_pin">Elimină PIN-ul</string>
+    <string name="pin_label">PIN (4–8 cifre)</string>
+    <string name="pin_confirm_label">Confirmă PIN-ul</string>
+    <string name="enter_pin">Introdu PIN-ul</string>
+    <string name="wrong_pin">PIN greșit</string>
+    <string name="pin_mismatch">PIN-urile nu coincid</string>
+    <string name="pin_too_short">PIN-ul trebuie să aibă cel puțin 4 cifre</string>
+    <string name="use_biometric">Folosește amprenta</string>
+    <string name="pin_set_summary">PIN-ul este setat – funcționează și fără amprentă.</string>
+    <string name="pin_not_set_summary">Setează un PIN pentru a debloca fără amprentă.</string>
+
+    <!-- Foto rețetă și preparare -->
+    <string name="recipe_image">Foto rețetă</string>
+    <string name="take_photo">Foto</string>
+    <string name="choose_gallery">Galerie</string>
+    <string name="remove_image">Elimină foto</string>
+    <string name="instructions">Preparare</string>
+    <string name="instructions_hint">Cum se prepară…</string>
+
+    <!-- Copiere zi -->
+    <string name="copy_day">Copiază ziua</string>
+    <string name="copy_to_all_days">Copiază în toate zilele</string>
+
+    <!-- Favorite, sortare, partajare -->
+    <string name="favorite">Favorit</string>
+    <string name="favorites">Favorite</string>
+    <string name="sort_by_name">Nume</string>
+    <string name="sort_by_calories">Calorii</string>
+    <string name="share_list">Partajează lista</string>
+
+    <!-- Comune -->
+    <string name="save">Salvează</string>
+    <string name="cancel">Anulează</string>
+    <string name="close">Închide</string>
+    <string name="delete">Șterge</string>
+    <string name="ok">OK</string>
+
+    <!-- Scaner cod de bare -->
+    <string name="scan_barcode">Scanează codul de bare</string>
+    <string name="scan_hint">Îndreaptă camera spre codul de bare al produsului</string>
+    <string name="scan_success">Produs găsit – valori nutriționale completate (la 100 g)</string>
+    <string name="scan_not_found">Produsul nu a fost găsit în baza de date</string>
+    <string name="scan_error">Fără conexiune. Verifică internetul și încearcă din nou</string>
+    <string name="confirm">Confirmă</string>
+    <string name="field_required">Acest câmp este obligatoriu</string>
+    <string name="delete_confirm_title">Confirmă ștergerea</string>
+    <string name="delete_recipe_message">Sigur dorești să ștergi această rețetă?</string>
+    <string name="clear_week_message">Elimini toate atribuirile din planul săptămânal?</string>
+    <string name="clear_all_message">Ștergi întreaga listă de cumpărături?</string>
+    <string name="remove">Elimină</string>
+
+    <!-- Numele rețetelor implicite (traductibile) -->
+    <string name="rcp_b1">Terci de ovăz cu afine</string>
+    <string name="rcp_b2">Omletă cu legume</string>
+    <string name="rcp_b3">Iaurt grecesc</string>
+    <string name="rcp_b4">Cremă de brânză de vaci</string>
+    <string name="rcp_b5">Cremă de ou cu avocado</string>
+    <string name="rcp_b6">Brânză cottage cu roșii</string>
+    <string name="rcp_b7">Tortilla cu pui</string>
+    <string name="rcp_b8">Budincă de chia</string>
+    <string name="rcp_b9">Skyr cu măr</string>
+    <string name="rcp_b10">Sandviș cu ton</string>
+    <string name="rcp_ms1">Măr cu migdale</string>
+    <string name="rcp_ms2">Banană cu nucă</string>
+    <string name="rcp_ms3">Pară cu semințe de dovleac</string>
+    <string name="rcp_ms4">Iaurt</string>
+    <string name="rcp_ms5">Skyr</string>
+    <string name="rcp_ms6">Hummus cu morcov</string>
+    <string name="rcp_ms7">Ardei gras</string>
+    <string name="rcp_ms8">Brânză cottage cu castravete</string>
+    <string name="rcp_ms9">Portocală</string>
+    <string name="rcp_ms10">Fructe de pădure</string>
+    <string name="rcp_l1">Piept de pui cu orez brun</string>
+    <string name="rcp_l2">Somon cu salată</string>
+    <string name="rcp_l3">Piept de curcan cu bulgur</string>
+    <string name="rcp_l4">Piept de pui cu legume mixte</string>
+    <string name="rcp_l5">Linte cu ouă</string>
+    <string name="rcp_l6">Salată cu ton</string>
+    <string name="rcp_l7">Carne de vită cu legume</string>
+    <string name="rcp_l8">Năut cu orez</string>
+    <string name="rcp_l9">Broccoli cu carne tocată</string>
+    <string name="rcp_l10">Piept de pui cu roșii și castravete</string>
+    <string name="rcp_as1">Măr cu nucă</string>
+    <string name="rcp_as2">Chefir</string>
+    <string name="rcp_as3">Skyr</string>
+    <string name="rcp_as4">Brânză cottage</string>
+    <string name="rcp_as5">Pară</string>
+    <string name="rcp_as6">Biscuit integral</string>
+    <string name="rcp_as7">Migdale</string>
+    <string name="rcp_as8">Popcorn</string>
+    <string name="rcp_as9">Fructe de pădure</string>
+    <string name="rcp_as10">Hummus cu castravete</string>
+    <string name="rcp_d1">Salată cu roșii, castravete și feta</string>
+    <string name="rcp_d2">Ton cu salată</string>
+    <string name="rcp_d3">Ouă cu pâine</string>
+    <string name="rcp_d4">Brânză cottage cu ardei</string>
+    <string name="rcp_d5">Piept de curcan cu salată</string>
+    <string name="rcp_d6">Supă de legume</string>
+    <string name="rcp_d7">Somon cu salată</string>
+    <string name="rcp_d8">Piept de pui cu tortilla</string>
+    <string name="rcp_d9">Brânză cottage cu ardei și castravete</string>
+    <string name="rcp_d10">Mozzarella cu roșii</string>
+
+    <!-- Numele ingredientelor implicite (traductibile) -->
+    <string name="ing_oats">Fulgi de ovăz</string>
+    <string name="ing_milk">Lapte</string>
+    <string name="ing_blueberry">Afine</string>
+    <string name="ing_walnut">Nucă</string>
+    <string name="ing_egg">Ou</string>
+    <string name="ing_bell_pepper">Ardei gras</string>
+    <string name="ing_tomato">Roșie</string>
+    <string name="ing_wholegrain_bread">Pâine integrală</string>
+    <string name="ing_greek_yogurt">Iaurt grecesc</string>
+    <string name="ing_honey">Miere</string>
+    <string name="ing_quark">Brânză de vaci</string>
+    <string name="ing_cottage_cheese">Brânză cottage</string>
+    <string name="ing_avocado">Avocado</string>
+    <string name="ing_chicken_breast">Piept de pui</string>
+    <string name="ing_tortilla">Tortilla</string>
+    <string name="ing_lettuce">Salată</string>
+    <string name="ing_chia">Semințe de chia</string>
+    <string name="ing_banana">Banană</string>
+    <string name="ing_skyr">Skyr</string>
+    <string name="ing_apple">Măr</string>
+    <string name="ing_tuna">Ton</string>
+    <string name="ing_bread">Pâine</string>
+    <string name="ing_cucumber">Castravete</string>
+    <string name="ing_almond">Migdale</string>
+    <string name="ing_pumpkin_seed">Semințe de dovleac</string>
+    <string name="ing_yogurt">Iaurt</string>
+    <string name="ing_hummus">Hummus</string>
+    <string name="ing_carrot">Morcov</string>
+    <string name="ing_orange">Portocală</string>
+    <string name="ing_berries">Fructe de pădure</string>
+    <string name="ing_brown_rice">Orez brun</string>
+    <string name="ing_broccoli">Broccoli</string>
+    <string name="ing_salmon">Somon</string>
+    <string name="ing_turkey_breast">Piept de curcan</string>
+    <string name="ing_bulgur">Bulgur</string>
+    <string name="ing_mixed_vegetables">Legume mixte</string>
+    <string name="ing_lentils">Linte</string>
+    <string name="ing_beef">Carne de vită</string>
+    <string name="ing_vegetables">Legume</string>
+    <string name="ing_chickpeas">Năut</string>
+    <string name="ing_rice">Orez</string>
+    <string name="ing_minced_meat">Carne tocată</string>
+    <string name="ing_sour_cream">Smântână</string>
+    <string name="ing_kefir">Chefir</string>
+    <string name="ing_wholegrain_biscuit">Biscuit integral</string>
+    <string name="ing_popcorn">Popcorn</string>
+    <string name="ing_feta">Feta</string>
+    <string name="ing_vegetable_soup">Supă de legume</string>
+    <string name="ing_mozzarella">Mozzarella</string>
+    <string name="ing_pear">Pară</string>
+
+    <!-- Funcții noi: plan automat, partajare rețetă, macro, culori dinamice -->
+    <string name="share">Partajează</string>
+    <string name="auto_plan">Generează săptămâna</string>
+    <string name="plan_generated">Plan automat gata: %1$d mese</string>
+    <string name="plan_no_recipes">Adaugă întâi rețete pentru a genera un plan</string>
+    <string name="import_recipe">Importă rețetă</string>
+    <string name="recipe_import_ok">Rețetă importată</string>
+    <string name="recipe_import_fail">Rețeta nu a putut fi importată</string>
+    <string name="dynamic_color">Culori dinamice</string>
+    <string name="dynamic_color_summary">Folosește culorile din imaginea de fundal (Android 12+).</string>
+    <string name="macro_goals">Obiective macro (g)</string>
+    <string name="macro_goals_summary">Lasă gol pentru valori automate din obiectivul caloric.</string>
+    <string name="macro_auto">Auto</string>
+
+    <!-- Jurnal alimentar -->
+    <string name="streak_days">Serie de %1$d zile</string>
+    <string name="food_log_title">Jurnalul de azi</string>
+    <string name="food_log_empty">Nimic înregistrat azi.</string>
+    <string name="log_food">Înregistrează aliment</string>
+    <string name="food_name">Numele alimentului</string>
+    <string name="grams">Cantitate (g)</string>
+
+    <!-- Grafic săptămânal și greutate -->
+    <string name="weekly_calories">Caloriile săptămânii</string>
+    <!-- Rezumat săptămânal -->
+    <string name="weekly_insights">Rezumat săptămânal</string>
+    <string name="insight_days_logged">Zile înregistrate</string>
+    <string name="insight_days_value">%1$d / 7</string>
+    <string name="insight_avg_calories">Calorii medii/zi</string>
+    <string name="insight_kcal_value">%1$d kcal</string>
+    <string name="insight_avg_protein">Proteine medii/zi</string>
+    <string name="insight_gram_value">%1$d g</string>
+    <string name="insight_top_food">Cel mai logat</string>
+    <!-- Jurnal de dispoziție -->
+    <string name="mood_title">Dispoziție</string>
+    <string name="mood_prompt">Cum te simți astăzi?</string>
+    <!-- Serie și insigne -->
+    <string name="streak_badges_title">Serie și insigne</string>
+    <string name="streak_current">Serie de %1$d zile</string>
+    <string name="streak_best">Cea mai lungă: %1$d zile</string>
+    <string name="badge_streak_3">3 zile</string>
+    <string name="badge_streak_7">7 zile</string>
+    <string name="badge_streak_14">14 zile</string>
+    <string name="badge_streak_30">30 de zile</string>
+    <string name="badge_first_log">Prima logare</string>
+    <string name="badge_log_30_days">30 de zile logate</string>
+    <string name="badge_weight_tracker">Monitor greutate</string>
+    <!-- Recunoaștere foto AI -->
+    <string name="ai_photo_recognize">Recunoaștere foto AI</string>
+    <string name="ai_photo_hint">Îndreaptă spre mâncare și fotografiază</string>
+    <string name="ai_photo_capture">Fotografiază</string>
+    <string name="ai_photo_loading">Se recunoaște mâncarea…</string>
+    <string name="ai_photo_error">Mâncarea nu a putut fi recunoscută. Încearcă din nou.</string>
+    <string name="weight_title">Greutate</string>
+    <string name="weight_add">Adaugă greutate</string>
+    <string name="weight_hint">Adaugă cel puțin două valori pentru a vedea tendința.</string>
+
+    <!-- Sincronizare & AI (cheie proprie) -->
+    <string name="sync_ai">Sincronizare &amp; AI (experimental)</string>
+    <string name="sync_ai_enable">Activează sincronizarea &amp; AI</string>
+    <string name="sync_ai_summary">Folosește propriul cont/cheie pentru sincronizare și funcții AI.</string>
+    <string name="sync_provider">Furnizor (ex. Drive, WebDAV, OpenAI…)</string>
+    <string name="api_key">Cheie API / token</string>
+    <string name="clear_key">Șterge cheia</string>
+    <string name="sync_key_set">Există o cheie salvată (criptată).</string>
+    <string name="sync_key_none">Nicio cheie salvată încă.</string>
+    <string name="sync_ai_note">Stocată criptat pe acest dispozitiv (Keystore) și niciodată inclusă în backup. Sincronizarea/AI reală este în finalizare.</string>
+    <string name="servings">Porții</string>
+
+    <!-- AI providers (proxy) -->
+    <string name="ai_providers">Furnizori AI</string>
+    <string name="ai_enable">Activează funcțiile AI</string>
+    <string name="ai_summary">Conectează propriul proxy Cloudflare Worker (cheile rămân pe server).</string>
+    <string name="proxy_url">URL proxy</string>
+    <string name="proxy_token">Token aplicație</string>
+    <string name="clear_token">Șterge tokenul</string>
+    <string name="token_set">Token salvat (criptat).</string>
+    <string name="token_none">Niciun token încă.</string>
+    <string name="providers">Furnizori</string>
+    <string name="test_connection">Test</string>
+    <string name="ai_suggest">Idee de meniu AI</string>
+    <string name="ai_working">Se procesează…</string>
+    <string name="ai_note">URL + token stocate criptat (Keystore), protejate de blocarea aplicației. Cheile furnizorilor sunt doar pe Worker-ul tău.</string>
+
+    <!-- Dashboard UI extras -->
+    <string name="tab_daily">Azi</string>
+    <string name="tab_weekly">Săptămânal</string>
+    <string name="weight_previous">Anterior</string>
+    <string name="date_today">Azi</string>
+    <string name="date_yesterday">Ieri</string>
+
+    <!-- Micronutrienți -->
+    <string name="micro_nutrients">Micronutrienți</string>
+    <string name="fiber">Fibre</string>
+    <string name="vitamin_c">Vitamina C</string>
+    <string name="iron">Fier</string>
+    <string name="calcium">Calciu</string>
+    <string name="vitamin_d">Vitamina D</string>
+    <string name="vitamin_b12">Vitamina B12</string>
+    <string name="magnesium">Magneziu</string>
+
+    <!-- Baza de date alimentară locală -->
+    <string name="local_foods">Alimente locale (HU/RO)</string>
+    <string name="search_foods">Caută alimente locale…</string>
+
+    <!-- Cronometru post intermitent -->
+    <string name="fasting_title">Cronometru post (16:8)</string>
+    <string name="fasting_idle">Nu postești — apasă Start pentru un post de 16 ore</string>
+    <string name="fasting_active">Timp scurs: %1$s · Rămas: %2$s</string>
+    <string name="fasting_complete">Post complet! Poți mânca acum.</string>
+    <string name="fasting_start">Start</string>
+    <string name="fasting_stop">Stop</string>
+    <string name="fasting_window">Fereastră: %1$s (post intermitent)</string>
+
+    <!-- Sugestii de înlocuire -->
+    <string name="swap_food">Sugestii înlocuire</string>
+    <string name="swap_desc">Alternative cu raport proteină/calorii similar pentru "%1$s"</string>
+
+    <!-- Înregistrare vocală -->
+    <string name="voice_log">Înregistrare vocală</string>
+
+    <!-- Alimente de sezon -->
+    <string name="seasonal_foods">De sezon în această lună</string>
+    <string name="seasonal_tip">Produse proaspete de sezon acum</string>
+
+    <!-- Unități de măsură -->
+    <string name="units">Unități</string>
+    <string name="unit_mass">Greutate</string>
+    <string name="unit_length">Înălțime / lungime</string>
+    <string name="unit_mass_kg">Kilogram (kg)</string>
+    <string name="unit_mass_lb">Livră (lb)</string>
+    <string name="unit_length_cm">Centimetru (cm)</string>
+    <string name="unit_length_inch">Inch (in)</string>
+
+    <!-- Regiune de sezon -->
+    <string name="seasonal_region">Regiune de sezon</string>
+    <string name="seasonal_region_summary">Alege regiunea pentru produse de sezon corecte.</string>
+    <string name="region_central_europe">Europa Centrală</string>
+    <string name="region_mediterranean">Mediteraneean</string>
+    <string name="region_northern_europe">Europa de Nord</string>
+    <string name="region_north_america">America de Nord</string>
+
+    <!-- Validator compoziție farfurie -->
+    <string name="plate_composition">Echilibrul farfuriei (față de 30/40/30)</string>
+</resources>

@@ -1,0 +1,7 @@
+# NutriPlan AI Proxy – Cloudflare Worker konfiguráció
+# A titkos kulcsokat NEM ide tesszük, hanem `wrangler secret put` paranccsal
+# (lásd README.md). Így nem kerülnek a verziókezelőbe.
+
+name = "nutriplan-ai-proxy"
+main = "worker.js"
+compatibility_date = "2024-11-01"

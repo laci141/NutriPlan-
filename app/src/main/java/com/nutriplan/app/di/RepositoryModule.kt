@@ -1,0 +1,57 @@
+package com.nutriplan.app.di
+
+import com.nutriplan.app.data.repository.BackupRepositoryImpl
+import com.nutriplan.app.data.repository.FoodLogRepositoryImpl
+import com.nutriplan.app.data.repository.MealPlanRepositoryImpl
+import com.nutriplan.app.data.repository.MoodRepositoryImpl
+import com.nutriplan.app.data.repository.RecipeRepositoryImpl
+import com.nutriplan.app.data.repository.ShoppingRepositoryImpl
+import com.nutriplan.app.data.repository.WeightRepositoryImpl
+import com.nutriplan.app.domain.repository.BackupRepository
+import com.nutriplan.app.domain.repository.FoodLogRepository
+import com.nutriplan.app.domain.repository.MealPlanRepository
+import com.nutriplan.app.domain.repository.MoodRepository
+import com.nutriplan.app.domain.repository.RecipeRepository
+import com.nutriplan.app.domain.repository.ShoppingRepository
+import com.nutriplan.app.domain.repository.WeightRepository
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+/**
+ * Hilt modul a tároló interfészek és a konkrét megvalósítások összekötéséhez.
+ */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindRecipeRepository(impl: RecipeRepositoryImpl): RecipeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMealPlanRepository(impl: MealPlanRepositoryImpl): MealPlanRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindShoppingRepository(impl: ShoppingRepositoryImpl): ShoppingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBackupRepository(impl: BackupRepositoryImpl): BackupRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFoodLogRepository(impl: FoodLogRepositoryImpl): FoodLogRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWeightRepository(impl: WeightRepositoryImpl): WeightRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMoodRepository(impl: MoodRepositoryImpl): MoodRepository
+}

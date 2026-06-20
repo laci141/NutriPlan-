@@ -1,0 +1,136 @@
+# NutriPlan – folyamatos integráció (CI)
+# Ez a "robot" minden feltöltésnél és pull requestnél lefuttatja a teszteket,
+# lefordítja a megerősített (R8-csökkentett, obfuszkált) RELEASE APK-t,
+# és közzéteszi letölthető Release-ként. Hiba esetén pirossal jelez.
+name: Android CI
+
+on:
+  push:
+    branches:
+      - main
+      - "claude/**"
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Fordítás és tesztek
+    runs-on: ubuntu-latest
+    # Jogosultság a Release létrehozásához/frissítéséhez
+    permissions:
+      contents: write
+
+    steps:
+      # 1. lépés – a robot lemásolja a kódot a tiszta gépre
+      - name: Kód letöltése
+        uses: actions/checkout@v4
+
+      # 2. lépés – Java (JDK 17) telepítése
+      - name: JDK 17 beállítása
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # 3. lépés – Android SDK telepítése
+      - name: Android SDK beállítása
+        uses: android-actions/setup-android@v3
+
+      # 4. lépés – Gradle előkészítése (gyorsítótárral)
+      - name: Gradle beállítása
+        uses: gradle/actions/setup-gradle@v4
+
+      # 5. lépés – a gradlew futtathatóvá tétele
+      - name: gradlew futtathatóvá tétele
+        run: chmod +x ./gradlew
+
+      # 6. lépés – egységtesztek futtatása
+      - name: Egységtesztek futtatása
+        run: ./gradlew testDebugUnitTest --stacktrace
+
+      # 7. lépés – a MEGERŐSÍTETT release APK fordítása (R8 + erőforrás-zsugorítás)
+      # Ez egyúttal ellenőrzi, hogy a ProGuard/R8 szabályok nem törik el az appot.
+      - name: Release APK fordítása
+        run: ./gradlew assembleRelease --stacktrace
+
+      # 7/b. lépés – garantált metaadat-eltávolítás
+      # Az AGP a csomagolás UTÁN injektálja az app-metadata.properties fájlt, ezért a
+      # Gradle exclude nem mindig elég. Itt biztosan kivágjuk, majd újraigazítjuk
+      # (zipalign) és újraírjuk (apksigner) a csomagot a debug kulccsal.
+      - name: app-metadata eltávolítása és APK újraaláírása
+        run: |
+          set -e
+          APK="app/build/outputs/apk/release/app-release.apk"
+          echo "Eltávolítás előtti tartalom:"
+          unzip -l "$APK" | grep -i "app-metadata" || echo "  (már nincs benne)"
+          # A bejegyzés törlése a csomagból
+          zip -d "$APK" "META-INF/com/android/build/gradle/app-metadata.properties" || true
+          # A legfrissebb build-tools megkeresése a zipalign/apksigner eszközökhöz
+          BT="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)"
+          echo "build-tools: $BT"
+          # Újraigazítás (a törlés után szükséges)
+          "${BT}zipalign" -f -p 4 "$APK" "${APK%.apk}-aligned.apk"
+          # Újraaláírás a repóban tárolt stabil tesztkulccsal (ugyanaz, mint a Gradle-é)
+          "${BT}apksigner" sign \
+            --ks app/signing/nutriplan-release.jks \
+            --ks-pass pass:nutriplan \
+            --key-pass pass:nutriplan \
+            --ks-key-alias nutriplan \
+            "${APK%.apk}-aligned.apk"
+          mv -f "${APK%.apk}-aligned.apk" "$APK"
+          rm -f "${APK%.apk}-aligned.apk.idsig"
+          echo "Eltávolítás utáni ellenőrzés (üres = sikeres):"
+          if unzip -l "$APK" | grep -i "app-metadata"; then
+            echo "HIBA: az app-metadata még mindig bent van!"; exit 1
+          else
+            echo "OK: nincs app-metadata.properties a csomagban."
+          fi
+          # Az aláírás érvényességének ellenőrzése
+          "${BT}apksigner" verify --print-certs "$APK" >/dev/null && echo "Aláírás érvényes."
+
+      # 7/c. lépés – Android App Bundle (.aab) fordítása a Play Store-hoz.
+      # Az .aab eszközönként testreszabott, kisebb letöltést tesz lehetővé (ABI/sűrűség/nyelv szerint).
+      - name: Release AAB fordítása (Play Store formátum)
+        run: ./gradlew bundleRelease --stacktrace
+
+      # 8. lépés – a kész release APK feltöltése letölthető csomagként
+      - name: Release APK feltöltése (artifact)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nutriplan-release-apk
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: warn
+
+      # 8/b. lépés – az AAB feltöltése (Play Console feltöltéshez)
+      - name: Release AAB feltöltése (artifact)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nutriplan-release-aab
+          path: app/build/outputs/bundle/release/*.aab
+          if-no-files-found: warn
+
+      # 9. lépés – teszt-jelentések feltöltése (akkor is, ha a teszt elbukott)
+      - name: Teszt-jelentések feltöltése
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: app/build/reports/tests/
+          if-no-files-found: ignore
+
+      # 10. lépés – az APK közzététele letölthető Release-ként (állandó link)
+      - name: APK közzététele Release-ként
+        if: github.event_name == 'push' && success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nutriplan-debug
+          name: NutriPlan APK (legfrissebb)
+          body: "A legfrissebb fordításból készült, megerősített (R8) telepíthető APK. Automatikusan frissül minden feltöltésnél."
+          prerelease: true
+          files: app/build/outputs/apk/release/*.apk
