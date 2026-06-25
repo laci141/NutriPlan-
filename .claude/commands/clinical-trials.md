@@ -15,95 +15,96 @@ Token saved at `~/.github_token` on user's device.
 Push command: `git push https://$(cat ~/.github_token)@github.com/laci141/printing-press-library.git fix-branch:feat/clinical-trials`
 Alias: `gitpush` (defined in ~/.bashrc)
 
-## Natural Language Wrapper
+## Natural Language Wrapper (~/ct)
 
-`~/ct` script routes Hungarian/English natural language queries to the correct CLI command.
+`~/ct` script routes natural language queries (English or Hungarian) to the correct CLI command.
 Source: `library/health/clinical-trials/ct-wrapper.sh` on feat/clinical-trials branch.
 
+Hungarian input examples (handled automatically):
 ```bash
-~/ct "diabetes type 2 aktív kísérletek"
-~/ct "hasonlítsd össze az aspirint az ibuprofennel"
-~/ct "cancer ki finanszírozza"
+~/ct "diabetes type 2 active trials"
+~/ct "compare aspirin ibuprofen"
+~/ct "cancer who funds"
 ~/ct "alzheimer trend"
 ~/ct "lung cancer phase 3"
-~/ct "aspirin mellékhatás fda"
+~/ct "aspirin fda safety"
 ```
 
 ## All 30 Commands / Questions
 
-### RECRUITING (aktív toborzó kísérletek)
+### RECRUITING — Active recruiting trials
 ```bash
 ./clinical-trials recruiting "diabetes type 2" --limit 10 --human-friendly
 ./clinical-trials recruiting "heart disease" --human-friendly
 ./clinical-trials recruiting "obesity" --human-friendly
 ```
 
-### HOTSPOTS (földrajzi eloszlás)
+### HOTSPOTS — Geographic distribution of research
 ```bash
 ./clinical-trials hotspots "alzheimer" --human-friendly
 ./clinical-trials hotspots "covid-19" --human-friendly
 ./clinical-trials hotspots "diabetes" --human-friendly
 ```
 
-### PHASE3 (fázis szűrő)
+### PHASE3 — Phase 3 trials only
 ```bash
 ./clinical-trials phase3 "lung cancer" --human-friendly
 ./clinical-trials phase3 "breast cancer" --human-friendly
 ./clinical-trials phase3 "hypertension" --human-friendly
 ```
 
-### COMPARE (összehasonlítás)
+### COMPARE — Head-to-head drug comparison (RxNorm normalized)
 ```bash
 ./clinical-trials compare "aspirin" "ibuprofen" --human-friendly
 ./clinical-trials compare "metformin" "insulin" --human-friendly
 ./clinical-trials compare "ozempic" "wegovy" --human-friendly
 ```
 
-### SPONSORS (szponzorok)
+### SPONSORS — Who funds the research
 ```bash
 ./clinical-trials sponsors "cancer" --human-friendly
 ./clinical-trials sponsors "alzheimer" --human-friendly
 ./clinical-trials sponsors "heart disease" --human-friendly
 ```
 
-### SAFETY (FDA mellékhatások)
+### SAFETY — FDA adverse-event signals (FAERS database)
 ```bash
 ./clinical-trials safety "aspirin" --human-friendly
 ./clinical-trials safety "ibuprofen" --human-friendly
 ./clinical-trials safety "metformin" --human-friendly
 ```
 
-### VELOCITY / EMERGING (trend elemzés)
+### VELOCITY / EMERGING — Trend analysis and growth rate
 ```bash
 ./clinical-trials velocity "alzheimer" --human-friendly
 ./clinical-trials velocity "covid-19" --human-friendly
 ./clinical-trials emerging "cancer" --human-friendly
 ```
 
-### RISK (kockázatelemzés — NCT ID kell)
+### RISK — Risk analysis for a specific trial (needs NCT ID)
 ```bash
 ./clinical-trials risk NCT07011732 --human-friendly
 ./clinical-trials risk NCT04280705 --human-friendly
 ```
 
-### EVIDENCE (eredmények / publikációk — NCT ID kell)
+### EVIDENCE — Publications and citations (needs NCT ID)
 ```bash
 ./clinical-trials evidence NCT04280705 --human-friendly
 ./clinical-trials evidence NCT06128837 --human-friendly
 ```
 
-### WATCH (változások figyelése)
+### WATCH — Monitor changes since last run
 ```bash
 ./clinical-trials watch "vitamin d" --human-friendly
 ```
 
-### REPORT (teljes heti riport)
+### REPORT — Full weekly intelligence briefing
 ```bash
 ./clinical-trials report "long covid" --format md
 ./clinical-trials report "diabetes" --format md
 ```
 
-### HEALTH / DOCTOR (rendszer diagnosztika)
+### HEALTH / DOCTOR — System diagnostics
 ```bash
 ./clinical-trials health --human-friendly
 ./clinical-trials doctor
