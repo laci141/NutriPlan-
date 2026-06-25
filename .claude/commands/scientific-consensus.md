@@ -5,7 +5,7 @@ A multi-source scientific evidence aggregator — combines OpenAlex, PubMed, Cro
 ## Installation (Termux/Android)
 
 ```bash
-cd ~/printing-press-library/library/health/scientific-consensus
+cd ~/printing-press-library/library/other/scientific-consensus
 GOTOOLCHAIN=local go build -o scientific-consensus ./cmd/scientific-consensus-pp-cli/
 ```
 
@@ -27,7 +27,7 @@ feat/scientific-consensus  (in printing-press-library repo)
 
 No API key needed. Optional: OpenAI / Anthropic / Gemini key for AI-enhanced stance detection.
 
-## All 37 Commands
+## All 36 Commands
 
 ### CONSENSUS — Evidence stance score
 ```bash
@@ -167,7 +167,7 @@ Note: requires minimum 2-year span between --from and --to.
 
 ### WORKS — Publication details
 ```bash
-./scientific-consensus works search "CRISPR cancer" --human-friendly
+./scientific-consensus works search "CRISPR cancer" --per-page 5 --human-friendly
 ./scientific-consensus works get W2741809807 --human-friendly
 ```
 
@@ -179,11 +179,12 @@ Note: requires minimum 2-year span between --from and --to.
 
 ### EXPORT — Multi-format output
 ```bash
-./scientific-consensus export "alzheimer prevention" --format md
-./scientific-consensus export "cancer immunotherapy" --format bibtex
-./scientific-consensus export "covid long term" --format csv
-./scientific-consensus export "diabetes diet" --format html
+./scientific-consensus export works --format md
+./scientific-consensus export authors --format bibtex
+./scientific-consensus export institutions --format csv
+./scientific-consensus export sources --format html
 ```
+Note: first argument is resource type (works/authors/institutions/sources/topics/funders), not a topic query.
 
 ### CURATE — Ranked reading list
 ```bash
@@ -197,16 +198,11 @@ Note: requires minimum 2-year span between --from and --to.
 ./scientific-consensus sync --query "cardiovascular"
 ```
 
-### SQL — Raw FTS5 query on local corpus
+### SOURCES — Source listing and details
 ```bash
-./scientific-consensus sql "SELECT title, year FROM works WHERE year > 2020 LIMIT 10"
-./scientific-consensus sql "SELECT COUNT(*) FROM works"
-```
-
-### SOURCES — Source status and coverage
-```bash
-./scientific-consensus sources --human-friendly
-./scientific-consensus sources --json
+./scientific-consensus sources search --human-friendly
+./scientific-consensus sources get openalex --human-friendly
+./scientific-consensus sources search --json
 ```
 
 ### DOCTOR — Health check and API key detection
@@ -228,7 +224,7 @@ Note: requires minimum 2-year span between --from and --to.
 ./scientific-consensus help
 ```
 
-## All Available Commands (37 total)
+## All Available Commands (36 total)
 
 | Command | Type | Description |
 |---|---|---|
@@ -253,13 +249,12 @@ Note: requires minimum 2-year span between --from and --to.
 | cited-by | live API | Cross-source citation resolution |
 | authors | live API | Author search and details |
 | institutions | live API | Institution search and details |
-| works | live API | Publication search and details |
+| works | live API | Publication search and details (use --per-page for limit) |
 | analytics | live API | Faceted aggregation |
-| export | live API | Multi-format output (md/json/csv/html/bibtex) |
+| export | live API | Multi-format output — resource type first, then --format |
 | curate | live API | Ranked deduplicated reading list |
 | sync | local DB | Populate SQLite from all sources |
-| sql | local DB | Raw FTS5 query on synced corpus |
-| sources | info | Source status + rate limits |
+| sources | live API | Source search and details (requires subcommand: search/get) |
 | doctor | info | Health check + API key detection |
 | profile | config | Named flag sets |
 | which | helper | NL to command resolver |

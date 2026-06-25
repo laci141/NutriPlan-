@@ -255,7 +255,7 @@
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
           <pre><span class="cmd-line">./scientific-consensus doctor</span>
-<span class="cmd-line">./scientific-consensus sources <span class="cmd-flag">--human-friendly</span></span></pre>
+<span class="cmd-line">./scientific-consensus sources search <span class="cmd-flag">--human-friendly</span></span></pre>
         </div>
       </div>
     </div>
@@ -632,14 +632,14 @@
     <div class="card">
       <div class="card-head"><span class="tag tag-export">EXPORT</span><span class="card-title">5 output formats</span></div>
       <div class="card-body">
-        <p>Export any query result to markdown, JSON, CSV, HTML, or BibTeX.</p>
+        <p>Export resource lists to markdown, JSON, CSV, HTML, or BibTeX. First argument is resource type.</p>
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus export "alzheimer prevention" <span class="cmd-flag">--format</span> md</span>
-<span class="cmd-line">./scientific-consensus export "cancer immunotherapy" <span class="cmd-flag">--format</span> bibtex</span>
-<span class="cmd-line">./scientific-consensus export "covid long term" <span class="cmd-flag">--format</span> csv</span>
-<span class="cmd-line">./scientific-consensus export "diabetes diet" <span class="cmd-flag">--format</span> html</span>
-<span class="cmd-line">./scientific-consensus export "CRISPR therapy" <span class="cmd-flag">--format</span> json</span></pre>
+          <pre><span class="cmd-line">./scientific-consensus export works <span class="cmd-flag">--format</span> md</span>
+<span class="cmd-line">./scientific-consensus export authors <span class="cmd-flag">--format</span> bibtex</span>
+<span class="cmd-line">./scientific-consensus export institutions <span class="cmd-flag">--format</span> csv</span>
+<span class="cmd-line">./scientific-consensus export sources <span class="cmd-flag">--format</span> html</span>
+<span class="cmd-line">./scientific-consensus export funders <span class="cmd-flag">--format</span> json</span></pre>
         </div>
       </div>
     </div>
@@ -666,20 +666,20 @@
   <div class="section-header">
     <div class="section-icon" style="background:rgba(88,166,255,0.12)">🩺</div>
     <h2>Data &amp; Diagnostics</h2>
-    <div class="desc">sync, sql, sources, doctor</div>
+    <div class="desc">sync, sources, doctor</div>
   </div>
   <div class="cards cols2">
     <div class="card">
-      <div class="card-head"><span class="tag tag-local">LOCAL DB</span><span class="card-title">sync + sql</span></div>
+      <div class="card-head"><span class="tag tag-local">LOCAL DB</span><span class="card-title">sync + sources</span></div>
       <div class="card-body">
-        <p>Populate local SQLite store for offline querying. Run raw FTS5 queries on the corpus.</p>
+        <p>Populate local SQLite store for offline querying. Browse available data sources.</p>
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
           <pre><span class="cmd-line">./scientific-consensus sync</span>
 <span class="cmd-line">./scientific-consensus sync <span class="cmd-flag">--query</span> "cardiovascular"</span>
 
-<span class="cmd-line">./scientific-consensus sql "SELECT COUNT(*) FROM works"</span>
-<span class="cmd-line">./scientific-consensus sql "SELECT title, year FROM works WHERE year > 2020 LIMIT 10"</span></pre>
+<span class="cmd-line">./scientific-consensus sources search <span class="cmd-flag">--human-friendly</span></span>
+<span class="cmd-line">./scientific-consensus sources get openalex <span class="cmd-flag">--human-friendly</span></span></pre>
         </div>
       </div>
     </div>
@@ -777,8 +777,7 @@
         <tr><td class="cmd-name">export</td><td><span class="tag tag-export">export</span></td><td class="cmd-desc">Multi-format output (md / json / csv / html / bibtex)</td></tr>
         <tr><td class="cmd-name">curate</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Ranked deduplicated reading list</td></tr>
         <tr><td class="cmd-name">sync</td><td><span class="tag tag-local">local DB</span></td><td class="cmd-desc">Populate SQLite from all sources</td></tr>
-        <tr><td class="cmd-name">sql</td><td><span class="tag tag-local">local DB</span></td><td class="cmd-desc">Raw FTS5 query on synced corpus</td></tr>
-        <tr><td class="cmd-name">sources</td><td><span class="tag tag-info">info</span></td><td class="cmd-desc">Source status, coverage, rate limits</td></tr>
+        <tr><td class="cmd-name">sources</td><td><span class="tag tag-info">info</span></td><td class="cmd-desc">Source listing and details — requires subcommand: <code>sources search</code> or <code>sources get &lt;id&gt;</code></td></tr>
         <tr><td class="cmd-name">doctor</td><td><span class="tag tag-info">info</span></td><td class="cmd-desc">Health check + API key detection</td></tr>
         <tr><td class="cmd-name">profile</td><td><span class="tag tag-local">config</span></td><td class="cmd-desc">Named flag sets / presets</td></tr>
         <tr><td class="cmd-name">which</td><td><span class="tag tag-local">helper</span></td><td class="cmd-desc">Natural language to command resolver</td></tr>
@@ -819,7 +818,7 @@
 <span class="cmd-line">./scientific-consensus gaps "your claim" <span class="cmd-flag">--human-friendly</span></span>
 
 <span class="out-muted"># 5. Export bibliography</span>
-<span class="cmd-line">./scientific-consensus export "your claim" <span class="cmd-flag">--format</span> bibtex</span></pre>
+<span class="cmd-line">./scientific-consensus export works <span class="cmd-flag">--format</span> bibtex</span></pre>
         </div>
       </div>
     </div>
