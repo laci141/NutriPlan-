@@ -1,89 +1,164 @@
 # Clinical Trials CLI Skill
 
-A multi-source clinical-trials intelligence system — aggregates ClinicalTrials.gov, EU CTIS, OpenAlex. Nincs API kulcs szükséges.
+A multi-source clinical-trials intelligence system — aggregates ClinicalTrials.gov, EU CTIS, OpenAlex. No API key required.
 
-## Telepítés
+## Installation (Termux/Android)
 
 ```bash
 cd ~/printing-press-library/library/health/clinical-trials
 GOTOOLCHAIN=local go build -o clinical-trials ./cmd/clinical-trials-pp-cli/
 ```
 
-## Mind a 10 funkció — kipróbált parancsok
+## GitHub Token (Termux push)
 
-### 1. Betegség kereső — aktív toborzó kísérletek
+Token saved at `~/.github_token` on user's device.
+Push command: `git push https://$(cat ~/.github_token)@github.com/laci141/printing-press-library.git fix-branch:feat/clinical-trials`
+Alias: `gitpush` (defined in ~/.bashrc)
+
+## Natural Language Wrapper
+
+`~/ct` script routes Hungarian/English natural language queries to the correct CLI command.
+Source: `library/health/clinical-trials/ct-wrapper.sh` on feat/clinical-trials branch.
+
+```bash
+~/ct "diabetes type 2 aktív kísérletek"
+~/ct "hasonlítsd össze az aspirint az ibuprofennel"
+~/ct "cancer ki finanszírozza"
+~/ct "alzheimer trend"
+~/ct "lung cancer phase 3"
+~/ct "aspirin mellékhatás fda"
+```
+
+## All 30 Commands / Questions
+
+### RECRUITING (aktív toborzó kísérletek)
 ```bash
 ./clinical-trials recruiting "diabetes type 2" --limit 10 --human-friendly
+./clinical-trials recruiting "heart disease" --human-friendly
+./clinical-trials recruiting "obesity" --human-friendly
 ```
 
-### 2. Földrajzi eloszlás — hol folyik a legtöbb kutatás
+### HOTSPOTS (földrajzi eloszlás)
 ```bash
 ./clinical-trials hotspots "alzheimer" --human-friendly
+./clinical-trials hotspots "covid-19" --human-friendly
+./clinical-trials hotspots "diabetes" --human-friendly
 ```
 
-### 3. Fázis szűrő — csak Phase 3 kísérletek
+### PHASE3 (fázis szűrő)
 ```bash
 ./clinical-trials phase3 "lung cancer" --human-friendly
+./clinical-trials phase3 "breast cancer" --human-friendly
+./clinical-trials phase3 "hypertension" --human-friendly
 ```
 
-### 4. Értesítő — változások figyelése
+### COMPARE (összehasonlítás)
+```bash
+./clinical-trials compare "aspirin" "ibuprofen" --human-friendly
+./clinical-trials compare "metformin" "insulin" --human-friendly
+./clinical-trials compare "ozempic" "wegovy" --human-friendly
+```
+
+### SPONSORS (szponzorok)
+```bash
+./clinical-trials sponsors "cancer" --human-friendly
+./clinical-trials sponsors "alzheimer" --human-friendly
+./clinical-trials sponsors "heart disease" --human-friendly
+```
+
+### SAFETY (FDA mellékhatások)
+```bash
+./clinical-trials safety "aspirin" --human-friendly
+./clinical-trials safety "ibuprofen" --human-friendly
+./clinical-trials safety "metformin" --human-friendly
+```
+
+### VELOCITY / EMERGING (trend elemzés)
+```bash
+./clinical-trials velocity "alzheimer" --human-friendly
+./clinical-trials velocity "covid-19" --human-friendly
+./clinical-trials emerging "cancer" --human-friendly
+```
+
+### RISK (kockázatelemzés — NCT ID kell)
+```bash
+./clinical-trials risk NCT07011732 --human-friendly
+./clinical-trials risk NCT04280705 --human-friendly
+```
+
+### EVIDENCE (eredmények / publikációk — NCT ID kell)
+```bash
+./clinical-trials evidence NCT04280705 --human-friendly
+./clinical-trials evidence NCT06128837 --human-friendly
+```
+
+### WATCH (változások figyelése)
 ```bash
 ./clinical-trials watch "vitamin d" --human-friendly
 ```
 
-### 5. Összehasonlítás — két gyógyszer egymás ellen ✓ KIPRÓBÁLT
-```bash
-./clinical-trials compare "aspirin" "ibuprofen" --human-friendly
-```
-
-### 6. Szponzor / ki finanszírozza
-```bash
-./clinical-trials sponsors "cancer" --human-friendly
-```
-
-### 7. Exportálás CSV-be
-```bash
-./clinical-trials export --format jsonl > trials.jsonl
-```
-
-### 8. Kockázatelemzés — egy trial kockázata
-```bash
-./clinical-trials risk NCT07011732 --human-friendly
-```
-
-### 9. Eredmény / publikáció összefoglaló ✓ KIPRÓBÁLT
-```bash
-./clinical-trials evidence NCT04280705 --human-friendly
-```
-
-### 10. Trend elemzés — növekedési sebesség
-```bash
-./clinical-trials velocity "alzheimer" --human-friendly
-# Vagy leggyorsabban növekvő kategóriák:
-./clinical-trials emerging "cancer" --human-friendly
-```
-
-## Bónusz: Teljes heti riport
+### REPORT (teljes heti riport)
 ```bash
 ./clinical-trials report "long covid" --format md
+./clinical-trials report "diabetes" --format md
 ```
 
-## Egészség ellenőrzés
+### HEALTH / DOCTOR (rendszer diagnosztika)
 ```bash
 ./clinical-trials health --human-friendly
 ./clinical-trials doctor
 ```
 
-## Fontos szabályok
+## All Available Commands (30 total)
 
-- `--human-friendly` = szép emberi kimenet (terminálba)
-- `--json` = gépi/agent kimenet
-- `--agent` = json + no-color + no-input (CI/script)
-- `recruiting` > `search` ha nincs lokális szinkron
-- Nincs API kulcs szükséges az alap funkcióhoz
-- Read-only CLI — nem módosít adatot
+| Command | Type | Description |
+|---|---|---|
+| recruiting | live API | Active recruiting trials |
+| hotspots | live API | Geographic distribution |
+| phase3 | live API | Phase 3 filter |
+| watch | live API | Monitor changes |
+| compare | live API | Head-to-head drug comparison |
+| sponsors | live API | Who funds the research |
+| safety | live API | FDA adverse-event signals |
+| velocity | live API | Growth speed measurement |
+| emerging | live API | Fastest-growing categories |
+| evidence | live API | Publications + citations (needs NCT ID) |
+| risk | live API | Risk analysis (needs NCT ID) |
+| report | live API | Full weekly briefing |
+| search | local DB | Full-text search (needs sync first) |
+| sync | local DB | Download to SQLite offline |
+| tail | live API | Real-time stream of changes |
+| analytics | local DB | Analytics on synced data |
+| workflow | live API | Compound multi-step operations |
+| export | local | Export to JSONL/JSON |
+| import | local | Import from JSONL |
+| api | info | Browse API endpoints |
+| profile | config | Named flag sets |
+| health | info | Live API status |
+| doctor | info | Connectivity diagnostics |
+| which | helper | NL to command resolver |
+| agent-context | agent | JSON description for agents |
+| clinicaltrials-gov-version | info | API version |
+| feedback | local | Record feedback |
+| completion | shell | Shell autocompletion |
+| version | info | Print version |
+| help | info | Help |
 
-## MCP szerver (Claude Desktop-ba)
+## Key Rules
+
+- `--human-friendly` = colored terminal output
+- `--json` = machine/agent output
+- `--agent` = json + no-color + no-input (CI/scripts)
+- `recruiting` works live; `search` needs `sync` first
+- `risk` and `evidence` require NCT ID (e.g. NCT04280705)
+- No API key needed for core functionality
+- Read-only CLI — never modifies data
+
+## MCP Server (Claude Desktop)
 ```bash
 claude mcp add clinical-trials-pp-mcp -- clinical-trials-pp-mcp
 ```
+
+## HTML Demo Files
+- Romanian: `clinical-trials-prezentare.html` (NutriPlan- repo)
+- English mobile-friendly: `clinical-trials-demo.html` (NutriPlan- repo, claude/clinical-trials-cli-vu4v7j branch)
