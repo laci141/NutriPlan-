@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClinicalTrials Intelligence — Prezentare 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #050d1a;
+    --card: #0a1628;
+    --card2: #0f1f38;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --border: rgba(0,212,255,0.15);
+    --glow: 0 0 30px rgba(0,212,255,0.2);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    background: radial-gradient(ellipse at 50% 0%, rgba(0,212,255,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 80%, rgba(124,58,237,0.1) 0%, transparent 60%),
+                var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 800px; height: 800px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,212,255,0.08);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 1200px; height: 1200px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,212,255,0.04);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: pulse 4s ease-in-out infinite 1s;
+  }
+  @keyframes pulse {
+    0%,100% { transform: translate(-50%,-50%) scale(1); opacity:1; }
+    50% { transform: translate(-50%,-50%) scale(1.05); opacity:0.5; }
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent);
+    padding: 0.4rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    position: relative; z-index: 1;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    position: relative; z-index: 1;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    position: relative; z-index: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .num {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-stat .label { color: var(--muted); font-size: 0.85rem; margin-top: 0.2rem; }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(5,13,26,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow-x: auto;
+  }
+  .nav-logo { font-weight: 700; color: var(--accent); white-space: nowrap; margin-right: 1rem; }
+  .nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .nav a:hover { color: var(--accent); background: rgba(0,212,255,0.08); }
+
+  /* SECTIONS */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .section-num {
+    display: inline-block;
+    width: 2.5rem; height: 2.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 2.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .section-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .section-header p { color: var(--muted); font-size: 1rem; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .card:hover { border-color: rgba(0,212,255,0.3); box-shadow: var(--glow); transform: translateY(-2px); }
+  .card:hover::before { opacity: 1; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+
+  /* COMMAND BOX */
+  .cmd {
+    background: #020810;
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin: 1rem 0;
+    position: relative;
+  }
+  .cmd .prompt { color: var(--accent3); }
+  .cmd .flag { color: var(--accent4); }
+  .cmd .arg { color: #f8f8f2; }
+
+  /* DATA TABLES */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  .data-table th {
+    background: rgba(0,212,255,0.08);
+    color: var(--accent);
+    padding: 0.7rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .data-table td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text);
+  }
+  .data-table tr:hover td { background: rgba(0,212,255,0.03); }
+
+  /* BADGES */
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0.1rem;
+  }
+  .tag-blue { background: rgba(0,212,255,0.15); color: var(--accent); }
+  .tag-green { background: rgba(16,185,129,0.15); color: var(--accent3); }
+  .tag-purple { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .tag-yellow { background: rgba(245,158,11,0.15); color: var(--accent4); }
+  .tag-red { background: rgba(239,68,68,0.15); color: #f87171; }
+
+  /* METRIC */
+  .metric-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+  .metric {
+    flex: 1; min-width: 120px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .metric .val {
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .metric .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 4rem 0;
+  }
+
+  /* CHART CONTAINER */
+  .chart-wrap { position: relative; max-height: 300px; margin: 1.5rem 0; }
+
+  /* ACCORDION */
+  .accordion { margin: 1rem 0; }
+  .acc-btn {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+    margin-bottom: 0.5rem;
+  }
+  .acc-btn:hover { border-color: rgba(0,212,255,0.3); color: var(--accent); }
+  .acc-btn .arrow { transition: transform 0.3s; font-size: 1.2rem; }
+  .acc-btn.open .arrow { transform: rotate(180deg); }
+  .acc-content {
+    display: none;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: -0.3rem;
+    margin-bottom: 0.5rem;
+    animation: fadeIn 0.3s ease;
+  }
+  .acc-content.open { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+
+  /* SCROLL INDICATOR */
+  .scroll-down {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 2s infinite;
+    color: var(--muted);
+    font-size: 1.5rem;
+    z-index: 1;
+  }
+  @keyframes bounce {
+    0%,100%{transform:translateX(-50%) translateY(0)}
+    50%{transform:translateX(-50%) translateY(8px)}
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap { margin: 0.5rem 0; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.3rem; }
+  .progress-bar { height: 6px; border-radius: 100px; background: rgba(255,255,255,0.05); overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* RESPONSIVE */
+  @media(max-width:600px) {
+    .hero h1 { font-size: 2.2rem; }
+    .hero-stats { gap: 1.5rem; }
+    .card { padding: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">Sistem de Inteligență Medicală · 2026</div>
+  <h1>ClinicalTrials<br>Intelligence</h1>
+  <p>Sistem multi-sursă pentru analiza studiilor clinice — agregează, normalizează și analizează date din ClinicalTrials.gov, EU CTIS și OpenAlex în timp real.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">856+</div><div class="label">Studii active diabet tip 2</div></div>
+    <div class="hero-stat"><div class="num">15.152</div><div class="label">Citări trial COVID-19</div></div>
+    <div class="hero-stat"><div class="num">3</div><div class="label">Registre internaționale</div></div>
+    <div class="hero-stat"><div class="num">10</div><div class="label">Capabilități de analiză</div></div>
+  </div>
+  <div class="scroll-down">↓</div>
+</section>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">CT·Intel</span>
+  <a href="#cap1">1. Căutare</a>
+  <a href="#cap2">2. Hartă</a>
+  <a href="#cap3">3. Faza 3</a>
+  <a href="#cap4">4. Monitor</a>
+  <a href="#cap5">5. Comparație</a>
+  <a href="#cap6">6. Sponsori</a>
+  <a href="#cap7">7. Export</a>
+  <a href="#cap8">8. Risc</a>
+  <a href="#cap9">9. Publicații</a>
+  <a href="#cap10">10. Tendințe</a>
+</nav>
+
+<!-- INTRO -->
+<div class="section">
+  <div class="section-header">
+    <h2>De ce este diferit acest instrument?</h2>
+    <p>Spre deosebire de alte instrumente care accesează o singură bază de date, acesta agregează și deduplicează din <strong style="color:var(--accent)">3 registre internaționale</strong> simultan.</p>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <div style="font-size:2rem;margin-bottom:0.5rem">🔬</div>
+      <h3 style="color:var(--accent);margin-bottom:0.5rem">Pentru cercetători</h3>
+      <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">Analiza peisajului clinic — ce se testează, ce emerge, cine finanțează. Date în timp real din ClinicalTrials.gov + EU CTIS + OpenAlex.</p>
+    </div>
+    <div class="card">
+      <div style="font-size:2rem;margin-bottom:0.5rem">👨‍⚕️</div>
+      <h3 style="color:var(--accent3);margin-bottom:0.5rem">Pentru medici</h3>
+      <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">Verificați dacă există studii active pentru pacienți, comparați eficacitatea medicamentelor pe baza activității reale de cercetare, nu marketing.</p>
+    </div>
+    <div class="card">
+      <div style="font-size:2rem;margin-bottom:0.5rem">🧑‍💻</div>
+      <h3 style="color:#a78bfa;margin-bottom:0.5rem">Pentru laici</h3>
+      <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">Aflați rapid dacă există studii clinice active pentru o boală, unde se desfășoară și ce medicamente sunt testate.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 1 -->
+<div class="section" id="cap1">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <h2>Căutare studii active</h2>
+    <p>Găsește instantaneu toate studiile clinice care recrutează pacienți pentru o boală</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials recruiting</span> <span class="tag tag-blue">"diabetes type 2"</span> <span class="flag">--limit 5 --human-friendly</span>
+    </div>
+    <div class="metric-row">
+      <div class="metric"><div class="val">856</div><div class="lbl">Studii active ACUM</div></div>
+      <div class="metric"><div class="val">Phase 3</div><div class="lbl">Cel mai avansat</div></div>
+      <div class="metric"><div class="val">Global</div><div class="lbl">Acoperire geografică</div></div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>ID Trial</th><th>Titlu</th><th>Faza</th><th>Sponsor</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-blue">NCT07622628</span></td><td>AIM-MET: AI-Guided Microbiome Nutrition for Glycemic Improvement</td><td><span class="tag tag-yellow">N/A</span></td><td>ENBIOSIS Biotechnologies</td></tr>
+        <tr><td><span class="tag tag-blue">NCT06805786</span></td><td>Continuous Glucose Monitoring: Intermittent vs Real-time</td><td><span class="tag tag-yellow">N/A</span></td><td>LMC Diabetes & Endocrinology</td></tr>
+        <tr><td><span class="tag tag-blue">NCT04602754</span></td><td>Efficacy of Berlim 25/20 in Treatment of Type II Diabetes</td><td><span class="tag tag-green">Phase 3</span></td><td>EMS</td></tr>
+        <tr><td><span class="tag tag-blue">NCT07549373</span></td><td>Diode Laser and Vinegar in Diabetic Patients</td><td><span class="tag tag-yellow">N/A</span></td><td>Sharda University</td></tr>
+        <tr><td><span class="tag tag-blue">NCT07023172</span></td><td>Observational Study on Treatment of Type 2 Diabetes</td><td><span class="tag tag-yellow">N/A</span></td><td>Nanjing Drum Tower Hospital</td></tr>
+      </tbody>
+    </table>
+    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:1rem;margin-top:1rem">
+      <strong style="color:var(--accent3)">Ce înseamnă pentru un pacient?</strong>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">Există <strong style="color:white">856 studii active</strong> în lume pentru diabet tip 2. Un pacient care dorește să participe poate găsi studii în faza 3 — cele mai avansate, aproape de aprobare.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 2 -->
+<div class="section" id="cap2">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <h2>Distribuție geografică</h2>
+    <p>Unde se desfășoară cercetarea în lume pentru o boală?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials hotspots</span> <span class="tag tag-purple">"alzheimer"</span> <span class="flag">--human-friendly</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+      <div>
+        <div class="chart-wrap"><canvas id="hotspotChart"></canvas></div>
+      </div>
+      <div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🇺🇸 Statele Unite</span><span>156</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#00d4ff,#7c3aed)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🇫🇷 Franța</span><span>41</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:26%;background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🇨🇦 Canada</span><span>32</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:20%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🇬🇧 Marea Britanie</span><span>25</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:16%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🇪🇸 Spania</span><span>24</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:15%;background:#f59e0b"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🇩🇪 Germania</span><span>21</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:13%;background:#64748b"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🇨🇳 China</span><span>20</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:12%;background:#64748b"></div></div>
+        </div>
+      </div>
+    </div>
+    <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:1rem;margin-top:1rem">
+      <strong style="color:#a78bfa">Concluzie:</strong>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">SUA domină cercetarea Alzheimer cu <strong style="color:white">52% din studii</strong>. Europa (Franța, UK, Spania, Germania) contribuie semnificativ. China și Asia de Est sunt în creștere rapidă.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 3 -->
+<div class="section" id="cap3">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2>Filtru după fază — Phase 3</h2>
+    <p>Studiile în Faza 3 sunt cele mai avansate — aproape de aprobare pentru utilizare clinică</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials phase3</span> <span class="tag tag-red">"lung cancer"</span> <span class="flag">--human-friendly</span>
+    </div>
+    <div class="metric-row">
+      <div class="metric"><div class="val">63</div><div class="lbl">Studii Phase 3 găsite</div></div>
+      <div class="metric"><div class="val">600</div><div class="lbl">Studii scanate</div></div>
+      <div class="metric"><div class="val">10.5%</div><div class="lbl">Rata Phase 3</div></div>
+    </div>
+
+    <div style="margin:1rem 0">
+      <h4 style="color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem">Explicarea statusurilor</h4>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.8rem">
+        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:0.8rem">
+          <span class="tag tag-green">RECRUITING</span>
+          <p style="color:var(--muted);font-size:0.8rem;margin-top:0.4rem">Recrutează activ — pacienții se pot înscrie acum</p>
+        </div>
+        <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:0.8rem">
+          <span class="tag tag-yellow">ACTIVE_NOT_RECRUITING</span>
+          <p style="color:var(--muted);font-size:0.8rem;margin-top:0.4rem">Rulează dar nu acceptă pacienți noi</p>
+        </div>
+        <div style="background:rgba(100,116,139,0.1);border:1px solid rgba(100,116,139,0.2);border-radius:8px;padding:0.8rem">
+          <span class="tag" style="background:rgba(100,116,139,0.2);color:#94a3b8">COMPLETED</span>
+          <p style="color:var(--muted);font-size:0.8rem;margin-top:0.4rem">Finalizat — rezultatele sunt disponibile</p>
+        </div>
+        <div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:8px;padding:0.8rem">
+          <span class="tag tag-blue">NOT_YET_RECRUITING</span>
+          <p style="color:var(--muted);font-size:0.8rem;margin-top:0.4rem">Urmează să înceapă în curând</p>
+        </div>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>ID</th><th>Studiu (selecție)</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>NCT06472245</td><td>Vaccin Terapeutic OSE2101 pentru NSCLC</td><td><span class="tag tag-green">RECRUITING</span></td></tr>
+        <tr><td>NCT05091567</td><td>Lurbinectedin în combinație — Faza III</td><td><span class="tag tag-yellow">ACTIV</span></td></tr>
+        <tr><td>NCT06561386</td><td>Nivolumab + Relatlimab + Chimioterapie</td><td><span class="tag tag-green">RECRUITING</span></td></tr>
+        <tr><td>NCT04351555</td><td>Osimertinib cu/fără Chimioterapie</td><td><span class="tag tag-yellow">ACTIV</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 4 -->
+<div class="section" id="cap4">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2>Monitor de modificări</h2>
+    <p>Urmărește automat schimbările în studiile pentru un termen — nou, modificat, închis</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials watch</span> <span class="tag tag-green">"vitamin d"</span> <span class="flag">--human-friendly</span>
+    </div>
+    <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:1.5rem;margin:1rem 0">
+      <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--accent3);box-shadow:0 0 8px var(--accent3)"></div>
+        <span style="color:var(--accent3);font-weight:600">Baseline stabilit pentru 200 studii</span>
+      </div>
+      <p style="color:var(--muted);font-size:0.9rem;line-height:1.6">La prima rulare se creează un <strong style="color:white">snapshot</strong> al tuturor studiilor. La a doua rulare sistemul raportează:</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem">
+        <div style="text-align:center;padding:0.8rem;background:rgba(16,185,129,0.08);border-radius:8px">
+          <div style="font-size:1.5rem">🆕</div>
+          <div style="color:var(--accent3);font-size:0.8rem;font-weight:600;margin-top:0.3rem">Studii noi</div>
+        </div>
+        <div style="text-align:center;padding:0.8rem;background:rgba(245,158,11,0.08);border-radius:8px">
+          <div style="font-size:1.5rem">✏️</div>
+          <div style="color:var(--accent4);font-size:0.8rem;font-weight:600;margin-top:0.3rem">Status modificat</div>
+        </div>
+        <div style="text-align:center;padding:0.8rem;background:rgba(239,68,68,0.08);border-radius:8px">
+          <div style="font-size:1.5rem">🔴</div>
+          <div style="color:#f87171;font-size:0.8rem;font-weight:600;margin-top:0.3rem">Studii închise</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:rgba(0,212,255,0.06);border:1px solid var(--border);border-radius:10px;padding:1rem">
+      <strong style="color:var(--accent)">Caz de utilizare practic:</strong>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">Un cercetător setează un watch pe "imunoterapie melanom" — săptămânal primește o listă cu studii noi deschise sau cu modificări de protocol, fără a reciti zeci de pagini manual.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 5 -->
+<div class="section" id="cap5">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <h2>Comparație cap la cap</h2>
+    <p>Compară activitatea reală de cercetare a două medicamente — nu marketing, ci date reale</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials compare</span> <span class="tag tag-blue">"aspirin"</span> <span class="tag tag-purple">"ibuprofen"</span> <span class="flag">--human-friendly</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0">
+      <div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:1.5rem;text-align:center">
+        <div style="font-size:3rem;font-weight:800;color:var(--accent)">2.179</div>
+        <div style="color:var(--muted);margin:0.3rem 0">studii totale</div>
+        <div style="font-size:1.5rem;font-weight:700;color:white;margin-bottom:0.5rem">Aspirina</div>
+        <span class="tag tag-green">11% recrutare activă</span>
+        <div style="margin-top:1rem;font-size:0.85rem;color:var(--muted)">Top: AstraZeneca, Bayer</div>
+      </div>
+      <div style="background:rgba(124,58,237,0.05);border:1px solid rgba(124,58,237,0.2);border-radius:12px;padding:1.5rem;text-align:center">
+        <div style="font-size:3rem;font-weight:800;color:#a78bfa">1.094</div>
+        <div style="color:var(--muted);margin:0.3rem 0">studii totale</div>
+        <div style="font-size:1.5rem;font-weight:700;color:white;margin-bottom:0.5rem">Ibuprofen</div>
+        <span class="tag tag-purple">8% recrutare activă</span>
+        <div style="margin-top:1rem;font-size:0.85rem;color:var(--muted)">Top: Medipol Univ., Pfizer</div>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="compareChart"></canvas></div>
+    <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:1rem;margin-top:1rem">
+      <strong style="color:var(--accent3)">Concluzie:</strong>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">Aspirina este de <strong style="color:white">2× mai studiată</strong> decât ibuprofenul. Aspirina este susținută de industria farmaceutică mare (AstraZeneca, Bayer), în timp ce ibuprofenul este mai mult studiat academic.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 6 -->
+<div class="section" id="cap6">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2>Analiza sponsorilor</h2>
+    <p>Cine finanțează cercetarea? Industrie, academie sau guvern?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials sponsors</span> <span class="tag tag-red">"cancer"</span> <span class="flag">--human-friendly</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0">
+      <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:1.2rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🏭</div>
+        <div style="color:var(--accent);font-weight:700">Industrie</div>
+        <p style="color:var(--muted);font-size:0.8rem;margin-top:0.5rem">Merck, Pfizer, Roche<br>Orientat spre produs</p>
+      </div>
+      <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:1.2rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🎓</div>
+        <div style="color:var(--accent3);font-weight:700">Academie</div>
+        <p style="color:var(--muted);font-size:0.8rem;margin-top:0.5rem">Universități, spitale<br>Orientat spre știință</p>
+      </div>
+      <div style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.2);border-radius:12px;padding:1.2rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🏛️</div>
+        <div style="color:#a78bfa;font-weight:700">Guvern</div>
+        <p style="color:var(--muted);font-size:0.8rem;margin-top:0.5rem">NIH, NCI, NIAID<br>Orientat spre sănătate publică</p>
+      </div>
+    </div>
+    <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:1rem">
+      <strong style="color:var(--accent4)">De ce contează pentru un medic?</strong>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">Dacă un medicament este finanțat exclusiv de industrie, există potențial conflict de interese. Studiile academice și guvernamentale sunt considerate mai independente.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 7 -->
+<div class="section" id="cap7">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <h2>Export date</h2>
+    <p>Exportă date pentru analiză proprie în Excel, Python, R</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials export</span> <span class="flag">--format jsonl > trials.jsonl</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0">
+      <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:0.3rem">📊</div>
+        <div style="color:var(--accent);font-weight:600;font-size:0.9rem">JSONL</div>
+        <p style="color:var(--muted);font-size:0.75rem;margin-top:0.3rem">Python, pandas, ML</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:0.3rem">📋</div>
+        <div style="color:var(--accent3);font-weight:600;font-size:0.9rem">CSV</div>
+        <p style="color:var(--muted);font-size:0.75rem;margin-top:0.3rem">Excel, Google Sheets</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:0.3rem">📝</div>
+        <div style="color:#a78bfa;font-weight:600;font-size:0.9rem">Markdown</div>
+        <p style="color:var(--muted);font-size:0.75rem;margin-top:0.3rem">Rapoarte, documentare</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 8 -->
+<div class="section" id="cap8">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <h2>Analiză de risc</h2>
+    <p>Cât de probabil este ca un studiu să fie finalizat și să raporteze rezultate?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials risk</span> <span class="tag tag-blue">NCT07011732</span> <span class="flag">--human-friendly</span>
+    </div>
+    <div style="margin:1.5rem 0">
+      <h4 style="color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem">Factori de risc analizați</h4>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.8rem">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:0.8rem">
+          <div style="color:var(--accent4);font-size:1.2rem">📉</div>
+          <div style="font-weight:600;font-size:0.85rem;margin:0.3rem 0">Rata de terminare</div>
+          <p style="color:var(--muted);font-size:0.75rem">% studii similare abandonate</p>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:0.8rem">
+          <div style="color:var(--accent);font-size:1.2rem">👥</div>
+          <div style="font-weight:600;font-size:0.85rem;margin:0.3rem 0">Recrutare</div>
+          <p style="color:var(--muted);font-size:0.75rem">Ritmul de înrolare vs. țintă</p>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:0.8rem">
+          <div style="color:var(--accent3);font-size:1.2rem">🏥</div>
+          <div style="font-weight:600;font-size:0.85rem;margin:0.3rem 0">Situri</div>
+          <p style="color:var(--muted);font-size:0.75rem">Numărul de centre implicate</p>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:0.8rem">
+          <div style="color:#a78bfa;font-size:1.2rem">🏆</div>
+          <div style="font-weight:600;font-size:0.85rem;margin:0.3rem 0">Track record</div>
+          <p style="color:var(--muted);font-size:0.75rem">Istoricul sponsorului</p>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:0.8rem">
+          <div style="color:#f87171;font-size:1.2rem">⚗️</div>
+          <div style="font-weight:600;font-size:0.85rem;margin:0.3rem 0">Faza</div>
+          <p style="color:var(--muted);font-size:0.75rem">Faza 1 = risc mai mare</p>
+        </div>
+      </div>
+    </div>
+    <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:1rem">
+      <strong style="color:#f87171">Utilitate clinică:</strong>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">Înainte de a trimite un pacient la un studiu clinic, medicul poate verifica rapid dacă studiul are probabilitate mare de finalizare sau este la risc de abandon.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 9 -->
+<div class="section" id="cap9">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <h2>Publicații și citări</h2>
+    <p>A publicat un studiu clinic rezultatele? Câtă influență a avut?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials evidence</span> <span class="tag tag-blue">NCT04280705</span> <span class="flag">--human-friendly</span>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(124,58,237,0.06));border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0">
+      <div style="font-weight:700;font-size:1.1rem;margin-bottom:0.5rem">Adaptive COVID-19 Treatment Trial (ACTT)</div>
+      <div style="color:var(--muted);font-size:0.85rem;margin-bottom:1rem">Studiu pivot pentru Remdesivir — unul dintre cele mai importante studii COVID-19</div>
+      <div class="metric-row">
+        <div class="metric"><div class="val">10</div><div class="lbl">Articole PubMed</div></div>
+        <div class="metric"><div class="val">288</div><div class="lbl">Lucrări OpenAlex</div></div>
+        <div class="metric"><div class="val">15.152</div><div class="lbl">Total citări</div></div>
+      </div>
+    </div>
+    <div class="chart-wrap" style="max-height:220px"><canvas id="citChart"></canvas></div>
+    <table class="data-table" style="margin-top:1rem">
+      <thead><tr><th>Articol (selecție)</th><th>An</th><th>Citări</th></tr></thead>
+      <tbody>
+        <tr><td>Remdesivir for the Treatment of Covid-19 — Final Report</td><td>2020</td><td><span class="tag tag-green">7.728</span></td></tr>
+        <tr><td>Epidemiology, clinical course critically ill</td><td>2020</td><td><span class="tag tag-blue">2.280</span></td></tr>
+        <tr><td>Remdesivir — Preliminary Report</td><td>2020</td><td><span class="tag tag-blue">1.456</span></td></tr>
+        <tr><td>COVID-19 and Pregnancy</td><td>2020</td><td><span class="tag tag-yellow">1.465</span></td></tr>
+        <tr><td>Viral Resistance Analyses</td><td>2023</td><td><span class="tag tag-purple">32</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CAP 10 -->
+<div class="section" id="cap10">
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <h2>Analiză de tendințe</h2>
+    <p>Cercetarea accelerează sau încetinește? Unde mergem?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">
+      <span class="prompt">$</span> <span class="arg">./clinical-trials velocity</span> <span class="tag tag-purple">"alzheimer"</span> <span class="flag">--human-friendly</span>
+    </div>
+    <div class="metric-row" style="margin:1.5rem 0">
+      <div class="metric">
+        <div class="val" style="color:#f87171">-69%</div>
+        <div class="lbl">Studii noi (3 ani recenți)</div>
+      </div>
+      <div class="metric">
+        <div class="val" style="color:var(--accent3)">+19%</div>
+        <div class="lbl">Pacienți înrolați</div>
+      </div>
+      <div class="metric">
+        <div class="val">509K</div>
+        <div class="lbl">Înrolați în 2025</div>
+      </div>
+    </div>
+    <div class="chart-wrap" style="max-height:280px"><canvas id="velocityChart"></canvas></div>
+    <div style="background:rgba(0,212,255,0.06);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-top:1rem">
+      <strong style="color:var(--accent)">Interpretare:</strong>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">Deși numărul de studii noi a scăzut (-69%), studiile existente sunt <strong style="color:white">mult mai mari</strong> — mai mulți pacienți, studii multicentrice globale. Saltul masiv din 2025 (+509.000 înrolați) indică un trial major în desfășurare.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SUMMARY -->
+<div class="section">
+  <div class="section-header">
+    <h2>Rezumat — Ce poate face acest instrument?</h2>
+  </div>
+
+  <div class="accordion">
+    <button class="acc-btn" onclick="toggleAcc(this)">
+      <span>🔎 Căutare și descoperire</span><span class="arrow">▾</span>
+    </button>
+    <div class="acc-content">
+      <p style="color:var(--muted)">Găsește orice studiu clinic activ în lume pentru o boală sau intervenție. Agregă din ClinicalTrials.gov + EU CTIS + OpenAlex simultan, eliminând duplicatele.</p>
+      <div class="cmd"><span class="prompt">$</span> ./clinical-trials recruiting "parkinson" --limit 20 --human-friendly</div>
+    </div>
+
+    <button class="acc-btn" onclick="toggleAcc(this)">
+      <span>📊 Analiză și comparație</span><span class="arrow">▾</span>
+    </button>
+    <div class="acc-content">
+      <p style="color:var(--muted)">Compară medicamente, analizează sponsori, măsoară viteza de creștere a unui domeniu de cercetare.</p>
+      <div class="cmd"><span class="prompt">$</span> ./clinical-trials compare "semaglutide" "tirzepatide" --human-friendly</div>
+    </div>
+
+    <button class="acc-btn" onclick="toggleAcc(this)">
+      <span>📚 Legătură cu literatura științifică</span><span class="arrow">▾</span>
+    </button>
+    <div class="acc-content">
+      <p style="color:var(--muted)">Conectează un trial la publicațiile PubMed și OpenAlex. Verifică dacă rezultatele au fost publicate și cât de mult au influențat comunitatea știintifică.</p>
+      <div class="cmd"><span class="prompt">$</span> ./clinical-trials evidence NCT04280705 --human-friendly</div>
+    </div>
+
+    <button class="acc-btn" onclick="toggleAcc(this)">
+      <span>⚠️ Evaluare risc și siguranță</span><span class="arrow">▾</span>
+    </button>
+    <div class="acc-content">
+      <p style="color:var(--muted)">Calculează scorul de risc al unui trial și verifică semnalele adverse FDA pentru un medicament.</p>
+      <div class="cmd"><span class="prompt">$</span> ./clinical-trials safety "pembrolizumab" --human-friendly</div>
+    </div>
+
+    <button class="acc-btn" onclick="toggleAcc(this)">
+      <span>📈 Rapoarte săptămânale automate</span><span class="arrow">▾</span>
+    </button>
+    <div class="acc-content">
+      <p style="color:var(--muted)">Generează un raport complet în markdown sau CSV despre orice domeniu medical — ideal pentru buletine informative clinice.</p>
+      <div class="cmd"><span class="prompt">$</span> ./clinical-trials report "long covid" --format md > raport-saptamanal.md</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>Generat cu <strong style="color:var(--accent)">ClinicalTrials Intelligence CLI</strong></p>
+  <p style="margin-top:0.5rem">Date din ClinicalTrials.gov · EU CTIS · OpenAlex · PubMed · OpenFDA</p>
+  <p style="margin-top:0.5rem;color:#334155">Fără cheie API necesară · Read-only · Open Source · 2026</p>
+</footer>
+
+<script>
+// Accordion
+function toggleAcc(btn) {
+  const content = btn.nextElementSibling;
+  const isOpen = content.classList.contains('open');
+  document.querySelectorAll('.acc-content').forEach(c => c.classList.remove('open'));
+  document.querySelectorAll('.acc-btn').forEach(b => b.classList.remove('open'));
+  if (!isOpen) { content.classList.add('open'); btn.classList.add('open'); }
+}
+
+// Chart defaults
+Chart.defaults.color = '#64748b';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+// Hotspot pie
+new Chart(document.getElementById('hotspotChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['SUA','Franța','Canada','UK','Spania','Germania','China','Altele'],
+    datasets: [{
+      data: [156,41,32,25,24,21,20,81],
+      backgroundColor: ['#00d4ff','#7c3aed','#10b981','#f59e0b','#f87171','#64748b','#a78bfa','#334155'],
+      borderWidth: 0
+    }]
+  },
+  options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } }, cutout: '65%' }
+});
+
+// Compare bar
+new Chart(document.getElementById('compareChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Phase 4','Phase 3','Phase 2','Phase 1','Early Ph.1','N/A'],
+    datasets: [
+      { label: 'Aspirina', data: [68,61,35,21,8,69], backgroundColor: 'rgba(0,212,255,0.7)', borderRadius: 6 },
+      { label: 'Ibuprofen', data: [81,41,42,25,3,104], backgroundColor: 'rgba(124,58,237,0.7)', borderRadius: 6 }
+    ]
+  },
+  options: { plugins: { legend: { position: 'top' } }, scales: { x: { stacked: false }, y: { beginAtZero: true } }, responsive: true, maintainAspectRatio: true }
+});
+
+// Citations bar
+new Chart(document.getElementById('citChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Final Report','Epidemiology','Preliminary','Pregnancy','Remdesivir Approval','Others'],
+    datasets: [{
+      label: 'Citări',
+      data: [7728,2280,1456,1465,291,1932],
+      backgroundColor: ['#00d4ff','#7c3aed','#10b981','#f59e0b','#a78bfa','#64748b'],
+      borderRadius: 6
+    }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } }, responsive: true, maintainAspectRatio: true }
+});
+
+// Velocity line
+new Chart(document.getElementById('velocityChart'), {
+  type: 'line',
+  data: {
+    labels: ['2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      {
+        label: 'Studii noi',
+        data: [13,9,9,11,18,16,14,27,12,20,26,18,29,28,26,23,24],
+        borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.08)',
+        fill: true, tension: 0.4, pointRadius: 3
+      },
+      {
+        label: 'Înrolați (mii)',
+        data: [4,0.7,1.9,5,202,3,12,8,2.7,3.5,7.5,82,28,105,7.5,49,509],
+        borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.05)',
+        fill: true, tension: 0.4, pointRadius: 3, yAxisID: 'y2'
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      y: { beginAtZero: true, title: { display: true, text: 'Studii noi' } },
+      y2: { beginAtZero: true, position: 'right', title: { display: true, text: 'Înrolați (mii)' }, grid: { drawOnChartArea: false } }
+    }
+  }
+});
+
+// Progress bars animation
+window.addEventListener('load', () => {
+  document.querySelectorAll('.progress-fill').forEach(bar => {
+    const w = bar.style.width;
+    bar.style.width = '0';
+    setTimeout(() => bar.style.width = w, 300);
+  });
+});
+</script>
+</body>
+</html>
