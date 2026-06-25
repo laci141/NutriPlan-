@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClinicalTrials Intelligence — CLI Demo</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #050d1a;
+  --card: #0a1628;
+  --card2: #0f1f38;
+  --accent: #00d4ff;
+  --accent2: #7c3aed;
+  --accent3: #10b981;
+  --accent4: #f59e0b;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --border: rgba(0,212,255,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Segoe UI',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  font-size:16px;
+}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:2rem 1rem;
+  background:
+    radial-gradient(ellipse at 50% -10%,rgba(0,212,255,0.15) 0%,transparent 60%),
+    radial-gradient(ellipse at 90% 90%,rgba(124,58,237,0.1) 0%,transparent 50%),
+    var(--bg);
+  position:relative;overflow:hidden;
+}
+.ring{
+  position:absolute;border-radius:50%;border:1px solid;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  animation:pulse 5s ease-in-out infinite;
+}
+.ring1{width:min(600px,90vw);height:min(600px,90vw);border-color:rgba(0,212,255,0.07);animation-delay:0s}
+.ring2{width:min(900px,130vw);height:min(900px,130vw);border-color:rgba(0,212,255,0.04);animation-delay:1.5s}
+@keyframes pulse{0%,100%{opacity:1;transform:translate(-50%,-50%) scale(1)}50%{opacity:.4;transform:translate(-50%,-50%) scale(1.04)}}
+
+.badge{
+  display:inline-block;
+  background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);
+  color:var(--accent);padding:.4rem 1.2rem;border-radius:100px;
+  font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:1.5rem;position:relative;z-index:1;
+}
+.hero h1{
+  font-size:clamp(2rem,7vw,4.5rem);font-weight:800;line-height:1.1;
+  margin-bottom:1rem;position:relative;z-index:1;
+  background:linear-gradient(135deg,#fff 20%,var(--accent) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p{
+  font-size:clamp(.9rem,2.5vw,1.15rem);color:#94a3b8;
+  max-width:580px;line-height:1.7;margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.stats-row{
+  display:flex;flex-wrap:wrap;gap:1.5rem;
+  justify-content:center;position:relative;z-index:1;
+}
+.stat{text-align:center}
+.stat .num{
+  font-size:clamp(1.8rem,5vw,2.5rem);font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stat .lbl{color:var(--muted);font-size:.8rem;margin-top:.2rem}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(5,13,26,.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:.8rem 1rem;display:flex;align-items:center;gap:.5rem;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.nav::-webkit-scrollbar{height:3px}
+.nav::-webkit-scrollbar-thumb{background:var(--accent2);border-radius:100px}
+.nav-logo{font-weight:700;color:var(--accent);white-space:nowrap;margin-right:.5rem;font-size:.9rem}
+.nav a{
+  color:var(--muted);text-decoration:none;font-size:.78rem;
+  white-space:nowrap;padding:.3rem .7rem;border-radius:6px;transition:all .2s;
+}
+.nav a:hover{color:var(--accent);background:rgba(0,212,255,.08)}
+
+/* LAYOUT */
+.section{max-width:1000px;margin:0 auto;padding:4rem 1rem}
+.section-header{text-align:center;margin-bottom:2.5rem}
+.num-chip{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:2.2rem;height:2.2rem;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;font-weight:700;font-size:.95rem;margin-bottom:.8rem;
+}
+.section-header h2{font-size:clamp(1.4rem,4vw,1.9rem);font-weight:700;margin-bottom:.4rem}
+.section-header p{color:var(--muted);font-size:.95rem}
+
+/* CARD */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:1.5rem;margin-bottom:1.2rem;
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.card:hover{border-color:rgba(0,212,255,.3);box-shadow:0 0 30px rgba(0,212,255,.12);transform:translateY(-2px)}
+.card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.card:hover::after{opacity:1}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+/* CMD */
+.cmd{
+  background:#020810;border:1px solid rgba(0,212,255,.2);
+  border-radius:10px;padding:1rem;
+  font-family:'Courier New',monospace;font-size:.82rem;
+  color:var(--accent);margin:1rem 0;overflow-x:auto;
+  white-space:nowrap;-webkit-overflow-scrolling:touch;
+}
+
+/* TABLE wrapper — horizontal scroll on mobile */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1rem 0;border-radius:10px}
+.tbl-wrap::-webkit-scrollbar{height:4px}
+.tbl-wrap::-webkit-scrollbar-thumb{background:var(--accent2);border-radius:100px}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th{
+  background:rgba(0,212,255,.08);color:var(--accent);
+  padding:.65rem 1rem;text-align:left;
+  font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;
+}
+td{padding:.65rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);font-size:.88rem}
+tr:hover td{background:rgba(0,212,255,.03)}
+
+/* TAGS */
+.tag{display:inline-block;padding:.18rem .65rem;border-radius:100px;font-size:.72rem;font-weight:600;white-space:nowrap}
+.t-blue{background:rgba(0,212,255,.15);color:var(--accent)}
+.t-green{background:rgba(16,185,129,.15);color:var(--accent3)}
+.t-purple{background:rgba(124,58,237,.15);color:#a78bfa}
+.t-yellow{background:rgba(245,158,11,.15);color:var(--accent4)}
+.t-red{background:rgba(239,68,68,.15);color:#f87171}
+.t-grey{background:rgba(100,116,139,.2);color:#94a3b8}
+
+/* METRICS */
+.metrics{display:flex;flex-wrap:wrap;gap:.8rem;margin:1rem 0}
+.metric{
+  flex:1;min-width:90px;background:var(--card2);
+  border:1px solid var(--border);border-radius:12px;padding:.9rem;text-align:center;
+}
+.metric .v{
+  font-size:clamp(1.4rem,4vw,1.9rem);font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.metric .l{font-size:.72rem;color:var(--muted);margin-top:.15rem}
+
+/* PROGRESS */
+.prog{margin:.5rem 0}
+.prog-lbl{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:.25rem}
+.prog-bar{height:6px;border-radius:100px;background:rgba(255,255,255,.06);overflow:hidden}
+.prog-fill{height:100%;border-radius:100px;transition:width 1.2s ease}
+
+/* CHART */
+.ch-wrap{position:relative;margin:1.5rem 0}
+
+/* INFO BOX */
+.info{border-radius:10px;padding:1rem;margin-top:1rem}
+.info-blue{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2)}
+.info-green{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2)}
+.info-yellow{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+.info-red{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}
+.info-purple{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)}
+.info strong{display:block;margin-bottom:.3rem;font-size:.9rem}
+.info p{color:var(--muted);font-size:.85rem;line-height:1.6}
+
+/* ACCORDION */
+.acc-btn{
+  width:100%;background:var(--card2);border:1px solid var(--border);
+  border-radius:10px;padding:1rem 1.2rem;color:var(--text);
+  font-size:.92rem;font-weight:600;text-align:left;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:all .2s;margin-bottom:.5rem;
+}
+.acc-btn:hover{border-color:rgba(0,212,255,.3);color:var(--accent)}
+.acc-arrow{transition:transform .3s}
+.acc-btn.open .acc-arrow{transform:rotate(180deg)}
+.acc-body{
+  display:none;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:1.2rem;margin-top:-.3rem;margin-bottom:.5rem;
+  animation:fadeIn .25s ease;
+}
+.acc-body.open{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* DIVIDER */
+hr.div{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:3.5rem 0}
+
+/* HEAD-TO-HEAD */
+.h2h{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0}
+@media(max-width:480px){.h2h{grid-template-columns:1fr}}
+.h2h-card{border-radius:12px;padding:1.2rem;text-align:center}
+
+/* FEATURE GRID */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin:1rem 0}
+.feat-item{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:.9rem;text-align:center}
+.feat-icon{font-size:1.6rem;margin-bottom:.4rem}
+.feat-title{font-size:.82rem;font-weight:600;color:var(--accent);margin-bottom:.3rem}
+.feat-desc{font-size:.73rem;color:var(--muted);line-height:1.4}
+
+/* FOOTER */
+footer{
+  text-align:center;padding:2.5rem 1rem;color:var(--muted);
+  border-top:1px solid var(--border);font-size:.82rem;
+}
+footer a{color:var(--accent);text-decoration:none}
+
+/* SCROLL CUE */
+.scroll-cue{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  animation:bob 2s infinite;color:var(--muted);font-size:1.3rem;z-index:1;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* INTRO CARDS */
+.intro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:2rem}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="ring ring1"></div>
+  <div class="ring ring2"></div>
+  <div class="badge">Multi-Registry Clinical Intelligence · 2026</div>
+  <h1>ClinicalTrials<br>Intelligence CLI</h1>
+  <p>Aggregates, normalizes, and analyzes clinical trial data across ClinicalTrials.gov, EU CTIS, and OpenAlex — with 10 intelligence capabilities no single-registry tool has.</p>
+  <div class="stats-row">
+    <div class="stat"><div class="num">856+</div><div class="lbl">Active diabetes trials</div></div>
+    <div class="stat"><div class="num">15,152</div><div class="lbl">Citations — COVID trial</div></div>
+    <div class="stat"><div class="num">3</div><div class="lbl">International registries</div></div>
+    <div class="stat"><div class="num">10</div><div class="lbl">Intelligence commands</div></div>
+  </div>
+  <div class="scroll-cue">↓</div>
+</section>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">CT·Intel</span>
+  <a href="#c1">1 Search</a>
+  <a href="#c2">2 Map</a>
+  <a href="#c3">3 Phase 3</a>
+  <a href="#c4">4 Watch</a>
+  <a href="#c5">5 Compare</a>
+  <a href="#c6">6 Sponsors</a>
+  <a href="#c7">7 Export</a>
+  <a href="#c8">8 Risk</a>
+  <a href="#c9">9 Evidence</a>
+  <a href="#c10">10 Trends</a>
+</nav>
+
+<!-- INTRO -->
+<div class="section">
+  <div class="section-header">
+    <h2>Why is this tool different?</h2>
+    <p>Every other ClinicalTrials.gov tool is a single-source pass-through.<br>This one merges 3 registries into one deduplicated, normalized model.</p>
+  </div>
+  <div class="intro-grid">
+    <div class="card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:.5rem">🔬</div>
+      <h3 style="color:var(--accent);margin-bottom:.4rem;font-size:1rem">For Researchers</h3>
+      <p style="color:var(--muted);font-size:.85rem;line-height:1.6">Landscape analysis — what's running, what's emerging, who funds it. Real-time data across ClinicalTrials.gov + EU CTIS + OpenAlex.</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:.5rem">👨‍⚕️</div>
+      <h3 style="color:var(--accent3);margin-bottom:.4rem;font-size:1rem">For Physicians</h3>
+      <p style="color:var(--muted);font-size:.85rem;line-height:1.6">Find active trials for patients, compare drug efficacy by real research activity — not marketing — and check if results were published.</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:.5rem">🧑‍💻</div>
+      <h3 style="color:#a78bfa;margin-bottom:.4rem;font-size:1rem">For Everyone</h3>
+      <p style="color:var(--muted);font-size:.85rem;line-height:1.6">Quickly find whether active clinical trials exist for a disease, where they run, and which drugs are being tested — no credentials needed.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 1. RECRUITING -->
+<div class="section" id="c1">
+  <div class="section-header">
+    <div class="num-chip">1</div>
+    <h2>Search active trials</h2>
+    <p>Find every recruiting trial for any disease — right now, worldwide</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials recruiting "diabetes type 2" --limit 5 --human-friendly</div>
+    <div class="metrics">
+      <div class="metric"><div class="v">856</div><div class="l">Active trials NOW</div></div>
+      <div class="metric"><div class="v">Phase 3</div><div class="l">Most advanced</div></div>
+      <div class="metric"><div class="v">Global</div><div class="l">Coverage</div></div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Trial ID</th><th>Title</th><th>Phase</th><th>Sponsor</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag t-blue">NCT07622628</span></td><td>AIM-MET: AI-Guided Microbiome Nutrition for Glycemic Improvement</td><td><span class="tag t-grey">N/A</span></td><td>ENBIOSIS Biotechnologies</td></tr>
+          <tr><td><span class="tag t-blue">NCT06805786</span></td><td>Continuous Glucose Monitoring: Intermittent vs Real-time</td><td><span class="tag t-grey">N/A</span></td><td>LMC Diabetes & Endocrinology</td></tr>
+          <tr><td><span class="tag t-blue">NCT04602754</span></td><td>Efficacy of Berlim 25/20 in Type II Diabetes</td><td><span class="tag t-green">Phase 3</span></td><td>EMS</td></tr>
+          <tr><td><span class="tag t-blue">NCT07549373</span></td><td>Diode Laser and Vinegar in Diabetic Patients</td><td><span class="tag t-grey">N/A</span></td><td>Sharda University</td></tr>
+          <tr><td><span class="tag t-blue">NCT07023172</span></td><td>Observational Study on Treatment of Type 2 Diabetes</td><td><span class="tag t-grey">N/A</span></td><td>Nanjing Drum Tower Hospital</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info info-green">
+      <strong style="color:var(--accent3)">What does this mean for a patient?</strong>
+      <p>There are <strong style="color:#fff">856 actively recruiting trials</strong> worldwide for type 2 diabetes right now. A patient interested in participating can find Phase 3 trials — the most advanced stage, closest to approval.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 2. HOTSPOTS -->
+<div class="section" id="c2">
+  <div class="section-header">
+    <div class="num-chip">2</div>
+    <h2>Geographic distribution</h2>
+    <p>Where in the world is research happening for a disease?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials hotspots "alzheimer" --human-friendly</div>
+    <div class="grid-2" style="align-items:start;margin-top:1rem">
+      <div class="ch-wrap"><canvas id="hotspotChart"></canvas></div>
+      <div>
+        <div class="prog"><div class="prog-lbl"><span>🇺🇸 United States</span><span><strong>156</strong></span></div><div class="prog-bar"><div class="prog-fill" data-w="100" style="background:linear-gradient(90deg,#00d4ff,#7c3aed)"></div></div></div>
+        <div class="prog"><div class="prog-lbl"><span>🇫🇷 France</span><span>41</span></div><div class="prog-bar"><div class="prog-fill" data-w="26" style="background:#7c3aed"></div></div></div>
+        <div class="prog"><div class="prog-lbl"><span>🇨🇦 Canada</span><span>32</span></div><div class="prog-bar"><div class="prog-fill" data-w="21" style="background:#10b981"></div></div></div>
+        <div class="prog"><div class="prog-lbl"><span>🇬🇧 United Kingdom</span><span>25</span></div><div class="prog-bar"><div class="prog-fill" data-w="16" style="background:#f59e0b"></div></div></div>
+        <div class="prog"><div class="prog-lbl"><span>🇪🇸 Spain</span><span>24</span></div><div class="prog-bar"><div class="prog-fill" data-w="15" style="background:#f59e0b"></div></div></div>
+        <div class="prog"><div class="prog-lbl"><span>🇩🇪 Germany</span><span>21</span></div><div class="prog-bar"><div class="prog-fill" data-w="13" style="background:#64748b"></div></div></div>
+        <div class="prog"><div class="prog-lbl"><span>🇨🇳 China</span><span>20</span></div><div class="prog-bar"><div class="prog-fill" data-w="13" style="background:#64748b"></div></div></div>
+        <div class="prog"><div class="prog-lbl"><span>🇰🇷 South Korea</span><span>20</span></div><div class="prog-bar"><div class="prog-fill" data-w="13" style="background:#64748b"></div></div></div>
+      </div>
+    </div>
+    <div class="info info-purple">
+      <strong style="color:#a78bfa">Takeaway:</strong>
+      <p>The US dominates Alzheimer research with <strong style="color:#fff">52% of all trials</strong>. Europe (France, UK, Spain, Germany) is a strong second. China and East Asia are growing fast — a trend to watch over the next 5 years.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 3. PHASE 3 -->
+<div class="section" id="c3">
+  <div class="section-header">
+    <div class="num-chip">3</div>
+    <h2>Phase filter — Phase 3 trials</h2>
+    <p>Phase 3 trials are the final hurdle before regulatory approval</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials phase3 "lung cancer" --human-friendly</div>
+    <div class="metrics">
+      <div class="metric"><div class="v">63</div><div class="l">Phase 3 matched</div></div>
+      <div class="metric"><div class="v">600</div><div class="l">Trials scanned</div></div>
+      <div class="metric"><div class="v">10.5%</div><div class="l">Phase 3 rate</div></div>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="feat-icon" style="color:var(--accent3)">✅</div>
+        <div class="feat-title" style="color:var(--accent3)">RECRUITING</div>
+        <div class="feat-desc">Actively enrolling — patients can join now</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="color:var(--accent4)">⏳</div>
+        <div class="feat-title" style="color:var(--accent4)">ACTIVE</div>
+        <div class="feat-desc">Running but not taking new patients</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="color:#64748b">🏁</div>
+        <div class="feat-title" style="color:#94a3b8">COMPLETED</div>
+        <div class="feat-desc">Finished — results may be available</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="color:var(--accent)">🔜</div>
+        <div class="feat-title">NOT YET</div>
+        <div class="feat-desc">Starting soon — watch for enrollment</div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Trial ID</th><th>Study</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>NCT06472245</td><td>Therapeutic Cancer Vaccine OSE2101 — NSCLC</td><td><span class="tag t-green">RECRUITING</span></td></tr>
+          <tr><td>NCT05091567</td><td>Lurbinectedin Maintenance — Phase III</td><td><span class="tag t-yellow">ACTIVE</span></td></tr>
+          <tr><td>NCT06561386</td><td>Nivolumab + Relatlimab + Chemotherapy</td><td><span class="tag t-green">RECRUITING</span></td></tr>
+          <tr><td>NCT04351555</td><td>Osimertinib ± Chemotherapy vs Chemo Alone</td><td><span class="tag t-yellow">ACTIVE</span></td></tr>
+          <tr><td>NCT06416410</td><td>JAB-21822 + JAB-3312 vs SOC, First Line</td><td><span class="tag t-green">RECRUITING</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 4. WATCH -->
+<div class="section" id="c4">
+  <div class="section-header">
+    <div class="num-chip">4</div>
+    <h2>Change monitor</h2>
+    <p>Track a topic over time — new trials, status changes, terminations</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials watch "vitamin d" --human-friendly</div>
+    <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:1.2rem;margin:1rem 0">
+      <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.8rem">
+        <div style="width:9px;height:9px;border-radius:50%;background:var(--accent3);box-shadow:0 0 8px var(--accent3)"></div>
+        <span style="color:var(--accent3);font-weight:600;font-size:.9rem">Baseline set for 200 trials — re-run to see changes</span>
+      </div>
+      <p style="color:var(--muted);font-size:.85rem;line-height:1.6">First run creates a <strong style="color:#fff">snapshot</strong>. Every subsequent run reports only what changed — saving hours of manual review.</p>
+    </div>
+    <div class="grid-3" style="margin:1rem 0">
+      <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:.9rem;text-align:center">
+        <div style="font-size:1.6rem">🆕</div>
+        <div style="color:var(--accent3);font-size:.8rem;font-weight:600;margin-top:.3rem">New trials</div>
+        <div style="color:var(--muted);font-size:.73rem;margin-top:.2rem">Appeared since last run</div>
+      </div>
+      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:.9rem;text-align:center">
+        <div style="font-size:1.6rem">✏️</div>
+        <div style="color:var(--accent4);font-size:.8rem;font-weight:600;margin-top:.3rem">Status changed</div>
+        <div style="color:var(--muted);font-size:.73rem;margin-top:.2rem">Phase, enrollment updates</div>
+      </div>
+      <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:.9rem;text-align:center">
+        <div style="font-size:1.6rem">🔴</div>
+        <div style="color:#f87171;font-size:.8rem;font-weight:600;margin-top:.3rem">Terminated</div>
+        <div style="color:var(--muted);font-size:.73rem;margin-top:.2rem">Stopped or withdrawn</div>
+      </div>
+    </div>
+    <div class="info info-blue">
+      <strong style="color:var(--accent)">Practical use case:</strong>
+      <p>A researcher sets a watch on "immunotherapy melanoma." Each week they get a delta — new trials opened, protocol changes, terminations — without re-reading hundreds of records manually.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 5. COMPARE -->
+<div class="section" id="c5">
+  <div class="section-header">
+    <div class="num-chip">5</div>
+    <h2>Head-to-head drug comparison</h2>
+    <p>Compare two drugs by real research activity — not marketing</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials compare "aspirin" "ibuprofen" --human-friendly</div>
+    <div class="h2h">
+      <div class="h2h-card" style="background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.2)">
+        <div style="font-size:clamp(2rem,6vw,3rem);font-weight:800;color:var(--accent)">2,179</div>
+        <div style="color:var(--muted);font-size:.8rem">total trials</div>
+        <div style="font-size:1.3rem;font-weight:700;color:#fff;margin:.4rem 0">Aspirin</div>
+        <span class="tag t-green">11% recruiting</span>
+        <div style="color:var(--muted);font-size:.78rem;margin-top:.8rem">Top: AstraZeneca, Bayer</div>
+      </div>
+      <div class="h2h-card" style="background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.2)">
+        <div style="font-size:clamp(2rem,6vw,3rem);font-weight:800;color:#a78bfa">1,094</div>
+        <div style="color:var(--muted);font-size:.8rem">total trials</div>
+        <div style="font-size:1.3rem;font-weight:700;color:#fff;margin:.4rem 0">Ibuprofen</div>
+        <span class="tag t-purple">8% recruiting</span>
+        <div style="color:var(--muted);font-size:.78rem;margin-top:.8rem">Top: Medipol Univ., Pfizer</div>
+      </div>
+    </div>
+    <div class="ch-wrap" style="max-height:260px"><canvas id="compareChart"></canvas></div>
+    <div class="info info-green">
+      <strong style="color:var(--accent3)">Takeaway:</strong>
+      <p>Aspirin is <strong style="color:#fff">2× more studied</strong> than ibuprofen. Aspirin is backed by large pharma (AstraZeneca, Bayer), while ibuprofen is mostly academic. Both show strong Phase 4 activity — post-approval safety monitoring.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 6. SPONSORS -->
+<div class="section" id="c6">
+  <div class="section-header">
+    <div class="num-chip">6</div>
+    <h2>Sponsor analysis</h2>
+    <p>Who funds the research — industry, academia, or government?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials sponsors "cancer" --human-friendly</div>
+    <div class="ch-wrap" style="max-height:250px"><canvas id="sponsorChart"></canvas></div>
+    <div class="grid-3" style="margin-top:1.2rem">
+      <div style="background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:1rem;text-align:center">
+        <div style="font-size:1.6rem">🏭</div>
+        <div style="color:var(--accent);font-weight:700;font-size:.88rem;margin:.3rem 0">Industry</div>
+        <p style="color:var(--muted);font-size:.75rem;line-height:1.4">Merck, Pfizer, Roche<br>Product-oriented</p>
+      </div>
+      <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:1rem;text-align:center">
+        <div style="font-size:1.6rem">🎓</div>
+        <div style="color:var(--accent3);font-weight:700;font-size:.88rem;margin:.3rem 0">Academic</div>
+        <p style="color:var(--muted);font-size:.75rem;line-height:1.4">Universities, hospitals<br>Science-oriented</p>
+      </div>
+      <div style="background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:1rem;text-align:center">
+        <div style="font-size:1.6rem">🏛️</div>
+        <div style="color:#a78bfa;font-weight:700;font-size:.88rem;margin:.3rem 0">Government</div>
+        <p style="color:var(--muted);font-size:.75rem;line-height:1.4">NIH, NCI, NIAID<br>Public health-oriented</p>
+      </div>
+    </div>
+    <div class="info info-yellow">
+      <strong style="color:var(--accent4)">Why does this matter for physicians?</strong>
+      <p>Trials funded solely by industry may have conflicts of interest. Academic and government-funded studies are considered more independent. Use this to weigh the credibility of a study's results.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 7. EXPORT -->
+<div class="section" id="c7">
+  <div class="section-header">
+    <div class="num-chip">7</div>
+    <h2>Data export</h2>
+    <p>Export trial data for your own analysis in Excel, Python, or R</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials export --format jsonl &gt; trials.jsonl</div>
+    <div class="grid-3" style="margin:1.2rem 0">
+      <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:.3rem">📊</div>
+        <div style="color:var(--accent);font-weight:600;font-size:.88rem">JSONL</div>
+        <p style="color:var(--muted);font-size:.75rem;margin-top:.3rem">Python, pandas, ML pipelines</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:.3rem">📋</div>
+        <div style="color:var(--accent3);font-weight:600;font-size:.88rem">CSV</div>
+        <p style="color:var(--muted);font-size:.75rem;margin-top:.3rem">Excel, Google Sheets</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:.3rem">📝</div>
+        <div style="color:#a78bfa;font-weight:600;font-size:.88rem">Markdown</div>
+        <p style="color:var(--muted);font-size:.75rem;margin-top:.3rem">Reports, documentation</p>
+      </div>
+    </div>
+    <div class="info info-blue">
+      <strong style="color:var(--accent)">Combined with sync:</strong>
+      <p>Run <code style="color:var(--accent4)">./clinical-trials sync</code> first to pull a full local SQLite snapshot, then export any subset for offline analysis — works with no internet.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 8. RISK -->
+<div class="section" id="c8">
+  <div class="section-header">
+    <div class="num-chip">8</div>
+    <h2>Trial risk score</h2>
+    <p>How likely is a trial to complete and publish results?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials risk NCT07011732 --human-friendly</div>
+    <div class="ch-wrap" style="max-height:260px"><canvas id="riskChart"></canvas></div>
+    <div class="feat-grid" style="margin-top:1.2rem">
+      <div class="feat-item">
+        <div class="feat-icon" style="color:var(--accent4)">📉</div>
+        <div class="feat-title" style="color:var(--accent4)">Termination rate</div>
+        <div class="feat-desc">% of similar trials abandoned early</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="color:var(--accent)">👥</div>
+        <div class="feat-title">Enrollment</div>
+        <div class="feat-desc">Actual vs target recruitment pace</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="color:var(--accent3)">🏥</div>
+        <div class="feat-title" style="color:var(--accent3)">Site count</div>
+        <div class="feat-desc">More sites = more resilient</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="color:#a78bfa">🏆</div>
+        <div class="feat-title" style="color:#a78bfa">Sponsor track record</div>
+        <div class="feat-desc">Past completion rate of this sponsor</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="color:#f87171">⚗️</div>
+        <div class="feat-title" style="color:#f87171">Phase factor</div>
+        <div class="feat-desc">Phase 1 = higher risk than Phase 3</div>
+      </div>
+    </div>
+    <div class="info info-red">
+      <strong style="color:#f87171">Clinical utility:</strong>
+      <p>Before referring a patient to a trial, a physician can check whether the study has a high probability of completion — or is at risk of termination before producing usable results.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 9. EVIDENCE -->
+<div class="section" id="c9">
+  <div class="section-header">
+    <div class="num-chip">9</div>
+    <h2>Publications & citations</h2>
+    <p>Did a trial publish results? How much did it influence the field?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials evidence NCT04280705 --human-friendly</div>
+    <div style="background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(124,58,237,.06));border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin:1rem 0">
+      <div style="font-weight:700;font-size:1rem;margin-bottom:.3rem">Adaptive COVID-19 Treatment Trial (ACTT)</div>
+      <div style="color:var(--muted);font-size:.82rem;margin-bottom:1rem">The pivotal Remdesivir trial — one of the most influential COVID-19 studies ever conducted</div>
+      <div class="metrics">
+        <div class="metric"><div class="v">10</div><div class="l">PubMed articles</div></div>
+        <div class="metric"><div class="v">288</div><div class="l">OpenAlex works</div></div>
+        <div class="metric"><div class="v">15,152</div><div class="l">Total citations</div></div>
+      </div>
+    </div>
+    <div class="ch-wrap" style="max-height:230px"><canvas id="citChart"></canvas></div>
+    <div class="tbl-wrap" style="margin-top:1rem">
+      <table>
+        <thead><tr><th>Publication</th><th>Year</th><th>Citations</th></tr></thead>
+        <tbody>
+          <tr><td>Remdesivir for the Treatment of Covid-19 — Final Report</td><td>2020</td><td><span class="tag t-green">7,728</span></td></tr>
+          <tr><td>Epidemiology, clinical course, critically ill patients</td><td>2020</td><td><span class="tag t-blue">2,280</span></td></tr>
+          <tr><td>COVID-19 and Pregnancy</td><td>2020</td><td><span class="tag t-blue">1,465</span></td></tr>
+          <tr><td>Remdesivir — Preliminary Report</td><td>2020</td><td><span class="tag t-blue">1,456</span></td></tr>
+          <tr><td>Viral Resistance Analyses</td><td>2023</td><td><span class="tag t-purple">32</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info info-blue">
+      <strong style="color:var(--accent)">When to use this:</strong>
+      <p>"Has NCT... published results?" or "How influential was this trial?" — evidence links a trial to its full publication and citation footprint across PubMed and OpenAlex simultaneously.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- 10. VELOCITY -->
+<div class="section" id="c10">
+  <div class="section-header">
+    <div class="num-chip">10</div>
+    <h2>Trend analysis</h2>
+    <p>Is research in a field accelerating or slowing down?</p>
+  </div>
+  <div class="card">
+    <div class="cmd">$ ./clinical-trials velocity "alzheimer" --human-friendly</div>
+    <div class="metrics">
+      <div class="metric"><div class="v" style="-webkit-text-fill-color:#f87171;color:#f87171">−69%</div><div class="l">New trials (last 3yr)</div></div>
+      <div class="metric"><div class="v" style="-webkit-text-fill-color:var(--accent3);color:var(--accent3)">+19%</div><div class="l">Patients enrolled</div></div>
+      <div class="metric"><div class="v">509K</div><div class="l">Enrolled in 2025</div></div>
+    </div>
+    <div class="ch-wrap" style="max-height:280px"><canvas id="velocityChart"></canvas></div>
+    <div class="info info-blue">
+      <strong style="color:var(--accent)">What this means:</strong>
+      <p>Fewer new Alzheimer trials started (−69%), but existing studies are <strong style="color:#fff">far larger</strong> — the massive 2025 spike (+509K enrolled) signals a large global multi-center trial in progress. Research is consolidating, not shrinking.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- SUMMARY -->
+<div class="section">
+  <div class="section-header">
+    <h2>All 10 capabilities — quick reference</h2>
+    <p>Use the right command for the right question</p>
+  </div>
+
+  <button class="acc-btn" onclick="tog(this)"><span>🔎 Search & Discovery</span><span class="acc-arrow">▾</span></button>
+  <div class="acc-body">
+    <p style="color:var(--muted);margin-bottom:.8rem">Find any active trial worldwide. Aggregates 3 registries, deduplicates NCT/EUCTR/WHO IDs.</p>
+    <div class="cmd">$ ./clinical-trials recruiting "parkinson" --limit 20 --human-friendly</div>
+  </div>
+
+  <button class="acc-btn" onclick="tog(this)"><span>📊 Analysis & Comparison</span><span class="acc-arrow">▾</span></button>
+  <div class="acc-body">
+    <p style="color:var(--muted);margin-bottom:.8rem">Compare drugs, rank sponsors, measure growth velocity in a research field.</p>
+    <div class="cmd">$ ./clinical-trials compare "semaglutide" "tirzepatide" --human-friendly</div>
+  </div>
+
+  <button class="acc-btn" onclick="tog(this)"><span>📚 Link to Scientific Literature</span><span class="acc-arrow">▾</span></button>
+  <div class="acc-body">
+    <p style="color:var(--muted);margin-bottom:.8rem">Connect a trial to PubMed and OpenAlex publications. Verify if results were published and how widely cited.</p>
+    <div class="cmd">$ ./clinical-trials evidence NCT04280705 --human-friendly</div>
+  </div>
+
+  <button class="acc-btn" onclick="tog(this)"><span>⚠️ Risk & Safety Assessment</span><span class="acc-arrow">▾</span></button>
+  <div class="acc-body">
+    <p style="color:var(--muted);margin-bottom:.8rem">Calculate trial completion risk. Surface FDA adverse-event signals for a drug.</p>
+    <div class="cmd">$ ./clinical-trials safety "pembrolizumab" --human-friendly</div>
+  </div>
+
+  <button class="acc-btn" onclick="tog(this)"><span>📈 Weekly Landscape Reports</span><span class="acc-arrow">▾</span></button>
+  <div class="acc-body">
+    <p style="color:var(--muted);margin-bottom:.8rem">Generate a complete markdown or CSV briefing on any medical domain — ideal for clinical newsletters.</p>
+    <div class="cmd">$ ./clinical-trials report "long covid" --format md &gt; weekly-brief.md</div>
+  </div>
+</div>
+
+<footer>
+  <p>Built with <strong style="color:var(--accent)">ClinicalTrials Intelligence CLI</strong></p>
+  <p style="margin-top:.4rem">Data: ClinicalTrials.gov · EU CTIS · OpenAlex · PubMed · OpenFDA</p>
+  <p style="margin-top:.4rem;color:#334155">No API key required · Read-only · Open Source · 2026</p>
+</footer>
+
+<script>
+function tog(btn){
+  const body=btn.nextElementSibling;
+  const open=body.classList.contains('open');
+  document.querySelectorAll('.acc-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.acc-btn').forEach(b=>b.classList.remove('open'));
+  if(!open){body.classList.add('open');btn.classList.add('open');}
+}
+
+Chart.defaults.color='#64748b';
+Chart.defaults.borderColor='rgba(255,255,255,0.06)';
+const mobile=window.innerWidth<600;
+
+// 1. Hotspot doughnut
+new Chart(document.getElementById('hotspotChart'),{
+  type:'doughnut',
+  data:{
+    labels:['USA','France','Canada','UK','Spain','Germany','China','South Korea','Others'],
+    datasets:[{
+      data:[156,41,32,25,24,21,20,20,61],
+      backgroundColor:['#00d4ff','#7c3aed','#10b981','#f59e0b','#f87171','#6366f1','#a78bfa','#34d399','#334155'],
+      borderWidth:0,hoverOffset:6
+    }]
+  },
+  options:{
+    cutout:'60%',
+    plugins:{legend:{position:mobile?'bottom':'right',labels:{boxWidth:10,padding:8,font:{size:11}}}},
+    responsive:true,maintainAspectRatio:true
+  }
+});
+
+// 2. Compare horizontal bar
+new Chart(document.getElementById('compareChart'),{
+  type:'bar',
+  data:{
+    labels:['Phase 4','Phase 3','Phase 2','Phase 1','Early Ph.1','N/A'],
+    datasets:[
+      {label:'Aspirin',data:[68,61,35,21,8,69],backgroundColor:'rgba(0,212,255,0.75)',borderRadius:5},
+      {label:'Ibuprofen',data:[81,41,42,25,3,104],backgroundColor:'rgba(124,58,237,0.75)',borderRadius:5}
+    ]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'top'}},
+    scales:{x:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}}
+  }
+});
+
+// 3. Sponsor polar area
+new Chart(document.getElementById('sponsorChart'),{
+  type:'polarArea',
+  data:{
+    labels:['Industry','Academic','Government','Other'],
+    datasets:[{
+      data:[45,35,15,5],
+      backgroundColor:['rgba(0,212,255,0.6)','rgba(16,185,129,0.6)','rgba(124,58,237,0.6)','rgba(100,116,139,0.4)'],
+      borderWidth:0
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:mobile?'bottom':'right',labels:{boxWidth:10,padding:8,font:{size:11}}}},
+    scales:{r:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{display:false}}}
+  }
+});
+
+// 4. Risk radar
+new Chart(document.getElementById('riskChart'),{
+  type:'radar',
+  data:{
+    labels:['Termination Risk','Enrollment Pace','Site Count','Sponsor Track Record','Phase Factor','Duration Risk'],
+    datasets:[
+      {label:'Low Risk Trial',data:[15,85,90,88,75,80],borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.12)',pointBackgroundColor:'#10b981',borderWidth:2},
+      {label:'High Risk Trial',data:[70,30,20,40,25,65],borderColor:'#f87171',backgroundColor:'rgba(239,68,68,0.12)',pointBackgroundColor:'#f87171',borderWidth:2}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'top'}},
+    scales:{r:{
+      beginAtZero:true,max:100,
+      grid:{color:'rgba(255,255,255,0.06)'},
+      pointLabels:{font:{size:mobile?9:11},color:'#94a3b8'},
+      ticks:{display:false}
+    }}
+  }
+});
+
+// 5. Citations bar
+new Chart(document.getElementById('citChart'),{
+  type:'bar',
+  data:{
+    labels:['Final Report','Epidemiology','Pregnancy','Preliminary','Approval','Other'],
+    datasets:[{
+      label:'Citations',
+      data:[7728,2280,1465,1456,291,1932],
+      backgroundColor:['#00d4ff','#7c3aed','#10b981','#f59e0b','#a78bfa','#334155'],
+      borderRadius:6,borderSkipped:false
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.04)'}},
+      x:{grid:{display:false}}
+    }
+  }
+});
+
+// 6. Velocity area chart
+new Chart(document.getElementById('velocityChart'),{
+  type:'line',
+  data:{
+    labels:['2009','2011','2013','2015','2017','2019','2021','2022','2023','2024','2025'],
+    datasets:[
+      {
+        label:'New trials',
+        data:[13,9,18,14,12,26,29,28,26,23,24],
+        borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.08)',
+        fill:true,tension:0.4,pointRadius:4,pointHoverRadius:7,
+        yAxisID:'y'
+      },{
+        label:'Enrolled (thousands)',
+        data:[4,1.9,202,12,2.7,7.5,28,105,7.5,49,509],
+        borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.06)',
+        fill:true,tension:0.4,pointRadius:4,pointHoverRadius:7,
+        yAxisID:'y2'
+      }
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:true,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{position:'top'}},
+    scales:{
+      y:{beginAtZero:true,title:{display:!mobile,text:'New trials'},grid:{color:'rgba(255,255,255,0.04)'}},
+      y2:{beginAtZero:true,position:'right',title:{display:!mobile,text:'Enrolled (k)'},grid:{drawOnChartArea:false}}
+    }
+  }
+});
+
+// Animate progress bars
+window.addEventListener('load',()=>{
+  document.querySelectorAll('.prog-fill').forEach(el=>{
+    const w=el.getAttribute('data-w');
+    el.style.width='0';
+    setTimeout(()=>{el.style.width=w+'%'},400);
+  });
+});
+</script>
+</body>
+</html>
