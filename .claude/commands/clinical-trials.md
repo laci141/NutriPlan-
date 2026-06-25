@@ -1,69 +1,89 @@
 # Clinical Trials CLI Skill
 
-A multi-source clinical-trials intelligence system built on top of the `clinical-trials-pp-cli` binary from [mvanhorn/printing-press-library](https://github.com/mvanhorn/printing-press-library).
+A multi-source clinical-trials intelligence system — aggregates ClinicalTrials.gov, EU CTIS, OpenAlex. Nincs API kulcs szükséges.
 
-## Telepítés (ha nincs még)
+## Telepítés
 
 ```bash
+cd ~/printing-press-library/library/health/clinical-trials
 GOTOOLCHAIN=local go build -o clinical-trials ./cmd/clinical-trials-pp-cli/
-# vagy go install:
-go install github.com/mvanhorn/printing-press-library/library/health/clinical-trials/cmd/clinical-trials-pp-cli@latest
 ```
 
-## Legjobb parancsok (kipróbált, működik)
+## Mind a 10 funkció — kipróbált parancsok
 
-### 1. Betegség kereső — aktív kísérletek
+### 1. Betegség kereső — aktív toborzó kísérletek
 ```bash
-clinical-trials-pp-cli recruiting "diabetes type 2" --limit 10 --human-friendly
+./clinical-trials recruiting "diabetes type 2" --limit 10 --human-friendly
 ```
 
-### 5. Összehasonlítás — két gyógyszer egymás ellen
+### 2. Földrajzi eloszlás — hol folyik a legtöbb kutatás
 ```bash
-clinical-trials-pp-cli compare "aspirin" "ibuprofen" --human-friendly
-# Vagy JSON módban:
-clinical-trials-pp-cli compare "Keytruda" "Opdivo" --json
+./clinical-trials hotspots "alzheimer" --human-friendly
 ```
 
-### 9. Publikáció / eredmény összefoglaló egy trial-hoz
+### 3. Fázis szűrő — csak Phase 3 kísérletek
 ```bash
-clinical-trials-pp-cli evidence NCT04280705 --human-friendly
+./clinical-trials phase3 "lung cancer" --human-friendly
 ```
 
-## Egyéb hasznos parancsok
-
+### 4. Értesítő — változások figyelése
 ```bash
-# Leggyorsabban növekvő kategóriák
-clinical-trials-pp-cli emerging "cancer" --human-friendly
-
-# Kik finanszírozzák a legtöbb kísérletet?
-clinical-trials-pp-cli sponsors "diabetes" --human-friendly
-
-# Egy trial kockázata
-clinical-trials-pp-cli risk NCT07011732 --human-friendly
-
-# Heti összefoglaló riport
-clinical-trials-pp-cli report "long covid" --format md
-
-# Egészség check
-clinical-trials-pp-cli health --human-friendly
+./clinical-trials watch "vitamin d" --human-friendly
 ```
 
-## Fontos tudnivalók
+### 5. Összehasonlítás — két gyógyszer egymás ellen ✓ KIPRÓBÁLT
+```bash
+./clinical-trials compare "aspirin" "ibuprofen" --human-friendly
+```
 
-- **Nincs szükség API kulcsra** az alap funkcióhoz
-- `--human-friendly` = szép emberi olvasható kimenet
-- `--json` = agent/script módhoz
-- `--agent` = teljesen automatizált mód (json + no-input + no-color)
-- `--data-source live` = csak live API, ne local cache
-- Az MCP szerver: `clinical-trials-pp-mcp`
+### 6. Szponzor / ki finanszírozza
+```bash
+./clinical-trials sponsors "cancer" --human-friendly
+```
 
-## Keresés helyett használd a `recruiting`-ot
+### 7. Exportálás CSV-be
+```bash
+./clinical-trials export --format jsonl > trials.jsonl
+```
 
-A `search` parancs lokális adatbázist keres. Ha nincs szinkronizálva, hibát dob.  
-A `recruiting` parancs közvetlenül a live API-t hívja.
+### 8. Kockázatelemzés — egy trial kockázata
+```bash
+./clinical-trials risk NCT07011732 --human-friendly
+```
 
-## MCP szerver regisztrálás Claude Code-ba
+### 9. Eredmény / publikáció összefoglaló ✓ KIPRÓBÁLT
+```bash
+./clinical-trials evidence NCT04280705 --human-friendly
+```
 
+### 10. Trend elemzés — növekedési sebesség
+```bash
+./clinical-trials velocity "alzheimer" --human-friendly
+# Vagy leggyorsabban növekvő kategóriák:
+./clinical-trials emerging "cancer" --human-friendly
+```
+
+## Bónusz: Teljes heti riport
+```bash
+./clinical-trials report "long covid" --format md
+```
+
+## Egészség ellenőrzés
+```bash
+./clinical-trials health --human-friendly
+./clinical-trials doctor
+```
+
+## Fontos szabályok
+
+- `--human-friendly` = szép emberi kimenet (terminálba)
+- `--json` = gépi/agent kimenet
+- `--agent` = json + no-color + no-input (CI/script)
+- `recruiting` > `search` ha nincs lokális szinkron
+- Nincs API kulcs szükséges az alap funkcióhoz
+- Read-only CLI — nem módosít adatot
+
+## MCP szerver (Claude Desktop-ba)
 ```bash
 claude mcp add clinical-trials-pp-mcp -- clinical-trials-pp-mcp
 ```
