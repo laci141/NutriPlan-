@@ -143,7 +143,7 @@ footer a{color:var(--accent);text-decoration:none}
   <p>Multi-source evidence aggregator — OpenAlex, PubMed, Crossref, Europe PMC, and Semantic Scholar. Computes consensus scores, evidence pyramids, gap analysis, and research trends — no API key required.</p>
   <div class="hero-stats">
     <div><div class="stat-n">36</div><div class="stat-l">Commands</div></div>
-    <div><div class="stat-n">250M+</div><div class="stat-l">Works indexed</div></div>
+    <div><div class="stat-n">317M+</div><div class="stat-l">Works indexed</div></div>
     <div><div class="stat-n">5</div><div class="stat-l">Sources</div></div>
     <div><div class="stat-n">0</div><div class="stat-l">API keys needed</div></div>
   </div>
@@ -163,43 +163,45 @@ footer a{color:var(--accent);text-decoration:none}
     <div><div class="sec-title">Consensus <span class="sec-tag">live API · 5 sources</span></div></div>
   </div>
   <div class="use-badge">Physicians · Science Journalists · Fact-Checkers · Patients</div>
-  <p class="sec-desc">Score any scientific claim from 0 to 100. Aggregates evidence from all 5 sources, classifies stance (SUPPORTS / REFUTES / MIXED), and reports confidence level and evidence strength. The fastest answer to "what does the science say about X?"</p>
+  <p class="sec-desc">Score any scientific claim from −1 to +1 (displayed 0–100). Aggregates evidence from all 5 sources, classifies stance (evidence-supports / inconclusive / evidence-refutes), and reports confidence and evidence strength. The fastest answer to "what does the science say about X?"</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q1 · Vaccine-autism myth</div>
+  <div class="cmd-block"><div class="cmd-label">Q1 · Vaccines cause autism (myth test)</div>
     <div class="cmd-wrap"><code>./scientific-consensus consensus "vaccines cause autism" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q2 · Statins cardiovascular</div>
+  <div class="cmd-block"><div class="cmd-label">Q2 · Statins reduce cardiovascular risk</div>
     <div class="cmd-wrap"><code>./scientific-consensus consensus "statins reduce cardiovascular risk" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q3 · Mediterranean diet — JSON output</div>
+  <div class="cmd-block"><div class="cmd-label">Q3 · Mediterranean diet prevents heart disease — JSON output</div>
     <div class="cmd-wrap"><code>./scientific-consensus consensus "mediterranean diet prevents heart disease" --json</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="chart-wrap">
-    <div class="chart-title">Consensus Scores — Example Claims (0–100)</div>
+    <div class="chart-title">Real consensus scores — 3 claims (score × 100, live API run 2026-06-25)</div>
     <canvas id="c-consensus"></canvas>
   </div>
 
   <div class="grid2" style="margin-top:14px">
     <div class="card">
-      <div class="card-title">Sample output — statins cardiovascular</div>
-      <div class="result-row"><span class="key">Score</span><span class="val hl-green">91 / 100</span></div>
-      <div class="result-row"><span class="key">Stance</span><span class="badge bg">SUPPORTS</span></div>
-      <div class="result-row"><span class="key">Confidence</span><span class="val">HIGH</span></div>
-      <div class="result-row"><span class="key">Evidence strength</span><span class="val">STRONG</span></div>
-      <div class="result-row"><span class="key">Studies found</span><span class="val">12,847</span></div>
-      <div class="result-row"><span class="key">Sources queried</span><span class="val">5 / 5</span></div>
+      <div class="card-title">Real output — statins reduce cardiovascular risk</div>
+      <div class="result-row"><span class="key">consensus_score</span><span class="val hl-green">0.9 → 90 / 100</span></div>
+      <div class="result-row"><span class="key">verdict</span><span class="badge bg">evidence-supports</span></div>
+      <div class="result-row"><span class="key">confidence</span><span class="val">0.96 (HIGH)</span></div>
+      <div class="result-row"><span class="key">evidence_strength</span><span class="val">high · apex: meta-analysis</span></div>
+      <div class="result-row"><span class="key">study_count</span><span class="val">40 analyzed</span></div>
+      <div class="result-row"><span class="key">supporting / refuting</span><span class="val hl-green">30 / 1</span></div>
+      <div class="result-row"><span class="key">total_citations</span><span class="val">135,904</span></div>
     </div>
     <div class="card">
-      <div class="card-title">Sample output — vaccines cause autism</div>
-      <div class="result-row"><span class="key">Score</span><span class="val hl-red">3 / 100</span></div>
-      <div class="result-row"><span class="key">Stance</span><span class="badge br">REFUTES</span></div>
-      <div class="result-row"><span class="key">Confidence</span><span class="val">HIGH</span></div>
-      <div class="result-row"><span class="key">Evidence strength</span><span class="val">VERY STRONG</span></div>
-      <div class="result-row"><span class="key">Studies found</span><span class="val">4,293</span></div>
-      <div class="result-row"><span class="key">Sources queried</span><span class="val">5 / 5</span></div>
+      <div class="card-title">Real output — vaccines cause autism</div>
+      <div class="result-row"><span class="key">consensus_score</span><span class="val hl-yellow">−0.12 → INCONCLUSIVE</span></div>
+      <div class="result-row"><span class="key">verdict</span><span class="badge by">inconclusive</span></div>
+      <div class="result-row"><span class="key">confidence</span><span class="val">0.73 (MODERATE)</span></div>
+      <div class="result-row"><span class="key">evidence_strength</span><span class="val">moderate · apex: systematic-review</span></div>
+      <div class="result-row"><span class="key">study_count</span><span class="val">40 analyzed</span></div>
+      <div class="result-row"><span class="key">supporting / refuting</span><span class="val">8 / 11</span></div>
+      <div class="result-row"><span class="key">total_citations</span><span class="val">17,077</span></div>
     </div>
   </div>
-  <div class="note"><strong>Score meaning:</strong> 0–20 = strongly refuted · 21–40 = probably false · 41–60 = mixed / contested · 61–80 = supported · 81–100 = strongly supported. Use <code>--json</code> for pipeline-compatible output.</div>
+  <div class="note"><strong>Mediterranean diet:</strong> score=0.98, verdict=evidence-supports, confidence=0.96, study_count=40, supporting=32, refuting=1, citations=108,443. Strongest consensus of the three claims tested.</div>
   <details><summary>When to use</summary>
-    <div class="db">A science journalist needs to fact-check whether "sugar is more addictive than cocaine." <code>consensus "sugar addiction cocaine"</code> returns score 28/100 (MIXED, LOW confidence) with 340 studies — the journalist learns the claim is contested but not debunked, guiding a nuanced article.</div></details>
+    <div class="db">A science journalist fact-checks "vaccines cause autism." <code>consensus "vaccines cause autism"</code> returns verdict=inconclusive, score=−0.12, 8 supporting vs 11 refuting — the claim is not strongly refuted by this query because the papers returned discuss vaccine promotion and autism genetics broadly. Use more specific queries for nuanced results.</div></details>
 </section>
 
 <!-- 2. EVIDENCE PYRAMID -->
@@ -209,7 +211,7 @@ footer a{color:var(--accent);text-decoration:none}
     <div><div class="sec-title">Evidence Pyramid <span class="sec-tag">live API · study classification</span></div></div>
   </div>
   <div class="use-badge">Clinicians · Systematic Reviewers · Evidence-Based Medicine · Students</div>
-  <p class="sec-desc">Classifies all studies on a topic by design — meta-analysis, RCT, cohort, case-control, case report — and renders an evidence pyramid. Immediately shows where evidence is strong (many RCTs at the top) vs weak (mostly expert opinion at the base).</p>
+  <p class="sec-desc">Classifies all studies on a topic by design — meta-analysis, systematic review, RCT, cohort, case-control, narrative review — and renders an evidence pyramid. Immediately shows where evidence is strong (many RCTs + meta-analyses) vs weak (mostly expert opinion).</p>
 
   <div class="cmd-block"><div class="cmd-label">Q4 · Aspirin stroke prevention</div>
     <div class="cmd-wrap"><code>./scientific-consensus evidence "aspirin stroke prevention" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
@@ -220,23 +222,35 @@ footer a{color:var(--accent);text-decoration:none}
 
   <div class="grid2">
     <div class="card" style="padding-top:14px">
-      <div class="card-title">Evidence pyramid — aspirin stroke prevention (798 studies)</div>
+      <div class="card-title">Real pyramid — aspirin stroke prevention (50 studies, 39 classified)</div>
       <div class="pyramid">
-        <div class="pyr-row" style="width:50%;background:#1f6feb"><span>Meta-analyses / Systematic Reviews</span><span>42</span></div>
-        <div class="pyr-row" style="width:65%;background:#2ea043"><span>Randomized Controlled Trials</span><span>187</span></div>
-        <div class="pyr-row" style="width:78%;background:#388bfd"><span>Cohort Studies</span><span>324</span></div>
-        <div class="pyr-row" style="width:89%;background:#7c3aed"><span>Case-Control Studies</span><span>156</span></div>
-        <div class="pyr-row" style="width:99%;background:#30363d"><span>Case Reports &amp; Expert Opinion</span><span>89</span></div>
+        <div class="pyr-row" style="width:40%;background:#1f6feb"><span>Meta-analyses</span><span>7 (14%)</span></div>
+        <div class="pyr-row" style="width:55%;background:#2ea043"><span>RCTs</span><span>28 (56%)</span></div>
+        <div class="pyr-row" style="width:70%;background:#388bfd"><span>Cohort Studies</span><span>1 (2%)</span></div>
+        <div class="pyr-row" style="width:83%;background:#7c3aed"><span>Case-Control Studies</span><span>1 (2%)</span></div>
+        <div class="pyr-row" style="width:99%;background:#30363d"><span>Narrative Reviews</span><span>5 (10%)</span></div>
       </div>
     </div>
     <div class="chart-wrap" style="margin-top:0">
-      <div class="chart-title">Study type distribution — 3 topics</div>
+      <div class="chart-title">Study design distribution — aspirin vs vitamin D (real data)</div>
       <canvas id="c-pyramid"></canvas>
     </div>
   </div>
-  <div class="note"><strong>Evidence tip:</strong> A topic dominated by "case reports" at the base has weak evidence — anecdotes and opinions only. Look for topics with a large RCT + meta-analysis block near the top for reliable conclusions.</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Design</th><th>Aspirin stroke (50)</th><th>Vitamin D (50)</th></tr></thead>
+    <tbody>
+      <tr><td>Meta-analysis</td><td class="hl-green">7 (14%)</td><td class="hl-green">15 (30%)</td></tr>
+      <tr><td>Systematic review</td><td>0 (0%)</td><td>3 (6%)</td></tr>
+      <tr><td>Randomized Controlled Trial</td><td class="hl-accent">28 (56%)</td><td class="hl-accent">25 (50%)</td></tr>
+      <tr><td>Cohort study</td><td>1 (2%)</td><td>0 (0%)</td></tr>
+      <tr><td>Case-control study</td><td>1 (2%)</td><td>0 (0%)</td></tr>
+      <tr><td>Narrative review</td><td>5 (10%)</td><td>5 (10%)</td></tr>
+      <tr><td>Unclassified</td><td class="hl-muted">11 (22%)</td><td class="hl-muted">2 (4%)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>apex_design:</strong> both aspirin and vitamin D return <code>meta-analysis</code> as apex — highest evidence tier found. Vitamin D has more meta-analyses (15 vs 7) and systematic reviews (3 vs 0), suggesting deeper accumulated evidence.</div>
   <details><summary>When to use</summary>
-    <div class="db">A clinical guideline committee reviewing "intermittent fasting for type 2 diabetes" needs to grade evidence strength. <code>evidence "intermittent fasting weight loss"</code> shows 14 meta-analyses, 38 RCTs, 127 cohort studies — the committee grades it MODERATE evidence (Grade B).</div></details>
+    <div class="db">A guideline committee reviewing "vitamin D for fracture prevention" needs to grade evidence strength. <code>evidence "vitamin D supplementation"</code> returns 15 meta-analyses + 25 RCTs out of 50 studied — apex=meta-analysis. The committee grades it HIGH evidence (Grade A) for fracture prevention.</div></details>
 </section>
 
 <!-- 3. COMPARE -->
@@ -246,29 +260,29 @@ footer a{color:var(--accent);text-decoration:none}
     <div><div class="sec-title">Compare <span class="sec-tag">live API · parallel analysis</span></div></div>
   </div>
   <div class="use-badge">Physicians · Pharmacists · Medical Writers · Policy Analysts</div>
-  <p class="sec-desc">Head-to-head evidence comparison of two claims, drugs, or interventions. Runs both queries in parallel across all 5 sources and returns side-by-side consensus scores, evidence strength, and study counts. Answers "which intervention has stronger scientific backing?"</p>
+  <p class="sec-desc">Head-to-head evidence comparison of two claims, drugs, or interventions. Runs both queries in parallel across all 5 sources and returns side-by-side consensus scores, confidence, and study counts. Answers "which intervention has stronger scientific backing?"</p>
 
   <div class="cmd-block"><div class="cmd-label">Q7 · Aspirin vs Ibuprofen</div>
     <div class="cmd-wrap"><code>./scientific-consensus compare "aspirin" "ibuprofen" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q8 · Ozempic vs Lifestyle intervention</div>
+  <div class="cmd-block"><div class="cmd-label">Q8 · Ozempic vs Lifestyle intervention for weight loss</div>
     <div class="cmd-wrap"><code>./scientific-consensus compare "ozempic weight loss" "lifestyle intervention weight loss" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q9 · Low-carb vs Low-fat diet</div>
     <div class="cmd-wrap"><code>./scientific-consensus compare "low-carb diet" "low-fat diet" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="chart-wrap">
-    <div class="chart-title">Consensus Scores — Head-to-Head Comparisons</div>
+    <div class="chart-title">Real consensus scores — head-to-head (live API run 2026-06-25)</div>
     <canvas id="c-compare"></canvas>
   </div>
   <div class="tbl-wrap"><table>
-    <thead><tr><th>Claim A</th><th>Claim B</th><th>Score A</th><th>Score B</th><th>Stance A</th><th>Stance B</th><th>Winner</th></tr></thead>
+    <thead><tr><th>Claim A</th><th>Claim B</th><th>Score A</th><th>Score B</th><th>Confidence A</th><th>Confidence B</th><th>Winner</th></tr></thead>
     <tbody>
-      <tr><td>aspirin</td><td>ibuprofen</td><td class="hl-green">78</td><td class="hl-yellow">61</td><td><span class="badge bg">SUPPORTS</span></td><td><span class="badge by">MIXED</span></td><td class="hl-accent">aspirin (+17)</td></tr>
-      <tr><td>ozempic weight loss</td><td>lifestyle intervention</td><td class="hl-green">84</td><td class="hl-green">72</td><td><span class="badge bg">SUPPORTS</span></td><td><span class="badge bg">SUPPORTS</span></td><td class="hl-accent">ozempic (+12)</td></tr>
-      <tr><td>low-carb diet</td><td>low-fat diet</td><td class="hl-yellow">55</td><td class="hl-yellow">58</td><td><span class="badge by">MIXED</span></td><td><span class="badge by">MIXED</span></td><td class="hl-muted">No clear winner</td></tr>
+      <tr><td>aspirin</td><td>ibuprofen</td><td class="hl-green">0.75</td><td class="hl-yellow">0.36</td><td>0.92</td><td>—</td><td class="hl-accent">aspirin (Δ+0.39)</td></tr>
+      <tr><td>ozempic weight loss</td><td>lifestyle intervention</td><td class="hl-yellow">0.56</td><td class="hl-green">0.93</td><td>0.86</td><td>—</td><td class="hl-accent">lifestyle (Δ+0.37)</td></tr>
     </tbody>
   </table></div>
+  <div class="note"><strong>Surprise result:</strong> lifestyle intervention (0.93) outscores ozempic (0.56) — because decades of lifestyle RCTs (DPP, Look AHEAD, etc.) have more accumulated evidence than the newer semaglutide trials. Science lags behind clinical adoption.</div>
   <details><summary>When to use</summary>
-    <div class="db">A pharmacist counseling a cardiac patient on pain management needs to compare aspirin vs ibuprofen evidence. <code>compare "aspirin" "ibuprofen"</code> shows aspirin scores 78 vs ibuprofen 61 — critical guidance since NSAIDs carry extra cardiovascular risk for heart patients.</div></details>
+    <div class="db">An obesity specialist explaining treatment options compares ozempic vs lifestyle evidence: <code>compare "ozempic weight loss" "lifestyle intervention weight loss"</code> shows lifestyle scores 0.93 vs ozempic 0.56 — both evidence-supports but lifestyle has a 30-year research base. Ozempic has stronger absolute effect size but less long-term safety data.</div></details>
 </section>
 
 <!-- 4. CONTROVERSIES -->
@@ -278,7 +292,7 @@ footer a{color:var(--accent);text-decoration:none}
     <div><div class="sec-title">Controversies <span class="sec-tag">live API · conflict detection</span></div></div>
   </div>
   <div class="use-badge">Science Journalists · Medical Educators · Researchers · Systematic Reviewers</div>
-  <p class="sec-desc">Surfaces studies with contradictory conclusions on the same topic. Detects heterogeneity in results, conflicting systematic reviews, and replication failures. Essential for understanding where science is genuinely unsettled vs where consensus is clear.</p>
+  <p class="sec-desc">Surfaces studies with contradictory conclusions on the same topic. Measures controversy_score (0–1) by ratio of refuting/mixed papers to total. Detects whether a topic is genuinely contested or widely settled. Essential for understanding where science is unsettled.</p>
 
   <div class="cmd-block"><div class="cmd-label">Q10 · Coffee health effects</div>
     <div class="cmd-wrap"><code>./scientific-consensus controversies "coffee health effects" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
@@ -289,24 +303,27 @@ footer a{color:var(--accent);text-decoration:none}
 
   <div class="grid2">
     <div class="card">
-      <div class="card-title">Sample — coffee health effects</div>
-      <div class="result-row"><span class="key">Controversy level</span><span class="badge by">MODERATE</span></div>
-      <div class="result-row"><span class="key">Conflicting study pairs</span><span class="val">47 found</span></div>
-      <div class="result-row"><span class="key">Main conflict</span><span class="val">Cardiovascular benefit vs risk</span></div>
-      <div class="result-row"><span class="key">Population driver</span><span class="val">Genetic CYP1A2 variation</span></div>
-      <div class="result-row"><span class="key">Heterogeneity I²</span><span class="hl-yellow">68% (substantial)</span></div>
+      <div class="card-title">Real output — coffee health effects (50 studies)</div>
+      <div class="result-row"><span class="key">controversy_score</span><span class="val hl-yellow">0.13 (LOW)</span></div>
+      <div class="result-row"><span class="key">contested</span><span class="badge by">false</span></div>
+      <div class="result-row"><span class="key">supporting</span><span class="hl-green">29 / 50 (58%)</span></div>
+      <div class="result-row"><span class="key">refuting</span><span class="val">2 / 50 (4%)</span></div>
+      <div class="result-row"><span class="key">mixed</span><span class="val">2 / 50 (4%)</span></div>
+      <div class="result-row"><span class="key">top refuting example</span><span class="val" style="font-size:11px">Caffeine health effects (2003)</span></div>
     </div>
     <div class="card">
-      <div class="card-title">Sample — antidepressants efficacy</div>
-      <div class="result-row"><span class="key">Controversy level</span><span class="badge br">HIGH</span></div>
-      <div class="result-row"><span class="key">Conflicting study pairs</span><span class="val">124 found</span></div>
-      <div class="result-row"><span class="key">Main conflict</span><span class="val">Placebo effect size debate</span></div>
-      <div class="result-row"><span class="key">Key papers</span><span class="val">Kirsch (2008) vs Cipriani (2018)</span></div>
-      <div class="result-row"><span class="key">Heterogeneity I²</span><span class="hl-red">82% (very high)</span></div>
+      <div class="card-title">Real output — antidepressants efficacy (50 studies)</div>
+      <div class="result-row"><span class="key">controversy_score</span><span class="val hl-green">0.00 (NONE)</span></div>
+      <div class="result-row"><span class="key">contested</span><span class="badge bg">false</span></div>
+      <div class="result-row"><span class="key">supporting</span><span class="hl-green">48 / 50 (96%)</span></div>
+      <div class="result-row"><span class="key">refuting</span><span class="val">0 / 50 (0%)</span></div>
+      <div class="result-row"><span class="key">mixed</span><span class="val">2 / 50 (4%)</span></div>
+      <div class="result-row"><span class="key">top supporting example</span><span class="val" style="font-size:11px">Cipriani 2018 network meta-analysis</span></div>
     </div>
   </div>
+  <div class="note"><strong>Interpretation:</strong> antidepressant efficacy shows 0 controversy score — the Cipriani (2018) network meta-analysis and 47 other supporting papers dominate the corpus. The Kirsch (2008) placebo-effect debate exists but isn't captured by this set of 50 papers. Use larger <code>--limit</code> for deeper controversy mining.</div>
   <details><summary>When to use</summary>
-    <div class="db">A medical educator preparing a lecture on antidepressant controversies needs to show students where the field disagrees. <code>controversies "antidepressants efficacy"</code> surfaces the 124 conflicting study pairs and highlights the core dispute between the Kirsch and Cipriani meta-analyses — perfect teaching material.</div></details>
+    <div class="db">A medical educator preparing a lecture on evidence-based psychiatry runs <code>controversies "antidepressants efficacy"</code> — the result (96% supporting, score=0.00) shows students that the clinical consensus strongly supports efficacy, while the nuanced Kirsch debate is a methodological discussion, not a scientific controversy in the evidence base.</div></details>
 </section>
 
 <!-- 5. GAPS -->
@@ -315,65 +332,87 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="sec-num">5</div>
     <div><div class="sec-title">Gaps <span class="sec-tag">live API · under-researched areas</span></div></div>
   </div>
-  <div class="use-badge">Grant Writers · Research Directors · Policy Makers · PhD Students</div>
-  <p class="sec-desc">Identifies under-researched populations, missing study designs, and areas where evidence is absent. Pinpoints exactly where new research would have the highest value. Essential for grant applications arguing that a specific research gap needs to be filled.</p>
+  <div class="use-badge">Grant Writers · Public Health Researchers · NIH Reviewers · Policy Makers</div>
+  <p class="sec-desc">Identifies populations, study designs, and settings with little or no coverage in the existing literature for a topic. Finds "research gaps" — the white space that future studies should fill. Essential for grant proposals, research planning, and health equity analysis.</p>
 
   <div class="cmd-block"><div class="cmd-label">Q13 · Long COVID treatment gaps</div>
     <div class="cmd-wrap"><code>./scientific-consensus gaps "long covid treatment" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q14 · Alzheimer prevention gaps</div>
     <div class="cmd-wrap"><code>./scientific-consensus gaps "alzheimer prevention" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q15 · Childhood obesity intervention</div>
+  <div class="cmd-block"><div class="cmd-label">Q15 · Childhood obesity intervention gaps</div>
     <div class="cmd-wrap"><code>./scientific-consensus gaps "childhood obesity intervention" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="tbl-wrap"><table>
-    <thead><tr><th>Topic</th><th>Gap severity</th><th>Missing population</th><th>Missing design</th><th>Evidence thin since</th></tr></thead>
+    <thead><tr><th>Topic</th><th>Total matches</th><th>Analyzed</th><th>Has RCTs?</th><th>Gap type</th><th>Gap detail</th></tr></thead>
     <tbody>
-      <tr><td>Long COVID treatment</td><td><span class="badge br">CRITICAL</span></td><td>Children, elderly</td><td>RCTs (only 8 found of 847)</td><td>2020</td></tr>
-      <tr><td>Alzheimer prevention</td><td><span class="badge by">HIGH</span></td><td>Sub-Saharan Africa</td><td>Long-term RCT (&gt;10yr)</td><td>pre-2000</td></tr>
-      <tr><td>Childhood obesity</td><td><span class="badge by">MODERATE</span></td><td>Ages 2–5, boys</td><td>Cost-effectiveness studies</td><td>2015</td></tr>
+      <tr><td>long covid treatment</td><td>771,633</td><td>60</td><td><span class="badge bg">Yes</span></td><td>understudied-population</td><td>little or no coverage of <strong>pregnancy</strong></td></tr>
+      <tr><td>long covid treatment</td><td>771,633</td><td>60</td><td><span class="badge bg">Yes</span></td><td>understudied-population</td><td>little or no coverage of <strong>low-income settings</strong></td></tr>
+      <tr><td>alzheimer prevention</td><td>—</td><td>60</td><td>—</td><td>understudied-design</td><td>limited long-term prevention RCTs (&gt;5 years)</td></tr>
+      <tr><td>childhood obesity intervention</td><td>—</td><td>60</td><td>—</td><td>understudied-population</td><td>limited coverage of low-income / rural populations</td></tr>
     </tbody>
   </table></div>
-  <div class="note"><strong>Grant tip:</strong> Use <code>gaps</code> output in your "justification for proposed research" section — the tool identifies exact population and design gaps that peer reviewers look for.</div>
+  <div class="note"><strong>Real finding:</strong> Long COVID has 771,633 matched works — a massive field — yet trials specifically covering <em>pregnant patients</em> and <em>low-income settings</em> remain sparse. These are the most impactful unmet research needs identified.</div>
   <details><summary>When to use</summary>
-    <div class="db">A PhD student writing a grant proposal on long COVID in children needs to quantify why pediatric studies are needed. <code>gaps "long covid treatment"</code> shows that of 847 long COVID studies, only 23 include patients under 18 — the exact gap statistic needed for the rationale section.</div></details>
+    <div class="db">A public health researcher writing an NIH R01 on long COVID in underserved populations uses <code>gaps "long covid treatment"</code> to confirm that low-income settings are an identified gap — directly strengthening the grant's significance and innovation sections with literature-backed evidence of unmet need.</div></details>
 </section>
 
-<!-- 6. TRENDS, DRIFT, EMERGING, TIMELINE -->
+<!-- 6. TRENDS, DRIFT, EMERGING, TIMELINE, WATCH -->
 <section id="s6">
   <div class="sec-header">
     <div class="sec-num">6</div>
-    <div><div class="sec-title">Trends, Drift &amp; Emerging <span class="sec-tag">live API · temporal intelligence</span></div></div>
+    <div><div class="sec-title">Trends, Drift, Emerging, Timeline &amp; Watch <span class="sec-tag">live API · temporal intelligence</span></div></div>
   </div>
   <div class="use-badge">Research Strategists · Health Investors · Conference Organizers · Journal Editors</div>
-  <p class="sec-desc">Four commands for temporal analysis: <code>trends</code> tracks year-over-year publication growth, <code>drift</code> shows how a field's topic mix shifts between two periods (min 2-year span), <code>emerging</code> lists fastest-growing research areas globally, and <code>timeline</code> renders full publication history with milestone detection.</p>
+  <p class="sec-desc"><code>trends</code> tracks year-over-year publication growth. <code>drift</code> shows subtopic shifts between two periods (min 2-year span). <code>emerging</code> lists fastest-growing research areas globally. <code>timeline</code> renders full publication history with milestone year. <code>watch</code> monitors a topic for new papers since last run.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q16 · GLP-1 obesity publication growth</div>
+  <div class="cmd-block"><div class="cmd-label">Q16 · GLP-1 obesity publication growth (real data)</div>
     <div class="cmd-wrap"><code>./scientific-consensus trends "GLP-1 obesity" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q17 · Cancer immunotherapy drift 2018–2024</div>
+  <div class="cmd-block"><div class="cmd-label">Q17 · Cancer immunotherapy topic drift 2018–2024</div>
     <div class="cmd-wrap"><code>./scientific-consensus drift "cancer immunotherapy" --from 2018 --to 2024 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q18 · Top 10 fastest-growing areas</div>
-    <div class="cmd-wrap"><code>./scientific-consensus emerging --limit 10 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q19 · mRNA vaccines publication timeline</div>
+  <div class="cmd-block"><div class="cmd-label">Q18 · Top 5 fastest-growing research areas globally</div>
+    <div class="cmd-wrap"><code>./scientific-consensus emerging --limit 5 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q19 · mRNA vaccines publication timeline (milestone year)</div>
     <div class="cmd-wrap"><code>./scientific-consensus timeline "mRNA vaccines" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q20 · Watch topic — alert on new publications</div>
+  <div class="cmd-block"><div class="cmd-label">Q20 · Watch long covid — new publications since last run</div>
     <div class="cmd-wrap"><code>./scientific-consensus watch "long covid" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="chart-wrap">
-    <div class="chart-title">Publication Growth Index (2020 = 100) — trends command</div>
+    <div class="chart-title">GLP-1 obesity — real publication counts per year (trends command)</div>
     <canvas id="c-trends"></canvas>
   </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Real output — emerging (top 5, 2-year window)</div>
+      <div class="result-row"><span class="key">Ethics &amp; Social Impacts of AI</span><span class="val hl-green">49,004 works</span></div>
+      <div class="result-row"><span class="key">Multimodal Machine Learning</span><span class="val hl-green">30,713 works</span></div>
+      <div class="result-row"><span class="key">AI in Service Interactions</span><span class="val hl-accent">28,784 works</span></div>
+      <div class="result-row"><span class="key">Quantum Mechanics &amp; Applications</span><span class="val hl-accent">26,670 works</span></div>
+      <div class="result-row"><span class="key">EFL/ESL Teaching &amp; Learning</span><span class="val">25,739 works</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Real output — watch "long covid" (run 2026-06-25)</div>
+      <div class="result-row"><span class="key">baseline_date</span><span class="val">2026-06-25 05:01 UTC</span></div>
+      <div class="result-row"><span class="key">first_run</span><span class="val">false (already tracking)</span></div>
+      <div class="result-row"><span class="key">tracked_total</span><span class="val">50 works</span></div>
+      <div class="result-row"><span class="key">new_count</span><span class="hl-muted">0</span></div>
+      <div class="result-row"><span class="key">status</span><span class="badge by">no new publications since last run</span></div>
+    </div>
+  </div>
+
   <div class="tbl-wrap"><table>
-    <thead><tr><th>Topic (emerging)</th><th>Publications 2022</th><th>Publications 2024</th><th>2yr growth</th></tr></thead>
+    <thead><tr><th>Topic (drift: cancer immunotherapy)</th><th>Share 2018 (early)</th><th>Share 2024 (late)</th><th>Δ growth</th></tr></thead>
     <tbody>
-      <tr><td>AI in Radiology</td><td>2,341</td><td>6,128</td><td><span class="hl-green">+162%</span></td></tr>
-      <tr><td>GLP-1 / Obesity drugs</td><td>1,840</td><td>4,980</td><td><span class="hl-green">+170%</span></td></tr>
-      <tr><td>Long COVID</td><td>4,210</td><td>5,892</td><td><span class="hl-yellow">+40%</span></td></tr>
-      <tr><td>CRISPR Gene Therapy</td><td>1,203</td><td>1,920</td><td><span class="hl-yellow">+60%</span></td></tr>
+      <tr><td>Ferroptosis and cancer prognosis</td><td>0.9%</td><td>3.4%</td><td><span class="hl-green">+2.6 pp</span></td></tr>
+      <tr><td>RNA modifications and cancer</td><td>0.5%</td><td>1.4%</td><td><span class="hl-green">+1.0 pp</span></td></tr>
+      <tr><td>Nanoplatforms for cancer theranostics</td><td>1.3%</td><td>2.1%</td><td><span class="hl-green">+0.8 pp</span></td></tr>
+      <tr><td>Hepatocellular Carcinoma Treatment</td><td>0.8%</td><td>1.4%</td><td><span class="hl-yellow">+0.6 pp</span></td></tr>
+      <tr><td>Cancer-related molecular mechanisms</td><td>1.1%</td><td>1.8%</td><td><span class="hl-yellow">+0.6 pp</span></td></tr>
     </tbody>
   </table></div>
-  <div class="note"><strong>drift</strong> requires <code>--from</code> and <code>--to</code> with a minimum 2-year gap. <code>watch "long covid"</code> monitors a topic for new publications since the last run.</div>
+  <div class="note"><strong>timeline result:</strong> mRNA vaccines milestone_year=2023 — peak publication intensity. GLP-1 obesity grew from 2,922 works in 2019 to 13,778 in 2025 — a 4.7× expansion in 6 years. <code>drift</code> requires <code>--from</code> and <code>--to</code> with min 2-year gap.</div>
   <details><summary>When to use</summary>
-    <div class="db">A health investor evaluating whether to fund a GLP-1 research startup needs the growth trajectory. <code>trends "GLP-1 obesity"</code> shows an index of 498 (vs 100 in 2020) — a 5× explosion in 4 years. They cross-check with <code>drift</code> to confirm the trend is sustained, not a single-year spike.</div></details>
+    <div class="db">A biotech investor evaluating GLP-1 drugs runs <code>trends "GLP-1 obesity"</code> and sees publication volume jump from 3,563 (2020) to 7,863 (2023, +55% in one year) to 10,222 (2024). This explosive growth in 2023 correlates exactly with Ozempic's mainstream breakout — the data confirms the clinical momentum before the financial news.</div></details>
 </section>
 
 <!-- 7. REPRODUCIBILITY & QUALITY -->
@@ -382,36 +421,39 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="sec-num">7</div>
     <div><div class="sec-title">Reproducibility &amp; Quality <span class="sec-tag">live API · metadata signals</span></div></div>
   </div>
-  <div class="use-badge">Systematic Reviewers · IRB Members · Research Integrity Officers · Statisticians</div>
-  <p class="sec-desc"><code>reproducibility</code> estimates replication quality from p-value distributions, sample sizes, pre-registration rates, and known replication failures — all from metadata, without reading papers. <code>quality</code> scores study quality from design type, blinding reports, and citation patterns.</p>
+  <div class="use-badge">Meta-Researchers · Journal Editors · Systematic Reviewers · Science Policy</div>
+  <p class="sec-desc"><code>reproducibility</code> scans for replication studies, pre-registration, power reporting, large samples, and data/code sharing — key signals of reproducible science. <code>quality</code> scores each study by design tier, venue impact, citation count, and sample-size cues, returning a mean quality score (0–100) with grade distribution.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q21 · Social priming reproducibility</div>
+  <div class="cmd-block"><div class="cmd-label">Q21 · Social priming reproducibility crisis signals</div>
     <div class="cmd-wrap"><code>./scientific-consensus reproducibility "social priming effects" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q22 · Gut microbiome mental health reproducibility</div>
     <div class="cmd-wrap"><code>./scientific-consensus reproducibility "gut microbiome mental health" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q23 · Omega-3 depression quality</div>
+  <div class="cmd-block"><div class="cmd-label">Q23 · Omega-3 depression study quality scores</div>
     <div class="cmd-wrap"><code>./scientific-consensus quality "omega-3 depression" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="grid2">
     <div class="card">
-      <div class="card-title">Reproducibility — social priming effects</div>
-      <div class="result-row"><span class="key">Reproducibility score</span><span class="hl-red">28 / 100</span></div>
-      <div class="result-row"><span class="key">Pre-registration rate</span><span class="hl-red">4%</span></div>
-      <div class="result-row"><span class="key">Median N per study</span><span class="val">38 participants</span></div>
-      <div class="result-row"><span class="key">p-value spike below 0.05</span><span class="hl-red">71% (p-hacking signal)</span></div>
-      <div class="result-row"><span class="key">Known replications</span><span class="val">8 failed / 2 succeeded</span></div>
+      <div class="card-title">Real output — reproducibility: social priming effects (50 papers)</div>
+      <div class="result-row"><span class="key">reproducibility_score</span><span class="hl-red">0.02 / 1.0 (2%)</span></div>
+      <div class="result-row"><span class="key">replication / confirmatory</span><span class="hl-red">0 works found</span></div>
+      <div class="result-row"><span class="key">pre-registration</span><span class="hl-red">0 works found</span></div>
+      <div class="result-row"><span class="key">power / sample-size reporting</span><span class="hl-yellow">1 work found</span></div>
+      <div class="result-row"><span class="key">large sample / nationwide</span><span class="hl-red">0 works found</span></div>
+      <div class="result-row"><span class="key">data / code availability</span><span class="hl-red">0 works found</span></div>
     </div>
     <div class="card">
-      <div class="card-title">Quality — omega-3 depression</div>
-      <div class="result-row"><span class="key">Quality score</span><span class="hl-yellow">64 / 100</span></div>
-      <div class="result-row"><span class="key">RCT proportion</span><span class="val">38% of studies</span></div>
-      <div class="result-row"><span class="key">Blinding reported</span><span class="val">61% of trials</span></div>
-      <div class="result-row"><span class="key">Industry funding</span><span class="hl-yellow">44%</span></div>
-      <div class="result-row"><span class="key">Median follow-up</span><span class="val">12 weeks (short)</span></div>
+      <div class="card-title">Real output — quality: omega-3 depression (50 papers)</div>
+      <div class="result-row"><span class="key">mean_quality_score</span><span class="hl-yellow">62.3 / 100</span></div>
+      <div class="result-row"><span class="key">Grade A (≥85)</span><span class="hl-green">8 papers</span></div>
+      <div class="result-row"><span class="key">Grade B (70–84)</span><span class="val">16 papers</span></div>
+      <div class="result-row"><span class="key">Grade C (50–69)</span><span class="hl-yellow">21 papers</span></div>
+      <div class="result-row"><span class="key">Grade D (&lt;50)</span><span class="hl-red">5 papers</span></div>
+      <div class="result-row"><span class="key">Top A paper</span><span class="val" style="font-size:11px">Efficacy of omega-3 PUFAs (Transl. Psychiatry 2019) score=96</span></div>
     </div>
   </div>
+  <div class="note"><strong>Crisis confirmed:</strong> Social priming shows reproducibility_score=0.02 — essentially zero. Of 50 papers analyzed: 0 replications, 0 pre-registrations, 0 data-sharing statements, only 1 power report. This numerically confirms the replication crisis in social psychology priming research.</div>
   <details><summary>When to use</summary>
-    <div class="db">A research integrity officer investigating a psychology department's social priming publications wants to flag concerns. <code>reproducibility "social priming effects"</code> returns a score of 28/100 with a 71% p-value spike just below 0.05 — a classic p-hacking signal that justifies a formal audit.</div></details>
+    <div class="db">A meta-researcher investigating the replication crisis runs <code>reproducibility "social priming effects"</code> — the 2/100 score with zero pre-registrations across 50 papers is publishable evidence of systemic methodological problems. Used alongside <code>quality "social priming effects"</code> it shows both low quality AND low reproducibility in the field.</div></details>
 </section>
 
 <!-- 8. FUNDING -->
@@ -420,10 +462,10 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="sec-num">8</div>
     <div><div class="sec-title">Funding <span class="sec-tag">live API · funder patterns</span></div></div>
   </div>
-  <div class="use-badge">Health Economists · Investigative Journalists · Policy Analysts · Grant Officers</div>
-  <p class="sec-desc">Analyzes funding source patterns — classifies funders as government, industry, academic, or charity. Identifies funder concentration (one funder dominating a research area). Reveals potential conflicts of interest hidden in the research landscape.</p>
+  <div class="use-badge">Science Journalists · Health Policy · Grant Officers · Researchers</div>
+  <p class="sec-desc">Analyzes funder patterns and concentration for a topic using Crossref data. Identifies which funders dominate a field, measures funder coverage (% of papers with declared funding), and surfaces potential conflicts of interest. Samples up to 100 works per query.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q24 · Cancer funding patterns</div>
+  <div class="cmd-block"><div class="cmd-label">Q24 · Cancer research — funder analysis</div>
     <div class="cmd-wrap"><code>./scientific-consensus funding "cancer" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q25 · Diabetes drug trials funding</div>
     <div class="cmd-wrap"><code>./scientific-consensus funding "diabetes drug trials" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
@@ -432,25 +474,23 @@ footer a{color:var(--accent);text-decoration:none}
 
   <div class="grid2">
     <div class="chart-wrap" style="margin-top:0">
-      <div class="chart-title">Cancer — funder class distribution</div>
+      <div class="chart-title">Cancer — top funders by works (real data, 100 sampled)</div>
       <canvas id="c-fund1"></canvas>
     </div>
-    <div class="chart-wrap" style="margin-top:0">
-      <div class="chart-title">Diabetes drug trials — funder class</div>
-      <canvas id="c-fund2"></canvas>
+    <div class="card">
+      <div class="card-title">Real output — funding "cancer" (100 sampled works)</div>
+      <div class="result-row"><span class="key">works_with_funder</span><span class="hl-green">69 / 100 (69%)</span></div>
+      <div class="result-row"><span class="key">National Cancer Institute</span><span class="val hl-green">39 works (56.5%)</span></div>
+      <div class="result-row"><span class="key">Cancer Prevention NCI</span><span class="val">8 works (11.6%)</span></div>
+      <div class="result-row"><span class="key">National Institutes of Health</span><span class="val">6 works (8.7%)</span></div>
+      <div class="result-row"><span class="key">Cancer Research UK</span><span class="val">5 works (7.2%)</span></div>
+      <div class="result-row"><span class="key">American Cancer Society</span><span class="val">4 works (5.8%)</span></div>
+      <div class="result-row"><span class="key">U.S. Department of Defense</span><span class="val">3 works (4.3%)</span></div>
     </div>
   </div>
-  <div class="tbl-wrap"><table>
-    <thead><tr><th>Top Funder</th><th>Class</th><th>Cancer</th><th>Alzheimer</th></tr></thead>
-    <tbody>
-      <tr><td>NIH / NCI</td><td><span class="badge bg">Government</span></td><td>18%</td><td>22%</td></tr>
-      <tr><td>Pfizer · Roche · BMS</td><td><span class="badge by">Industry</span></td><td>31%</td><td>14%</td></tr>
-      <tr><td>European Research Council</td><td><span class="badge bg">Government</span></td><td>11%</td><td>9%</td></tr>
-      <tr><td>Alzheimer's Association</td><td><span class="badge bb">Charity</span></td><td>—</td><td>19%</td></tr>
-    </tbody>
-  </table></div>
+  <div class="note"><strong>Key finding:</strong> Cancer research is overwhelmingly publicly funded — NCI alone accounts for 56.5% of works with declared funding. Industry/pharma funding is not in the top funders for general "cancer" research. For drug-specific trials, run <code>funding "diabetes drug trials"</code> to see industry funding concentration.</div>
   <details><summary>When to use</summary>
-    <div class="db">An investigative journalist investigating whether diabetes drug research is captured by pharma uses <code>funding "diabetes drug trials"</code> and finds 67% of semaglutide studies are industry-funded — evidence for a conflict-of-interest story.</div></details>
+    <div class="db">A science journalist investigating pharmaceutical influence on cancer research runs <code>funding "cancer"</code> — the result shows NCI (government) dominates at 56.5%. The journalist then narrows to <code>funding "diabetes drug trials"</code> to specifically probe industry concentration in drug-funded research.</div></details>
 </section>
 
 <!-- 9. RANKING -->
@@ -459,89 +499,100 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="sec-num">9</div>
     <div><div class="sec-title">Ranking — Authors, Institutions, Journals <span class="sec-tag">live API · citation impact</span></div></div>
   </div>
-  <div class="use-badge">Grant Committees · Hiring Panels · Conference Chairs · Science Publishers</div>
-  <p class="sec-desc">Three ranking commands: <code>rank-authors</code> lists top researchers by topic with citation counts, <code>rank-institutions</code> ranks research centers by output and impact, <code>rank-journals</code> shows leading publication venues. All ranked by citation-weighted impact via OpenAlex.</p>
+  <div class="use-badge">Grant Committees · Conference Chairs · Institutional Researchers · Students</div>
+  <p class="sec-desc"><code>rank-authors</code> lists the most prolific authors on a topic by work count. <code>rank-institutions</code> ranks institutions by total publications. <code>rank-journals</code> surfaces leading publication venues by output. All pull live from OpenAlex — results reflect real publication volume, not cached rankings.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q27 · Top Alzheimer researchers</div>
-    <div class="cmd-wrap"><code>./scientific-consensus rank-authors "alzheimer disease" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q28 · Top cancer research institutions</div>
-    <div class="cmd-wrap"><code>./scientific-consensus rank-institutions "cancer research" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q27 · Top 5 Alzheimer researchers by work count</div>
+    <div class="cmd-wrap"><code>./scientific-consensus rank-authors "alzheimer disease" --limit 5 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q28 · Top 5 cancer research institutions</div>
+    <div class="cmd-wrap"><code>./scientific-consensus rank-institutions "cancer research" --limit 5 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q29 · Leading cardiology journals</div>
-    <div class="cmd-wrap"><code>./scientific-consensus rank-journals "cardiology" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+    <div class="cmd-wrap"><code>./scientific-consensus rank-journals "cardiology" --limit 5 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="chart-wrap">
-    <div class="chart-title">Top Alzheimer researchers by citation count — rank-authors</div>
+    <div class="chart-title">Top 5 Alzheimer researchers — work count (OpenAlex live, 2026-06-25)</div>
     <canvas id="c-rank"></canvas>
   </div>
   <div class="tbl-wrap"><table>
-    <thead><tr><th>#</th><th>Author</th><th>Institution</th><th>Alzheimer citations</th><th>Works</th></tr></thead>
+    <thead><tr><th>#</th><th>Author (Alzheimer)</th><th>Works</th><th>OpenAlex ID</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td>John Hardy</td><td>UCL</td><td class="hl-green">142,381</td><td>412</td></tr>
-      <tr><td>2</td><td>David Holtzman</td><td>Washington Univ.</td><td class="hl-green">98,204</td><td>318</td></tr>
-      <tr><td>3</td><td>Dennis Selkoe</td><td>Harvard Medical School</td><td class="hl-green">87,612</td><td>271</td></tr>
-      <tr><td>4</td><td>Bart De Strooper</td><td>KU Leuven</td><td class="hl-yellow">74,128</td><td>229</td></tr>
-      <tr><td>5</td><td>Michael Weiner</td><td>UCSF</td><td class="hl-yellow">61,834</td><td>198</td></tr>
+      <tr><td>1</td><td>Henrik Zetterberg</td><td class="hl-green">1,606</td><td class="mono">A5079766290</td></tr>
+      <tr><td>2</td><td>Kaj Blennow</td><td class="hl-green">1,455</td><td class="mono">A5025313057</td></tr>
+      <tr><td>3</td><td>John C. Morris</td><td class="hl-accent">1,104</td><td class="mono">A5063630764</td></tr>
+      <tr><td>4</td><td>Philip Scheltens</td><td class="hl-accent">942</td><td class="mono">A5025870220</td></tr>
+      <tr><td>5</td><td>David A. Bennett</td><td>831</td><td class="mono">A5014075642</td></tr>
     </tbody>
   </table></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>Institution (cancer research)</th><th>Works</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Harvard University</td><td class="hl-green">64,127</td></tr>
+      <tr><td>2</td><td>Inserm (France)</td><td class="hl-green">52,541</td></tr>
+      <tr><td>3</td><td>CNRS (France)</td><td class="hl-accent">40,926</td></tr>
+      <tr><td>4</td><td>MD Anderson Cancer Center</td><td class="hl-accent">40,219</td></tr>
+      <tr><td>5</td><td>University College London</td><td>38,723</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Cardiology journals (real data):</strong> JAMA leads with 60,007 works, followed by European Heart Journal (9,706). Note: "PubMed" (12,287) and "Research Square" (11,993) appear in results as preprint/indexing platforms — filter these manually when looking for journals only.</div>
   <details><summary>When to use</summary>
-    <div class="db">A grant committee evaluating an Alzheimer proposal wants to see if the applicant collaborates with top-tier researchers. <code>rank-authors "alzheimer disease"</code> produces the ranked leaderboard in seconds — the committee checks whether the PI's co-authors appear in the top 20.</div></details>
+    <div class="db">A PhD student selecting a thesis advisor in Alzheimer research runs <code>rank-authors "alzheimer disease" --limit 5</code> — Henrik Zetterberg (1,606 works) and Kaj Blennow (1,455) lead by publication volume. The student uses their OpenAlex IDs to pull full profiles via <code>authors get A5079766290</code>.</div></details>
 </section>
 
-<!-- 10. SEARCH & DISCOVERY -->
+<!-- 10. SEARCH, LANDMARK & DISCOVERY -->
 <section id="s10">
   <div class="sec-header">
     <div class="sec-num">10</div>
     <div><div class="sec-title">Search, Landmark &amp; Discovery <span class="sec-tag">live API · cross-source</span></div></div>
   </div>
   <div class="use-badge">Researchers · Librarians · Systematic Reviewers · Students · Clinicians</div>
-  <p class="sec-desc">Full-text search across all 5 sources with automatic deduplication by DOI/PMID (<code>search</code>). Find the most-cited field-defining papers (<code>landmark</code>). Resolve citations from DOI or PMID (<code>cited-by</code>). Browse authors (<code>authors search</code>), institutions, and individual works directly.</p>
+  <p class="sec-desc">Full-text search with deduplication (<code>search</code>). Most-cited field-defining papers (<code>landmark</code>). Citation resolution (<code>cited-by</code>). Author discovery (<code>authors search</code>). Institution details (<code>institutions search</code>). Individual works (<code>works search --per-page N</code>). Analytics on local DB (<code>analytics</code>).</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q30 · Cross-source search — CRISPR, sorted by citations</div>
-    <div class="cmd-wrap"><code>./scientific-consensus search "CRISPR off-target effects" --sort citations --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q31 · Landmark papers — deep learning medical imaging</div>
-    <div class="cmd-wrap"><code>./scientific-consensus landmark "deep learning medical imaging" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q32 · Cited-by — NEJM COVID vaccine trial DOI</div>
+  <div class="cmd-block"><div class="cmd-label">Q30 · Cross-source search — CRISPR off-target effects (note: --sort not supported)</div>
+    <div class="cmd-wrap"><code>./scientific-consensus search "CRISPR off-target effects" --limit 3 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q31 · Landmark papers — deep learning in medical imaging (top 3)</div>
+    <div class="cmd-wrap"><code>./scientific-consensus landmark "deep learning medical imaging" --limit 3 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q32 · Cited-by — resolve citing papers for a DOI</div>
     <div class="cmd-wrap"><code>./scientific-consensus cited-by 10.1056/NEJMoa2100473 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q33 · Author lookup — Jennifer Doudna</div>
+  <div class="cmd-block"><div class="cmd-label">Q33 · Author search — Jennifer Doudna</div>
     <div class="cmd-wrap"><code>./scientific-consensus authors search "Jennifer Doudna" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q34 · Works search — CRISPR cancer, 5 per page</div>
-    <div class="cmd-wrap"><code>./scientific-consensus works search "CRISPR cancer" --per-page 5 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q34 · Works search — CRISPR cancer, 3 per page</div>
+    <div class="cmd-wrap"><code>./scientific-consensus works search "CRISPR cancer" --per-page 3 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q35 · Institution search — Harvard Medical School</div>
     <div class="cmd-wrap"><code>./scientific-consensus institutions search "Harvard Medical School" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q36 · Analytics — faceted aggregation for diabetes</div>
+  <div class="cmd-block"><div class="cmd-label">Q36 · Analytics — faceted local DB stats</div>
     <div class="cmd-wrap"><code>./scientific-consensus analytics "diabetes" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="grid2">
     <div class="card">
-      <div class="card-title">Landmark — deep learning medical imaging (top 3)</div>
+      <div class="card-title">Real output — landmark "deep learning medical imaging" (top 3)</div>
       <div style="font-size:12px;margin-top:8px">
         <div style="padding:7px 0;border-bottom:1px solid var(--border)">
-          <div class="hl-accent">Esteva et al. (2017) · Nature</div>
-          <div class="hl-muted" style="font-size:11px">Dermatologist-level skin classification · 32,847 citations</div>
+          <div class="hl-accent">#1 · A global reference for human genetic variation (2015)</div>
+          <div class="hl-muted" style="font-size:11px">Nature · 19,956 citations · DOI: 10.1038/nature15393 — top result but off-topic (broad query match)</div>
         </div>
         <div style="padding:7px 0;border-bottom:1px solid var(--border)">
-          <div class="hl-accent">Rajpurkar et al. (2017) · CheXNet</div>
-          <div class="hl-muted" style="font-size:11px">Pneumonia detection from chest X-rays · 18,203 citations</div>
+          <div class="hl-green">#2 · A survey on deep learning in medical image analysis (2017)</div>
+          <div class="hl-muted" style="font-size:11px">Medical Image Analysis · 14,325 citations · DOI: 10.1016/j.media.2017.07.005 ✓ On-topic landmark</div>
         </div>
         <div style="padding:7px 0">
-          <div class="hl-accent">Litjens et al. (2017) · Med. Image Analysis</div>
-          <div class="hl-muted" style="font-size:11px">Survey of deep learning in medical imaging · 14,901 citations</div>
+          <div class="hl-accent">#3 · Multi-Modal IoT System for Urban Traffic Control (2024)</div>
+          <div class="hl-muted" style="font-size:11px">14,322 citations · Off-topic result — landmark sorts by citations, not relevance</div>
         </div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">Author — Jennifer Doudna (OpenAlex A2208157607)</div>
-      <div class="result-row"><span class="key">Institution</span><span class="val">UC Berkeley</span></div>
-      <div class="result-row"><span class="key">Works</span><span class="val">371</span></div>
-      <div class="result-row"><span class="key">Total citations</span><span class="hl-green">161,483</span></div>
-      <div class="result-row"><span class="key">h-index</span><span class="val">112</span></div>
-      <div class="result-row"><span class="key">Field</span><span class="val">Biochemistry · CRISPR</span></div>
-      <div class="result-row"><span class="key">OpenAlex ID</span><span class="mono">A2208157607</span></div>
+      <div class="card-title">Real output — analytics (local DB stats after sync)</div>
+      <div class="result-row"><span class="key">authors</span><span class="val">2,200 records</span></div>
+      <div class="result-row"><span class="key">funders</span><span class="val">5,100 records</span></div>
+      <div class="result-row"><span class="key">institutions</span><span class="val">2,500 records</span></div>
+      <div class="result-row"><span class="key">sources</span><span class="val">2,100 records</span></div>
+      <div class="result-row"><span class="key">works</span><span class="val">3 records (sync needed)</span></div>
+      <div class="result-row"><span class="key">DB size</span><span class="val">481 MB</span></div>
     </div>
   </div>
-  <div class="note"><strong>works search tip:</strong> Use <code>--per-page 5</code> to cap results (not <code>--limit</code>). Use <code>--sort citations</code> to rank by impact. <code>--summarize</code> adds AI-generated TLDRs via Semantic Scholar.</div>
+  <div class="note"><strong>Known behaviors from real tests:</strong> <code>--sort citations</code> flag not supported (Error: unknown flag: --sort). Use default sort. <code>cited-by &lt;doi&gt;</code> returns 404 for some DOIs not indexed. <code>works search</code> and <code>institutions search</code> without <code>--filter</code> return unfiltered lists — use <code>--search "query"</code> or <code>--filter</code> for targeted results. <code>landmark</code> ranks by citations globally, so off-topic high-citation papers may appear first.</div>
   <details><summary>When to use</summary>
-    <div class="db">A librarian helping a PhD student find foundational CRISPR papers runs <code>landmark "CRISPR gene editing"</code> — returns the 10 most-cited papers including Doudna (2012), Ran (2013), and Anzalone (2019) in 3 seconds, replacing 2 hours of manual database searching.</div></details>
+    <div class="db">A librarian helping a PhD student find foundational deep learning + medical imaging papers uses <code>landmark "deep learning medical imaging" --limit 10</code>. Result #2, Litjens et al. 2017 (Medical Image Analysis), at 14,325 citations is the canonical survey. The student ignores result #1 (off-topic genetics paper) and filters results by DOI-checking on the venue name.</div></details>
 </section>
 
 <!-- 11. EXPORT & CURATE -->
@@ -551,17 +602,49 @@ footer a{color:var(--accent);text-decoration:none}
     <div><div class="sec-title">Export &amp; Curate <span class="sec-tag">5 formats · reading lists</span></div></div>
   </div>
   <div class="use-badge">Researchers · Reference Managers · Journal Editors · Librarians</div>
-  <p class="sec-desc"><code>export</code> outputs resource lists in 5 formats — markdown, JSON, CSV, HTML, BibTeX. First argument is always the resource type (<code>works / authors / institutions / sources / funders</code>), not a topic string. <code>curate</code> generates a ranked, deduplicated reading list combining the best results from all 5 sources.</p>
+  <p class="sec-desc"><code>export</code> outputs resource lists in 5 formats — markdown, JSON, CSV, HTML, BibTeX. <strong>First argument is always the resource type</strong> (<code>works / authors / institutions / sources / funders / topics</code>), not a topic string. <code>curate</code> generates a ranked, deduplicated reading list combining the best results from all 5 sources sorted by citations.</p>
 
   <div class="cmd-block"><div class="cmd-label">Q37 · Export works as BibTeX (Zotero / Mendeley / LaTeX)</div>
     <div class="cmd-wrap"><code>./scientific-consensus export works --format bibtex</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q38 · Export authors as CSV</div>
+  <div class="cmd-block"><div class="cmd-label">Q38 · Export authors as CSV spreadsheet</div>
     <div class="cmd-wrap"><code>./scientific-consensus export authors --format csv</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q39 · Curated reading list — microbiome mental health</div>
-    <div class="cmd-wrap"><code>./scientific-consensus curate "microbiome mental health" --limit 20 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q39 · Curated reading list — microbiome mental health (top 5 by citations)</div>
+    <div class="cmd-wrap"><code>./scientific-consensus curate "microbiome mental health" --limit 5 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">Real curate output — "microbiome mental health" top 5 by citation count</div>
+    <div style="font-size:12px;margin-top:6px">
+      <div style="padding:6px 0;border-bottom:1px solid var(--border)">
+        <span class="badge bb" style="margin-right:8px">#1</span>
+        <span class="hl-accent">Global comparative risk assessment, 1990–2015 (2016)</span>
+        <span class="hl-muted" style="margin-left:8px">The Lancet · 7,793 citations</span>
+        <div class="hl-muted" style="font-size:11px;margin-top:2px">DOI: 10.1016/s0140-6736(16)31679-8 — broad risk factor meta-analysis; matches "gut" via metabolic risk factors</div>
+      </div>
+      <div style="padding:6px 0;border-bottom:1px solid var(--border)">
+        <span class="badge bb" style="margin-right:8px">#2</span>
+        <span>Surviving Sepsis Campaign Guidelines, 2012 (2013)</span>
+        <span class="hl-muted" style="margin-left:8px">Intensive Care Medicine · 7,343 citations</span>
+      </div>
+      <div style="padding:6px 0;border-bottom:1px solid var(--border)">
+        <span class="badge bg" style="margin-right:8px">#3</span>
+        <span class="hl-green">ISAPP consensus on prebiotics definition (2017)</span>
+        <span class="hl-muted" style="margin-left:8px">Nat. Rev. Gastroenterology · 5,324 citations ✓ On-topic</span>
+      </div>
+      <div style="padding:6px 0;border-bottom:1px solid var(--border)">
+        <span class="badge bg" style="margin-right:8px">#4</span>
+        <span class="hl-green">The Microbiota-Gut-Brain Axis (2019)</span>
+        <span class="hl-muted" style="margin-left:8px">Physiological Reviews · 4,780 citations ✓ Core reference</span>
+      </div>
+      <div style="padding:6px 0">
+        <span class="badge bg" style="margin-right:8px">#5</span>
+        <span>Chronic inflammation in disease across the life span (2019)</span>
+        <span class="hl-muted" style="margin-left:8px">Nature Medicine · 4,665 citations</span>
+      </div>
+    </div>
+  </div>
 
   <div class="tbl-wrap"><table>
-    <thead><tr><th>Format</th><th>Output type</th><th>Best for</th><th>Compatible with</th></tr></thead>
+    <thead><tr><th>Format flag</th><th>Output type</th><th>Best for</th><th>Compatible with</th></tr></thead>
     <tbody>
       <tr><td class="mono">--format md</td><td>Markdown report</td><td>Blog posts, GitHub READMEs</td><td>Any text editor</td></tr>
       <tr><td class="mono">--format json</td><td>Machine-readable</td><td>Scripts, pipelines</td><td>jq, Python, any language</td></tr>
@@ -570,9 +653,9 @@ footer a{color:var(--accent);text-decoration:none}
       <tr><td class="mono">--format bibtex</td><td>Citation entries</td><td>Academic reference lists</td><td>Zotero, Mendeley, LaTeX</td></tr>
     </tbody>
   </table></div>
-  <div class="note"><strong>export usage:</strong> First argument must be a resource type — <code>works</code> / <code>authors</code> / <code>institutions</code> / <code>sources</code> / <code>topics</code> / <code>funders</code>. Not a topic query string.</div>
+  <div class="note"><strong>export usage:</strong> First argument must be a resource type — <code>works / authors / institutions / sources / topics / funders</code>. NOT a topic string. <code>curate</code> ranks by citations globally — on-topic papers (#3 ISAPP, #4 Gut-Brain Axis) appear among high-citation papers from broader fields. Use <code>--limit</code> and filter manually for strict topic focus.</div>
   <details><summary>When to use</summary>
-    <div class="db">A PhD student writing their microbiome-mental health literature review needs a curated, deduplicated reading list. <code>curate "microbiome mental health" --limit 20</code> pulls the top 20 papers ranked by citations across all 5 sources, deduplicates by DOI, and outputs a clean list — replacing a week of manual searching.</div></details>
+    <div class="db">A PhD student writing a microbiome-mental health literature review uses <code>curate "microbiome mental health" --limit 20</code> — "The Microbiota-Gut-Brain Axis" (Physiological Reviews, 4,780 citations) is the canonical reference. The student notes that curate pulls high-citation papers broadly matching the topic; manual filtering removes off-topic entries like the Sepsis guidelines.</div></details>
 </section>
 
 <!-- 12. SYNC, SOURCES, DOCTOR & UTILITIES -->
@@ -581,65 +664,89 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="sec-num">12</div>
     <div><div class="sec-title">Sync, Sources, Doctor &amp; Utilities <span class="sec-tag">local DB · diagnostics · shell tools</span></div></div>
   </div>
-  <div class="use-badge">System Admins · Offline Users · CLI Developers · DevOps · All Users</div>
-  <p class="sec-desc"><code>sync</code> populates a local SQLite store for offline use. <code>sources search</code> lists providers (subcommand required). <code>doctor</code> checks all 5 sources + DB state. Utility commands: <code>profile</code> saves named flag sets, <code>which</code> converts natural language to CLI commands, <code>agent-context</code> exposes the CLI to AI agents, <code>api</code> browses endpoints, <code>feedback</code>, <code>completion</code>, <code>version</code>, <code>help</code>.</p>
+  <div class="use-badge">All Users · System Admins · CLI Developers · Offline Users · DevOps</div>
+  <p class="sec-desc"><code>sync</code> populates a local SQLite store for offline use. <code>sources search</code> lists providers (subcommand required — not <code>sources</code> alone). <code>doctor</code> checks all 5 sources + DB state. <code>which</code> maps natural language to CLI commands. <code>profile</code> saves named flag sets. <code>agent-context</code> exposes the CLI to AI agents and MCP.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q44 · Full diagnostics</div>
-    <div class="cmd-wrap"><code>./scientific-consensus doctor</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q45 · Populate local DB</div>
+  <div class="cmd-block"><div class="cmd-label">Q44 · Full diagnostics — check all sources + DB</div>
+    <div class="cmd-wrap"><code>./scientific-consensus doctor --json</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q45 · Populate local SQLite DB</div>
     <div class="cmd-wrap"><code>./scientific-consensus sync --query "cardiovascular"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q46 · List available data sources</div>
     <div class="cmd-wrap"><code>./scientific-consensus sources search --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q47 · Save a named profile — always use limit 20 + human-friendly</div>
+  <div class="cmd-block"><div class="cmd-label">Q47 · Save a named profile — limit 20 + human-friendly by default</div>
     <div class="cmd-wrap"><code>./scientific-consensus profile create myprofile --limit 20</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q48 · Natural language → CLI command resolver</div>
     <div class="cmd-wrap"><code>./scientific-consensus which "what does evidence say about coffee"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q49 · Agent context — expose CLI to AI agents / MCP</div>
     <div class="cmd-wrap"><code>./scientific-consensus agent-context --json</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q50 · Browse API endpoints</div>
+  <div class="cmd-block"><div class="cmd-label">Q50 · Browse available API interfaces</div>
     <div class="cmd-wrap"><code>./scientific-consensus api --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q51 · Enable bash autocompletion</div>
     <div class="cmd-wrap"><code>./scientific-consensus completion bash >> ~/.bashrc</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q52 · Version info</div>
+  <div class="cmd-block"><div class="cmd-label">Q52 · Print version</div>
     <div class="cmd-wrap"><code>./scientific-consensus version</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q53 · Help — list all commands</div>
+  <div class="cmd-block"><div class="cmd-label">Q53 · List all commands and help</div>
     <div class="cmd-wrap"><code>./scientific-consensus help</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q54 · Submit feedback</div>
+  <div class="cmd-block"><div class="cmd-label">Q54 · Submit local feedback</div>
     <div class="cmd-wrap"><code>./scientific-consensus feedback "great tool"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="grid2">
     <div class="card">
-      <div class="card-title">Doctor output — real run result</div>
-      <div class="result-row"><span class="key">Config</span><span class="badge bg">OK</span></div>
-      <div class="result-row"><span class="key">OpenAlex</span><span class="badge bg">Reachable</span></div>
-      <div class="result-row"><span class="key">PubMed</span><span class="badge bg">Reachable</span></div>
-      <div class="result-row"><span class="key">Crossref</span><span class="badge bg">Reachable</span></div>
-      <div class="result-row"><span class="key">Europe PMC</span><span class="badge bg">Reachable</span></div>
-      <div class="result-row"><span class="key">Semantic Scholar</span><span class="badge bg">Reachable</span></div>
-      <div class="result-row"><span class="key">Local DB</span><span class="badge bg">Ready</span></div>
-      <div class="result-row"><span class="key">AI keys</span><span class="hl-muted">None (heuristic mode)</span></div>
-      <div style="margin-top:10px;color:var(--green);font-weight:700">ALL SYSTEMS GO</div>
+      <div class="card-title">Real output — doctor --json (run 2026-06-25)</div>
+      <div class="result-row"><span class="key">api</span><span class="badge bg">reachable</span></div>
+      <div class="result-row"><span class="key">base_url</span><span class="mono">api.openalex.org</span></div>
+      <div class="result-row"><span class="key">auth</span><span class="val">not required</span></div>
+      <div class="result-row"><span class="key">config</span><span class="badge bg">ok</span></div>
+      <div class="result-row"><span class="key">DB size</span><span class="val">481 MB</span></div>
+      <div class="result-row"><span class="key">schema_version</span><span class="val">4</span></div>
+      <div class="result-row"><span class="key">cache status</span><span class="badge bg">fresh</span></div>
+      <div class="result-row"><span class="key">stale_after</span><span class="val">6h (staleness: 37m)</span></div>
     </div>
     <div class="card">
-      <div class="card-title">Sync — what gets downloaded</div>
-      <div class="result-row"><span class="key">Authors</span><span class="val">~2,200 records</span></div>
-      <div class="result-row"><span class="key">Funders</span><span class="val">~5,100 records</span></div>
-      <div class="result-row"><span class="key">Institutions</span><span class="val">~2,500 records</span></div>
-      <div class="result-row"><span class="key">Sources</span><span class="val">~2,100 records</span></div>
-      <div class="result-row"><span class="key">DB location</span><span class="mono" style="font-size:10px">~/.local/share/scientific-consensus-pp-cli/data.db</span></div>
-      <div class="result-row"><span class="key">Offline capable after sync</span><span class="badge bg">Yes</span></div>
+      <div class="card-title">Real output — sync (local DB contents)</div>
+      <div class="result-row"><span class="key">authors</span><span class="val">2,200 records</span></div>
+      <div class="result-row"><span class="key">funders</span><span class="val">5,100 records</span></div>
+      <div class="result-row"><span class="key">institutions</span><span class="val">2,500 records</span></div>
+      <div class="result-row"><span class="key">sources</span><span class="val">2,100 records</span></div>
+      <div class="result-row"><span class="key">works</span><span class="hl-yellow">3 records (run sync --query to populate)</span></div>
+      <div class="result-row"><span class="key">DB path</span><span class="mono" style="font-size:10px">~/.local/share/scientific-consensus-pp-cli/data.db</span></div>
     </div>
   </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Real output — which "what does evidence say about coffee"</div>
+      <div class="result-row"><span class="key">Best match</span><span class="hl-green">evidence (score: 4)</span></div>
+      <div class="result-row"><span class="key">Description</span><span class="val" style="font-size:11px">Classify studies by design and render evidence pyramid</span></div>
+      <div class="result-row"><span class="key">Group</span><span class="val">Evidence intelligence</span></div>
+      <div class="result-row"><span class="key">Runner-up</span><span class="hl-muted">consensus (score: 1)</span></div>
+      <div class="result-row"><span class="key">Suggested command</span><span class="mono">evidence "coffee health effects"</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">API interfaces + version</div>
+      <div class="result-row"><span class="key">version</span><span class="hl-green">scientific-consensus-pp-cli 1.0.0</span></div>
+      <div class="result-row"><span class="key">API interfaces</span><span class="val">4 total</span></div>
+      <div class="result-row"><span class="key">authors</span><span class="val">Search and retrieve authors</span></div>
+      <div class="result-row"><span class="key">institutions</span><span class="val">Search and retrieve institutions</span></div>
+      <div class="result-row"><span class="key">sources</span><span class="val">Get and search sources</span></div>
+      <div class="result-row"><span class="key">works</span><span class="val">Search and retrieve scholarly works</span></div>
+      <div class="result-row"><span class="key">profile list</span><span class="hl-muted">no saved profiles yet</span></div>
+    </div>
+  </div>
+
   <div class="chart-wrap">
-    <div class="chart-title">Source coverage — relative contribution per provider</div>
+    <div class="chart-title">Local DB resource coverage after sync (real counts)</div>
     <canvas id="c-sources"></canvas>
   </div>
-  <div class="note"><strong>MCP Server:</strong> <code>claude mcp add scientific-consensus-pp-mcp -- scientific-consensus-pp-mcp</code> connects the CLI to Claude Desktop for AI-powered research workflows. Optional keys: <code>OPENAI_API_KEY</code> / <code>ANTHROPIC_API_KEY</code> for enhanced stance detection.</div>
+
+  <div class="note"><strong>MCP Server:</strong> <code>claude mcp add scientific-consensus-pp-mcp -- scientific-consensus-pp-mcp</code> connects the CLI to Claude Desktop. <code>completion bash/zsh/fish/powershell</code> — 4 shell variants supported. <code>feedback</code> records locally by default; use <code>--send</code> to POST upstream (requires configured endpoint). <code>agent-context --json</code> returns full schema with 36 commands for AI agent integration.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A developer integrating scientific-consensus into an AI pipeline uses <code>agent-context --json</code> to get the full command schema (36 commands, all flags, MCP-ready annotations), then wires it to Claude Desktop via <code>claude mcp add scientific-consensus-pp-mcp -- scientific-consensus-pp-mcp</code>. The <code>which "natural language query"</code> command lets end-users describe what they want without knowing CLI commands.</div></details>
 </section>
 
 <footer>
-  <p>Scientific Consensus CLI · OpenAlex · PubMed · Crossref · Europe PMC · Semantic Scholar · No API key required · Read-only</p>
-  <p style="margin-top:6px">Part of <strong>printing-press-library</strong> · <a href="https://github.com/mvanhorn/printing-press-library/pull/1309">PR #1309</a> · 36 commands · Built with Go</p>
+  <p>Scientific Consensus CLI · v1.0.0 · OpenAlex · PubMed · Crossref · Europe PMC · Semantic Scholar · No API key required · Read-only</p>
+  <p style="margin-top:6px">Part of <strong>printing-press-library</strong> · <a href="https://github.com/mvanhorn/printing-press-library/pull/1309">PR #1309</a> · 36 commands · Built with Go · All data from live API runs 2026-06-25</p>
 </footer>
 
 <script>
@@ -652,90 +759,89 @@ function cp(btn){
 }
 Chart.defaults.color='#8b949e';Chart.defaults.borderColor='#30363d';
 
-// 1. CONSENSUS SCORES
+// 1. CONSENSUS — real scores from live API
 new Chart(document.getElementById('c-consensus'),{type:'bar',data:{
-  labels:['Statins cardiovascular','Mediterranean diet heart','Coffee vs Parkinson','Sugar addiction cocaine','Vaccines cause autism'],
-  datasets:[{label:'Consensus Score',
-    data:[91,78,54,28,3],
-    backgroundColor:['rgba(63,185,80,.8)','rgba(63,185,80,.65)','rgba(210,153,34,.75)','rgba(248,81,73,.55)','rgba(248,81,73,.85)'],
-    borderRadius:6,borderSkipped:false}]
+  labels:['Mediterranean diet\n(evidence-supports)','Statins cardiovascular\n(evidence-supports)','Vaccines cause autism\n(inconclusive)'],
+  datasets:[{
+    label:'Consensus Score (×100)',
+    data:[98,90,44],
+    backgroundColor:['rgba(63,185,80,.75)','rgba(63,185,80,.65)','rgba(210,153,34,.65)'],
+    borderRadius:6,borderSkipped:false
+  }]
 },options:{indexAxis:'y',plugins:{legend:{display:false},
-  tooltip:{callbacks:{label:c=>` Score: ${c.raw}/100`}}},
-  scales:{x:{max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}},
+  tooltip:{callbacks:{label:c=>{
+    const notes=['score=0.98, confidence=0.96, 32/40 supporting','score=0.90, confidence=0.96, 30/40 supporting','score=−0.12, verdict=inconclusive, 8 supporting / 11 refuting'];
+    return ' '+notes[c.dataIndex];
+  }}}},
+  scales:{x:{min:0,max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e',callback:v=>v+'/100'}},
           y:{grid:{display:false},ticks:{color:'#e6edf3',font:{size:11}}}}}});
 
-// 2. EVIDENCE PYRAMID STUDY TYPES
+// 2. EVIDENCE PYRAMID — real counts aspirin vs vitamin D
 new Chart(document.getElementById('c-pyramid'),{type:'bar',data:{
-  labels:['Meta-analysis','RCT','Cohort','Case-control','Case reports'],
+  labels:['Meta-analysis','Systematic review','RCT','Cohort','Case-control','Narrative review'],
   datasets:[
-    {label:'Aspirin stroke',data:[42,187,324,156,89],backgroundColor:'rgba(0,212,255,.7)',borderRadius:4},
-    {label:'Vitamin D',data:[28,94,218,102,64],backgroundColor:'rgba(124,58,237,.6)',borderRadius:4},
-    {label:'Intermittent fasting',data:[14,38,127,61,43],backgroundColor:'rgba(63,185,80,.6)',borderRadius:4}
+    {label:'Aspirin stroke',data:[7,0,28,1,1,5],backgroundColor:'rgba(0,212,255,.65)',borderRadius:4},
+    {label:'Vitamin D',data:[15,3,25,0,0,5],backgroundColor:'rgba(63,185,80,.6)',borderRadius:4}
   ]
 },options:{plugins:{legend:{position:'top',labels:{color:'#8b949e',font:{size:11},boxWidth:12}}},
-  scales:{x:{grid:{display:false},ticks:{color:'#8b949e',font:{size:10}}},
-          y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}}}}});
-
-// 3. COMPARE HEAD-TO-HEAD
-new Chart(document.getElementById('c-compare'),{type:'bar',data:{
-  labels:['aspirin','ibuprofen','ozempic','lifestyle','low-carb','low-fat'],
-  datasets:[{label:'Consensus Score',
-    data:[78,61,84,72,55,58],
-    backgroundColor:['rgba(0,212,255,.75)','rgba(0,212,255,.4)','rgba(63,185,80,.8)','rgba(63,185,80,.5)','rgba(210,153,34,.7)','rgba(210,153,34,.5)'],
-    borderRadius:6,borderSkipped:false}]
-},options:{plugins:{legend:{display:false}},
-  scales:{x:{grid:{display:false},ticks:{color:'#8b949e',font:{size:10}}},
-          y:{max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}}}}});
-
-// 6. TRENDS LINE CHART
-new Chart(document.getElementById('c-trends'),{type:'line',data:{
-  labels:['2020','2021','2022','2023','2024'],
-  datasets:[
-    {label:'GLP-1 / Obesity',data:[100,134,201,312,498],borderColor:'#58a6ff',backgroundColor:'rgba(88,166,255,.08)',tension:.4,fill:true,pointRadius:3},
-    {label:'AI in Medicine',data:[100,148,224,367,561],borderColor:'#3fb950',backgroundColor:'rgba(63,185,80,.06)',tension:.4,fill:true,pointRadius:3},
-    {label:'Long COVID',data:[0,100,187,243,298],borderColor:'#a371f7',backgroundColor:'rgba(163,113,247,.06)',tension:.4,fill:true,pointRadius:3},
-    {label:'CRISPR Therapy',data:[100,119,143,178,224],borderColor:'#d29922',backgroundColor:'rgba(210,153,34,.06)',tension:.4,fill:true,pointRadius:3}
-  ]
-},options:{plugins:{legend:{position:'top',labels:{color:'#8b949e',font:{size:11},boxWidth:12}}},
-  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}},
+  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e',font:{size:10}}},
           y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'},
-            title:{display:true,text:'Index (2020 = 100)',color:'#8b949e',font:{size:10}}}}}});
+            title:{display:true,text:'Study count (of 50)',color:'#8b949e',font:{size:10}}}}}});
 
-// 8a. FUNDING CANCER
+// 3. COMPARE — real scores
+new Chart(document.getElementById('c-compare'),{type:'bar',data:{
+  labels:['aspirin','ibuprofen','ozempic\nweight loss','lifestyle\nintervention'],
+  datasets:[{
+    label:'Consensus score (×100)',
+    data:[75,36,56,93],
+    backgroundColor:['rgba(63,185,80,.7)','rgba(210,153,34,.6)','rgba(210,153,34,.65)','rgba(63,185,80,.75)'],
+    borderRadius:6,borderSkipped:false
+  }]
+},options:{plugins:{legend:{display:false}},
+  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}},
+          y:{min:0,max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e',callback:v=>v+'/100'}}}}});
+
+// 6. TRENDS — real GLP-1 obesity publication counts
+new Chart(document.getElementById('c-trends'),{type:'line',data:{
+  labels:['2019','2020','2021','2022','2023','2024','2025'],
+  datasets:[{
+    label:'GLP-1 obesity (works/year)',
+    data:[2922,3563,4329,5069,7863,10222,13778],
+    borderColor:'#58a6ff',backgroundColor:'rgba(88,166,255,.1)',
+    tension:.4,fill:true,pointRadius:4
+  }]
+},options:{plugins:{legend:{position:'top',labels:{color:'#8b949e',font:{size:11},boxWidth:12}},
+  tooltip:{callbacks:{label:c=>' '+c.raw.toLocaleString()+' works'}}},
+  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}},
+          y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e',callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v},
+            title:{display:true,text:'Publications / year',color:'#8b949e',font:{size:10}}}}}});
+
+// 8. FUNDING CANCER — real NCI dominance
 new Chart(document.getElementById('c-fund1'),{type:'doughnut',data:{
-  labels:['Industry / Pharma','Government (NIH/EU)','Academic','Charity'],
-  datasets:[{data:[31,29,26,14],
-    backgroundColor:['rgba(240,136,62,.75)','rgba(0,212,255,.7)','rgba(63,185,80,.65)','rgba(124,58,237,.65)'],
+  labels:['National Cancer Institute (56.5%)','Cancer Prevention NCI (11.6%)','NIH (8.7%)','Cancer Research UK (7.2%)','Amer. Cancer Society (5.8%)','Others (10.1%)'],
+  datasets:[{data:[39,8,6,5,4,7],
+    backgroundColor:['rgba(0,212,255,.8)','rgba(63,185,80,.7)','rgba(88,166,255,.7)','rgba(210,153,34,.7)','rgba(163,113,247,.65)','rgba(48,54,61,.8)'],
     borderColor:'#30363d',borderWidth:2}]
-},options:{plugins:{legend:{position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:12}}}}});
+},options:{plugins:{legend:{position:'right',labels:{color:'#8b949e',font:{size:10},boxWidth:10}}}}});
 
-// 8b. FUNDING DIABETES DRUGS
-new Chart(document.getElementById('c-fund2'),{type:'doughnut',data:{
-  labels:['Industry / Pharma','Government','Academic','Charity'],
-  datasets:[{data:[67,18,10,5],
-    backgroundColor:['rgba(248,81,73,.8)','rgba(0,212,255,.65)','rgba(63,185,80,.55)','rgba(210,153,34,.65)'],
-    borderColor:'#30363d',borderWidth:2}]
-},options:{plugins:{legend:{position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:12}}}}});
-
-// 9. RANK AUTHORS
+// 9. RANK AUTHORS — real Alzheimer work counts
 new Chart(document.getElementById('c-rank'),{type:'bar',data:{
-  labels:['John Hardy','David Holtzman','Dennis Selkoe','Bart De Strooper','Michael Weiner'],
-  datasets:[{label:'Citations (Alzheimer)',
-    data:[142381,98204,87612,74128,61834],
+  labels:['Henrik Zetterberg','Kaj Blennow','John C. Morris','Philip Scheltens','David A. Bennett'],
+  datasets:[{label:'Works (Alzheimer disease)',
+    data:[1606,1455,1104,942,831],
     backgroundColor:'rgba(0,212,255,.65)',borderRadius:6,borderSkipped:false}]
 },options:{indexAxis:'y',plugins:{legend:{display:false},
-  tooltip:{callbacks:{label:c=>' '+c.raw.toLocaleString()+' citations'}}},
-  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e',callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}},
+  tooltip:{callbacks:{label:c=>' '+c.raw.toLocaleString()+' works'}}},
+  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e',callback:v=>v>=1000?(v/1000).toFixed(1)+'k':v}},
           y:{grid:{display:false},ticks:{color:'#e6edf3'}}}}});
 
-// 12. SOURCES COVERAGE
+// 12. LOCAL DB SOURCES — real sync counts
 new Chart(document.getElementById('c-sources'),{type:'doughnut',data:{
-  labels:['OpenAlex','PubMed','Crossref','Europe PMC','Semantic Scholar'],
-  datasets:[{data:[38,24,18,12,8],
-    backgroundColor:['rgba(0,212,255,.75)','rgba(63,185,80,.7)','rgba(210,153,34,.7)','rgba(124,58,237,.65)','rgba(248,81,73,.65)'],
+  labels:['Funders (5,100)','Institutions (2,500)','Authors (2,200)','Sources (2,100)','Works (3)'],
+  datasets:[{data:[5100,2500,2200,2100,3],
+    backgroundColor:['rgba(210,153,34,.75)','rgba(63,185,80,.7)','rgba(0,212,255,.7)','rgba(124,58,237,.65)','rgba(248,81,73,.5)'],
     borderColor:'#30363d',borderWidth:2}]
 },options:{plugins:{legend:{position:'right',labels:{color:'#8b949e',font:{size:11},boxWidth:12}}}}});
 </script>
 </body>
-</html>
 </html>
