@@ -2,906 +2,716 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scientific Consensus CLI — Demo &amp; Feature Overview</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Scientific Consensus CLI · 36 Commands Demo</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-  :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #1f2937;
-    --border: #30363d;
-    --accent: #1f6feb;
-    --accent2: #58a6ff;
-    --green: #3fb950;
-    --yellow: #d29922;
-    --red: #f85149;
-    --purple: #a371f7;
-    --teal: #39d353;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --code-bg: #0d1117;
-    --radius: 10px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    font-size: clamp(13px, 2.2vw, 15px);
-    line-height: 1.6;
-  }
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --border:#30363d;--text:#e6edf3;--muted:#8b949e;
+  --accent:#00d4ff;--green:#3fb950;--yellow:#d29922;
+  --red:#f85149;--orange:#f0883e;--purple:#7c3aed;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;
+  font-size:clamp(13px,2.2vw,15px);line-height:1.6}
 
-  /* NAV */
-  nav {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(13,17,23,0.96);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 16px;
-  }
-  .nav-inner {
-    max-width: 1100px; margin: 0 auto;
-    display: flex; align-items: center; gap: 8px;
-    height: 52px; overflow-x: auto; scrollbar-width: none;
-  }
-  .nav-inner::-webkit-scrollbar { display: none; }
-  .nav-logo { font-weight: 700; font-size: 1.05em; color: var(--accent2); white-space: nowrap; margin-right: 8px; }
-  .nav-logo span { color: var(--muted); font-weight: 400; }
-  nav a { color: var(--muted); text-decoration: none; font-size: 0.82em; white-space: nowrap; padding: 4px 8px; border-radius: 6px; transition: all 0.15s; }
-  nav a:hover { color: var(--text); background: var(--surface2); }
+nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.95);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border);
+  padding:8px 16px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{color:var(--muted);text-decoration:none;font-size:12px;padding:4px 10px;
+  border-radius:6px;display:inline-block;transition:.2s}
+nav a:hover{background:var(--bg3);color:var(--accent)}
 
-  /* HERO */
-  .hero {
-    background: linear-gradient(135deg, #0a0f1a 0%, #0d1117 50%, #0a1a12 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 48px 16px 40px; text-align: center;
-  }
-  .hero-badge {
-    display: inline-block;
-    background: rgba(31,111,235,0.15); border: 1px solid rgba(31,111,235,0.4);
-    color: var(--accent2); font-size: 0.78em; font-weight: 600;
-    padding: 4px 12px; border-radius: 20px; letter-spacing: 0.05em; margin-bottom: 16px;
-  }
-  .hero h1 { font-size: clamp(1.6em, 5vw, 2.6em); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; line-height: 1.2; }
-  .hero h1 .highlight { color: var(--accent2); }
-  .hero p { color: var(--muted); max-width: 600px; margin: 0 auto 24px; font-size: clamp(0.9em, 2.5vw, 1.05em); }
-  .hero-stats { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .hero-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; min-width: 90px; }
-  .hero-stat .num { font-size: 1.5em; font-weight: 700; color: var(--accent2); display: block; }
-  .hero-stat .lbl { color: var(--muted); font-size: 0.78em; }
+.hero{background:linear-gradient(135deg,#0d1117 0%,#0a1628 50%,#0d1a0d 100%);
+  padding:clamp(32px,6vw,64px) clamp(16px,4vw,48px);text-align:center;border-bottom:1px solid var(--border)}
+.hero h1{font-size:clamp(24px,5vw,48px);font-weight:700;
+  background:linear-gradient(135deg,var(--accent),var(--green));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.hero p{color:var(--muted);font-size:clamp(13px,2vw,16px);max-width:640px;margin:0 auto 24px}
+.hero-stats{display:flex;justify-content:center;gap:clamp(16px,4vw,48px);flex-wrap:wrap}
+.stat-n{font-size:clamp(28px,5vw,48px);font-weight:800;color:var(--accent)}
+.stat-l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.sources{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
+.src-badge{background:var(--bg3);border:1px solid var(--border);border-radius:20px;
+  padding:4px 14px;font-size:12px;color:var(--muted)}
+.src-badge span{color:var(--green);margin-right:4px}
 
-  /* SOURCES STRIP */
-  .sources-strip {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 14px 16px; text-align: center;
-  }
-  .sources-strip .inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
-  .source-chip {
-    padding: 4px 12px; border-radius: 20px; font-size: 0.78em; font-weight: 600;
-    border: 1px solid;
-  }
-  .sc-openalex { background: rgba(88,166,255,0.1); color: var(--accent2); border-color: rgba(88,166,255,0.3); }
-  .sc-pubmed { background: rgba(63,185,80,0.1); color: var(--green); border-color: rgba(63,185,80,0.3); }
-  .sc-crossref { background: rgba(210,153,34,0.1); color: var(--yellow); border-color: rgba(210,153,34,0.3); }
-  .sc-epmc { background: rgba(163,113,247,0.1); color: var(--purple); border-color: rgba(163,113,247,0.3); }
-  .sc-s2 { background: rgba(248,81,73,0.1); color: var(--red); border-color: rgba(248,81,73,0.3); }
+section{padding:clamp(24px,4vw,48px) clamp(16px,4vw,48px);border-bottom:1px solid var(--border);
+  max-width:1200px;margin:0 auto}
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.sec-num{background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;
+  width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.sec-title{font-size:clamp(18px,3vw,24px);font-weight:700}
+.sec-tag{background:var(--bg3);border:1px solid var(--border);border-radius:4px;
+  padding:2px 8px;font-size:11px;color:var(--muted);font-family:monospace;vertical-align:middle}
+.sec-desc{color:var(--muted);margin-bottom:16px;font-size:clamp(13px,1.8vw,14px)}
+.use-badge{display:inline-block;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.25);
+  color:var(--accent);border-radius:4px;padding:2px 8px;font-size:11px;margin-bottom:10px}
 
-  .main { max-width: 1100px; margin: 0 auto; padding: 32px 16px 64px; }
-  section { margin-bottom: 48px; }
-  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-  .section-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1em; flex-shrink: 0; }
-  .section-header h2 { font-size: clamp(1.05em, 3vw, 1.25em); font-weight: 700; }
-  .section-header .desc { color: var(--muted); font-size: 0.85em; margin-left: auto; text-align: right; }
+.cmd-block{margin-bottom:8px}
+.cmd-label{font-size:11px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.cmd-wrap{display:flex;align-items:stretch;background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;overflow:hidden}
+.cmd-wrap code{flex:1;padding:9px 14px;font-family:'Courier New',monospace;
+  font-size:clamp(11px,1.8vw,13px);color:#79c0ff;overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
+.copy-btn{background:var(--bg3);border:none;border-left:1px solid var(--border);color:var(--muted);
+  padding:8px 14px;cursor:pointer;font-size:12px;transition:.2s;white-space:nowrap;flex-shrink:0}
+.copy-btn:hover{background:var(--accent);color:#000}
+.copy-btn.ok{background:var(--green)!important;color:#000!important}
 
-  .cards { display: grid; gap: 14px; }
-  .cards.cols2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-  .cards.cols3 { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.card-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
 
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.15s; }
-  .card:hover { border-color: var(--accent2); }
-  .card-head { padding: 12px 14px 8px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
-  .card-head .tag { font-size: 0.72em; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.04em; }
-  .tag-live { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
-  .tag-local { background: rgba(88,166,255,0.12); color: var(--accent2); border: 1px solid rgba(88,166,255,0.25); }
-  .tag-ai { background: rgba(163,113,247,0.12); color: var(--purple); border: 1px solid rgba(163,113,247,0.25); }
-  .tag-info { background: rgba(210,153,34,0.12); color: var(--yellow); border: 1px solid rgba(210,153,34,0.25); }
-  .tag-export { background: rgba(248,81,73,0.1); color: var(--red); border: 1px solid rgba(248,81,73,0.25); }
-  .card-title { font-weight: 600; font-size: 0.92em; }
-  .card-body { padding: 12px 14px; }
-  .card-body p { color: var(--muted); font-size: 0.85em; margin-bottom: 10px; }
+.chart-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:16px;margin-top:14px}
+.chart-title{font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.04em}
+canvas{max-height:240px}
 
-  .code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .code-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; border-bottom: 1px solid var(--border); background: var(--surface2); }
-  .code-lang { color: var(--muted); font-size: 0.72em; letter-spacing: 0.06em; font-family: monospace; }
-  .copy-btn { background: none; border: 1px solid var(--border); border-radius: 5px; color: var(--muted); font-size: 0.74em; padding: 3px 9px; cursor: pointer; transition: all 0.15s; font-family: inherit; }
-  .copy-btn:hover { color: var(--text); border-color: var(--accent2); }
-  .copy-btn.copied { color: var(--green); border-color: var(--green); }
-  pre { padding: 12px 14px; overflow-x: auto; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: clamp(0.76em, 1.8vw, 0.85em); line-height: 1.6; }
-  .cmd-line { color: #79c0ff; }
-  .cmd-flag { color: var(--purple); }
-  .out-key { color: var(--yellow); }
-  .out-val { color: var(--green); }
-  .out-muted { color: var(--muted); }
-  .out-accent { color: var(--accent2); }
-  .out-red { color: var(--red); }
-  .out-purple { color: var(--purple); }
+.tbl-wrap{overflow-x:auto;margin-top:12px;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:clamp(11px,1.8vw,13px)}
+th{background:var(--bg3);color:var(--muted);padding:8px 12px;text-align:left;
+  font-size:11px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+td{padding:8px 12px;border-top:1px solid var(--border);color:var(--text)}
+tr:hover td{background:rgba(255,255,255,.02)}
 
-  .output-preview { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: clamp(0.76em, 1.8vw, 0.84em); line-height: 1.65; overflow-x: auto; }
+.result-row{display:flex;justify-content:space-between;align-items:center;
+  padding:5px 0;border-bottom:1px solid var(--border);font-size:13px}
+.result-row:last-child{border-bottom:none}
+.key{color:var(--muted)}
+.val{color:var(--text);font-weight:500}
 
-  /* EVIDENCE PYRAMID */
-  .pyramid { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px 0; }
-  .pyramid-level {
-    border-radius: 4px; display: flex; align-items: center; justify-content: center;
-    font-size: 0.78em; font-weight: 600; color: white; text-align: center; padding: 7px 8px;
-    transition: opacity 0.15s;
-  }
-  .pyramid-level:hover { opacity: 0.85; }
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.bg{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+.by{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid rgba(210,153,34,.3)}
+.br{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3)}
+.bb{background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.3)}
+.bv{background:rgba(124,58,237,.1);color:#a78bfa;border:1px solid rgba(124,58,237,.3)}
 
-  /* CONSENSUS METER */
-  .consensus-meter { padding: 16px 0; }
-  .meter-label { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.78em; margin-bottom: 6px; }
-  .meter-bar { height: 20px; background: var(--surface2); border-radius: 10px; overflow: hidden; position: relative; }
-  .meter-fill { height: 100%; border-radius: 10px; display: flex; align-items: center; padding-left: 10px; font-size: 0.78em; font-weight: 700; color: white; transition: width 0.5s; }
-  .meter-item { margin-bottom: 10px; }
-  .meter-item-label { font-size: 0.82em; margin-bottom: 4px; }
+.note{background:rgba(0,212,255,.05);border-left:3px solid var(--accent);
+  padding:10px 14px;border-radius:0 6px 6px 0;font-size:12px;color:var(--muted);margin-top:10px}
+.note strong{color:var(--text)}
 
-  .chart-wrap { position: relative; height: 220px; }
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 0}
+.pyr-row{display:flex;align-items:center;justify-content:space-between;
+  border-radius:4px;padding:7px 14px;font-size:11px;font-weight:600;color:#fff}
 
-  .install-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-  .install-step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .step-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--surface2); }
-  .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: white; font-size: 0.78em; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .step-head span { font-weight: 600; font-size: 0.9em; }
-  .step-body { padding: 12px 14px; }
+details{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-top:10px}
+summary{padding:9px 14px;cursor:pointer;font-size:12px;color:var(--muted);list-style:none;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▶  '}
+details[open] summary::before{content:'▼  '}
+.db{padding:10px 14px;border-top:1px solid var(--border);font-size:13px;color:var(--muted)}
 
-  .cmd-table { width: 100%; border-collapse: collapse; font-size: 0.83em; }
-  .cmd-table th { background: var(--surface2); padding: 9px 12px; text-align: left; border-bottom: 2px solid var(--border); color: var(--muted); font-weight: 600; letter-spacing: 0.03em; font-size: 0.85em; }
-  .cmd-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  .cmd-table tr:hover td { background: var(--surface2); }
-  .cmd-name { font-family: monospace; color: var(--accent2); font-weight: 600; }
-  .cmd-desc { color: var(--muted); font-size: 0.9em; }
-  .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+.hl-green{color:var(--green)}
+.hl-red{color:var(--red)}
+.hl-yellow{color:var(--yellow)}
+.hl-accent{color:var(--accent)}
+.hl-muted{color:var(--muted)}
+.mono{font-family:monospace;color:var(--accent);font-size:12px}
 
-  .pill { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 600; }
-  .pill-green { background: rgba(63,185,80,0.12); color: var(--green); border: 1px solid rgba(63,185,80,0.25); }
-  .pill-blue { background: rgba(88,166,255,0.12); color: var(--accent2); border: 1px solid rgba(88,166,255,0.25); }
-  .pill-red { background: rgba(248,81,73,0.12); color: var(--red); border: 1px solid rgba(248,81,73,0.25); }
-  .pill-yellow { background: rgba(210,153,34,0.12); color: var(--yellow); border: 1px solid rgba(210,153,34,0.25); }
-  .pill-purple { background: rgba(163,113,247,0.12); color: var(--purple); border: 1px solid rgba(163,113,247,0.25); }
-
-  footer { border-top: 1px solid var(--border); padding: 28px 16px; text-align: center; color: var(--muted); font-size: 0.82em; }
-  footer a { color: var(--accent2); text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
-
-  @media (max-width: 600px) {
-    .section-header { flex-wrap: wrap; }
-    .section-header .desc { margin-left: 0; text-align: left; }
-    .hero-stats { gap: 8px; }
-    .hero-stat { padding: 10px 14px; min-width: 80px; }
-  }
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:24px;text-align:center;
+  color:var(--muted);font-size:12px}
+footer a{color:var(--accent);text-decoration:none}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <div class="nav-inner">
-    <div class="nav-logo">Scientific Consensus <span>CLI</span></div>
-    <a href="#install">Install</a>
-    <a href="#consensus">Consensus</a>
-    <a href="#evidence">Evidence</a>
-    <a href="#compare">Compare</a>
-    <a href="#controversies">Controversies</a>
-    <a href="#gaps">Gaps</a>
-    <a href="#search">Search</a>
-    <a href="#ranking">Ranking</a>
-    <a href="#trends">Trends</a>
-    <a href="#export">Export</a>
-    <a href="#doctor">Doctor</a>
-    <a href="#all-commands">All 37</a>
-  </div>
+  <a href="#s1">1·Consensus</a>
+  <a href="#s2">2·Evidence</a>
+  <a href="#s3">3·Compare</a>
+  <a href="#s4">4·Controversies</a>
+  <a href="#s5">5·Gaps</a>
+  <a href="#s6">6·Trends</a>
+  <a href="#s7">7·Quality</a>
+  <a href="#s8">8·Funding</a>
+  <a href="#s9">9·Ranking</a>
+  <a href="#s10">10·Search</a>
+  <a href="#s11">11·Export</a>
+  <a href="#s12">12·Doctor</a>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
-  <div class="hero-badge">MULTI-SOURCE SCIENTIFIC EVIDENCE AGGREGATOR</div>
-  <h1>What Does the <span class="highlight">Evidence</span> Say<br>About X?</h1>
-  <p>Aggregates OpenAlex, PubMed, Crossref, Europe PMC, and Semantic Scholar to compute consensus scores, evidence pyramids, and research gap analysis — no API key required.</p>
+  <h1>Scientific Consensus CLI</h1>
+  <p>Multi-source evidence aggregator — OpenAlex, PubMed, Crossref, Europe PMC, and Semantic Scholar. Computes consensus scores, evidence pyramids, gap analysis, and research trends — no API key required.</p>
   <div class="hero-stats">
-    <div class="hero-stat"><span class="num">37</span><span class="lbl">Commands</span></div>
-    <div class="hero-stat"><span class="num">5</span><span class="lbl">Sources</span></div>
-    <div class="hero-stat"><span class="num">250M+</span><span class="lbl">Works indexed</span></div>
-    <div class="hero-stat"><span class="num">0</span><span class="lbl">API keys needed</span></div>
-    <div class="hero-stat"><span class="num">93/93</span><span class="lbl">Tests passing</span></div>
+    <div><div class="stat-n">36</div><div class="stat-l">Commands</div></div>
+    <div><div class="stat-n">250M+</div><div class="stat-l">Works indexed</div></div>
+    <div><div class="stat-n">5</div><div class="stat-l">Sources</div></div>
+    <div><div class="stat-n">0</div><div class="stat-l">API keys needed</div></div>
+  </div>
+  <div class="sources">
+    <div class="src-badge"><span>●</span>OpenAlex</div>
+    <div class="src-badge"><span>●</span>PubMed</div>
+    <div class="src-badge"><span>●</span>Crossref</div>
+    <div class="src-badge"><span>●</span>Europe PMC</div>
+    <div class="src-badge"><span>●</span>Semantic Scholar</div>
   </div>
 </div>
 
-<!-- SOURCES STRIP -->
-<div class="sources-strip">
-  <div class="inner">
-    <span style="color:var(--muted);font-size:0.8em;margin-right:4px;">Sources:</span>
-    <span class="source-chip sc-openalex">OpenAlex</span>
-    <span class="source-chip sc-pubmed">PubMed</span>
-    <span class="source-chip sc-crossref">Crossref</span>
-    <span class="source-chip sc-epmc">Europe PMC</span>
-    <span class="source-chip sc-s2">Semantic Scholar</span>
+<!-- 1. CONSENSUS -->
+<section id="s1">
+  <div class="sec-header">
+    <div class="sec-num">1</div>
+    <div><div class="sec-title">Consensus <span class="sec-tag">live API · 5 sources</span></div></div>
   </div>
-</div>
+  <div class="use-badge">Physicians · Science Journalists · Fact-Checkers · Patients</div>
+  <p class="sec-desc">Score any scientific claim from 0 to 100. Aggregates evidence from all 5 sources, classifies stance (SUPPORTS / REFUTES / MIXED), and reports confidence level and evidence strength. The fastest answer to "what does the science say about X?"</p>
 
-<div class="main">
+  <div class="cmd-block"><div class="cmd-label">Q1 · Vaccine-autism myth</div>
+    <div class="cmd-wrap"><code>./scientific-consensus consensus "vaccines cause autism" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q2 · Statins cardiovascular</div>
+    <div class="cmd-wrap"><code>./scientific-consensus consensus "statins reduce cardiovascular risk" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q3 · Mediterranean diet — JSON output</div>
+    <div class="cmd-wrap"><code>./scientific-consensus consensus "mediterranean diet prevents heart disease" --json</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
-<!-- INSTALL -->
-<section id="install">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(31,111,235,0.12)">⚙️</div>
-    <h2>Installation &amp; Setup</h2>
-    <div class="desc">Termux / Android / Linux</div>
+  <div class="chart-wrap">
+    <div class="chart-title">Consensus Scores — Example Claims (0–100)</div>
+    <canvas id="c-consensus"></canvas>
   </div>
-  <div class="install-grid">
-    <div class="install-step">
-      <div class="step-head"><div class="step-num">1</div><span>Clone &amp; Build</span></div>
-      <div class="step-body">
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">cd ~/printing-press-library/library/health/scientific-consensus</span>
-<span class="cmd-line">GOTOOLCHAIN=local go build -o scientific-consensus ./cmd/scientific-consensus-pp-cli/</span></pre>
-        </div>
-      </div>
+
+  <div class="grid2" style="margin-top:14px">
+    <div class="card">
+      <div class="card-title">Sample output — statins cardiovascular</div>
+      <div class="result-row"><span class="key">Score</span><span class="val hl-green">91 / 100</span></div>
+      <div class="result-row"><span class="key">Stance</span><span class="badge bg">SUPPORTS</span></div>
+      <div class="result-row"><span class="key">Confidence</span><span class="val">HIGH</span></div>
+      <div class="result-row"><span class="key">Evidence strength</span><span class="val">STRONG</span></div>
+      <div class="result-row"><span class="key">Studies found</span><span class="val">12,847</span></div>
+      <div class="result-row"><span class="key">Sources queried</span><span class="val">5 / 5</span></div>
     </div>
-    <div class="install-step">
-      <div class="step-head"><div class="step-num">2</div><span>Verify sources</span></div>
-      <div class="step-body">
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus doctor</span>
-<span class="cmd-line">./scientific-consensus sources search <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="install-step">
-      <div class="step-head"><div class="step-num">3</div><span>Optional: AI keys</span></div>
-      <div class="step-body">
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="out-muted"># Enhanced stance detection (optional)</span>
-<span class="cmd-line">export OPENAI_API_KEY=sk-...</span>
-<span class="cmd-line">export ANTHROPIC_API_KEY=sk-ant-...</span>
-<span class="out-muted"># Tool works fully without these</span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="install-step">
-      <div class="step-head"><div class="step-num">4</div><span>MCP Server (optional)</span></div>
-      <div class="step-body">
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">claude mcp add scientific-consensus-pp-mcp -- scientific-consensus-pp-mcp</span></pre>
-        </div>
-      </div>
+    <div class="card">
+      <div class="card-title">Sample output — vaccines cause autism</div>
+      <div class="result-row"><span class="key">Score</span><span class="val hl-red">3 / 100</span></div>
+      <div class="result-row"><span class="key">Stance</span><span class="badge br">REFUTES</span></div>
+      <div class="result-row"><span class="key">Confidence</span><span class="val">HIGH</span></div>
+      <div class="result-row"><span class="key">Evidence strength</span><span class="val">VERY STRONG</span></div>
+      <div class="result-row"><span class="key">Studies found</span><span class="val">4,293</span></div>
+      <div class="result-row"><span class="key">Sources queried</span><span class="val">5 / 5</span></div>
     </div>
   </div>
+  <div class="note"><strong>Score meaning:</strong> 0–20 = strongly refuted · 21–40 = probably false · 41–60 = mixed / contested · 61–80 = supported · 81–100 = strongly supported. Use <code>--json</code> for pipeline-compatible output.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A science journalist needs to fact-check whether "sugar is more addictive than cocaine." <code>consensus "sugar addiction cocaine"</code> returns score 28/100 (MIXED, LOW confidence) with 340 studies — the journalist learns the claim is contested but not debunked, guiding a nuanced article.</div></details>
 </section>
 
-<!-- CONSENSUS -->
-<section id="consensus">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(63,185,80,0.12)">🎯</div>
-    <h2>Consensus</h2>
-    <div class="desc">Evidence stance score</div>
+<!-- 2. EVIDENCE PYRAMID -->
+<section id="s2">
+  <div class="sec-header">
+    <div class="sec-num">2</div>
+    <div><div class="sec-title">Evidence Pyramid <span class="sec-tag">live API · study classification</span></div></div>
   </div>
-  <div class="cards cols2">
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">consensus command</span></div>
-      <div class="card-body">
-        <p>Evaluates a claim across all sources. Returns score (0–100), confidence level, stance (supports / refutes / mixed), and evidence strength.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus consensus "vaccines cause autism" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus consensus "mediterranean diet prevents heart disease" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus consensus "statins reduce cardiovascular risk" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus consensus "coffee protects against Parkinson" <span class="cmd-flag">--json</span></span></pre>
-        </div>
+  <div class="use-badge">Clinicians · Systematic Reviewers · Evidence-Based Medicine · Students</div>
+  <p class="sec-desc">Classifies all studies on a topic by design — meta-analysis, RCT, cohort, case-control, case report — and renders an evidence pyramid. Immediately shows where evidence is strong (many RCTs at the top) vs weak (mostly expert opinion at the base).</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q4 · Aspirin stroke prevention</div>
+    <div class="cmd-wrap"><code>./scientific-consensus evidence "aspirin stroke prevention" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q5 · Vitamin D supplementation</div>
+    <div class="cmd-wrap"><code>./scientific-consensus evidence "vitamin D supplementation" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q6 · Intermittent fasting weight loss</div>
+    <div class="cmd-wrap"><code>./scientific-consensus evidence "intermittent fasting weight loss" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="grid2">
+    <div class="card" style="padding-top:14px">
+      <div class="card-title">Evidence pyramid — aspirin stroke prevention (798 studies)</div>
+      <div class="pyramid">
+        <div class="pyr-row" style="width:50%;background:#1f6feb"><span>Meta-analyses / Systematic Reviews</span><span>42</span></div>
+        <div class="pyr-row" style="width:65%;background:#2ea043"><span>Randomized Controlled Trials</span><span>187</span></div>
+        <div class="pyr-row" style="width:78%;background:#388bfd"><span>Cohort Studies</span><span>324</span></div>
+        <div class="pyr-row" style="width:89%;background:#7c3aed"><span>Case-Control Studies</span><span>156</span></div>
+        <div class="pyr-row" style="width:99%;background:#30363d"><span>Case Reports &amp; Expert Opinion</span><span>89</span></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">EXAMPLE SCORES</span><span class="card-title">Consensus results</span></div>
-      <div class="card-body">
-        <div class="consensus-meter">
-          <div class="meter-item">
-            <div class="meter-item-label">Vaccines cause autism <span class="pill pill-red">REFUTES</span></div>
-            <div class="meter-bar"><div class="meter-fill" style="width:97%;background:linear-gradient(90deg,#3fb950,#3fb950)">97 / 100</div></div>
-          </div>
-          <div class="meter-item">
-            <div class="meter-item-label">Statins reduce cardiovascular risk <span class="pill pill-green">SUPPORTS</span></div>
-            <div class="meter-bar"><div class="meter-fill" style="width:91%;background:linear-gradient(90deg,#1f6feb,#58a6ff)">91 / 100</div></div>
-          </div>
-          <div class="meter-item">
-            <div class="meter-item-label">Mediterranean diet prevents heart disease <span class="pill pill-green">SUPPORTS</span></div>
-            <div class="meter-bar"><div class="meter-fill" style="width:78%;background:linear-gradient(90deg,#1f6feb,#58a6ff)">78 / 100</div></div>
-          </div>
-          <div class="meter-item">
-            <div class="meter-item-label">Coffee protects against Parkinson <span class="pill pill-yellow">MIXED</span></div>
-            <div class="meter-bar"><div class="meter-fill" style="width:54%;background:linear-gradient(90deg,#d29922,#e3b341)">54 / 100</div></div>
-          </div>
-        </div>
-      </div>
+    <div class="chart-wrap" style="margin-top:0">
+      <div class="chart-title">Study type distribution — 3 topics</div>
+      <canvas id="c-pyramid"></canvas>
     </div>
   </div>
+  <div class="note"><strong>Evidence tip:</strong> A topic dominated by "case reports" at the base has weak evidence — anecdotes and opinions only. Look for topics with a large RCT + meta-analysis block near the top for reliable conclusions.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A clinical guideline committee reviewing "intermittent fasting for type 2 diabetes" needs to grade evidence strength. <code>evidence "intermittent fasting weight loss"</code> shows 14 meta-analyses, 38 RCTs, 127 cohort studies — the committee grades it MODERATE evidence (Grade B).</div></details>
 </section>
 
-<!-- EVIDENCE PYRAMID -->
-<section id="evidence">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(88,166,255,0.12)">🔺</div>
-    <h2>Evidence Pyramid</h2>
-    <div class="desc">Study design hierarchy</div>
+<!-- 3. COMPARE -->
+<section id="s3">
+  <div class="sec-header">
+    <div class="sec-num">3</div>
+    <div><div class="sec-title">Compare <span class="sec-tag">live API · parallel analysis</span></div></div>
   </div>
-  <div class="cards cols2">
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">evidence command</span></div>
-      <div class="card-body">
-        <p>Classifies studies by design and renders a full evidence pyramid from meta-analysis down to case reports.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus evidence "aspirin stroke prevention" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus evidence "vitamin D supplementation" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus evidence "intermittent fasting weight loss" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus evidence "gut microbiome mental health" <span class="cmd-flag">--json</span></span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">VISUAL</span><span class="card-title">Evidence pyramid — aspirin stroke</span></div>
-      <div class="card-body">
-        <div class="pyramid">
-          <div class="pyramid-level" style="width:55%;background:#1f6feb;">Meta-analyses &amp; Systematic Reviews (42)</div>
-          <div class="pyramid-level" style="width:68%;background:#388bfd;">Randomized Controlled Trials (187)</div>
-          <div class="pyramid-level" style="width:78%;background:#58a6ff;">Cohort Studies (324)</div>
-          <div class="pyramid-level" style="width:87%;background:#7ec2ff;">Case-Control Studies (156)</div>
-          <div class="pyramid-level" style="width:95%;background:#30363d;">Case Reports &amp; Expert Opinion (89)</div>
-        </div>
-        <p style="text-align:center;font-size:0.78em;color:var(--muted);margin-top:8px;">798 total studies classified</p>
-      </div>
-    </div>
+  <div class="use-badge">Physicians · Pharmacists · Medical Writers · Policy Analysts</div>
+  <p class="sec-desc">Head-to-head evidence comparison of two claims, drugs, or interventions. Runs both queries in parallel across all 5 sources and returns side-by-side consensus scores, evidence strength, and study counts. Answers "which intervention has stronger scientific backing?"</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q7 · Aspirin vs Ibuprofen</div>
+    <div class="cmd-wrap"><code>./scientific-consensus compare "aspirin" "ibuprofen" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q8 · Ozempic vs Lifestyle intervention</div>
+    <div class="cmd-wrap"><code>./scientific-consensus compare "ozempic weight loss" "lifestyle intervention weight loss" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q9 · Low-carb vs Low-fat diet</div>
+    <div class="cmd-wrap"><code>./scientific-consensus compare "low-carb diet" "low-fat diet" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Consensus Scores — Head-to-Head Comparisons</div>
+    <canvas id="c-compare"></canvas>
   </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Claim A</th><th>Claim B</th><th>Score A</th><th>Score B</th><th>Stance A</th><th>Stance B</th><th>Winner</th></tr></thead>
+    <tbody>
+      <tr><td>aspirin</td><td>ibuprofen</td><td class="hl-green">78</td><td class="hl-yellow">61</td><td><span class="badge bg">SUPPORTS</span></td><td><span class="badge by">MIXED</span></td><td class="hl-accent">aspirin (+17)</td></tr>
+      <tr><td>ozempic weight loss</td><td>lifestyle intervention</td><td class="hl-green">84</td><td class="hl-green">72</td><td><span class="badge bg">SUPPORTS</span></td><td><span class="badge bg">SUPPORTS</span></td><td class="hl-accent">ozempic (+12)</td></tr>
+      <tr><td>low-carb diet</td><td>low-fat diet</td><td class="hl-yellow">55</td><td class="hl-yellow">58</td><td><span class="badge by">MIXED</span></td><td><span class="badge by">MIXED</span></td><td class="hl-muted">No clear winner</td></tr>
+    </tbody>
+  </table></div>
+  <details><summary>When to use</summary>
+    <div class="db">A pharmacist counseling a cardiac patient on pain management needs to compare aspirin vs ibuprofen evidence. <code>compare "aspirin" "ibuprofen"</code> shows aspirin scores 78 vs ibuprofen 61 — critical guidance since NSAIDs carry extra cardiovascular risk for heart patients.</div></details>
 </section>
 
-<!-- COMPARE -->
-<section id="compare">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(210,153,34,0.12)">⚖️</div>
-    <h2>Compare</h2>
-    <div class="desc">Side-by-side claim analysis</div>
+<!-- 4. CONTROVERSIES -->
+<section id="s4">
+  <div class="sec-header">
+    <div class="sec-num">4</div>
+    <div><div class="sec-title">Controversies <span class="sec-tag">live API · conflict detection</span></div></div>
   </div>
-  <div class="cards cols2">
+  <div class="use-badge">Science Journalists · Medical Educators · Researchers · Systematic Reviewers</div>
+  <p class="sec-desc">Surfaces studies with contradictory conclusions on the same topic. Detects heterogeneity in results, conflicting systematic reviews, and replication failures. Essential for understanding where science is genuinely unsettled vs where consensus is clear.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q10 · Coffee health effects</div>
+    <div class="cmd-wrap"><code>./scientific-consensus controversies "coffee health effects" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q11 · Antidepressants efficacy</div>
+    <div class="cmd-wrap"><code>./scientific-consensus controversies "antidepressants efficacy" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q12 · Low-carb vs low-fat diet</div>
+    <div class="cmd-wrap"><code>./scientific-consensus controversies "low-carb vs low-fat diet" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="grid2">
     <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">compare command</span></div>
-      <div class="card-body">
-        <p>Runs parallel evidence analysis on two competing claims or treatments.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus compare "aspirin" "ibuprofen" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus compare "ozempic weight loss" "lifestyle intervention weight loss" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus compare "low-carb diet" "low-fat diet" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus compare "metformin" "insulin" <span class="cmd-flag">--json</span></span></pre>
-        </div>
-      </div>
+      <div class="card-title">Sample — coffee health effects</div>
+      <div class="result-row"><span class="key">Controversy level</span><span class="badge by">MODERATE</span></div>
+      <div class="result-row"><span class="key">Conflicting study pairs</span><span class="val">47 found</span></div>
+      <div class="result-row"><span class="key">Main conflict</span><span class="val">Cardiovascular benefit vs risk</span></div>
+      <div class="result-row"><span class="key">Population driver</span><span class="val">Genetic CYP1A2 variation</span></div>
+      <div class="result-row"><span class="key">Heterogeneity I²</span><span class="hl-yellow">68% (substantial)</span></div>
     </div>
     <div class="card">
-      <div class="card-head"><span class="tag tag-live">EXAMPLE OUTPUT</span><span class="card-title">compare aspirin vs ibuprofen</span></div>
-      <div class="card-body">
-        <div class="output-preview">
-<span class="out-key">CLAIM A:   </span><span class="out-accent">aspirin</span>
-<span class="out-key">score      </span><span class="out-val">78  confidence: HIGH</span>
-<span class="out-key">stance     </span><span class="out-val">SUPPORTS  (cardiovascular)</span>
-<span class="out-key">studies    </span><span class="out-val">2,847 total  |  142 RCT</span>
-
-<span class="out-key">CLAIM B:   </span><span class="out-accent">ibuprofen</span>
-<span class="out-key">score      </span><span class="out-val">61  confidence: MODERATE</span>
-<span class="out-key">stance     </span><span class="out-val">MIXED  (pain / CV risk)</span>
-<span class="out-key">studies    </span><span class="out-val">1,934 total  |  98 RCT</span>
-
-<span class="out-key">WINNER     </span><span class="out-val">aspirin  (by 17 pts, cardiovascular)</span>
-        </div>
-      </div>
+      <div class="card-title">Sample — antidepressants efficacy</div>
+      <div class="result-row"><span class="key">Controversy level</span><span class="badge br">HIGH</span></div>
+      <div class="result-row"><span class="key">Conflicting study pairs</span><span class="val">124 found</span></div>
+      <div class="result-row"><span class="key">Main conflict</span><span class="val">Placebo effect size debate</span></div>
+      <div class="result-row"><span class="key">Key papers</span><span class="val">Kirsch (2008) vs Cipriani (2018)</span></div>
+      <div class="result-row"><span class="key">Heterogeneity I²</span><span class="hl-red">82% (very high)</span></div>
     </div>
   </div>
+  <details><summary>When to use</summary>
+    <div class="db">A medical educator preparing a lecture on antidepressant controversies needs to show students where the field disagrees. <code>controversies "antidepressants efficacy"</code> surfaces the 124 conflicting study pairs and highlights the core dispute between the Kirsch and Cipriani meta-analyses — perfect teaching material.</div></details>
 </section>
 
-<!-- CONTROVERSIES & GAPS -->
-<section id="controversies">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(248,81,73,0.12)">⚡</div>
-    <h2>Controversies &amp; Gaps</h2>
-    <div class="desc">Conflicts and missing research</div>
+<!-- 5. GAPS -->
+<section id="s5">
+  <div class="sec-header">
+    <div class="sec-num">5</div>
+    <div><div class="sec-title">Gaps <span class="sec-tag">live API · under-researched areas</span></div></div>
   </div>
-  <div class="cards cols2">
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">controversies</span></div>
-      <div class="card-body">
-        <p>Surfaces conflicting findings and studies with contradictory conclusions.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus controversies "coffee health effects" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus controversies "low-carb vs low-fat diet" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus controversies "antidepressants efficacy" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card" id="gaps">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">gaps command</span></div>
-      <div class="card-body">
-        <p>Identifies under-researched populations, missing study types, and areas needing more evidence.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus gaps "long covid treatment" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus gaps "alzheimer prevention" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus gaps "childhood obesity intervention" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="use-badge">Grant Writers · Research Directors · Policy Makers · PhD Students</div>
+  <p class="sec-desc">Identifies under-researched populations, missing study designs, and areas where evidence is absent. Pinpoints exactly where new research would have the highest value. Essential for grant applications arguing that a specific research gap needs to be filled.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q13 · Long COVID treatment gaps</div>
+    <div class="cmd-wrap"><code>./scientific-consensus gaps "long covid treatment" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q14 · Alzheimer prevention gaps</div>
+    <div class="cmd-wrap"><code>./scientific-consensus gaps "alzheimer prevention" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q15 · Childhood obesity intervention</div>
+    <div class="cmd-wrap"><code>./scientific-consensus gaps "childhood obesity intervention" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Topic</th><th>Gap severity</th><th>Missing population</th><th>Missing design</th><th>Evidence thin since</th></tr></thead>
+    <tbody>
+      <tr><td>Long COVID treatment</td><td><span class="badge br">CRITICAL</span></td><td>Children, elderly</td><td>RCTs (only 8 found of 847)</td><td>2020</td></tr>
+      <tr><td>Alzheimer prevention</td><td><span class="badge by">HIGH</span></td><td>Sub-Saharan Africa</td><td>Long-term RCT (&gt;10yr)</td><td>pre-2000</td></tr>
+      <tr><td>Childhood obesity</td><td><span class="badge by">MODERATE</span></td><td>Ages 2–5, boys</td><td>Cost-effectiveness studies</td><td>2015</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Grant tip:</strong> Use <code>gaps</code> output in your "justification for proposed research" section — the tool identifies exact population and design gaps that peer reviewers look for.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A PhD student writing a grant proposal on long COVID in children needs to quantify why pediatric studies are needed. <code>gaps "long covid treatment"</code> shows that of 847 long COVID studies, only 23 include patients under 18 — the exact gap statistic needed for the rationale section.</div></details>
 </section>
 
-<!-- SEARCH & LANDMARK -->
-<section id="search">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(88,166,255,0.12)">🔍</div>
-    <h2>Search &amp; Landmark</h2>
-    <div class="desc">Cross-source literature search</div>
+<!-- 6. TRENDS, DRIFT, EMERGING, TIMELINE -->
+<section id="s6">
+  <div class="sec-header">
+    <div class="sec-num">6</div>
+    <div><div class="sec-title">Trends, Drift &amp; Emerging <span class="sec-tag">live API · temporal intelligence</span></div></div>
   </div>
-  <div class="cards cols2">
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">search — cross-source</span></div>
-      <div class="card-body">
-        <p>Full-text search across all 5 sources with automatic deduplication by DOI/PMID.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus search "CRISPR off-target effects" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus search "metformin longevity" <span class="cmd-flag">--limit</span> 10 <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus search "cancer immunotherapy" <span class="cmd-flag">--sort</span> citations <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus search "alzheimer amyloid" <span class="cmd-flag">--summarize</span> <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">landmark — most influential papers</span></div>
-      <div class="card-body">
-        <p>Returns the field-defining papers ranked by citation impact and influence.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus landmark "deep learning medical imaging" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus landmark "covid-19 vaccine efficacy" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus landmark "CRISPR gene editing" <span class="cmd-flag">--limit</span> 5 <span class="cmd-flag">--json</span></span></pre>
-        </div>
-      </div>
-    </div>
+  <div class="use-badge">Research Strategists · Health Investors · Conference Organizers · Journal Editors</div>
+  <p class="sec-desc">Four commands for temporal analysis: <code>trends</code> tracks year-over-year publication growth, <code>drift</code> shows how a field's topic mix shifts between two periods (min 2-year span), <code>emerging</code> lists fastest-growing research areas globally, and <code>timeline</code> renders full publication history with milestone detection.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q16 · GLP-1 obesity publication growth</div>
+    <div class="cmd-wrap"><code>./scientific-consensus trends "GLP-1 obesity" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q17 · Cancer immunotherapy drift 2018–2024</div>
+    <div class="cmd-wrap"><code>./scientific-consensus drift "cancer immunotherapy" --from 2018 --to 2024 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q18 · Top 10 fastest-growing areas</div>
+    <div class="cmd-wrap"><code>./scientific-consensus emerging --limit 10 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q19 · mRNA vaccines publication timeline</div>
+    <div class="cmd-wrap"><code>./scientific-consensus timeline "mRNA vaccines" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Publication Growth Index (2020 = 100) — trends command</div>
+    <canvas id="c-trends"></canvas>
   </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Topic (emerging)</th><th>Publications 2022</th><th>Publications 2024</th><th>2yr growth</th></tr></thead>
+    <tbody>
+      <tr><td>AI in Radiology</td><td>2,341</td><td>6,128</td><td><span class="hl-green">+162%</span></td></tr>
+      <tr><td>GLP-1 / Obesity drugs</td><td>1,840</td><td>4,980</td><td><span class="hl-green">+170%</span></td></tr>
+      <tr><td>Long COVID</td><td>4,210</td><td>5,892</td><td><span class="hl-yellow">+40%</span></td></tr>
+      <tr><td>CRISPR Gene Therapy</td><td>1,203</td><td>1,920</td><td><span class="hl-yellow">+60%</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>drift</strong> requires <code>--from</code> and <code>--to</code> with a minimum 2-year gap. <code>watch "long covid"</code> monitors a topic for new publications since the last run.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A health investor evaluating whether to fund a GLP-1 research startup needs the growth trajectory. <code>trends "GLP-1 obesity"</code> shows an index of 498 (vs 100 in 2020) — a 5× explosion in 4 years. They cross-check with <code>drift</code> to confirm the trend is sustained, not a single-year spike.</div></details>
 </section>
 
-<!-- RANKING -->
-<section id="ranking">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(163,113,247,0.12)">🏆</div>
-    <h2>Ranking</h2>
-    <div class="desc">Authors, institutions, journals</div>
+<!-- 7. REPRODUCIBILITY & QUALITY -->
+<section id="s7">
+  <div class="sec-header">
+    <div class="sec-num">7</div>
+    <div><div class="sec-title">Reproducibility &amp; Quality <span class="sec-tag">live API · metadata signals</span></div></div>
   </div>
-  <div class="cards cols3">
+  <div class="use-badge">Systematic Reviewers · IRB Members · Research Integrity Officers · Statisticians</div>
+  <p class="sec-desc"><code>reproducibility</code> estimates replication quality from p-value distributions, sample sizes, pre-registration rates, and known replication failures — all from metadata, without reading papers. <code>quality</code> scores study quality from design type, blinding reports, and citation patterns.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q20 · Social priming reproducibility</div>
+    <div class="cmd-wrap"><code>./scientific-consensus reproducibility "social priming effects" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q21 · Gut microbiome mental health reproducibility</div>
+    <div class="cmd-wrap"><code>./scientific-consensus reproducibility "gut microbiome mental health" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q22 · Omega-3 depression quality</div>
+    <div class="cmd-wrap"><code>./scientific-consensus quality "omega-3 depression" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="grid2">
     <div class="card">
-      <div class="card-head"><span class="tag tag-live">AUTHORS</span><span class="card-title">rank-authors</span></div>
-      <div class="card-body">
-        <p>Top researchers by publication output and citation impact in a topic area.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus rank-authors "alzheimer disease" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus rank-authors "climate change health" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
+      <div class="card-title">Reproducibility — social priming effects</div>
+      <div class="result-row"><span class="key">Reproducibility score</span><span class="hl-red">28 / 100</span></div>
+      <div class="result-row"><span class="key">Pre-registration rate</span><span class="hl-red">4%</span></div>
+      <div class="result-row"><span class="key">Median N per study</span><span class="val">38 participants</span></div>
+      <div class="result-row"><span class="key">p-value spike below 0.05</span><span class="hl-red">71% (p-hacking signal)</span></div>
+      <div class="result-row"><span class="key">Known replications</span><span class="val">8 failed / 2 succeeded</span></div>
     </div>
     <div class="card">
-      <div class="card-head"><span class="tag tag-live">INSTITUTIONS</span><span class="card-title">rank-institutions</span></div>
-      <div class="card-body">
-        <p>Top institutions ranked by research output in a topic.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus rank-institutions "cancer research" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus rank-institutions "neuroscience" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">JOURNALS</span><span class="card-title">rank-journals</span></div>
-      <div class="card-body">
-        <p>Leading publication venues for a research topic.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus rank-journals "cardiology" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus rank-journals "oncology" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
+      <div class="card-title">Quality — omega-3 depression</div>
+      <div class="result-row"><span class="key">Quality score</span><span class="hl-yellow">64 / 100</span></div>
+      <div class="result-row"><span class="key">RCT proportion</span><span class="val">38% of studies</span></div>
+      <div class="result-row"><span class="key">Blinding reported</span><span class="val">61% of trials</span></div>
+      <div class="result-row"><span class="key">Industry funding</span><span class="hl-yellow">44%</span></div>
+      <div class="result-row"><span class="key">Median follow-up</span><span class="val">12 weeks (short)</span></div>
     </div>
   </div>
+  <details><summary>When to use</summary>
+    <div class="db">A research integrity officer investigating a psychology department's social priming publications wants to flag concerns. <code>reproducibility "social priming effects"</code> returns a score of 28/100 with a 71% p-value spike just below 0.05 — a classic p-hacking signal that justifies a formal audit.</div></details>
 </section>
 
-<!-- TRENDS & MONITORING -->
-<section id="trends">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(63,185,80,0.12)">📈</div>
-    <h2>Trends &amp; Monitoring</h2>
-    <div class="desc">Growth, drift, emerging, watch</div>
+<!-- 8. FUNDING -->
+<section id="s8">
+  <div class="sec-header">
+    <div class="sec-num">8</div>
+    <div><div class="sec-title">Funding <span class="sec-tag">live API · funder patterns</span></div></div>
   </div>
-  <div class="cards cols2">
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">trends + emerging + timeline</span></div>
-      <div class="card-body">
-        <p>Year-over-year growth analysis, fastest-growing areas, and publication timeline with milestone detection.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus trends "GLP-1 obesity" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus trends "artificial intelligence radiology" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus emerging <span class="cmd-flag">--limit</span> 10 <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus timeline "mRNA vaccines" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus timeline "CRISPR gene editing" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">drift + watch</span></div>
-      <div class="card-body">
-        <p>Compare topic distributions across time periods. Monitor for major new publications.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="out-muted"># drift requires min 2-year span</span>
-<span class="cmd-line">./scientific-consensus drift "cancer immunotherapy" <span class="cmd-flag">--from</span> 2018 <span class="cmd-flag">--to</span> 2024 <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus drift "covid-19 long term effects" <span class="cmd-flag">--from</span> 2020 <span class="cmd-flag">--to</span> 2025 <span class="cmd-flag">--human-friendly</span></span>
+  <div class="use-badge">Health Economists · Investigative Journalists · Policy Analysts · Grant Officers</div>
+  <p class="sec-desc">Analyzes funding source patterns — classifies funders as government, industry, academic, or charity. Identifies funder concentration (one funder dominating a research area). Reveals potential conflicts of interest hidden in the research landscape.</p>
 
-<span class="out-muted"># watch for new publications</span>
-<span class="cmd-line">./scientific-consensus watch "long covid" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus watch "alzheimer amyloid" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
+  <div class="cmd-block"><div class="cmd-label">Q23 · Cancer funding patterns</div>
+    <div class="cmd-wrap"><code>./scientific-consensus funding "cancer" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q24 · Diabetes drug trials funding</div>
+    <div class="cmd-wrap"><code>./scientific-consensus funding "diabetes drug trials" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q25 · Alzheimer funding</div>
+    <div class="cmd-wrap"><code>./scientific-consensus funding "alzheimer" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="grid2">
+    <div class="chart-wrap" style="margin-top:0">
+      <div class="chart-title">Cancer — funder class distribution</div>
+      <canvas id="c-fund1"></canvas>
+    </div>
+    <div class="chart-wrap" style="margin-top:0">
+      <div class="chart-title">Diabetes drug trials — funder class</div>
+      <canvas id="c-fund2"></canvas>
     </div>
   </div>
-  <div class="cards cols2" style="margin-top:14px;">
-    <div class="card" style="padding:20px;">
-      <h3 style="font-size:0.9em;font-weight:600;margin-bottom:4px;">Publication Growth by Field (2020–2024)</h3>
-      <p style="color:var(--muted);font-size:0.78em;margin-bottom:14px;">Year-over-year growth rate from trends command</p>
-      <div class="chart-wrap"><canvas id="trendsChart"></canvas></div>
-    </div>
-    <div class="card" style="padding:20px;">
-      <h3 style="font-size:0.9em;font-weight:600;margin-bottom:4px;">Source Coverage Distribution</h3>
-      <p style="color:var(--muted);font-size:0.78em;margin-bottom:14px;">Relative contribution per data source</p>
-      <div class="chart-wrap"><canvas id="sourcesChart"></canvas></div>
-    </div>
-  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Top Funder</th><th>Class</th><th>Cancer</th><th>Alzheimer</th></tr></thead>
+    <tbody>
+      <tr><td>NIH / NCI</td><td><span class="badge bg">Government</span></td><td>18%</td><td>22%</td></tr>
+      <tr><td>Pfizer · Roche · BMS</td><td><span class="badge by">Industry</span></td><td>31%</td><td>14%</td></tr>
+      <tr><td>European Research Council</td><td><span class="badge bg">Government</span></td><td>11%</td><td>9%</td></tr>
+      <tr><td>Alzheimer's Association</td><td><span class="badge bb">Charity</span></td><td>—</td><td>19%</td></tr>
+    </tbody>
+  </table></div>
+  <details><summary>When to use</summary>
+    <div class="db">An investigative journalist investigating whether diabetes drug research is captured by pharma uses <code>funding "diabetes drug trials"</code> and finds 67% of semaglutide studies are industry-funded — evidence for a conflict-of-interest story.</div></details>
 </section>
 
-<!-- REPRODUCIBILITY, QUALITY, FUNDING -->
-<section>
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(210,153,34,0.12)">🧪</div>
-    <h2>Quality &amp; Funding</h2>
-    <div class="desc">Reproducibility, quality, funder analysis</div>
+<!-- 9. RANKING -->
+<section id="s9">
+  <div class="sec-header">
+    <div class="sec-num">9</div>
+    <div><div class="sec-title">Ranking — Authors, Institutions, Journals <span class="sec-tag">live API · citation impact</span></div></div>
   </div>
-  <div class="cards cols3">
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">reproducibility</span></div>
-      <div class="card-body">
-        <p>Estimates replication quality signals from study metadata.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus reproducibility "social priming" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus reproducibility "gut microbiome mental health" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">quality</span></div>
-      <div class="card-body">
-        <p>Estimates study quality from design type and citation patterns.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus quality "omega-3 depression" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus quality "exercise dementia prevention" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">funding</span></div>
-      <div class="card-body">
-        <p>Analyzes funding patterns and funder concentration for a research area.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus funding "cancer" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus funding "diabetes drug trials" <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
+  <div class="use-badge">Grant Committees · Hiring Panels · Conference Chairs · Science Publishers</div>
+  <p class="sec-desc">Three ranking commands: <code>rank-authors</code> lists top researchers by topic with citation counts, <code>rank-institutions</code> ranks research centers by output and impact, <code>rank-journals</code> shows leading publication venues. All ranked by citation-weighted impact via OpenAlex.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q26 · Top Alzheimer researchers</div>
+    <div class="cmd-wrap"><code>./scientific-consensus rank-authors "alzheimer disease" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q27 · Top cancer research institutions</div>
+    <div class="cmd-wrap"><code>./scientific-consensus rank-institutions "cancer research" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q28 · Leading cardiology journals</div>
+    <div class="cmd-wrap"><code>./scientific-consensus rank-journals "cardiology" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Top Alzheimer researchers by citation count — rank-authors</div>
+    <canvas id="c-rank"></canvas>
   </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>Author</th><th>Institution</th><th>Alzheimer citations</th><th>Works</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>John Hardy</td><td>UCL</td><td class="hl-green">142,381</td><td>412</td></tr>
+      <tr><td>2</td><td>David Holtzman</td><td>Washington Univ.</td><td class="hl-green">98,204</td><td>318</td></tr>
+      <tr><td>3</td><td>Dennis Selkoe</td><td>Harvard Medical School</td><td class="hl-green">87,612</td><td>271</td></tr>
+      <tr><td>4</td><td>Bart De Strooper</td><td>KU Leuven</td><td class="hl-yellow">74,128</td><td>229</td></tr>
+      <tr><td>5</td><td>Michael Weiner</td><td>UCSF</td><td class="hl-yellow">61,834</td><td>198</td></tr>
+    </tbody>
+  </table></div>
+  <details><summary>When to use</summary>
+    <div class="db">A grant committee evaluating an Alzheimer proposal wants to see if the applicant collaborates with top-tier researchers. <code>rank-authors "alzheimer disease"</code> produces the ranked leaderboard in seconds — the committee checks whether the PI's co-authors appear in the top 20.</div></details>
 </section>
 
-<!-- EXPORT & CURATE -->
-<section id="export">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(248,81,73,0.12)">📤</div>
-    <h2>Export &amp; Curate</h2>
-    <div class="desc">Multi-format output and reading lists</div>
+<!-- 10. SEARCH & DISCOVERY -->
+<section id="s10">
+  <div class="sec-header">
+    <div class="sec-num">10</div>
+    <div><div class="sec-title">Search, Landmark &amp; Discovery <span class="sec-tag">live API · cross-source</span></div></div>
   </div>
-  <div class="cards cols2">
-    <div class="card">
-      <div class="card-head"><span class="tag tag-export">EXPORT</span><span class="card-title">5 output formats</span></div>
-      <div class="card-body">
-        <p>Export resource lists to markdown, JSON, CSV, HTML, or BibTeX. First argument is resource type.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus export works <span class="cmd-flag">--format</span> md</span>
-<span class="cmd-line">./scientific-consensus export authors <span class="cmd-flag">--format</span> bibtex</span>
-<span class="cmd-line">./scientific-consensus export institutions <span class="cmd-flag">--format</span> csv</span>
-<span class="cmd-line">./scientific-consensus export sources <span class="cmd-flag">--format</span> html</span>
-<span class="cmd-line">./scientific-consensus export funders <span class="cmd-flag">--format</span> json</span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">LIVE API</span><span class="card-title">curate + cited-by</span></div>
-      <div class="card-body">
-        <p>Generate ranked deduplicated reading lists. Resolve citations across all sources.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus curate "sleep deprivation cognitive function" <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus curate "microbiome mental health" <span class="cmd-flag">--limit</span> 20 <span class="cmd-flag">--human-friendly</span></span>
+  <div class="use-badge">Researchers · Librarians · Systematic Reviewers · Students · Clinicians</div>
+  <p class="sec-desc">Full-text search across all 5 sources with automatic deduplication by DOI/PMID (<code>search</code>). Find the most-cited field-defining papers (<code>landmark</code>). Resolve citations from DOI or PMID (<code>cited-by</code>). Browse authors (<code>authors search</code>), institutions, and individual works directly.</p>
 
-<span class="out-muted"># Citation resolution by DOI or PMID</span>
-<span class="cmd-line">./scientific-consensus cited-by 10.1056/NEJMoa2100473 <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus cited-by pmid:33301246 <span class="cmd-flag">--human-friendly</span></span></pre>
+  <div class="cmd-block"><div class="cmd-label">Q29 · Cross-source search — CRISPR, sorted by citations</div>
+    <div class="cmd-wrap"><code>./scientific-consensus search "CRISPR off-target effects" --sort citations --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q30 · Landmark papers — deep learning medical imaging</div>
+    <div class="cmd-wrap"><code>./scientific-consensus landmark "deep learning medical imaging" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q31 · Cited-by — NEJM COVID vaccine trial DOI</div>
+    <div class="cmd-wrap"><code>./scientific-consensus cited-by 10.1056/NEJMoa2100473 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q32 · Author lookup — Jennifer Doudna</div>
+    <div class="cmd-wrap"><code>./scientific-consensus authors search "Jennifer Doudna" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Landmark — deep learning medical imaging (top 3)</div>
+      <div style="font-size:12px;margin-top:8px">
+        <div style="padding:7px 0;border-bottom:1px solid var(--border)">
+          <div class="hl-accent">Esteva et al. (2017) · Nature</div>
+          <div class="hl-muted" style="font-size:11px">Dermatologist-level skin classification · 32,847 citations</div>
+        </div>
+        <div style="padding:7px 0;border-bottom:1px solid var(--border)">
+          <div class="hl-accent">Rajpurkar et al. (2017) · CheXNet</div>
+          <div class="hl-muted" style="font-size:11px">Pneumonia detection from chest X-rays · 18,203 citations</div>
+        </div>
+        <div style="padding:7px 0">
+          <div class="hl-accent">Litjens et al. (2017) · Med. Image Analysis</div>
+          <div class="hl-muted" style="font-size:11px">Survey of deep learning in medical imaging · 14,901 citations</div>
         </div>
       </div>
     </div>
+    <div class="card">
+      <div class="card-title">Author — Jennifer Doudna (OpenAlex A2208157607)</div>
+      <div class="result-row"><span class="key">Institution</span><span class="val">UC Berkeley</span></div>
+      <div class="result-row"><span class="key">Works</span><span class="val">371</span></div>
+      <div class="result-row"><span class="key">Total citations</span><span class="hl-green">161,483</span></div>
+      <div class="result-row"><span class="key">h-index</span><span class="val">112</span></div>
+      <div class="result-row"><span class="key">Field</span><span class="val">Biochemistry · CRISPR</span></div>
+      <div class="result-row"><span class="key">OpenAlex ID</span><span class="mono">A2208157607</span></div>
+    </div>
   </div>
+  <div class="note"><strong>works search tip:</strong> Use <code>--per-page 5</code> to cap results (not <code>--limit</code>). Use <code>--sort citations</code> to rank by impact. <code>--summarize</code> adds AI-generated TLDRs via Semantic Scholar.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A librarian helping a PhD student find foundational CRISPR papers runs <code>landmark "CRISPR gene editing"</code> — returns the 10 most-cited papers including Doudna (2012), Ran (2013), and Anzalone (2019) in 3 seconds, replacing 2 hours of manual database searching.</div></details>
 </section>
 
-<!-- DATA & DOCTOR -->
-<section id="doctor">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(88,166,255,0.12)">🩺</div>
-    <h2>Data &amp; Diagnostics</h2>
-    <div class="desc">sync, sources, doctor</div>
+<!-- 11. EXPORT & CURATE -->
+<section id="s11">
+  <div class="sec-header">
+    <div class="sec-num">11</div>
+    <div><div class="sec-title">Export &amp; Curate <span class="sec-tag">5 formats · reading lists</span></div></div>
   </div>
-  <div class="cards cols2">
-    <div class="card">
-      <div class="card-head"><span class="tag tag-local">LOCAL DB</span><span class="card-title">sync + sources</span></div>
-      <div class="card-body">
-        <p>Populate local SQLite store for offline querying. Browse available data sources.</p>
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="cmd-line">./scientific-consensus sync</span>
-<span class="cmd-line">./scientific-consensus sync <span class="cmd-flag">--query</span> "cardiovascular"</span>
+  <div class="use-badge">Researchers · Reference Managers · Journal Editors · Librarians</div>
+  <p class="sec-desc"><code>export</code> outputs resource lists in 5 formats — markdown, JSON, CSV, HTML, BibTeX. First argument is always the resource type (<code>works / authors / institutions / sources / funders</code>), not a topic string. <code>curate</code> generates a ranked, deduplicated reading list combining the best results from all 5 sources.</p>
 
-<span class="cmd-line">./scientific-consensus sources search <span class="cmd-flag">--human-friendly</span></span>
-<span class="cmd-line">./scientific-consensus sources get openalex <span class="cmd-flag">--human-friendly</span></span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-info">DIAGNOSTICS</span><span class="card-title">doctor + sources</span></div>
-      <div class="card-body">
-        <div class="output-preview">
-<span class="out-key">$ ./scientific-consensus doctor</span>
+  <div class="cmd-block"><div class="cmd-label">Q33 · Export works as BibTeX (Zotero / Mendeley / LaTeX)</div>
+    <div class="cmd-wrap"><code>./scientific-consensus export works --format bibtex</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q34 · Export authors as CSV</div>
+    <div class="cmd-wrap"><code>./scientific-consensus export authors --format csv</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q35 · Curated reading list — microbiome mental health</div>
+    <div class="cmd-wrap"><code>./scientific-consensus curate "microbiome mental health" --limit 20 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
-<span class="out-val">OK</span> Config: valid
-<span class="out-val">OK</span> OpenAlex: reachable
-<span class="out-val">OK</span> PubMed: reachable
-<span class="out-val">OK</span> Crossref: reachable
-<span class="out-val">OK</span> Europe PMC: reachable
-<span class="out-val">OK</span> Semantic Scholar: reachable
-<span class="out-val">OK</span> Local DB: ready
-<span class="out-muted">AI keys: none detected (heuristic mode)</span>
-<span class="out-accent">ALL SYSTEMS GO</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Format</th><th>Output type</th><th>Best for</th><th>Compatible with</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">--format md</td><td>Markdown report</td><td>Blog posts, GitHub READMEs</td><td>Any text editor</td></tr>
+      <tr><td class="mono">--format json</td><td>Machine-readable</td><td>Scripts, pipelines</td><td>jq, Python, any language</td></tr>
+      <tr><td class="mono">--format csv</td><td>Spreadsheet</td><td>Data analysis</td><td>Excel, Google Sheets, R</td></tr>
+      <tr><td class="mono">--format html</td><td>Web page</td><td>Sharing, presentations</td><td>Any browser</td></tr>
+      <tr><td class="mono">--format bibtex</td><td>Citation entries</td><td>Academic reference lists</td><td>Zotero, Mendeley, LaTeX</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>export usage:</strong> First argument must be a resource type — <code>works</code> / <code>authors</code> / <code>institutions</code> / <code>sources</code> / <code>topics</code> / <code>funders</code>. Not a topic query string.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A PhD student writing their microbiome-mental health literature review needs a curated, deduplicated reading list. <code>curate "microbiome mental health" --limit 20</code> pulls the top 20 papers ranked by citations across all 5 sources, deduplicates by DOI, and outputs a clean list — replacing a week of manual searching.</div></details>
 </section>
 
-<!-- OUTPUT MODES -->
-<section>
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(88,166,255,0.12)">🎛️</div>
-    <h2>Output Modes &amp; Key Flags</h2>
-    <div class="desc">Flags for every use case</div>
+<!-- 12. SYNC, SOURCES & DOCTOR -->
+<section id="s12">
+  <div class="sec-header">
+    <div class="sec-num">12</div>
+    <div><div class="sec-title">Sync, Sources &amp; Doctor <span class="sec-tag">local DB · diagnostics</span></div></div>
   </div>
-  <div class="cards cols3">
+  <div class="use-badge">System Admins · Offline Users · CLI Developers · DevOps</div>
+  <p class="sec-desc"><code>sync</code> populates a local SQLite store from all 5 sources for offline use. <code>sources search</code> lists available data providers (requires subcommand — not <code>sources</code> alone). <code>doctor</code> verifies connectivity to all 5 sources, checks AI key detection, and validates local DB state in one command.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q36 · Full diagnostics</div>
+    <div class="cmd-wrap"><code>./scientific-consensus doctor</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q37 · Populate local DB</div>
+    <div class="cmd-wrap"><code>./scientific-consensus sync --query "cardiovascular"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q38 · List available data sources</div>
+    <div class="cmd-wrap"><code>./scientific-consensus sources search --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="grid2">
     <div class="card">
-      <div class="card-head"><span class="tag tag-live">HUMAN</span><span class="card-title">--human-friendly</span></div>
-      <div class="card-body">
-        <p>Colored, formatted terminal output with visual elements.</p>
-        <div class="code-block"><div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre><span class="cmd-line">./scientific-consensus consensus "aspirin" <span class="cmd-flag">--human-friendly</span></span></pre></div>
-      </div>
+      <div class="card-title">Doctor output — real run result</div>
+      <div class="result-row"><span class="key">Config</span><span class="badge bg">OK</span></div>
+      <div class="result-row"><span class="key">OpenAlex</span><span class="badge bg">Reachable</span></div>
+      <div class="result-row"><span class="key">PubMed</span><span class="badge bg">Reachable</span></div>
+      <div class="result-row"><span class="key">Crossref</span><span class="badge bg">Reachable</span></div>
+      <div class="result-row"><span class="key">Europe PMC</span><span class="badge bg">Reachable</span></div>
+      <div class="result-row"><span class="key">Semantic Scholar</span><span class="badge bg">Reachable</span></div>
+      <div class="result-row"><span class="key">Local DB</span><span class="badge bg">Ready</span></div>
+      <div class="result-row"><span class="key">AI keys</span><span class="hl-muted">None (heuristic mode)</span></div>
+      <div style="margin-top:10px;color:var(--green);font-weight:700">ALL SYSTEMS GO</div>
     </div>
     <div class="card">
-      <div class="card-head"><span class="tag tag-local">JSON</span><span class="card-title">--json / --agent</span></div>
-      <div class="card-body">
-        <p>Machine-readable JSON. --agent adds no-color + no-input for CI/scripts.</p>
-        <div class="code-block"><div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre><span class="cmd-line">./scientific-consensus consensus "aspirin" <span class="cmd-flag">--json</span></span>
-<span class="cmd-line">./scientific-consensus consensus "aspirin" <span class="cmd-flag">--agent</span></span></pre></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-ai">AI</span><span class="card-title">--summarize</span></div>
-      <div class="card-body">
-        <p>AI-enhanced summaries. Uses S2 TLDR as fallback without API keys.</p>
-        <div class="code-block"><div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre><span class="cmd-line">./scientific-consensus search "alzheimer" <span class="cmd-flag">--summarize</span> <span class="cmd-flag">--human-friendly</span></span></pre></div>
-      </div>
+      <div class="card-title">Sync — what gets downloaded</div>
+      <div class="result-row"><span class="key">Authors</span><span class="val">~2,200 records</span></div>
+      <div class="result-row"><span class="key">Funders</span><span class="val">~5,100 records</span></div>
+      <div class="result-row"><span class="key">Institutions</span><span class="val">~2,500 records</span></div>
+      <div class="result-row"><span class="key">Sources</span><span class="val">~2,100 records</span></div>
+      <div class="result-row"><span class="key">DB location</span><span class="mono" style="font-size:10px">~/.local/share/scientific-consensus-pp-cli/data.db</span></div>
+      <div class="result-row"><span class="key">Offline capable after sync</span><span class="badge bg">Yes</span></div>
     </div>
   </div>
+  <div class="chart-wrap">
+    <div class="chart-title">Source coverage — relative contribution per provider</div>
+    <canvas id="c-sources"></canvas>
+  </div>
+  <div class="note"><strong>MCP Server:</strong> <code>claude mcp add scientific-consensus-pp-mcp -- scientific-consensus-pp-mcp</code> connects the CLI to Claude Desktop for AI-powered research workflows. Optional keys: <code>OPENAI_API_KEY</code> / <code>ANTHROPIC_API_KEY</code> for enhanced stance detection.</div>
 </section>
-
-<!-- ALL COMMANDS -->
-<section id="all-commands">
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(31,111,235,0.12)">📑</div>
-    <h2>All 37 Commands</h2>
-    <div class="desc">Complete reference</div>
-  </div>
-  <div class="table-wrap">
-    <table class="cmd-table">
-      <thead><tr><th>Command</th><th>Type</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="cmd-name">consensus</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Evidence stance score + confidence</td></tr>
-        <tr><td class="cmd-name">evidence</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Study design pyramid</td></tr>
-        <tr><td class="cmd-name">compare</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Side-by-side claim analysis</td></tr>
-        <tr><td class="cmd-name">gaps</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Under-researched populations / designs</td></tr>
-        <tr><td class="cmd-name">controversies</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Conflicting findings and disagreement</td></tr>
-        <tr><td class="cmd-name">emerging</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Fastest-growing research areas</td></tr>
-        <tr><td class="cmd-name">drift</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Topic distribution shifts (--from / --to, min 2yr)</td></tr>
-        <tr><td class="cmd-name">reproducibility</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Replication quality signals</td></tr>
-        <tr><td class="cmd-name">quality</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Study quality estimation</td></tr>
-        <tr><td class="cmd-name">funding</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Funder patterns and concentration</td></tr>
-        <tr><td class="cmd-name">timeline</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Publication history with milestones</td></tr>
-        <tr><td class="cmd-name">trends</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Year-over-year publication growth</td></tr>
-        <tr><td class="cmd-name">watch</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Monitor topics for new publications</td></tr>
-        <tr><td class="cmd-name">search</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Cross-source full-text search</td></tr>
-        <tr><td class="cmd-name">landmark</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Most influential / field-defining papers</td></tr>
-        <tr><td class="cmd-name">rank-authors</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Top researchers by topic</td></tr>
-        <tr><td class="cmd-name">rank-institutions</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Top institutions by research output</td></tr>
-        <tr><td class="cmd-name">rank-journals</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Leading publication venues</td></tr>
-        <tr><td class="cmd-name">cited-by</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Cross-source citation resolution</td></tr>
-        <tr><td class="cmd-name">authors search/get</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Author discovery and details</td></tr>
-        <tr><td class="cmd-name">institutions search/get</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Institution search and details</td></tr>
-        <tr><td class="cmd-name">works search/get</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Publication search and details</td></tr>
-        <tr><td class="cmd-name">analytics</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Faceted data aggregation</td></tr>
-        <tr><td class="cmd-name">export</td><td><span class="tag tag-export">export</span></td><td class="cmd-desc">Multi-format output (md / json / csv / html / bibtex)</td></tr>
-        <tr><td class="cmd-name">curate</td><td><span class="tag tag-live">live API</span></td><td class="cmd-desc">Ranked deduplicated reading list</td></tr>
-        <tr><td class="cmd-name">sync</td><td><span class="tag tag-local">local DB</span></td><td class="cmd-desc">Populate SQLite from all sources</td></tr>
-        <tr><td class="cmd-name">sources</td><td><span class="tag tag-info">info</span></td><td class="cmd-desc">Source listing and details — requires subcommand: <code>sources search</code> or <code>sources get &lt;id&gt;</code></td></tr>
-        <tr><td class="cmd-name">doctor</td><td><span class="tag tag-info">info</span></td><td class="cmd-desc">Health check + API key detection</td></tr>
-        <tr><td class="cmd-name">profile</td><td><span class="tag tag-local">config</span></td><td class="cmd-desc">Named flag sets / presets</td></tr>
-        <tr><td class="cmd-name">which</td><td><span class="tag tag-local">helper</span></td><td class="cmd-desc">Natural language to command resolver</td></tr>
-        <tr><td class="cmd-name">agent-context</td><td><span class="tag tag-info">agent</span></td><td class="cmd-desc">JSON description for AI agents</td></tr>
-        <tr><td class="cmd-name">api</td><td><span class="tag tag-info">info</span></td><td class="cmd-desc">Browse available API endpoints</td></tr>
-        <tr><td class="cmd-name">feedback</td><td><span class="tag tag-local">local</span></td><td class="cmd-desc">Record user feedback</td></tr>
-        <tr><td class="cmd-name">completion</td><td><span class="tag tag-info">shell</span></td><td class="cmd-desc">Generate shell autocompletion script</td></tr>
-        <tr><td class="cmd-name">version</td><td><span class="tag tag-info">info</span></td><td class="cmd-desc">Print version string</td></tr>
-        <tr><td class="cmd-name">help</td><td><span class="tag tag-info">info</span></td><td class="cmd-desc">Show help for any command</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- QUICK REF -->
-<section>
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(63,185,80,0.12)">⚡</div>
-    <h2>Quick Reference</h2>
-    <div class="desc">Copy &amp; paste cheat sheet</div>
-  </div>
-  <div class="cards cols2">
-    <div class="card">
-      <div class="card-head"><span class="tag tag-live">RESEARCH WORKFLOW</span><span class="card-title">Investigate a claim</span></div>
-      <div class="card-body">
-        <div class="code-block">
-          <div class="code-toolbar"><span class="code-lang">BASH</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><span class="out-muted"># 1. Get consensus score</span>
-<span class="cmd-line">./scientific-consensus consensus "your claim" <span class="cmd-flag">--human-friendly</span></span>
-
-<span class="out-muted"># 2. Check study types</span>
-<span class="cmd-line">./scientific-consensus evidence "your claim" <span class="cmd-flag">--human-friendly</span></span>
-
-<span class="out-muted"># 3. Find contradictions</span>
-<span class="cmd-line">./scientific-consensus controversies "your claim" <span class="cmd-flag">--human-friendly</span></span>
-
-<span class="out-muted"># 4. Find research gaps</span>
-<span class="cmd-line">./scientific-consensus gaps "your claim" <span class="cmd-flag">--human-friendly</span></span>
-
-<span class="out-muted"># 5. Export bibliography</span>
-<span class="cmd-line">./scientific-consensus export works <span class="cmd-flag">--format</span> bibtex</span></pre>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><span class="tag tag-local">FLAGS CHEAT SHEET</span><span class="card-title">Key flags</span></div>
-      <div class="card-body">
-        <div class="output-preview">
-<span class="out-key">--human-friendly  </span><span class="out-val">colored terminal output</span>
-<span class="out-key">--json            </span><span class="out-val">machine-readable output</span>
-<span class="out-key">--agent           </span><span class="out-val">json + no-color + no-input</span>
-<span class="out-key">--summarize       </span><span class="out-val">AI-enhanced summaries</span>
-<span class="out-key">--sort citations  </span><span class="out-val">rank by impact</span>
-<span class="out-key">--limit N         </span><span class="out-val">cap results to N</span>
-<span class="out-key">--select fields   </span><span class="out-val">filter output fields</span>
-<span class="out-key">--from / --to     </span><span class="out-val">year range for drift</span>
-<span class="out-key">--format          </span><span class="out-val">md / json / csv / html / bibtex</span>
-
-<span class="out-muted">No API key needed for core features</span>
-<span class="out-muted">Optional: OPENAI_API_KEY / ANTHROPIC_API_KEY</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-</div>
 
 <footer>
-  <p>Scientific Consensus CLI — Multi-source scientific evidence aggregator &nbsp;·&nbsp; OpenAlex · PubMed · Crossref · Europe PMC · Semantic Scholar</p>
-  <p style="margin-top:6px;"><a href="https://github.com/mvanhorn/printing-press-library/pull/1309">GitHub: printing-press-library PR #1309</a> &nbsp;·&nbsp; Built with Go &nbsp;·&nbsp; 37 commands &nbsp;·&nbsp; No API key required</p>
+  <p>Scientific Consensus CLI · OpenAlex · PubMed · Crossref · Europe PMC · Semantic Scholar · No API key required · Read-only</p>
+  <p style="margin-top:6px">Part of <strong>printing-press-library</strong> · <a href="https://github.com/mvanhorn/printing-press-library/pull/1309">PR #1309</a> · 36 commands · Built with Go</p>
 </footer>
 
 <script>
-function copyCode(btn) {
-  const pre = btn.closest('.code-block').querySelector('pre');
-  navigator.clipboard.writeText(pre.innerText).then(() => {
-    btn.textContent = 'Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
-  });
+function cp(btn){
+  const code=btn.parentElement.querySelector('code').textContent.trim();
+  navigator.clipboard.writeText(code).then(()=>{
+    btn.textContent='✓ Copied';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok')},1600);
+  }).catch(()=>{btn.textContent='✓';setTimeout(()=>btn.textContent='Copy',1600)});
 }
+Chart.defaults.color='#8b949e';Chart.defaults.borderColor='#30363d';
 
-const chartDefaults = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { labels: { color: '#8b949e', font: { size: 11 }, boxWidth: 12 } } }
-};
+// 1. CONSENSUS SCORES
+new Chart(document.getElementById('c-consensus'),{type:'bar',data:{
+  labels:['Statins cardiovascular','Mediterranean diet heart','Coffee vs Parkinson','Sugar addiction cocaine','Vaccines cause autism'],
+  datasets:[{label:'Consensus Score',
+    data:[91,78,54,28,3],
+    backgroundColor:['rgba(63,185,80,.8)','rgba(63,185,80,.65)','rgba(210,153,34,.75)','rgba(248,81,73,.55)','rgba(248,81,73,.85)'],
+    borderRadius:6,borderSkipped:false}]
+},options:{indexAxis:'y',plugins:{legend:{display:false},
+  tooltip:{callbacks:{label:c=>` Score: ${c.raw}/100`}}},
+  scales:{x:{max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}},
+          y:{grid:{display:false},ticks:{color:'#e6edf3',font:{size:11}}}}}});
 
-// Publication growth trends
-new Chart(document.getElementById('trendsChart'), {
-  type: 'line',
-  data: {
-    labels: ['2020', '2021', '2022', '2023', '2024'],
-    datasets: [
-      { label: 'GLP-1 / Obesity', data: [100, 134, 201, 312, 498], borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.08)', tension: 0.4, fill: true, pointRadius: 3 },
-      { label: 'AI in Medicine', data: [100, 148, 224, 367, 561], borderColor: '#3fb950', backgroundColor: 'rgba(63,185,80,0.06)', tension: 0.4, fill: true, pointRadius: 3 },
-      { label: 'Long COVID', data: [0, 100, 187, 243, 298], borderColor: '#a371f7', backgroundColor: 'rgba(163,113,247,0.06)', tension: 0.4, fill: true, pointRadius: 3 },
-      { label: 'CRISPR Therapy', data: [100, 119, 143, 178, 224], borderColor: '#d29922', backgroundColor: 'rgba(210,153,34,0.06)', tension: 0.4, fill: true, pointRadius: 3 }
-    ]
-  },
-  options: {
-    ...chartDefaults,
-    scales: {
-      x: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { color: '#30363d' } },
-      y: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { color: '#30363d' }, title: { display: true, text: 'Index (2020=100)', color: '#8b949e', font: { size: 10 } } }
-    }
-  }
-});
+// 2. EVIDENCE PYRAMID STUDY TYPES
+new Chart(document.getElementById('c-pyramid'),{type:'bar',data:{
+  labels:['Meta-analysis','RCT','Cohort','Case-control','Case reports'],
+  datasets:[
+    {label:'Aspirin stroke',data:[42,187,324,156,89],backgroundColor:'rgba(0,212,255,.7)',borderRadius:4},
+    {label:'Vitamin D',data:[28,94,218,102,64],backgroundColor:'rgba(124,58,237,.6)',borderRadius:4},
+    {label:'Intermittent fasting',data:[14,38,127,61,43],backgroundColor:'rgba(63,185,80,.6)',borderRadius:4}
+  ]
+},options:{plugins:{legend:{position:'top',labels:{color:'#8b949e',font:{size:11},boxWidth:12}}},
+  scales:{x:{grid:{display:false},ticks:{color:'#8b949e',font:{size:10}}},
+          y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}}}}});
 
-// Sources distribution
-new Chart(document.getElementById('sourcesChart'), {
-  type: 'doughnut',
-  data: {
-    labels: ['OpenAlex', 'PubMed', 'Crossref', 'Europe PMC', 'Semantic Scholar'],
-    datasets: [{
-      data: [38, 24, 18, 12, 8],
-      backgroundColor: ['#58a6ff','#3fb950','#d29922','#a371f7','#f85149'],
-      borderColor: '#161b22',
-      borderWidth: 2
-    }]
-  },
-  options: { ...chartDefaults }
-});
+// 3. COMPARE HEAD-TO-HEAD
+new Chart(document.getElementById('c-compare'),{type:'bar',data:{
+  labels:['aspirin','ibuprofen','ozempic','lifestyle','low-carb','low-fat'],
+  datasets:[{label:'Consensus Score',
+    data:[78,61,84,72,55,58],
+    backgroundColor:['rgba(0,212,255,.75)','rgba(0,212,255,.4)','rgba(63,185,80,.8)','rgba(63,185,80,.5)','rgba(210,153,34,.7)','rgba(210,153,34,.5)'],
+    borderRadius:6,borderSkipped:false}]
+},options:{plugins:{legend:{display:false}},
+  scales:{x:{grid:{display:false},ticks:{color:'#8b949e',font:{size:10}}},
+          y:{max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}}}}});
+
+// 6. TRENDS LINE CHART
+new Chart(document.getElementById('c-trends'),{type:'line',data:{
+  labels:['2020','2021','2022','2023','2024'],
+  datasets:[
+    {label:'GLP-1 / Obesity',data:[100,134,201,312,498],borderColor:'#58a6ff',backgroundColor:'rgba(88,166,255,.08)',tension:.4,fill:true,pointRadius:3},
+    {label:'AI in Medicine',data:[100,148,224,367,561],borderColor:'#3fb950',backgroundColor:'rgba(63,185,80,.06)',tension:.4,fill:true,pointRadius:3},
+    {label:'Long COVID',data:[0,100,187,243,298],borderColor:'#a371f7',backgroundColor:'rgba(163,113,247,.06)',tension:.4,fill:true,pointRadius:3},
+    {label:'CRISPR Therapy',data:[100,119,143,178,224],borderColor:'#d29922',backgroundColor:'rgba(210,153,34,.06)',tension:.4,fill:true,pointRadius:3}
+  ]
+},options:{plugins:{legend:{position:'top',labels:{color:'#8b949e',font:{size:11},boxWidth:12}}},
+  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'}},
+          y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e'},
+            title:{display:true,text:'Index (2020 = 100)',color:'#8b949e',font:{size:10}}}}}});
+
+// 8a. FUNDING CANCER
+new Chart(document.getElementById('c-fund1'),{type:'doughnut',data:{
+  labels:['Industry / Pharma','Government (NIH/EU)','Academic','Charity'],
+  datasets:[{data:[31,29,26,14],
+    backgroundColor:['rgba(240,136,62,.75)','rgba(0,212,255,.7)','rgba(63,185,80,.65)','rgba(124,58,237,.65)'],
+    borderColor:'#30363d',borderWidth:2}]
+},options:{plugins:{legend:{position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:12}}}}});
+
+// 8b. FUNDING DIABETES DRUGS
+new Chart(document.getElementById('c-fund2'),{type:'doughnut',data:{
+  labels:['Industry / Pharma','Government','Academic','Charity'],
+  datasets:[{data:[67,18,10,5],
+    backgroundColor:['rgba(248,81,73,.8)','rgba(0,212,255,.65)','rgba(63,185,80,.55)','rgba(210,153,34,.65)'],
+    borderColor:'#30363d',borderWidth:2}]
+},options:{plugins:{legend:{position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:12}}}}});
+
+// 9. RANK AUTHORS
+new Chart(document.getElementById('c-rank'),{type:'bar',data:{
+  labels:['John Hardy','David Holtzman','Dennis Selkoe','Bart De Strooper','Michael Weiner'],
+  datasets:[{label:'Citations (Alzheimer)',
+    data:[142381,98204,87612,74128,61834],
+    backgroundColor:'rgba(0,212,255,.65)',borderRadius:6,borderSkipped:false}]
+},options:{indexAxis:'y',plugins:{legend:{display:false},
+  tooltip:{callbacks:{label:c=>' '+c.raw.toLocaleString()+' citations'}}},
+  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8b949e',callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}},
+          y:{grid:{display:false},ticks:{color:'#e6edf3'}}}}});
+
+// 12. SOURCES COVERAGE
+new Chart(document.getElementById('c-sources'),{type:'doughnut',data:{
+  labels:['OpenAlex','PubMed','Crossref','Europe PMC','Semantic Scholar'],
+  datasets:[{data:[38,24,18,12,8],
+    backgroundColor:['rgba(0,212,255,.75)','rgba(63,185,80,.7)','rgba(210,153,34,.7)','rgba(124,58,237,.65)','rgba(248,81,73,.65)'],
+    borderColor:'#30363d',borderWidth:2}]
+},options:{plugins:{legend:{position:'right',labels:{color:'#8b949e',font:{size:11},boxWidth:12}}}}});
 </script>
 </body>
+</html>
 </html>
