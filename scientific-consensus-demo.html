@@ -135,7 +135,7 @@ footer a{color:var(--accent);text-decoration:none}
   <a href="#s9">9·Ranking</a>
   <a href="#s10">10·Search</a>
   <a href="#s11">11·Export</a>
-  <a href="#s12">12·Doctor</a>
+  <a href="#s12">12·Doctor+Utils</a>
 </nav>
 
 <div class="hero">
@@ -355,6 +355,8 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="cmd-wrap"><code>./scientific-consensus emerging --limit 10 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
   <div class="cmd-block"><div class="cmd-label">Q19 · mRNA vaccines publication timeline</div>
     <div class="cmd-wrap"><code>./scientific-consensus timeline "mRNA vaccines" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q20 · Watch topic — alert on new publications</div>
+    <div class="cmd-wrap"><code>./scientific-consensus watch "long covid" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="chart-wrap">
     <div class="chart-title">Publication Growth Index (2020 = 100) — trends command</div>
@@ -383,11 +385,11 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="use-badge">Systematic Reviewers · IRB Members · Research Integrity Officers · Statisticians</div>
   <p class="sec-desc"><code>reproducibility</code> estimates replication quality from p-value distributions, sample sizes, pre-registration rates, and known replication failures — all from metadata, without reading papers. <code>quality</code> scores study quality from design type, blinding reports, and citation patterns.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q20 · Social priming reproducibility</div>
+  <div class="cmd-block"><div class="cmd-label">Q21 · Social priming reproducibility</div>
     <div class="cmd-wrap"><code>./scientific-consensus reproducibility "social priming effects" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q21 · Gut microbiome mental health reproducibility</div>
+  <div class="cmd-block"><div class="cmd-label">Q22 · Gut microbiome mental health reproducibility</div>
     <div class="cmd-wrap"><code>./scientific-consensus reproducibility "gut microbiome mental health" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q22 · Omega-3 depression quality</div>
+  <div class="cmd-block"><div class="cmd-label">Q23 · Omega-3 depression quality</div>
     <div class="cmd-wrap"><code>./scientific-consensus quality "omega-3 depression" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="grid2">
@@ -421,11 +423,11 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="use-badge">Health Economists · Investigative Journalists · Policy Analysts · Grant Officers</div>
   <p class="sec-desc">Analyzes funding source patterns — classifies funders as government, industry, academic, or charity. Identifies funder concentration (one funder dominating a research area). Reveals potential conflicts of interest hidden in the research landscape.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q23 · Cancer funding patterns</div>
+  <div class="cmd-block"><div class="cmd-label">Q24 · Cancer funding patterns</div>
     <div class="cmd-wrap"><code>./scientific-consensus funding "cancer" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q24 · Diabetes drug trials funding</div>
+  <div class="cmd-block"><div class="cmd-label">Q25 · Diabetes drug trials funding</div>
     <div class="cmd-wrap"><code>./scientific-consensus funding "diabetes drug trials" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q25 · Alzheimer funding</div>
+  <div class="cmd-block"><div class="cmd-label">Q26 · Alzheimer funding</div>
     <div class="cmd-wrap"><code>./scientific-consensus funding "alzheimer" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="grid2">
@@ -460,11 +462,11 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="use-badge">Grant Committees · Hiring Panels · Conference Chairs · Science Publishers</div>
   <p class="sec-desc">Three ranking commands: <code>rank-authors</code> lists top researchers by topic with citation counts, <code>rank-institutions</code> ranks research centers by output and impact, <code>rank-journals</code> shows leading publication venues. All ranked by citation-weighted impact via OpenAlex.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q26 · Top Alzheimer researchers</div>
+  <div class="cmd-block"><div class="cmd-label">Q27 · Top Alzheimer researchers</div>
     <div class="cmd-wrap"><code>./scientific-consensus rank-authors "alzheimer disease" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q27 · Top cancer research institutions</div>
+  <div class="cmd-block"><div class="cmd-label">Q28 · Top cancer research institutions</div>
     <div class="cmd-wrap"><code>./scientific-consensus rank-institutions "cancer research" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q28 · Leading cardiology journals</div>
+  <div class="cmd-block"><div class="cmd-label">Q29 · Leading cardiology journals</div>
     <div class="cmd-wrap"><code>./scientific-consensus rank-journals "cardiology" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="chart-wrap">
@@ -494,14 +496,20 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="use-badge">Researchers · Librarians · Systematic Reviewers · Students · Clinicians</div>
   <p class="sec-desc">Full-text search across all 5 sources with automatic deduplication by DOI/PMID (<code>search</code>). Find the most-cited field-defining papers (<code>landmark</code>). Resolve citations from DOI or PMID (<code>cited-by</code>). Browse authors (<code>authors search</code>), institutions, and individual works directly.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q29 · Cross-source search — CRISPR, sorted by citations</div>
+  <div class="cmd-block"><div class="cmd-label">Q30 · Cross-source search — CRISPR, sorted by citations</div>
     <div class="cmd-wrap"><code>./scientific-consensus search "CRISPR off-target effects" --sort citations --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q30 · Landmark papers — deep learning medical imaging</div>
+  <div class="cmd-block"><div class="cmd-label">Q31 · Landmark papers — deep learning medical imaging</div>
     <div class="cmd-wrap"><code>./scientific-consensus landmark "deep learning medical imaging" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q31 · Cited-by — NEJM COVID vaccine trial DOI</div>
+  <div class="cmd-block"><div class="cmd-label">Q32 · Cited-by — NEJM COVID vaccine trial DOI</div>
     <div class="cmd-wrap"><code>./scientific-consensus cited-by 10.1056/NEJMoa2100473 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q32 · Author lookup — Jennifer Doudna</div>
+  <div class="cmd-block"><div class="cmd-label">Q33 · Author lookup — Jennifer Doudna</div>
     <div class="cmd-wrap"><code>./scientific-consensus authors search "Jennifer Doudna" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q34 · Works search — CRISPR cancer, 5 per page</div>
+    <div class="cmd-wrap"><code>./scientific-consensus works search "CRISPR cancer" --per-page 5 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q35 · Institution search — Harvard Medical School</div>
+    <div class="cmd-wrap"><code>./scientific-consensus institutions search "Harvard Medical School" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q36 · Analytics — faceted aggregation for diabetes</div>
+    <div class="cmd-wrap"><code>./scientific-consensus analytics "diabetes" --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="grid2">
     <div class="card">
@@ -545,11 +553,11 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="use-badge">Researchers · Reference Managers · Journal Editors · Librarians</div>
   <p class="sec-desc"><code>export</code> outputs resource lists in 5 formats — markdown, JSON, CSV, HTML, BibTeX. First argument is always the resource type (<code>works / authors / institutions / sources / funders</code>), not a topic string. <code>curate</code> generates a ranked, deduplicated reading list combining the best results from all 5 sources.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q33 · Export works as BibTeX (Zotero / Mendeley / LaTeX)</div>
+  <div class="cmd-block"><div class="cmd-label">Q37 · Export works as BibTeX (Zotero / Mendeley / LaTeX)</div>
     <div class="cmd-wrap"><code>./scientific-consensus export works --format bibtex</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q34 · Export authors as CSV</div>
+  <div class="cmd-block"><div class="cmd-label">Q38 · Export authors as CSV</div>
     <div class="cmd-wrap"><code>./scientific-consensus export authors --format csv</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q35 · Curated reading list — microbiome mental health</div>
+  <div class="cmd-block"><div class="cmd-label">Q39 · Curated reading list — microbiome mental health</div>
     <div class="cmd-wrap"><code>./scientific-consensus curate "microbiome mental health" --limit 20 --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="tbl-wrap"><table>
@@ -567,21 +575,37 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="db">A PhD student writing their microbiome-mental health literature review needs a curated, deduplicated reading list. <code>curate "microbiome mental health" --limit 20</code> pulls the top 20 papers ranked by citations across all 5 sources, deduplicates by DOI, and outputs a clean list — replacing a week of manual searching.</div></details>
 </section>
 
-<!-- 12. SYNC, SOURCES & DOCTOR -->
+<!-- 12. SYNC, SOURCES, DOCTOR & UTILITIES -->
 <section id="s12">
   <div class="sec-header">
     <div class="sec-num">12</div>
-    <div><div class="sec-title">Sync, Sources &amp; Doctor <span class="sec-tag">local DB · diagnostics</span></div></div>
+    <div><div class="sec-title">Sync, Sources, Doctor &amp; Utilities <span class="sec-tag">local DB · diagnostics · shell tools</span></div></div>
   </div>
-  <div class="use-badge">System Admins · Offline Users · CLI Developers · DevOps</div>
-  <p class="sec-desc"><code>sync</code> populates a local SQLite store from all 5 sources for offline use. <code>sources search</code> lists available data providers (requires subcommand — not <code>sources</code> alone). <code>doctor</code> verifies connectivity to all 5 sources, checks AI key detection, and validates local DB state in one command.</p>
+  <div class="use-badge">System Admins · Offline Users · CLI Developers · DevOps · All Users</div>
+  <p class="sec-desc"><code>sync</code> populates a local SQLite store for offline use. <code>sources search</code> lists providers (subcommand required). <code>doctor</code> checks all 5 sources + DB state. Utility commands: <code>profile</code> saves named flag sets, <code>which</code> converts natural language to CLI commands, <code>agent-context</code> exposes the CLI to AI agents, <code>api</code> browses endpoints, <code>feedback</code>, <code>completion</code>, <code>version</code>, <code>help</code>.</p>
 
-  <div class="cmd-block"><div class="cmd-label">Q36 · Full diagnostics</div>
+  <div class="cmd-block"><div class="cmd-label">Q44 · Full diagnostics</div>
     <div class="cmd-wrap"><code>./scientific-consensus doctor</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q37 · Populate local DB</div>
+  <div class="cmd-block"><div class="cmd-label">Q45 · Populate local DB</div>
     <div class="cmd-wrap"><code>./scientific-consensus sync --query "cardiovascular"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
-  <div class="cmd-block"><div class="cmd-label">Q38 · List available data sources</div>
+  <div class="cmd-block"><div class="cmd-label">Q46 · List available data sources</div>
     <div class="cmd-wrap"><code>./scientific-consensus sources search --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q47 · Save a named profile — always use limit 20 + human-friendly</div>
+    <div class="cmd-wrap"><code>./scientific-consensus profile create myprofile --limit 20</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q48 · Natural language → CLI command resolver</div>
+    <div class="cmd-wrap"><code>./scientific-consensus which "what does evidence say about coffee"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q49 · Agent context — expose CLI to AI agents / MCP</div>
+    <div class="cmd-wrap"><code>./scientific-consensus agent-context --json</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q50 · Browse API endpoints</div>
+    <div class="cmd-wrap"><code>./scientific-consensus api --human-friendly</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q51 · Enable bash autocompletion</div>
+    <div class="cmd-wrap"><code>./scientific-consensus completion bash >> ~/.bashrc</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q52 · Version info</div>
+    <div class="cmd-wrap"><code>./scientific-consensus version</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q53 · Help — list all commands</div>
+    <div class="cmd-wrap"><code>./scientific-consensus help</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q54 · Submit feedback</div>
+    <div class="cmd-wrap"><code>./scientific-consensus feedback "great tool"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
 
   <div class="grid2">
     <div class="card">
