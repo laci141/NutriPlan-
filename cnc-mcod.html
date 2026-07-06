@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CNC M-cod · HMI Dashboard</title>
+<style>
+/* ============================================================
+   CSS TOKENEK – Glassmorphism + Neon
+   ============================================================ */
+:root{
+  --bg-0:#070a10; --bg-1:#0b111c;
+  --glass:rgba(255,255,255,.045); --glass-strong:rgba(255,255,255,.07);
+  --stroke:rgba(255,255,255,.10); --stroke-soft:rgba(255,255,255,.06);
+  --txt:#e8eef7; --txt-dim:#93a1b5; --txt-faint:#5f6f84;
+  --cyan:#2ee6ff; --green:#34ffab;
+  --cyan-glow:rgba(46,230,255,.35); --green-glow:rgba(52,255,171,.30);
+  --c-prog:#ff6b81; --c-prog-glow:rgba(255,107,129,.30);
+  --c-table:#2ee6ff; --c-table-glow:rgba(46,230,255,.30);
+  --c-vac:#b085ff; --c-vac-glow:rgba(176,133,255,.30);
+  --c-move:#34ffab; --c-move-glow:rgba(52,255,171,.30);
+  --c-act:#ffc234; --c-act-glow:rgba(255,194,52,.30);
+  --radius:20px; --radius-sm:13px;
+  --shadow:0 18px 50px -18px rgba(0,0,0,.75);
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --transition:.25s ease;
+}
+html[data-theme="light"]{
+  --bg-0:#eef2f8; --bg-1:#ffffff;
+  --glass:rgba(15,25,45,.035); --glass-strong:rgba(15,25,45,.06);
+  --stroke:rgba(15,25,45,.12); --stroke-soft:rgba(15,25,45,.07);
+  --txt:#132033; --txt-dim:#48586e; --txt-faint:#7d8da0;
+  --shadow:0 18px 45px -20px rgba(30,50,90,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--sans);color:var(--txt);background:var(--bg-0);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;font-size:28px}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(60vw 55vh at 8% -5%,rgba(46,230,255,.14),transparent 60%),
+  radial-gradient(55vw 50vh at 100% 0%,rgba(52,255,171,.12),transparent 55%),
+  radial-gradient(70vw 60vh at 50% 115%,rgba(176,133,255,.10),transparent 60%)}
+/* ---------- LAYOUT ---------- */
+.app{display:grid;grid-template-columns:340px 1fr;min-height:100vh}
+/* ---------- SIDEBAR ---------- */
+.sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;padding:24px 18px 34px;
+  background:linear-gradient(180deg,var(--glass-strong),var(--glass));
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border-right:1px solid var(--stroke);display:flex;flex-direction:column;gap:8px}
+.brand{display:flex;align-items:center;gap:13px;margin-bottom:14px}
+.brand .logo{width:52px;height:52px;flex:0 0 52px;border-radius:14px;display:grid;place-items:center;font-size:28px;
+  background:linear-gradient(135deg,rgba(46,230,255,.25),rgba(52,255,171,.22));
+  border:1px solid var(--stroke);box-shadow:0 0 22px var(--cyan-glow) inset}
+.brand h1{font-size:32px;font-weight:800;letter-spacing:.3px;line-height:1.1}
+.brand span{font-size:14px;color:var(--txt-dim);letter-spacing:2px;text-transform:uppercase}
+/* Kereső a sidebarban */
+.search-wrap{position:relative;margin-bottom:12px}
+.search-wrap .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:20px;opacity:.7}
+#search{width:100%;padding:13px 38px 13px 44px;font-size:22px;color:var(--txt);background:var(--glass);
+  border:1px solid var(--stroke);border-radius:14px;font-family:var(--sans);transition:.2s}
+#search:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 4px var(--cyan-glow)}
+#search::placeholder{color:var(--txt-faint)}
+.search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;
+  color:var(--txt-faint);cursor:pointer;font-size:20px;padding:4px}
+.nav-title{font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:var(--txt-faint);margin:14px 6px 6px;font-weight:700}
+.nav-list{display:flex;flex-direction:column;gap:3px}
+.nav-item{display:flex;align-items:center;gap:14px;padding:12px 15px;border-radius:12px;cursor:pointer;
+  font-size:28px;font-weight:600;color:var(--txt-dim);background:transparent;border:1px solid transparent;
+  transition:var(--transition);font-family:var(--sans);text-decoration:none}
+.nav-item .ico{font-size:24px;width:30px;text-align:center}
+.nav-item:hover{background:var(--glass);color:var(--txt);transform:translateX(2px)}
+.nav-item.active{color:var(--txt);background:var(--glass-strong);border-color:var(--stroke);box-shadow:0 0 18px var(--cyan-glow) inset}
+.nav-item.active .ico{filter:drop-shadow(0 0 6px var(--cyan-glow))}
+.sidebar .lang-switch{display:none}
+.theme-btn{background:var(--glass);border:1px solid var(--stroke);color:var(--txt-dim);padding:11px 14px;
+  border-radius:12px;cursor:pointer;font-size:27px;font-weight:600;transition:var(--transition);
+  font-family:var(--sans);margin-top:8px;display:flex;align-items:center;gap:10px;justify-content:center}
+.theme-btn:hover{color:var(--txt);border-color:var(--cyan);box-shadow:0 0 14px var(--cyan-glow)}
+#dlBtn:hover{border-color:var(--green);box-shadow:0 0 14px var(--green-glow)}
+/* ---------- MAIN ---------- */
+.main{padding:24px clamp(18px,3vw,44px) 60px;max-width:1480px;width:100%}
+.topbar{display:flex;align-items:center;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.hamburger{display:none;background:var(--glass);border:1px solid var(--stroke);color:var(--txt);
+  width:52px;height:52px;border-radius:14px;font-size:26px;cursor:pointer}
+.page-title{font-size:clamp(28px,3.8vw,40px);font-weight:800;letter-spacing:.2px;display:flex;align-items:center;gap:14px}
+.page-title .pt-ico{font-size:34px}
+.page-sub{color:var(--txt-dim);font-size:19px;margin-top:2px}
+.spacer{flex:1}
+.stat-pill{font-family:var(--mono);font-size:15px;color:var(--txt-dim);background:var(--glass);
+  border:1px solid var(--stroke);padding:8px 15px;border-radius:999px}
+#view{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* ---------- DASHBOARD ---------- */
+.dash-lang{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px;background:var(--glass);padding:10px 14px;border-radius:18px;border:1px solid var(--stroke)}
+.dash-lang .lang-btn{background:transparent;border:none;color:var(--txt-dim);font-weight:700;font-size:24px;padding:8px 18px;border-radius:999px;cursor:pointer;transition:.15s;font-family:var(--sans)}
+.dash-lang .lang-btn:hover{color:var(--txt)}
+.dash-lang .lang-btn.active{background:var(--cyan);color:#06121a;box-shadow:0 0 14px var(--cyan-glow)}
+.dash-search{max-width:700px;margin:0 auto 30px auto;position:relative}
+.dash-search input{width:100%;padding:18px 24px 18px 60px;font-size:24px;color:var(--txt);background:var(--glass-strong);border:2px solid var(--stroke);border-radius:18px;font-family:var(--sans);transition:.2s}
+.dash-search input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 5px var(--cyan-glow)}
+.dash-search .ico{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.7}
+.dash-cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:22px;max-width:1100px;margin:0 auto}
+.dash-cat{background:linear-gradient(160deg,var(--glass-strong),var(--glass));border:1px solid var(--stroke);border-radius:var(--radius);padding:22px 16px;text-align:center;cursor:pointer;transition:var(--transition);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.dash-cat::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:var(--cat);box-shadow:0 0 20px var(--cat)}
+.dash-cat:hover{transform:translateY(-6px);border-color:var(--cat);box-shadow:0 18px 40px -14px var(--cat),0 0 30px -10px var(--cat)}
+.dash-cat .ico{font-size:48px;display:block;margin-bottom:6px}
+.dash-cat .name{font-size:20px;font-weight:800;margin-bottom:2px}
+.dash-cat .count{font-size:16px;color:var(--txt-dim)}
+.dash-info{text-align:center;color:var(--txt-dim);font-size:20px;margin:28px 0 6px;opacity:.8}
+/* ---------- M-KÓDOK ---------- */
+.category{margin-bottom:22px;scroll-margin-top:20px}
+.cat-head{display:flex;align-items:center;gap:16px;cursor:pointer;user-select:none;padding:18px 22px;border-radius:var(--radius);background:linear-gradient(120deg,var(--glass-strong),var(--glass));border:1px solid var(--stroke);backdrop-filter:blur(16px);transition:var(--transition);position:relative;overflow:hidden}
+.cat-head::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--cat);box-shadow:0 0 20px var(--cat)}
+.cat-head:hover{border-color:var(--cat);box-shadow:0 0 24px -6px var(--cat)}
+.cat-ico{width:54px;height:54px;flex:0 0 54px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:color-mix(in srgb,var(--cat) 18%,transparent);border:1px solid color-mix(in srgb,var(--cat) 45%,transparent);box-shadow:0 0 18px -4px var(--cat)}
+.cat-titles{flex:1;min-width:0}
+.cat-titles h2{font-size:23px;font-weight:800}
+.cat-titles .sub{font-size:16px;color:var(--txt-dim);font-style:italic}
+.cat-count{font-family:var(--mono);font-size:15px;color:var(--cat);border:1px solid color-mix(in srgb,var(--cat) 40%,transparent);padding:5px 12px;border-radius:999px;background:color-mix(in srgb,var(--cat) 10%,transparent)}
+.cat-chev{font-size:19px;color:var(--txt-dim);transition:transform .28s ease}
+.category.collapsed .cat-chev{transform:rotate(-90deg)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;padding:18px 2px 4px;transition:.3s}
+.category.collapsed .cards{display:none}
+.card{position:relative;border-radius:var(--radius);padding:18px 16px 16px;background:linear-gradient(160deg,var(--glass-strong),var(--glass));border:1px solid var(--stroke);backdrop-filter:blur(14px);box-shadow:var(--shadow);transition:transform .22s,box-shadow .22s,border-color .22s;animation:pop .35s ease both}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.card:hover{transform:translateY(-4px);border-color:var(--cat);box-shadow:0 22px 44px -20px var(--cat),0 0 30px -12px var(--cat)}
+.card-top{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.code-badge{font-family:var(--mono);font-weight:800;font-size:42px;letter-spacing:.5px;color:#06121a;background:var(--cat);padding:4px 14px;border-radius:12px;box-shadow:0 0 20px -3px var(--cat)}
+.card-titles{flex:1;min-width:0}
+.card-titles .hu{font-size:24px;font-weight:800;line-height:1.2}
+.card-titles .ro{display:none}
+.card-actions{display:flex;gap:4px}
+.icon-btn{background:var(--glass);border:1px solid var(--stroke);color:var(--txt-dim);width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:18px;display:grid;place-items:center;transition:.15s}
+.icon-btn:hover{color:var(--txt);border-color:var(--cat);background:var(--glass-strong)}
+.card-desc-top{font-size:28px;font-weight:500;margin:4px 0 11px 0;color:var(--txt);line-height:1.4;border-left:5px solid var(--cat);padding-left:14px;background:rgba(255,255,255,.03);border-radius:0 8px 8px 0}
+.card-field{margin-top:9px}
+.card-field .lbl{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--txt-faint);font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.card-field .val{font-size:20px;color:var(--txt)}
+.card-field .val.mono{font-family:var(--mono);font-size:20px;color:var(--cyan);background:rgba(46,230,255,.08);border:1px solid var(--stroke-soft);padding:5px 9px;border-radius:10px;display:inline-block}
+.warn{margin-top:11px;font-size:18px;color:#ffd9d0;background:rgba(255,107,129,.10);border:1px solid rgba(255,107,129,.35);border-radius:12px;padding:8px 12px;display:flex;gap:8px;align-items:flex-start}
+.warn .wi{flex:0 0 auto}
+.note-box{margin-top:11px;display:none}
+.note-box.show{display:block}
+.note-box textarea{width:100%;min-height:56px;resize:vertical;font-size:20px;color:var(--txt);font-family:var(--sans);background:var(--glass);border:1px solid var(--stroke);border-radius:11px;padding:9px}
+.note-box textarea:focus{outline:none;border-color:var(--cat)}
+/* ---------- ELMETÉRKÉP (SVG) ---------- */
+.mindmap-wrap{max-width:1200px;margin:0 auto;padding:10px 0;overflow:hidden}
+.mm-title{text-align:center;font-size:32px;font-weight:800;margin-bottom:14px}
+.mm-controls{display:flex;gap:12px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.mm-controls button{background:var(--glass);border:1px solid var(--stroke);color:var(--txt);padding:9px 18px;border-radius:999px;cursor:pointer;font-size:24px;font-weight:600;transition:var(--transition);font-family:var(--sans)}
+.mm-controls button:hover{border-color:var(--cyan);box-shadow:0 0 16px var(--cyan-glow)}
+.mm-container{
+  position:relative;
+  background:var(--glass);
+  border-radius:var(--radius);
+  border:1px solid var(--stroke);
+  width:100%;
+  height:1260px;
+  overflow:hidden;
+  touch-action:none;
+  padding:10px;
+}
+.mm-container svg{
+  display:block;
+  width:100%;
+  height:100%;
+  cursor:grab;
+}
+.mm-container svg:active{cursor:grabbing}
+.mm-node-text{font-size:18px;font-weight:700;fill:var(--txt);dominant-baseline:central;text-anchor:middle}
+.mm-node-text-code{font-size:14px;font-weight:600;fill:#39ff14;dominant-baseline:central;text-anchor:middle}
+.mm-node-text-cat{font-size:13px;font-weight:600;fill:var(--txt-dim);dominant-baseline:central;text-anchor:middle}
+.mm-circle-cat{cursor:pointer;transition:filter .2s}
+.mm-circle-cat:hover{filter:brightness(1.3)}
+.mm-code-rect{cursor:pointer;transition:filter .2s}
+.mm-code-rect:hover{filter:brightness(1.5)}
+.mm-connector-line{stroke-width:1.5;fill:none;opacity:0.5}
+/* ---------- MUNKAMENETEK ---------- */
+.flow-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.flow-tab{font-size:24px;font-weight:700;padding:10px 18px;border-radius:12px;cursor:pointer;background:var(--glass);border:1px solid var(--stroke);color:var(--txt-dim);transition:.16s;font-family:var(--sans)}
+.flow-tab:hover{color:var(--txt);background:var(--glass-strong)}
+.flow-tab.active{color:#06121a;background:linear-gradient(120deg,var(--cyan),var(--green));border-color:transparent;box-shadow:0 0 20px -6px var(--cyan-glow)}
+.flow-title{font-size:26px;font-weight:800;margin-bottom:4px}
+.flow-desc{color:var(--txt-dim);font-size:19px;margin-bottom:20px}
+.flowchart{display:flex;flex-direction:column;align-items:center;gap:0}
+.flow-step{width:100%;max-width:560px}
+.flow-node{display:flex;align-items:center;gap:16px;padding:14px 20px;border-radius:18px;background:linear-gradient(160deg,var(--glass-strong),var(--glass));border:1px solid var(--stroke);backdrop-filter:blur(12px);box-shadow:var(--shadow);position:relative;animation:slidein .4s ease both}
+@keyframes slidein{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+.flow-node::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;border-radius:18px 0 0 18px;background:var(--fc,var(--cyan))}
+.flow-node .fc-code{font-family:var(--mono);font-weight:800;font-size:28px;color:#06121a;background:var(--fc,var(--cyan));padding:5px 11px;border-radius:10px;min-width:64px;text-align:center;box-shadow:0 0 16px -3px var(--fc,var(--cyan))}
+.flow-node .fc-txt{flex:1}
+.flow-node .fc-txt .fh{font-size:24px;font-weight:700}
+.flow-node .fc-txt .fr{font-size:15px;color:var(--txt-dim);font-style:italic}
+.flow-node.plain .fc-code{background:var(--glass-strong);color:var(--txt);box-shadow:none;font-family:var(--sans);font-size:28px;min-width:44px}
+.flow-arrow{height:26px;width:2px;background:linear-gradient(var(--cyan),var(--green));position:relative;margin:2px 0}
+.flow-arrow::after{content:"";position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--green)}
+/* ---------- BIZTONSÁG ---------- */
+.safety-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px}
+.safety-card{background:linear-gradient(160deg,var(--glass-strong),var(--glass));border:1px solid var(--stroke);border-radius:var(--radius);padding:20px 18px;backdrop-filter:blur(12px);box-shadow:var(--shadow);transition:var(--transition)}
+.safety-card:hover{border-color:var(--c-prog);box-shadow:0 0 28px -8px var(--c-prog-glow)}
+.safety-card h3{font-size:22px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.safety-card ul{list-style:none;padding:0}
+.safety-card li{padding:5px 0;font-size:24px;border-bottom:1px solid var(--stroke-soft);display:flex;gap:10px;align-items:baseline}
+.safety-card li:last-child{border-bottom:none}
+.safety-card .badge{font-family:var(--mono);font-size:13px;background:var(--c-prog-glow);color:var(--c-prog);padding:0 10px;border-radius:999px}
+/* ---------- CNC SZÓTÁR ---------- */
+.dict-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.dict-dl{background:var(--glass);border:1px solid var(--stroke);color:var(--txt);padding:10px 18px;border-radius:12px;cursor:pointer;font-size:24px;font-weight:700;transition:var(--transition);font-family:var(--sans);display:flex;align-items:center;gap:10px}
+.dict-dl:hover{border-color:var(--green);box-shadow:0 0 16px var(--green-glow)}
+.dict-list{display:grid;grid-template-columns:1fr;gap:6px}
+.dict-item{display:grid;grid-template-columns:110px 1fr 1fr 2fr;gap:12px;padding:11px 15px;background:var(--glass);border-radius:12px;border:1px solid var(--stroke);align-items:center;font-size:24px;transition:var(--transition)}
+.dict-item:hover{border-color:var(--cyan)}
+.dict-item .d-code{font-family:var(--mono);font-weight:800;color:var(--cyan)}
+.dict-item .d-hu{font-weight:600}
+.dict-item .d-ro{color:var(--txt-dim);font-style:italic}
+.dict-item .d-exp{color:var(--txt-dim);font-size:22px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;background:#0a0f18;border:1px solid var(--cyan);color:var(--txt);padding:12px 22px;border-radius:14px;font-size:24px;font-weight:600;box-shadow:0 0 26px -6px var(--cyan-glow);transition:.3s;z-index:100;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;backdrop-filter:blur(2px)}
+.empty{text-align:center;padding:60px 20px;color:var(--txt-dim)}
+.empty .big{font-size:46px;margin-bottom:12px}
+/* ---------- SZERKESZTŐ (M-kód editor) ---------- */
+.ed-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);z-index:300;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.ed-modal{max-width:680px;width:100%;background:var(--bg-1);border:1px solid var(--cyan);border-radius:var(--radius);padding:26px 22px;box-shadow:0 0 50px -10px var(--cyan-glow);position:relative;margin:auto 0}
+.ed-modal h2{font-size:28px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.ed-hint{font-size:16px;color:var(--txt-dim);margin-bottom:10px}
+.ed-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ed-field{margin-top:12px}
+.ed-field label{display:block;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--txt-faint);font-weight:700;margin-bottom:4px}
+.ed-field input,.ed-field textarea,.ed-field select{width:100%;padding:11px 13px;font-size:21px;color:var(--txt);background:var(--glass);border:1px solid var(--stroke);border-radius:11px;font-family:var(--sans)}
+.ed-field select option{background:var(--bg-1);color:var(--txt)}
+.ed-field textarea{min-height:66px;resize:vertical}
+.ed-field input:focus,.ed-field textarea:focus,.ed-field select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
+.ed-field input.mono,.ed-field textarea.mono{font-family:var(--mono)}
+.ed-langtabs{display:flex;gap:6px;margin-top:16px;flex-wrap:wrap}
+.ed-langtab{background:var(--glass);border:1px solid var(--stroke);color:var(--txt-dim);font-weight:700;font-size:19px;padding:7px 16px;border-radius:999px;cursor:pointer;font-family:var(--sans);transition:.15s}
+.ed-langtab.active{background:var(--cyan);color:#06121a;border-color:transparent;box-shadow:0 0 14px var(--cyan-glow)}
+.ed-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.ed-btn{border:none;border-radius:12px;padding:12px 20px;font-size:21px;font-weight:800;cursor:pointer;font-family:var(--sans);transition:.15s}
+.ed-btn.primary{background:linear-gradient(120deg,var(--cyan),var(--green));color:#06121a;box-shadow:0 0 18px -4px var(--cyan-glow)}
+.ed-btn.ghost{background:var(--glass);border:1px solid var(--stroke);color:var(--txt)}
+.ed-btn.danger{background:rgba(255,107,129,.15);border:1px solid rgba(255,107,129,.45);color:#ff8a9a;margin-left:auto}
+.ed-close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:10px;background:var(--glass);border:1px solid var(--stroke);color:var(--txt);font-size:20px;cursor:pointer}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+/* ---------- TELJES KÉPERNYŐS ELMETÉRKÉP ---------- */
+body.mm-full .sidebar,body.mm-full .topbar,body.mm-full .print-title,body.mm-full .mm-title,body.mm-full .mm-hint-txt{display:none !important}
+body.mm-full .app{grid-template-columns:1fr}
+body.mm-full .main{padding:8px 10px;max-width:100%}
+body.mm-full .mindmap-wrap{max-width:100%;padding:0}
+body.mm-full .mm-controls{margin-bottom:8px}
+body.mm-full .mm-container{height:calc(100vh - 88px)}
+body.mm-full{overflow:hidden}
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:0;z-index:50;width:min(340px,86vw);transform:translateX(-105%);transition:transform .3s}
+  .sidebar.open{transform:none}
+  .hamburger{display:grid;place-items:center}
+  #backdrop.show{display:block}
+  .dict-item{grid-template-columns:90px 1fr 1fr;gap:6px}
+  .dict-item .d-exp{grid-column:1 / -1}
+  .mm-container{height:78vh}
+}
+@media(max-width:560px){
+  body{font-size:18px}
+  .cards{grid-template-columns:1fr}
+  .dash-cats{grid-template-columns:repeat(6,1fr);gap:8px}
+  .dash-cat{grid-column:span 2;padding:13px 5px}
+  .dash-cat:nth-child(4),.dash-cat:nth-child(5){grid-column:span 3}
+  .dash-cat .name{font-size:11px;font-weight:700;letter-spacing:-0.3px;overflow-wrap:break-word}
+  .dash-cat .count{font-size:11.5px}
+  .mm-container{height:70vh;padding:6px}
+  .dict-item{grid-template-columns:80px 1fr;gap:4px;font-size:17px}
+  .dict-item .d-ro{grid-column:2}
+  .dict-item .d-exp{grid-column:1 / -1;font-size:15px}
+  .brand h1{font-size:24px}
+  .nav-item{font-size:20px;padding:10px 13px}
+  .theme-btn{font-size:19px}
+  .page-sub{font-size:15px}
+  .code-badge{font-size:26px;padding:3px 10px}
+  .card-titles .hu{font-size:19px}
+  .card-desc-top{font-size:18px;padding-left:10px}
+  .card-field .val{font-size:16px}
+  .card-field .val.mono{font-size:15px}
+  .warn{font-size:15px}
+  .cat-titles h2{font-size:18px}
+  .cat-ico{width:44px;height:44px;flex-basis:44px;font-size:20px}
+  .dash-lang .lang-btn{font-size:18px;padding:6px 14px}
+  .dash-search input{font-size:18px;padding:14px 18px 14px 50px}
+  .dash-cat .ico{font-size:32px}
+  .dash-info{font-size:15px}
+  .flow-tab{font-size:17px;padding:8px 13px}
+  .flow-node .fc-code{font-size:19px;min-width:52px}
+  .flow-node .fc-txt .fh{font-size:17px}
+  .flow-node.plain .fc-code{font-size:19px}
+  .flow-title{font-size:20px}
+  .flow-desc{font-size:15px}
+  .safety-card li{font-size:17px}
+  .safety-card h3{font-size:18px}
+  .mm-title{font-size:22px}
+  .mm-controls button{font-size:17px;padding:8px 14px}
+  .dict-dl{font-size:17px}
+  #toast{font-size:17px}
+  .ed-modal{padding:20px 14px}
+  .ed-row{grid-template-columns:1fr}
+  .ed-field input,.ed-field textarea,.ed-field select{font-size:17px}
+  .ed-btn{font-size:17px;padding:11px 16px}
+  .ed-modal h2{font-size:22px}
+}
+@media print{
+  .sidebar,.topbar,.hamburger,.card-actions,.note-box,#toast,#backdrop,.flow-tabs,.lang-switch,.theme-btn,.mm-controls,.dict-actions,.toolbar{display:none !important}
+  .app{grid-template-columns:1fr}
+  .main{padding:0;max-width:100%}
+  body{background:#fff;color:#000}
+  .card,.cat-head,.flow-node,.dash-card,.safety-card{break-inside:avoid;box-shadow:none;border:1px solid #bbb;background:#fff}
+  .category.collapsed .cards{display:grid !important}
+  .code-badge,.cat-ico{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .print-title{display:block !important;font-size:28px;font-weight:800;margin-bottom:16px}
+}
+.print-title{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">🛠️</div>
+      <div><h1>CNC M-cod</h1><span>Învățare · HMI</span></div>
+    </div>
+    <div class="search-wrap">
+      <span class="ico">🔎</span>
+      <input id="search" type="text" placeholder="Căutare: M120, ax, coborâre…" autocomplete="off">
+      <button class="search-clear" id="searchClear" title="Șterge" style="display:none">✕</button>
+    </div>
+    <div class="nav-title" data-key="nav_main">Meniu principal</div>
+    <nav class="nav-list" id="navList">
+      <a class="nav-item active" data-page="dashboard"><span class="ico">🏠</span><span data-key="nav_dashboard">Dashboard</span></a>
+      <a class="nav-item" data-page="mcodes"><span class="ico">📚</span><span data-key="nav_mcodes">Coduri M</span></a>
+      <a class="nav-item" data-page="mindmap"><span class="ico">🧠</span><span data-key="nav_mindmap">Hartă mentală</span></a>
+      <a class="nav-item" data-page="flows"><span class="ico">⚙️</span><span data-key="nav_flows">Fluxuri</span></a>
+      <a class="nav-item" data-page="safety"><span class="ico">⚠️</span><span data-key="nav_safety">Siguranță</span></a>
+      <a class="nav-item" data-page="dictionary"><span class="ico">📖</span><span data-key="nav_dict">Dicționar CNC</span></a>
+    </nav>
+    <button class="theme-btn" id="addBtnSide">➕ <span data-key="ed_add_short">Cod M nou</span></button>
+    <button class="theme-btn" id="themeBtn">🌙 Temă</button>
+    <button class="theme-btn" id="dlBtn">⬇️ <span data-key="dl_html">Descarcă HTML</span></button>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="topbar">
+      <button class="hamburger" id="hamburger">☰</button>
+      <div>
+        <div class="page-title"><span class="pt-ico" id="ptIco">🏠</span><span id="ptTitle">Dashboard</span></div>
+        <div class="page-sub" id="ptSub">Prezentare generală</div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="print-title">Referință CNC M-cod</div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<div id="backdrop"></div>
+<div id="toast"></div>
+<script type="application/json" id="mcodeData"></script>
+<script>
+/* ============================================================
+   ADATBÁZIS: CATS + DEFAULT_MCODES (4 nyelv: hu, ro, de, en)
+   ============================================================ */
+const CATS = {
+    prog: { name: { hu: "Program vezérlés", ro: "Control program", de: "Programmsteuerung", en: "Program control" }, ico: "🎛️", color: "var(--c-prog)", hex: "#ff6b81" },
+    table: { name: { hu: "Munkaasztal", ro: "Masă de lucru", de: "Arbeitstisch", en: "Work table" }, ico: "🟦", color: "var(--c-table)", hex: "#2ee6ff" },
+    vac: { name: { hu: "Vákuumpumpák", ro: "Pompe de vacuum", de: "Vakuumpumpen", en: "Vacuum pumps" }, ico: "🌀", color: "var(--c-vac)", hex: "#b085ff" },
+    move: { name: { hu: "Szerszám mozgatás", ro: "Mișcare scule", de: "Werkzeugbewegung", en: "Tool movement" }, ico: "🔧", color: "var(--c-move)", hex: "#34ffab" },
+    act: { name: { hu: "Szerszám aktiválás", ro: "Activare scule", de: "Werkzeugaktivierung", en: "Tool activation" }, ico: "⚡", color: "var(--c-act)", hex: "#ffc234" }
+};
+
+const DEFAULT_MCODES = [
+    { code: "M2", cat: "prog", name: { hu: "Program vége", ro: "Sfârșit program", de: "Programmende", en: "Program end" }, exp: { hu: "Lezárja a teljes megmunkáló programot, és a gép visszaáll alaphelyzetbe.", ro: "Încheie întregul program de prelucrare și mașina revine la poziția inițială.", de: "Beendet das gesamte Bearbeitungsprogramm, die Maschine kehrt in die Grundstellung zurück.", en: "Ends the entire machining program and the machine returns to its home position." }, when: { hu: "A program legutolsó sorában, amikor minden munka kész.", ro: "În ultima linie a programului, când toată lucrarea este gata.", de: "In der letzten Zeile des Programms, wenn die gesamte Arbeit fertig ist.", en: "On the last line of the program, once all work is finished." }, ex: "…\nM5\nM2", warn: { hu: "M2 után egyetlen sor sem fut le — mindent, ami alá van írva, a gép figyelmen kívül hagy.", ro: "După M2 nu se execută niciun rând — mașina ignoră tot ce urmează.", de: "Nach M2 wird keine Zeile mehr ausgeführt — alles danach wird ignoriert.", en: "No line runs after M2 — anything written below is ignored by the machine." } },
+    { code: "M3", cat: "prog", name: { hu: "Orsó indítás", ro: "Pornire ax", de: "Spindel starten", en: "Spindle start" }, exp: { hu: "Elindítja a főorsót, vagyis megforgatja a vágó/maró szerszámot.", ro: "Pornește axul principal, rotind scula de tăiere / frezare.", de: "Startet die Hauptspindel und dreht das Schneid-/Fräswerkzeug.", en: "Starts the main spindle, rotating the cutting/milling tool." }, when: { hu: "Közvetlenül azelőtt, hogy a szerszám hozzáérne az anyaghoz.", ro: "Imediat înainte ca scula să atingă materialul.", de: "Unmittelbar bevor das Werkzeug das Material berührt.", en: "Right before the tool touches the material." }, ex: "S18000 M3   (18000 fordulat/perc)", warn: { hu: "Csak akkor indítsd, ha a szerszám biztonságos helyen van — azonnal forogni kezd!", ro: "Pornește doar când scula este în poziție sigură — începe să se rotească imediat!", de: "Nur starten, wenn sich das Werkzeug in sicherer Position befindet — es beginnt sofort zu drehen!", en: "Only start when the tool is in a safe position — it begins spinning immediately!" } },
+    { code: "M5", cat: "prog", name: { hu: "Orsó leállítás", ro: "Oprire ax", de: "Spindel stoppen", en: "Spindle stop" }, exp: { hu: "Megállítja a forgó orsót (a szerszám leáll).", ro: "Oprește axul rotativ (scula se oprește).", de: "Stoppt die rotierende Spindel (das Werkzeug hält an).", en: "Stops the rotating spindle (the tool stops)." }, when: { hu: "Megmunkálás után, mielőtt felemeled a szerszámot vagy cserélsz.", ro: "După prelucrare, înainte de a ridica scula sau de a schimba.", de: "Nach der Bearbeitung, bevor das Werkzeug angehoben oder gewechselt wird.", en: "After machining, before raising or changing the tool." }, ex: "M5", warn: { hu: "Szerszámcsere és felemelés előtt MINDIG állítsd le az orsót.", ro: "Înainte de schimbarea sculei și ridicare, OPRESTE întotdeauna axul.", de: "Vor Werkzeugwechsel und Anheben IMMER die Spindel stoppen.", en: "ALWAYS stop the spindle before tool change or lifting." } },
+    { code: "M20", cat: "table", name: { hu: "Bal asztal", ro: "Masă stânga", de: "Linker Tisch", en: "Left table" }, exp: { hu: "Kiválasztja a bal oldali munkaasztalt a megmunkáláshoz.", ro: "Selectează masa de lucru din stânga pentru prelucrare.", de: "Wählt den linken Arbeitstisch für die Bearbeitung aus.", en: "Selects the left work table for machining." }, when: { hu: "Ha a munkadarab a bal asztalon fekszik.", ro: "Când piesa de prelucrat se află pe masa stângă.", de: "Wenn das Werkstück auf dem linken Tisch liegt.", en: "When the workpiece is on the left table." }, ex: "M20", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M21", cat: "table", name: { hu: "Jobb asztal", ro: "Masă dreapta", de: "Rechter Tisch", en: "Right table" }, exp: { hu: "Kiválasztja a jobb oldali munkaasztalt.", ro: "Selectează masa de lucru din dreapta.", de: "Wählt den rechten Arbeitstisch aus.", en: "Selects the right work table." }, when: { hu: "Ha a munkadarab a jobb asztalon fekszik.", ro: "Când piesa este pe masa dreaptă.", de: "Wenn das Werkstück auf dem rechten Tisch liegt.", en: "When the workpiece is on the right table." }, ex: "M21", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M26", cat: "table", name: { hu: "Bal asztal aktiválás", ro: "Activare masă stânga", de: "Linken Tisch aktivieren", en: "Activate left table" }, exp: { hu: "Élesíti a bal asztalt: érvénybe lép a hozzá tartozó koordináta-rendszer/referencia.", ro: "Activează masa stângă: intră în vigoare sistemul de coordonate/referință aferent.", de: "Aktiviert den linken Tisch: das zugehörige Koordinatensystem/die Referenz wird wirksam.", en: "Activates the left table: its coordinate system/reference takes effect." }, when: { hu: "A bal asztal kiválasztása (M20) után.", ro: "După selectarea mesei stângi (M20).", de: "Nach Auswahl des linken Tisches (M20).", en: "After selecting the left table (M20)." }, ex: "M20\nM26", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M27", cat: "table", name: { hu: "Jobb asztal aktiválás", ro: "Activare masă dreapta", de: "Rechten Tisch aktivieren", en: "Activate right table" }, exp: { hu: "Élesíti a jobb asztalt a hozzá tartozó referenciával.", ro: "Activează masa dreaptă cu referința aferentă.", de: "Aktiviert den rechten Tisch mit der zugehörigen Referenz.", en: "Activates the right table with its reference." }, when: { hu: "A jobb asztal kiválasztása (M21) után.", ro: "După selectarea mesei drepte (M21).", de: "Nach Auswahl des rechten Tisches (M21).", en: "After selecting the right table (M21)." }, ex: "M21\nM27", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M50", cat: "vac", name: { hu: "Pumpa 1 indítás", ro: "Pornire pompă 1", de: "Pumpe 1 starten", en: "Pump 1 start" }, exp: { hu: "Elindítja az 1-es vákuumpumpát, ami leszívja a levegőt az asztal alól.", ro: "Pornește pompa de vacuum 1, care extrage aerul de sub masă.", de: "Startet Vakuumpumpe 1, die die Luft unter dem Tisch absaugt.", en: "Starts vacuum pump 1, which draws air out from under the table." }, when: { hu: "Mielőtt a bal asztalon vákuumot kapcsolsz be.", ro: "Înainte de a porni vacuumul pe masa stângă.", de: "Bevor das Vakuum am linken Tisch eingeschaltet wird.", en: "Before switching on vacuum on the left table." }, ex: "M50", warn: { hu: "Pumpa nélkül nincs szívóerő — a darab elmozdulhat megmunkálás közben.", ro: "Fără pompă nu există forță de aspirație — piesa se poate deplasa în timpul prelucrării.", de: "Ohne Pumpe keine Saugkraft — das Werkstück kann sich während der Bearbeitung verschieben.", en: "Without the pump there is no suction — the workpiece may shift during machining." } },
+    { code: "M51", cat: "vac", name: { hu: "Pumpa 1 leállítás", ro: "Oprire pompă 1", de: "Pumpe 1 stoppen", en: "Pump 1 stop" }, exp: { hu: "Leállítja az 1-es vákuumpumpát.", ro: "Oprește pompa de vacuum 1.", de: "Stoppt Vakuumpumpe 1.", en: "Stops vacuum pump 1." }, when: { hu: "Munka végén, miután a vákuumot már kikapcsoltad.", ro: "La sfârșitul lucrării, după ce ai oprit vacuumul.", de: "Am Arbeitsende, nachdem das Vakuum bereits ausgeschaltet wurde.", en: "At the end of work, after the vacuum has already been switched off." }, ex: "M51", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M52", cat: "vac", name: { hu: "Pumpa 2 indítás", ro: "Pornire pompă 2", de: "Pumpe 2 starten", en: "Pump 2 start" }, exp: { hu: "Elindítja a 2-es vákuumpumpát (jellemzően a jobb asztalhoz).", ro: "Pornește pompa de vacuum 2 (de obicei pentru masa dreaptă).", de: "Startet Vakuumpumpe 2 (üblicherweise für den rechten Tisch).", en: "Starts vacuum pump 2 (typically for the right table)." }, when: { hu: "Mielőtt a jobb asztalon vákuumot kapcsolsz.", ro: "Înainte de a porni vacuumul pe masa dreaptă.", de: "Bevor das Vakuum am rechten Tisch eingeschaltet wird.", en: "Before switching on vacuum on the right table." }, ex: "M52", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M53", cat: "vac", name: { hu: "Pumpa 2 leállítás", ro: "Oprire pompă 2", de: "Pumpe 2 stoppen", en: "Pump 2 stop" }, exp: { hu: "Leállítja a 2-es vákuumpumpát.", ro: "Oprește pompa de vacuum 2.", de: "Stoppt Vakuumpumpe 2.", en: "Stops vacuum pump 2." }, when: { hu: "Munka végén.", ro: "La sfârșitul lucrării.", de: "Am Arbeitsende.", en: "At the end of work." }, ex: "M53", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M54", cat: "vac", name: { hu: "Vákuum be — Bal asztal", ro: "Pornire vacuum masă stânga", de: "Vakuum ein — Linker Tisch", en: "Vacuum on — Left table" }, exp: { hu: "Rákapcsolja a vákuumot a bal asztalra, ami odaszorítja a darabot.", ro: "Activează vacuumul pe masa stângă, fixând piesa.", de: "Schaltet das Vakuum am linken Tisch ein und fixiert das Werkstück.", en: "Turns on vacuum on the left table, clamping the workpiece down." }, when: { hu: "Ha a pumpa már jár és a darab a helyén van.", ro: "Când pompa funcționează și piesa este în poziție.", de: "Wenn die Pumpe bereits läuft und das Werkstück positioniert ist.", en: "When the pump is running and the workpiece is in place." }, ex: "M50\nM54", warn: { hu: "Marás előtt ellenőrizd, hogy a darab tényleg jól tapad.", ro: "Înainte de frezare, verifică dacă piesa este bine fixată.", de: "Vor dem Fräsen prüfen, ob das Werkstück wirklich fest sitzt.", en: "Before milling, check that the workpiece is actually holding firmly." } },
+    { code: "M55", cat: "vac", name: { hu: "Vákuum ki — Bal asztal", ro: "Oprire vacuum masă stânga", de: "Vakuum aus — Linker Tisch", en: "Vacuum off — Left table" }, exp: { hu: "Megszünteti a szívást a bal asztalon.", ro: "Oprește aspirația pe masa stângă.", de: "Beendet die Absaugung am linken Tisch.", en: "Stops suction on the left table." }, when: { hu: "Ha a szerszám már felemelkedett és kész a darab.", ro: "Când scula este ridicată și piesa este gata.", de: "Wenn das Werkzeug bereits angehoben ist und das Werkstück fertig ist.", en: "When the tool has already been raised and the workpiece is finished." }, ex: "M55", warn: { hu: "Csak felemelt szerszámnál kapcsold ki, különben a darab elmozdulhat vagy kirepülhet!", ro: "Oprește doar când scula este ridicată, altfel piesa se poate deplasa sau zbura!", de: "Nur bei angehobenem Werkzeug ausschalten, sonst kann sich das Werkstück verschieben oder wegfliegen!", en: "Only switch off with the tool raised, otherwise the workpiece may shift or fly off!" } },
+    { code: "M56", cat: "vac", name: { hu: "Vákuum be — Jobb asztal", ro: "Pornire vacuum masă dreapta", de: "Vakuum ein — Rechter Tisch", en: "Vacuum on — Right table" }, exp: { hu: "Rákapcsolja a vákuumot a jobb asztalra.", ro: "Activează vacuumul pe masa dreaptă.", de: "Schaltet das Vakuum am rechten Tisch ein.", en: "Turns on vacuum on the right table." }, when: { hu: "Ha a 2-es pumpa jár és a darab a helyén.", ro: "Când pompa 2 funcționează și piesa este în poziție.", de: "Wenn Pumpe 2 läuft und das Werkstück positioniert ist.", en: "When pump 2 is running and the workpiece is in place." }, ex: "M52\nM56", warn: { hu: "Marás előtt ellenőrizd a tapadást.", ro: "Verifică fixarea înainte de frezare.", de: "Vor dem Fräsen die Haftung prüfen.", en: "Check the hold before milling." } },
+    { code: "M57", cat: "vac", name: { hu: "Vákuum ki — Jobb asztal", ro: "Oprire vacuum masă dreapta", de: "Vakuum aus — Rechter Tisch", en: "Vacuum off — Right table" }, exp: { hu: "Megszünteti a szívást a jobb asztalon.", ro: "Oprește aspirația pe masa dreaptă.", de: "Beendet die Absaugung am rechten Tisch.", en: "Stops suction on the right table." }, when: { hu: "Felemelt szerszámnál, kész darabnál.", ro: "Când scula este ridicată și piesa este gata.", de: "Bei angehobenem Werkzeug und fertigem Werkstück.", en: "With the tool raised and the workpiece finished." }, ex: "M57", warn: { hu: "Csak felemelt szerszámnál kapcsold ki.", ro: "Oprește doar când scula este ridicată.", de: "Nur bei angehobenem Werkzeug ausschalten.", en: "Only switch off with the tool raised." } },
+    { code: "M73", cat: "vac", name: { hu: "Mindkét pumpa indítás", ro: "Pornire ambele pompe", de: "Beide Pumpen starten", en: "Both pumps start" }, exp: { hu: "Egyszerre indítja az 1-es és 2-es pumpát is.", ro: "Pornește simultan pompa 1 și 2.", de: "Startet Pumpe 1 und 2 gleichzeitig.", en: "Starts pumps 1 and 2 simultaneously." }, when: { hu: "Ha mindkét asztalon egyszerre dolgozol.", ro: "Când lucrezi pe ambele mese simultan.", de: "Wenn an beiden Tischen gleichzeitig gearbeitet wird.", en: "When working on both tables at the same time." }, ex: "M73", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M74", cat: "vac", name: { hu: "Mindkét pumpa leállítás", ro: "Oprire ambele pompe", de: "Beide Pumpen stoppen", en: "Both pumps stop" }, exp: { hu: "Egyszerre állítja le mindkét pumpát.", ro: "Oprește simultan ambele pompe.", de: "Stoppt beide Pumpen gleichzeitig.", en: "Stops both pumps simultaneously." }, when: { hu: "Kétasztalos munka végén.", ro: "La sfârșitul lucrului pe două mese.", de: "Am Ende der Arbeit an zwei Tischen.", en: "At the end of two-table work." }, ex: "M74", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M75", cat: "vac", name: { hu: "Vákuum be — mindkét asztal", ro: "Pornire vacuum ambele mese", de: "Vakuum ein — beide Tische", en: "Vacuum on — both tables" }, exp: { hu: "Egyszerre kapcsolja be a vákuumot a bal és jobb asztalon.", ro: "Activează vacuumul pe ambele mese simultan.", de: "Schaltet das Vakuum am linken und rechten Tisch gleichzeitig ein.", en: "Switches on vacuum on the left and right tables simultaneously." }, when: { hu: "Ha mindkét asztalon van rögzítendő darab.", ro: "Când există piese de fixat pe ambele mese.", de: "Wenn auf beiden Tischen Werkstücke zu fixieren sind.", en: "When there are workpieces to clamp on both tables." }, ex: "M73\nM75", warn: { hu: "Mindkét darab tapadását ellenőrizd.", ro: "Verifică fixarea ambelor piese.", de: "Die Haftung beider Werkstücke prüfen.", en: "Check the hold of both workpieces." } },
+    { code: "M76", cat: "vac", name: { hu: "Vákuum ki — mindkét asztal", ro: "Oprire vacuum ambele mese", de: "Vakuum aus — beide Tische", en: "Vacuum off — both tables" }, exp: { hu: "Egyszerre szünteti meg a szívást mindkét asztalon.", ro: "Oprește aspirația pe ambele mese simultan.", de: "Beendet die Absaugung an beiden Tischen gleichzeitig.", en: "Stops suction on both tables simultaneously." }, when: { hu: "Felemelt szerszámnál, kész daraboknál.", ro: "Când scula este ridicată și piesele sunt gata.", de: "Bei angehobenem Werkzeug und fertigen Werkstücken.", en: "With the tool raised and the workpieces finished." }, ex: "M76", warn: { hu: "Csak felemelt szerszámnál kapcsold ki.", ro: "Oprește doar când scula este ridicată.", de: "Nur bei angehobenem Werkzeug ausschalten.", en: "Only switch off with the tool raised." } },
+    { code: "M101", cat: "move", name: { hu: "T3 le", ro: "Coborâre T3", de: "T3 absenken", en: "T3 down" }, exp: { hu: "Leengedi a 3-as szerszámot (T3) munkapozícióba.", ro: "Coboară scula T3 în poziția de lucru.", de: "Senkt Werkzeug T3 in die Arbeitsposition ab.", en: "Lowers tool T3 into the working position." }, when: { hu: "Mielőtt a T3 szerszámmal dolgozol.", ro: "Înainte de a lucra cu scula T3.", de: "Bevor mit Werkzeug T3 gearbeitet wird.", en: "Before working with tool T3." }, ex: "M101", warn: { hu: "Leengedés előtt győződj meg, hogy nincs akadály és a vákuum tart.", ro: "Înainte de coborâre, asigură-te că nu există obstacole și că vacuumul ține.", de: "Vor dem Absenken sicherstellen, dass keine Hindernisse vorhanden sind und das Vakuum hält.", en: "Before lowering, make sure there are no obstructions and the vacuum is holding." } },
+    { code: "M102", cat: "move", name: { hu: "T2 le", ro: "Coborâre T2", de: "T2 absenken", en: "T2 down" }, exp: { hu: "Leengedi a 2-es szerszámot (T2).", ro: "Coboară scula T2.", de: "Senkt Werkzeug T2 ab.", en: "Lowers tool T2." }, when: { hu: "Mielőtt a T2-vel dolgozol.", ro: "Înainte de a lucra cu T2.", de: "Bevor mit T2 gearbeitet wird.", en: "Before working with T2." }, ex: "M102", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M103", cat: "move", name: { hu: "T13 le", ro: "Coborâre T13", de: "T13 absenken", en: "T13 down" }, exp: { hu: "Leengedi a 13-as szerszámot (T13).", ro: "Coboară scula T13.", de: "Senkt Werkzeug T13 ab.", en: "Lowers tool T13." }, when: { hu: "Mielőtt a T13-mal dolgozol.", ro: "Înainte de a lucra cu T13.", de: "Bevor mit T13 gearbeitet wird.", en: "Before working with T13." }, ex: "M103", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M104", cat: "move", name: { hu: "T12 le", ro: "Coborâre T12", de: "T12 absenken", en: "T12 down" }, exp: { hu: "Leengedi a 12-es szerszámot (T12).", ro: "Coboară scula T12.", de: "Senkt Werkzeug T12 ab.", en: "Lowers tool T12." }, when: { hu: "Mielőtt a T12-vel dolgozol.", ro: "Înainte de a lucra cu T12.", de: "Bevor mit T12 gearbeitet wird.", en: "Before working with T12." }, ex: "M104", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M105", cat: "move", name: { hu: "T2 vissza", ro: "Retragere T2", de: "T2 zurückziehen", en: "T2 retract" }, exp: { hu: "Visszahúzza / felemeli a 2-es szerszámot (T2) alaphelyzetbe.", ro: "Retrage/ridică scula T2 în poziția inițială.", de: "Zieht Werkzeug T2 zurück / hebt es in die Grundstellung an.", en: "Retracts/raises tool T2 back to its home position." }, when: { hu: "Miután a T2-vel végeztél.", ro: "După ce ai terminat cu T2.", de: "Nachdem die Arbeit mit T2 abgeschlossen ist.", en: "After finishing with T2." }, ex: "M105", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M113", cat: "move", name: { hu: "T3 + T13 le", ro: "Coborâre T3 + T13", de: "T3 + T13 absenken", en: "T3 + T13 down" }, exp: { hu: "Egyszerre engedi le a T3 és T13 szerszámot.", ro: "Coboară simultan sculele T3 și T13.", de: "Senkt T3 und T13 gleichzeitig ab.", en: "Lowers tools T3 and T13 simultaneously." }, when: { hu: "Ha két szerszámmal párhuzamosan dolgozol (T3 és T13).", ro: "Când lucrezi în paralel cu două scule (T3 și T13).", de: "Wenn parallel mit zwei Werkzeugen gearbeitet wird (T3 und T13).", en: "When working in parallel with two tools (T3 and T13)." }, ex: "M113", warn: { hu: "Mindkét szerszám útját ellenőrizd leengedés előtt.", ro: "Verifică traiectoria ambelor scule înainte de coborâre.", de: "Vor dem Absenken den Weg beider Werkzeuge prüfen.", en: "Check the path of both tools before lowering." } },
+    { code: "M114", cat: "move", name: { hu: "T2 + T12 le", ro: "Coborâre T2 + T12", de: "T2 + T12 absenken", en: "T2 + T12 down" }, exp: { hu: "Egyszerre engedi le a T2 és T12 szerszámot.", ro: "Coboară simultan T2 și T12.", de: "Senkt T2 und T12 gleichzeitig ab.", en: "Lowers tools T2 and T12 simultaneously." }, when: { hu: "Két szerszámos munkánál (T2 és T12).", ro: "La lucrul cu două scule (T2 și T12).", de: "Bei Arbeiten mit zwei Werkzeugen (T2 und T12).", en: "For two-tool jobs (T2 and T12)." }, ex: "M114", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M115", cat: "move", name: { hu: "Szerszám parkoló", ro: "Parcare scule", de: "Werkzeug-Parkposition", en: "Tool parking" }, exp: { hu: "Minden szerszámot biztonságos parkolóállásba küld.", ro: "Trimite toate sculele în poziția de parcare sigură.", de: "Bringt alle Werkzeuge in die sichere Parkposition.", en: "Sends all tools to a safe parking position." }, when: { hu: "Szerszámcsere előtt vagy a munka végén, biztonságos alaphelyzethez.", ro: "Înainte de schimbarea sculelor sau la sfârșitul lucrului, pentru o poziție de siguranță.", de: "Vor dem Werkzeugwechsel oder am Arbeitsende, für eine sichere Grundstellung.", en: "Before a tool change or at the end of work, for a safe home position." }, ex: "M115", warn: { hu: "Csere előtt ez a biztonságos alapállapot.", ro: "Înainte de schimbare, aceasta este poziția de siguranță.", de: "Vor dem Wechsel ist dies der sichere Grundzustand.", en: "This is the safe base state before a change." } },
+    { code: "M118", cat: "move", name: { hu: "Szerszámtartó fel", ro: "Ridicare suport scule", de: "Werkzeughalter anheben", en: "Tool holder up" }, exp: { hu: "Felemeli a teljes szerszámtartót.", ro: "Ridică întregul suport de scule.", de: "Hebt den gesamten Werkzeughalter an.", en: "Raises the entire tool holder." }, when: { hu: "Ha az összes szerszámot fel kell emelni.", ro: "Când toate sculele trebuie ridicate.", de: "Wenn alle Werkzeuge angehoben werden müssen.", en: "When all tools need to be raised." }, ex: "M118", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M120", cat: "move", name: { hu: "T1 le", ro: "Coborâre T1", de: "T1 absenken", en: "T1 down" }, exp: { hu: "Leengedi az 1-es szerszámot (T1) munkapozícióba.", ro: "Coboară scula T1 în poziția de lucru.", de: "Senkt Werkzeug T1 in die Arbeitsposition ab.", en: "Lowers tool T1 into the working position." }, when: { hu: "Mielőtt a T1-gyel dolgozol.", ro: "Înainte de a lucra cu T1.", de: "Bevor mit T1 gearbeitet wird.", en: "Before working with T1." }, ex: "M120", warn: { hu: "Leengedés előtt: nincs akadály, a vákuum tart.", ro: "Înainte de coborâre: fără obstacole, vacuumul ține.", de: "Vor dem Absenken: keine Hindernisse, das Vakuum hält.", en: "Before lowering: no obstructions, the vacuum is holding." } },
+    { code: "M121", cat: "move", name: { hu: "T1 fel", ro: "Ridicare T1", de: "T1 anheben", en: "T1 up" }, exp: { hu: "Felemeli az 1-es szerszámot (T1) alaphelyzetbe.", ro: "Ridică scula T1 în poziția inițială.", de: "Hebt Werkzeug T1 in die Grundstellung an.", en: "Raises tool T1 back to its home position." }, when: { hu: "Miután a T1-gyel végeztél.", ro: "După ce ai terminat cu T1.", de: "Nachdem die Arbeit mit T1 abgeschlossen ist.", en: "After finishing with T1." }, ex: "M121", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M122", cat: "move", name: { hu: "T11 le", ro: "Coborâre T11", de: "T11 absenken", en: "T11 down" }, exp: { hu: "Leengedi a 11-es szerszámot (T11).", ro: "Coboară scula T11.", de: "Senkt Werkzeug T11 ab.", en: "Lowers tool T11." }, when: { hu: "Mielőtt a T11-gyel dolgozol.", ro: "Înainte de a lucra cu T11.", de: "Bevor mit T11 gearbeitet wird.", en: "Before working with T11." }, ex: "M122", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M123", cat: "move", name: { hu: "T11 fel", ro: "Ridicare T11", de: "T11 anheben", en: "T11 up" }, exp: { hu: "Felemeli a 11-es szerszámot (T11).", ro: "Ridică scula T11.", de: "Hebt Werkzeug T11 an.", en: "Raises tool T11." }, when: { hu: "Miután a T11-gyel végeztél.", ro: "După ce ai terminat cu T11.", de: "Nachdem die Arbeit mit T11 abgeschlossen ist.", en: "After finishing with T11." }, ex: "M123", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M128", cat: "move", name: { hu: "T1 + T11 le", ro: "Coborâre T1 + T11", de: "T1 + T11 absenken", en: "T1 + T11 down" }, exp: { hu: "Egyszerre engedi le a T1 és T11 szerszámot.", ro: "Coboară simultan T1 și T11.", de: "Senkt T1 und T11 gleichzeitig ab.", en: "Lowers tools T1 and T11 simultaneously." }, when: { hu: "Ha a T1 és T11 párban dolgozik.", ro: "Când T1 și T11 lucrează în pereche.", de: "Wenn T1 und T11 als Paar arbeiten.", en: "When T1 and T11 work as a pair." }, ex: "M128", warn: { hu: "Mindkét szerszám útját ellenőrizd.", ro: "Verifică traiectoria ambelor scule.", de: "Den Weg beider Werkzeuge prüfen.", en: "Check the path of both tools." } },
+    { code: "M129", cat: "move", name: { hu: "T1 + T11 fel", ro: "Ridicare T1 + T11", de: "T1 + T11 anheben", en: "T1 + T11 up" }, exp: { hu: "Egyszerre emeli fel a T1 és T11 szerszámot.", ro: "Ridică simultan T1 și T11.", de: "Hebt T1 und T11 gleichzeitig an.", en: "Raises tools T1 and T11 simultaneously." }, when: { hu: "Miután a T1+T11 párral végeztél.", ro: "După ce ai terminat cu perechea T1+T11.", de: "Nachdem die Arbeit mit dem Paar T1+T11 abgeschlossen ist.", en: "After finishing with the T1+T11 pair." }, ex: "M129", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M140", cat: "act", name: { hu: "Szerszám 1 be", ro: "Pornire sculă 1", de: "Werkzeug 1 ein", en: "Tool 1 on" }, exp: { hu: "Bekapcsolja / élesíti az 1-es szerszámot (működésre kész).", ro: "Pornește / activează scula 1 (gata de funcționare).", de: "Schaltet Werkzeug 1 ein / aktiviert es (betriebsbereit).", en: "Switches on / activates tool 1 (ready for operation)." }, when: { hu: "Miután a T1 leért munkapozícióba.", ro: "După ce T1 a coborât în poziția de lucru.", de: "Nachdem T1 in die Arbeitsposition abgesenkt wurde.", en: "After T1 has lowered into the working position." }, ex: "M120\nM140", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M141", cat: "act", name: { hu: "Szerszám 1 ki", ro: "Oprire sculă 1", de: "Werkzeug 1 aus", en: "Tool 1 off" }, exp: { hu: "Kikapcsolja az 1-es szerszámot.", ro: "Oprește scula 1.", de: "Schaltet Werkzeug 1 aus.", en: "Switches off tool 1." }, when: { hu: "Miután a T1-gyel végeztél, felemelés előtt.", ro: "După ce ai terminat cu T1, înainte de ridicare.", de: "Nach der Arbeit mit T1, vor dem Anheben.", en: "After finishing with T1, before raising." }, ex: "M141", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M142", cat: "act", name: { hu: "Szerszám 11 be", ro: "Pornire sculă 11", de: "Werkzeug 11 ein", en: "Tool 11 on" }, exp: { hu: "Bekapcsolja a 11-es szerszámot.", ro: "Pornește scula 11.", de: "Schaltet Werkzeug 11 ein.", en: "Switches on tool 11." }, when: { hu: "Miután a T11 leért.", ro: "După ce T11 a coborât.", de: "Nachdem T11 abgesenkt wurde.", en: "After T11 has lowered." }, ex: "M122\nM142", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M143", cat: "act", name: { hu: "Szerszám 11 ki", ro: "Oprire sculă 11", de: "Werkzeug 11 aus", en: "Tool 11 off" }, exp: { hu: "Kikapcsolja a 11-es szerszámot.", ro: "Oprește scula 11.", de: "Schaltet Werkzeug 11 aus.", en: "Switches off tool 11." }, when: { hu: "Munka után, felemelés előtt.", ro: "După lucru, înainte de ridicare.", de: "Nach der Arbeit, vor dem Anheben.", en: "After work, before raising." }, ex: "M143", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M148", cat: "act", name: { hu: "Szerszám 21 be", ro: "Pornire sculă 21", de: "Werkzeug 21 ein", en: "Tool 21 on" }, exp: { hu: "Bekapcsolja a 21-es szerszámot.", ro: "Pornește scula 21.", de: "Schaltet Werkzeug 21 ein.", en: "Switches on tool 21." }, when: { hu: "Miután a 21-es szerszám leért.", ro: "După ce scula 21 a coborât.", de: "Nachdem Werkzeug 21 abgesenkt wurde.", en: "After tool 21 has lowered." }, ex: "M148", warn: { hu: "", ro: "", de: "", en: "" } },
+    { code: "M149", cat: "act", name: { hu: "Szerszám 21 ki", ro: "Oprire sculă 21", de: "Werkzeug 21 aus", en: "Tool 21 off" }, exp: { hu: "Kikapcsolja a 21-es szerszámot.", ro: "Oprește scula 21.", de: "Schaltet Werkzeug 21 aus.", en: "Switches off tool 21." }, when: { hu: "Munka után, felemelés előtt.", ro: "După lucru, înainte de ridicare.", de: "Nach der Arbeit, vor dem Anheben.", en: "After work, before raising." }, ex: "M149", warn: { hu: "", ro: "", de: "", en: "" } }
+];
+
+const FLOWS = [{
+    id: "main",
+    name: { hu: "Teljes folyamat", ro: "Proces complet", de: "Kompletter Ablauf", en: "Full process" },
+    desc: { hu: "Egy komplett megmunkálás elejétől a végéig.", ro: "O prelucrare completă de la început până la sfârșit.", de: "Eine komplette Bearbeitung von Anfang bis Ende.", en: "A complete machining run from start to finish." },
+    steps: [
+        { plain: { hu: "START", ro: "START", de: "START", en: "START" } },
+        { plain: { hu: "Asztal kiválasztás", ro: "Selectare masă", de: "Tischauswahl", en: "Table selection" }, code2: ["M20", "M21"] },
+        { code: "M50" }, { code: "M54" },
+        { plain: { hu: "Szerszám le", ro: "Coborâre sculă", de: "Werkzeug ab", en: "Tool down" }, code2: ["M120"] },
+        { code: "M3" },
+        { plain: { hu: "Megmunkálás", ro: "Prelucrare", de: "Bearbeitung", en: "Machining" } },
+        { plain: { hu: "Szerszám fel", ro: "Ridicare sculă", de: "Werkzeug an", en: "Tool up" }, code2: ["M121"] },
+        { code: "M5" }, { code: "M55" }, { code: "M51" }, { code: "M2" },
+        { plain: { hu: "END", ro: "SFÂRȘIT", de: "ENDE", en: "END" } }
+    ]
+}, {
+    id: "left",
+    name: { hu: "Bal asztal", ro: "Masă stânga", de: "Linker Tisch", en: "Left table" },
+    desc: { hu: "Munka a bal asztalon, 1-es pumpával.", ro: "Lucru pe masa stângă, cu pompa 1.", de: "Arbeit am linken Tisch mit Pumpe 1.", en: "Work on the left table, with pump 1." },
+    steps: [
+        { plain: { hu: "START", ro: "START", de: "START", en: "START" } },
+        { code: "M20" }, { code: "M26" }, { code: "M50" }, { code: "M54" },
+        { code: "M120" }, { code: "M140" }, { code: "M3" },
+        { plain: { hu: "Megmunkálás", ro: "Prelucrare", de: "Bearbeitung", en: "Machining" } },
+        { code: "M5" }, { code: "M141" }, { code: "M121" },
+        { code: "M55" }, { code: "M51" }, { code: "M2" },
+        { plain: { hu: "END", ro: "SFÂRȘIT", de: "ENDE", en: "END" } }
+    ]
+}, {
+    id: "right",
+    name: { hu: "Jobb asztal", ro: "Masă dreapta", de: "Rechter Tisch", en: "Right table" },
+    desc: { hu: "Munka a jobb asztalon, 2-es pumpával.", ro: "Lucru pe masa dreaptă, cu pompa 2.", de: "Arbeit am rechten Tisch mit Pumpe 2.", en: "Work on the right table, with pump 2." },
+    steps: [
+        { plain: { hu: "START", ro: "START", de: "START", en: "START" } },
+        { code: "M21" }, { code: "M27" }, { code: "M52" }, { code: "M56" },
+        { code: "M120" }, { code: "M140" }, { code: "M3" },
+        { plain: { hu: "Megmunkálás", ro: "Prelucrare", de: "Bearbeitung", en: "Machining" } },
+        { code: "M5" }, { code: "M141" }, { code: "M121" },
+        { code: "M57" }, { code: "M53" }, { code: "M2" },
+        { plain: { hu: "END", ro: "SFÂRȘIT", de: "ENDE", en: "END" } }
+    ]
+}, {
+    id: "both",
+    name: { hu: "Mindkét asztal", ro: "Ambele mese", de: "Beide Tische", en: "Both tables" },
+    desc: { hu: "Párhuzamos munka mindkét asztalon.", ro: "Lucru paralel pe ambele mese.", de: "Paralleles Arbeiten an beiden Tischen.", en: "Parallel work on both tables." },
+    steps: [
+        { plain: { hu: "START", ro: "START", de: "START", en: "START" } },
+        { plain: { hu: "Mindkét asztal", ro: "Ambele mese", de: "Beide Tische", en: "Both tables" }, code2: ["M20", "M21"] },
+        { plain: { hu: "Aktiválás", ro: "Activare", de: "Aktivierung", en: "Activation" }, code2: ["M26", "M27"] },
+        { code: "M73" }, { code: "M75" }, { code: "M128" }, { code: "M3" },
+        { plain: { hu: "Megmunkálás", ro: "Prelucrare", de: "Bearbeitung", en: "Machining" } },
+        { code: "M5" }, { code: "M129" }, { code: "M76" }, { code: "M74" }, { code: "M2" },
+        { plain: { hu: "END", ro: "SFÂRȘIT", de: "ENDE", en: "END" } }
+    ]
+}, {
+    id: "onetool",
+    name: { hu: "Egy szerszám", ro: "O singură sculă", de: "Ein Werkzeug", en: "One tool" },
+    desc: { hu: "Egyetlen szerszámmal (T1) végzett munka.", ro: "Lucru cu o singură sculă (T1).", de: "Arbeit mit einem einzigen Werkzeug (T1).", en: "Work done with a single tool (T1)." },
+    steps: [
+        { plain: { hu: "START", ro: "START", de: "START", en: "START" } },
+        { code: "M120" }, { code: "M140" }, { code: "M3" },
+        { plain: { hu: "Megmunkálás", ro: "Prelucrare", de: "Bearbeitung", en: "Machining" } },
+        { code: "M5" }, { code: "M141" }, { code: "M121" },
+        { plain: { hu: "END", ro: "SFÂRȘIT", de: "ENDE", en: "END" } }
+    ]
+}, {
+    id: "twotool",
+    name: { hu: "Két szerszám", ro: "Două scule", de: "Zwei Werkzeuge", en: "Two tools" },
+    desc: { hu: "Két szerszám (T1 + T11) egyszerre.", ro: "Două scule (T1 + T11) simultan.", de: "Zwei Werkzeuge (T1 + T11) gleichzeitig.", en: "Two tools (T1 + T11) at once." },
+    steps: [
+        { plain: { hu: "START", ro: "START", de: "START", en: "START" } },
+        { code: "M128" },
+        { plain: { hu: "Mindkettő be", ro: "Ambele pornite", de: "Beide ein", en: "Both on" }, code2: ["M140", "M142"] },
+        { code: "M3" },
+        { plain: { hu: "Megmunkálás", ro: "Prelucrare", de: "Bearbeitung", en: "Machining" } },
+        { code: "M5" },
+        { plain: { hu: "Mindkettő ki", ro: "Ambele oprite", de: "Beide aus", en: "Both off" }, code2: ["M141", "M143"] },
+        { code: "M129" },
+        { plain: { hu: "END", ro: "SFÂRȘIT", de: "ENDE", en: "END" } }
+    ]
+}, {
+    id: "change",
+    name: { hu: "Szerszámcsere", ro: "Schimbare sculă", de: "Werkzeugwechsel", en: "Tool change" },
+    desc: { hu: "Váltás egyik szerszámról a másikra.", ro: "Trecere de la o sculă la alta.", de: "Wechsel von einem Werkzeug zu einem anderen.", en: "Switching from one tool to another." },
+    steps: [
+        { plain: { hu: "START", ro: "START", de: "START", en: "START" } },
+        { code: "M5" }, { code: "M141" }, { code: "M121" }, { code: "M115" },
+        { plain: { hu: "Új szerszám le", ro: "Coborâre sculă nouă", de: "Neues Werkzeug ab", en: "New tool down" }, code2: ["M120"] },
+        { code: "M140" }, { code: "M3" },
+        { plain: { hu: "END", ro: "SFÂRȘIT", de: "ENDE", en: "END" } }
+    ]
+}, {
+    id: "vacuum",
+    name: { hu: "Vákuum kezelés", ro: "Gestionare vacuum", de: "Vakuum-Verwaltung", en: "Vacuum handling" },
+    desc: { hu: "A vákuum helyes be- és kikapcsolási sorrendje.", ro: "Secvența corectă de pornire și oprire a vacuumului.", de: "Die richtige Ein- und Ausschaltreihenfolge des Vakuums.", en: "The correct sequence for switching vacuum on and off." },
+    steps: [
+        { plain: { hu: "START", ro: "START", de: "START", en: "START" } },
+        { plain: { hu: "Pumpa indítás", ro: "Pornire pompă", de: "Pumpe starten", en: "Pump start" }, code2: ["M50", "M52", "M73"] },
+        { plain: { hu: "Vákuum be", ro: "Vacuum pornit", de: "Vakuum ein", en: "Vacuum on" }, code2: ["M54", "M56", "M75"] },
+        { plain: { hu: "Munka", ro: "Lucru", de: "Arbeit", en: "Work" } },
+        { plain: { hu: "Vákuum ki", ro: "Vacuum oprit", de: "Vakuum aus", en: "Vacuum off" }, code2: ["M55", "M57", "M76"] },
+        { plain: { hu: "Pumpa leáll", ro: "Oprire pompă", de: "Pumpe stoppt", en: "Pump stops" }, code2: ["M51", "M53", "M74"] },
+        { plain: { hu: "END", ro: "SFÂRȘIT", de: "ENDE", en: "END" } }
+    ]
+}];
+
+const UI_TEXTS = {
+    hu: { nav_main:"Főmenü", nav_dashboard:"Dashboard", nav_mcodes:"M-kódok", nav_mindmap:"Elmetérkép", nav_flows:"Munkamenetek", nav_safety:"Biztonság", nav_dict:"CNC Szótár",
+        search_placeholder:"Keresés: M120, orsó, coborâre…", dashboard_title:"Dashboard", dashboard_sub:"Áttekintés",
+        mcodes_title:"M-kódok", mcodes_sub:"Összes M-kód kártyákon, kategóriánként",
+        mindmap_title:"Elmetérkép", mindmap_sub:"Interaktív térkép – kattints a kódra a részletekért",
+        flows_title:"Munkamenetek", flows_sub:"Vizuális folyamatábrák a gépi lépésekhez",
+        safety_title:"Biztonság", safety_sub:"Gyakori hibák, veszélyek és helyes sorrendek",
+        dict_title:"CNC Szótár", dict_sub:"ABC sorrendben minden M-kód",
+        stat_codes:"M-kódok", stat_cats:"Kategóriák", stat_flows:"Munkamenetek", stat_favs:"Kedvencek",
+        card_exp:"📖 Magyarázat", card_when:"⏱️ Mikor használjuk", card_ex:"💡 Példa", card_warn:"⚠️ Figyelem", card_note:"Saját jegyzet",
+        safety_common:"Gyakori hibák", safety_danger:"Veszélyek", safety_not:"Mit nem szabad", safety_order:"Helyes sorrend", safety_warn:"Biztonsági figyelmeztetések",
+        toast_fav_add:"⭐ kedvenc", toast_fav_remove:"eltávolítva a kedvencekből", toast_copy:"a vágólapon 📋", toast_copy_fail:"Másolás nem sikerült",
+        toast_theme_light:"☀️ Világos mód", toast_theme_dark:"🌙 Sötét mód", toast_dl:"⬇️ HTML letöltve (a módosításaiddal együtt)",
+        mm_zoom_in:"🔍+ Nagyítás", mm_zoom_out:"🔍− Kicsinyítés", mm_reset:"↺ Alaphelyzet", mm_full:"⛶ Teljes képernyő", mm_full_exit:"✕ Kilépés", mm_hint:"💡 Kattints egy M-kódra a teljes magyarázatért · húzd az ujjaddal / egérrel a mozgatáshoz",
+        dict_code:"Kód", dict_hu:"Magyar", dict_ro:"Román", dict_exp:"Magyarázat", dl_html:"HTML letöltése", dl_csv:"CSV letöltése",
+        modal_exp:"Magyarázat", modal_when:"Mikor használjuk", modal_ex:"Példa kód", modal_warn:"Figyelem", modal_close:"Bezárás",
+        ed_add:"➕ Új M-kód", ed_add_short:"Új M-kód", ed_edit:"Szerkesztés", ed_title_new:"➕ Új M-kód", ed_title_edit:"✏️ M-kód szerkesztése",
+        ed_code:"Kód (pl. M120)", ed_cat:"Kategória", ed_name:"Név", ed_exp:"Magyarázat", ed_when:"Mikor használjuk", ed_ex:"Példa kód", ed_warn:"Figyelmeztetés (üresen hagyható)",
+        ed_save:"💾 Mentés", ed_cancel:"Mégse", ed_delete:"🗑️ Törlés", ed_confirm_del:"Biztosan törlöd ezt az M-kódot?",
+        ed_saved:"💾 Mentve", ed_deleted:"🗑️ Törölve", ed_code_err:"Adj meg érvényes kódot (pl. M120)", ed_dup_err:"Ez a kód már létezik!",
+        ed_reset:"↺ Alap adatok", ed_reset_confirm:"Minden saját módosítás és új kód elvész, visszaáll az eredeti lista. Folytatod?", ed_reset_done:"↺ Eredeti adatok visszaállítva",
+        ed_langhint:"Töltsd ki amelyik nyelvet tudod – az üresen hagyott nyelvek automatikusan átveszik a kitöltött szöveget." },
+    ro: { nav_main:"Meniu principal", nav_dashboard:"Dashboard", nav_mcodes:"Coduri M", nav_mindmap:"Hartă mentală", nav_flows:"Fluxuri", nav_safety:"Siguranță", nav_dict:"Dicționar CNC",
+        search_placeholder:"Căutare: M120, ax, coborâre…", dashboard_title:"Dashboard", dashboard_sub:"Prezentare generală",
+        mcodes_title:"Coduri M", mcodes_sub:"Toate codurile M pe carduri, pe categorii",
+        mindmap_title:"Hartă mentală", mindmap_sub:"Hartă interactivă – apasă pe un cod pentru detalii",
+        flows_title:"Fluxuri", flows_sub:"Diagrame vizuale pentru pașii mașinii",
+        safety_title:"Siguranță", safety_sub:"Erori frecvente, pericole și ordine corecte",
+        dict_title:"Dicționar CNC", dict_sub:"Toate codurile M în ordine alfabetică",
+        stat_codes:"Coduri M", stat_cats:"Categorii", stat_flows:"Fluxuri", stat_favs:"Favorite",
+        card_exp:"📖 Explicație", card_when:"⏱️ Când se folosește", card_ex:"💡 Exemplu", card_warn:"⚠️ Atenție", card_note:"Nota ta",
+        safety_common:"Erori frecvente", safety_danger:"Pericole", safety_not:"Ce nu trebuie făcut", safety_order:"Ordine corectă", safety_warn:"Avertismente de siguranță",
+        toast_fav_add:"⭐ favorit", toast_fav_remove:"eliminat din favorite", toast_copy:"pe clipboard 📋", toast_copy_fail:"Copierea a eșuat",
+        toast_theme_light:"☀️ Mod luminos", toast_theme_dark:"🌙 Mod întunecat", toast_dl:"⬇️ HTML descărcat (cu modificările tale)",
+        mm_zoom_in:"🔍+ Mărire", mm_zoom_out:"🔍− Micșorare", mm_reset:"↺ Resetare", mm_full:"⛶ Ecran complet", mm_full_exit:"✕ Ieșire", mm_hint:"💡 Apasă pe un cod M pentru explicația completă · trage cu degetul / mouse-ul pentru a muta",
+        dict_code:"Cod", dict_hu:"Maghiară", dict_ro:"Română", dict_exp:"Explicație", dl_html:"Descarcă HTML", dl_csv:"Descarcă CSV",
+        modal_exp:"Explicație", modal_when:"Când se folosește", modal_ex:"Exemplu de cod", modal_warn:"Atenție", modal_close:"Închide",
+        ed_add:"➕ Cod M nou", ed_add_short:"Cod M nou", ed_edit:"Editare", ed_title_new:"➕ Cod M nou", ed_title_edit:"✏️ Editare cod M",
+        ed_code:"Cod (ex. M120)", ed_cat:"Categorie", ed_name:"Nume", ed_exp:"Explicație", ed_when:"Când se folosește", ed_ex:"Exemplu de cod", ed_warn:"Avertisment (poate rămâne gol)",
+        ed_save:"💾 Salvare", ed_cancel:"Anulare", ed_delete:"🗑️ Ștergere", ed_confirm_del:"Sigur ștergi acest cod M?",
+        ed_saved:"💾 Salvat", ed_deleted:"🗑️ Șters", ed_code_err:"Introdu un cod valid (ex. M120)", ed_dup_err:"Acest cod există deja!",
+        ed_reset:"↺ Date implicite", ed_reset_confirm:"Toate modificările și codurile noi se pierd, lista revine la original. Continui?", ed_reset_done:"↺ Date originale restaurate",
+        ed_langhint:"Completează limbile pe care le știi – limbile goale preiau automat textul completat." },
+    de: { nav_main:"Hauptmenü", nav_dashboard:"Dashboard", nav_mcodes:"M-Codes", nav_mindmap:"Mindmap", nav_flows:"Arbeitsabläufe", nav_safety:"Sicherheit", nav_dict:"CNC-Wörterbuch",
+        search_placeholder:"Suche: M120, Spindel, absenken…", dashboard_title:"Dashboard", dashboard_sub:"Übersicht",
+        mcodes_title:"M-Codes", mcodes_sub:"Alle M-Codes als Karten, nach Kategorie",
+        mindmap_title:"Mindmap", mindmap_sub:"Interaktive Karte – klicke auf einen Code für Details",
+        flows_title:"Arbeitsabläufe", flows_sub:"Visuelle Ablaufdiagramme für die Maschinenschritte",
+        safety_title:"Sicherheit", safety_sub:"Häufige Fehler, Gefahren und richtige Reihenfolgen",
+        dict_title:"CNC-Wörterbuch", dict_sub:"Alle M-Codes in alphabetischer Reihenfolge",
+        stat_codes:"M-Codes", stat_cats:"Kategorien", stat_flows:"Abläufe", stat_favs:"Favoriten",
+        card_exp:"📖 Erklärung", card_when:"⏱️ Wann verwenden", card_ex:"💡 Beispiel", card_warn:"⚠️ Achtung", card_note:"Eigene Notiz",
+        safety_common:"Häufige Fehler", safety_danger:"Gefahren", safety_not:"Was nicht erlaubt ist", safety_order:"Richtige Reihenfolge", safety_warn:"Sicherheitshinweise",
+        toast_fav_add:"⭐ Favorit", toast_fav_remove:"aus Favoriten entfernt", toast_copy:"in die Zwischenablage kopiert 📋", toast_copy_fail:"Kopieren fehlgeschlagen",
+        toast_theme_light:"☀️ Heller Modus", toast_theme_dark:"🌙 Dunkler Modus", toast_dl:"⬇️ HTML heruntergeladen (mit deinen Änderungen)",
+        mm_zoom_in:"🔍+ Vergrößern", mm_zoom_out:"🔍− Verkleinern", mm_reset:"↺ Zurücksetzen", mm_full:"⛶ Vollbild", mm_full_exit:"✕ Beenden", mm_hint:"💡 Klicke auf einen M-Code für die vollständige Erklärung · zum Verschieben ziehen",
+        dict_code:"Code", dict_hu:"Ungarisch", dict_ro:"Rumänisch", dict_exp:"Erklärung", dl_html:"HTML herunterladen", dl_csv:"CSV herunterladen",
+        modal_exp:"Erklärung", modal_when:"Wann verwenden", modal_ex:"Codebeispiel", modal_warn:"Achtung", modal_close:"Schließen",
+        ed_add:"➕ Neuer M-Code", ed_add_short:"Neuer M-Code", ed_edit:"Bearbeiten", ed_title_new:"➕ Neuer M-Code", ed_title_edit:"✏️ M-Code bearbeiten",
+        ed_code:"Code (z.B. M120)", ed_cat:"Kategorie", ed_name:"Name", ed_exp:"Erklärung", ed_when:"Wann verwenden", ed_ex:"Codebeispiel", ed_warn:"Warnung (kann leer bleiben)",
+        ed_save:"💾 Speichern", ed_cancel:"Abbrechen", ed_delete:"🗑️ Löschen", ed_confirm_del:"Diesen M-Code wirklich löschen?",
+        ed_saved:"💾 Gespeichert", ed_deleted:"🗑️ Gelöscht", ed_code_err:"Gültigen Code eingeben (z.B. M120)", ed_dup_err:"Dieser Code existiert bereits!",
+        ed_reset:"↺ Standarddaten", ed_reset_confirm:"Alle Änderungen und neuen Codes gehen verloren. Fortfahren?", ed_reset_done:"↺ Originaldaten wiederhergestellt",
+        ed_langhint:"Fülle die Sprachen aus, die du kennst – leere Sprachen übernehmen automatisch den ausgefüllten Text." },
+    en: { nav_main:"Main menu", nav_dashboard:"Dashboard", nav_mcodes:"M-codes", nav_mindmap:"Mind map", nav_flows:"Workflows", nav_safety:"Safety", nav_dict:"CNC Dictionary",
+        search_placeholder:"Search: M120, spindle, lower…", dashboard_title:"Dashboard", dashboard_sub:"Overview",
+        mcodes_title:"M-codes", mcodes_sub:"All M-codes as cards, grouped by category",
+        mindmap_title:"Mind map", mindmap_sub:"Interactive map – click a code for details",
+        flows_title:"Workflows", flows_sub:"Visual flowcharts for the machine steps",
+        safety_title:"Safety", safety_sub:"Common mistakes, hazards, and correct sequences",
+        dict_title:"CNC Dictionary", dict_sub:"All M-codes in alphabetical order",
+        stat_codes:"M-codes", stat_cats:"Categories", stat_flows:"Workflows", stat_favs:"Favorites",
+        card_exp:"📖 Explanation", card_when:"⏱️ When to use it", card_ex:"💡 Example", card_warn:"⚠️ Warning", card_note:"Your note",
+        safety_common:"Common mistakes", safety_danger:"Hazards", safety_not:"What not to do", safety_order:"Correct sequence", safety_warn:"Safety warnings",
+        toast_fav_add:"⭐ favorite", toast_fav_remove:"removed from favorites", toast_copy:"copied to clipboard 📋", toast_copy_fail:"Copy failed",
+        toast_theme_light:"☀️ Light mode", toast_theme_dark:"🌙 Dark mode", toast_dl:"⬇️ HTML downloaded (with your edits)",
+        mm_zoom_in:"🔍+ Zoom in", mm_zoom_out:"🔍− Zoom out", mm_reset:"↺ Reset", mm_full:"⛶ Full screen", mm_full_exit:"✕ Exit", mm_hint:"💡 Click an M-code for the full explanation · drag to pan",
+        dict_code:"Code", dict_hu:"Hungarian", dict_ro:"Romanian", dict_exp:"Explanation", dl_html:"Download HTML", dl_csv:"Download CSV",
+        modal_exp:"Explanation", modal_when:"When to use it", modal_ex:"Example code", modal_warn:"Warning", modal_close:"Close",
+        ed_add:"➕ New M-code", ed_add_short:"New M-code", ed_edit:"Edit", ed_title_new:"➕ New M-code", ed_title_edit:"✏️ Edit M-code",
+        ed_code:"Code (e.g. M120)", ed_cat:"Category", ed_name:"Name", ed_exp:"Explanation", ed_when:"When to use it", ed_ex:"Example code", ed_warn:"Warning (may stay empty)",
+        ed_save:"💾 Save", ed_cancel:"Cancel", ed_delete:"🗑️ Delete", ed_confirm_del:"Really delete this M-code?",
+        ed_saved:"💾 Saved", ed_deleted:"🗑️ Deleted", ed_code_err:"Enter a valid code (e.g. M120)", ed_dup_err:"This code already exists!",
+        ed_reset:"↺ Default data", ed_reset_confirm:"All edits and new codes will be lost, the list returns to the original. Continue?", ed_reset_done:"↺ Original data restored",
+        ed_langhint:"Fill in the languages you know – empty languages automatically take over the filled text." }
+};
+
+/* ============================================================
+   ADAT BETÖLTÉS / MENTÉS – szerkeszthető M-kódok
+   ============================================================ */
+const LS = "mcode_";
+const LANGS = ["hu", "ro", "de", "en"];
+
+function normalizeCode(m) {
+    ["name", "exp", "when", "warn"].forEach(f => {
+        if (typeof m[f] !== "object" || m[f] === null) m[f] = { hu: String(m[f] ?? ""), ro: "", de: "", en: "" };
+        LANGS.forEach(l => { if (typeof m[f][l] !== "string") m[f][l] = ""; });
+    });
+    if (typeof m.ex !== "string") m.ex = String(m.ex ?? "");
+    if (!CATS[m.cat]) m.cat = "move";
+    return m;
+}
+
+function loadMcodes() {
+    try {
+        const s = localStorage.getItem(LS + "data");
+        if (s) { const a = JSON.parse(s); if (Array.isArray(a) && a.length) return a.map(normalizeCode); }
+    } catch (e) {}
+    try {
+        const el = document.getElementById("mcodeData");
+        if (el && el.textContent.trim()) { const a = JSON.parse(el.textContent); if (Array.isArray(a) && a.length) return a.map(normalizeCode); }
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(DEFAULT_MCODES));
+}
+
+let MCODES = loadMcodes();
+let byCode = {};
+function rebuildIndex() { byCode = Object.fromEntries(MCODES.map(m => [m.code, m])); }
+rebuildIndex();
+
+function saveMcodes() {
+    try { localStorage.setItem(LS + "data", JSON.stringify(MCODES)); } catch (e) {}
+    rebuildIndex();
+}
+
+/* ============================================================
+   ÁLLAPOT
+   ============================================================ */
+let state = {
+    page: "dashboard",
+    search: "",
+    filterCat: null,
+    filters: { prog: true, table: true, vac: true, move: true, act: true },
+    collapsed: JSON.parse(localStorage.getItem(LS + "collapsed") || "{}"),
+    notes: JSON.parse(localStorage.getItem(LS + "notes") || "{}"),
+    flow: "main",
+    lang: localStorage.getItem(LS + "lang") || "ro",
+    mmScale: 1, mmTranslateX: 0, mmTranslateY: 0,
+};
+
+const $ = s => document.querySelector(s);
+const view = $("#view");
+
+function t(key) { return UI_TEXTS[state.lang]?.[key] ?? UI_TEXTS.hu[key] ?? key; }
+function catName(catKey) { return CATS[catKey]?.name?.[state.lang] ?? CATS[catKey]?.name?.hu ?? catKey; }
+function getText(obj) {
+    if (typeof obj === 'string') return obj;
+    if (obj && obj[state.lang] !== undefined && obj[state.lang] !== "") return obj[state.lang];
+    return obj?.hu ?? '';
+}
+function catColor(catKey) { return CATS[catKey]?.color ?? 'var(--cyan)'; }
+
+function save() {
+    localStorage.setItem(LS + "notes", JSON.stringify(state.notes));
+    localStorage.setItem(LS + "collapsed", JSON.stringify(state.collapsed));
+    localStorage.setItem(LS + "lang", state.lang);
+}
+
+function toast(msg) {
+    const el = $("#toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(el._h);
+    el._h = setTimeout(() => el.classList.remove("show"), 1900);
+}
+
+function filtered() {
+    const q = state.search.trim().toLowerCase();
+    return MCODES.filter(m => {
+        if (state.filters[m.cat] === false) return false;
+        if (state.filterCat && m.cat !== state.filterCat) return false;
+        if (!q) return true;
+        const searchable = [
+            m.code.toLowerCase(),
+            ...LANGS.map(l => (m.name[l] || "").toLowerCase()),
+            getText(m.exp).toLowerCase(), getText(m.when).toLowerCase(), m.ex.toLowerCase(), getText(m.warn).toLowerCase()
+        ];
+        return searchable.some(s => s.includes(q));
+    });
+}
+
+function escapeHtml(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+/* ============================================================
+   OLDALVÁLTÁS
+   ============================================================ */
+const PAGE_META = {
+    dashboard: { ico: "🏠", titleKey: "dashboard_title", subKey: "dashboard_sub" },
+    mcodes: { ico: "📚", titleKey: "mcodes_title", subKey: "mcodes_sub" },
+    mindmap: { ico: "🧠", titleKey: "mindmap_title", subKey: "mindmap_sub" },
+    flows: { ico: "⚙️", titleKey: "flows_title", subKey: "flows_sub" },
+    safety: { ico: "⚠️", titleKey: "safety_title", subKey: "safety_sub" },
+    dictionary: { ico: "📖", titleKey: "dict_title", subKey: "dict_sub" }
+};
+
+function setPage(page, filterCat) {
+    state.page = page;
+    if (page !== "mindmap") document.body.classList.remove("mm-full");
+    if (filterCat) state.filterCat = filterCat;
+    else if (page !== 'mcodes') state.filterCat = null;
+    document.querySelectorAll(".nav-item").forEach(el => el.classList.toggle("active", el.dataset.page === page));
+    const meta = PAGE_META[page];
+    if (meta) {
+        $("#ptIco").textContent = meta.ico;
+        $("#ptTitle").textContent = t(meta.titleKey);
+        $("#ptSub").textContent = t(meta.subKey);
+    }
+    render();
+    closeSidebar();
+}
+
+function render() {
+    updateStat();
+    applyLangToUI();
+    const page = state.page;
+    if (page === "dashboard") renderDashboard();
+    else if (page === "mcodes") renderMcodes();
+    else if (page === "mindmap") renderMindmap();
+    else if (page === "flows") renderFlows();
+    else if (page === "safety") renderSafety();
+    else if (page === "dictionary") renderDictionary();
+}
+
+function updateStat() { /* jelvény eltávolítva kérésre */ }
+
+function applyLangToUI() {
+    document.querySelectorAll("[data-key]").forEach(el => {
+        const key = el.dataset.key;
+        if (UI_TEXTS[state.lang]?.[key] !== undefined) el.textContent = UI_TEXTS[state.lang][key];
+    });
+    document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("active", b.dataset.lang === state.lang));
+    $("#search").placeholder = t("search_placeholder");
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    $("#themeBtn").innerHTML = isLight ? "☀️ Temă" : "🌙 Temă";
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function renderDashboard() {
+    const html = `
+    <div class="dash-lang">
+      <button class="lang-btn" data-lang="ro">Ro</button>
+      <button class="lang-btn" data-lang="hu">Hu</button>
+      <button class="lang-btn" data-lang="de">Ger</button>
+      <button class="lang-btn" data-lang="en">Eng</button>
+    </div>
+    <div class="dash-search">
+      <span class="ico">🔎</span>
+      <input id="dashSearch" type="text" placeholder="${t('search_placeholder')}" autocomplete="off">
+    </div>
+    <div class="dash-cats">
+      ${Object.keys(CATS).map(key => {
+        const c = CATS[key];
+        const count = MCODES.filter(m => m.cat === key).length;
+        return `<div class="dash-cat" style="--cat:${c.color}" data-cat="${key}">
+          <span class="ico">${c.ico}</span>
+          <div class="name">${catName(key)}</div>
+          <div class="count">${count} ${t('stat_codes')}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="toolbar" style="justify-content:center;margin-top:26px;">
+      <button class="dict-dl" id="addCodeBtn">${t('ed_add')}</button>
+    </div>
+    <div class="dash-info">${t('mm_hint')}</div>
+  `;
+    view.innerHTML = html;
+
+    const ds = document.getElementById("dashSearch");
+    ds.value = state.search;
+    ds.addEventListener("input", function() {
+        state.search = this.value;
+        $("#search").value = this.value;
+        if (state.page === "mcodes") renderMcodes();
+        else if (this.value.trim()) setPage("mcodes");
+    });
+
+    document.querySelectorAll(".dash-cat").forEach(el => {
+        el.addEventListener("click", function() { setPage("mcodes", this.dataset.cat); });
+    });
+
+    document.querySelectorAll(".dash-lang .lang-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            state.lang = this.dataset.lang;
+            save();
+            applyLangToUI();
+            render();
+        });
+    });
+}
+
+/* ============================================================
+   M-KÓDOK
+   ============================================================ */
+function renderMcodes() {
+    const list = filtered();
+    const toolbar = `<div class="toolbar">
+      <button class="dict-dl" id="addCodeBtn">${t('ed_add')}</button>
+      <button class="dict-dl" id="resetBtn">${t('ed_reset')}</button>
+    </div>`;
+    if (list.length === 0) {
+        view.innerHTML = toolbar + `<div class="empty"><div class="big">🔍</div><div>— <b>${escapeHtml(state.search)}</b></div></div>`;
+        return;
+    }
+    let html = toolbar;
+    for (const key of Object.keys(CATS)) {
+        const items = list.filter(m => m.cat === key);
+        if (items.length === 0) continue;
+        const c = CATS[key];
+        const collapsed = state.collapsed[key] ? "collapsed" : "";
+        html += `<section class="category ${collapsed}" id="cat-${key}" style="--cat:${c.color}">
+      <div class="cat-head" data-toggle="${key}">
+        <div class="cat-ico">${c.ico}</div>
+        <div class="cat-titles"><h2>${catName(key)}</h2><div class="sub">${c.name.ro}</div></div>
+        <div class="cat-count">${items.length}</div>
+        <div class="cat-chev">▾</div>
+      </div>
+      <div class="cards">${items.map(cardHtml).join("")}</div>
+    </section>`;
+    }
+    view.innerHTML = html;
+}
+
+function cardHtml(m) {
+    const c = CATS[m.cat];
+    const note = state.notes[m.code] || "";
+    const exp = getText(m.exp), when = getText(m.when), warn = getText(m.warn), ex = m.ex;
+    const name = getText(m.name);
+    return `<article class="card" id="card-${m.code}" style="--cat:${c.color}">
+    <div class="card-top">
+      <div class="code-badge">${escapeHtml(m.code)}</div>
+      <div class="card-titles"><div class="hu">${escapeHtml(name)}</div></div>
+      <div class="card-actions">
+        <button class="icon-btn" data-edit="${escapeHtml(m.code)}" title="${t('ed_edit')}">✏️</button>
+        <button class="icon-btn" data-note="${escapeHtml(m.code)}">✎</button>
+        <button class="icon-btn" data-copy="${escapeHtml(m.code)}">⧉</button>
+      </div>
+    </div>
+    <div class="card-desc-top">${escapeHtml(exp)}</div>
+    <div class="card-field"><div class="lbl">${t("card_when")}</div><div class="val">${escapeHtml(when)}</div></div>
+    <div class="card-field"><div class="lbl">${t("card_ex")}</div><div class="val mono">${escapeHtml(ex).replace(/\n/g,"<br>")}</div></div>
+    ${warn ? `<div class="warn"><span class="wi">⚠️</span><span>${escapeHtml(warn)}</span></div>` : ""}
+    <div class="note-box ${note?'show':''}" id="note-${m.code}">
+      <textarea placeholder="${t("card_note")} ${escapeHtml(m.code)}…" data-noteinput="${escapeHtml(m.code)}">${escapeHtml(note)}</textarea>
+    </div>
+  </article>`;
+}
+
+/* ============================================================
+   ELMETÉRKÉP – MINDEN M-KÓD LÁTSZIK (szektoros elrendezés)
+   ============================================================ */
+function renderMindmap() {
+    const cats = Object.keys(CATS).filter(k => MCODES.some(m => m.cat === k));
+    const total = MCODES.length || 1;
+    const size = 1200, cx = size / 2, cy = size / 2;
+    const R_CAT = 255;      // kategória körök távolsága a középponttól
+    const R_RING1 = 410;    // belső kód-gyűrű
+    const R_RING2 = 520;    // külső kód-gyűrű
+    const catRadius = 73;
+    const BOX_W = 78, BOX_H = 38;
+
+    let nodesSvg = "", linesSvg = "";
+    let angle = -90; // fok, felülről indulunk
+
+    cats.forEach(key => {
+        const c = CATS[key];
+        const color = c.hex || "#2ee6ff";
+        const codes = MCODES.filter(m => m.cat === key);
+        const span = 360 * (0.5 / cats.length + 0.5 * codes.length / total);
+        const midDeg = angle + span / 2;
+        const midRad = midDeg * Math.PI / 180;
+        const px = cx + R_CAT * Math.cos(midRad);
+        const py = cy + R_CAT * Math.sin(midRad);
+
+        linesSvg += `<line x1="${cx}" y1="${cy}" x2="${px.toFixed(1)}" y2="${py.toFixed(1)}" stroke="var(--stroke)" stroke-width="2"/>`;
+
+        codes.forEach((m, j) => {
+            const aDeg = angle + span * (j + 0.5) / codes.length;
+            const aRad = aDeg * Math.PI / 180;
+            const r = (j % 2 === 1) ? R_RING2 : R_RING1;
+            const nx = cx + r * Math.cos(aRad);
+            const ny = cy + r * Math.sin(aRad);
+            const sx = px + catRadius * Math.cos(aRad);
+            const sy = py + catRadius * Math.sin(aRad);
+            linesSvg += `<line x1="${sx.toFixed(1)}" y1="${sy.toFixed(1)}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" class="mm-connector-line" style="stroke:${color};"/>`;
+            nodesSvg += `<g class="mm-code-rect" data-code="${escapeHtml(m.code)}">
+              <rect x="${(nx - BOX_W/2).toFixed(1)}" y="${(ny - BOX_H/2).toFixed(1)}" width="${BOX_W}" height="${BOX_H}" rx="10" fill="var(--glass-strong)" stroke="${color}" stroke-width="2" filter="url(#neonGlow)"/>
+              <text x="${nx.toFixed(1)}" y="${ny.toFixed(1)}" class="mm-node-text-code" font-size="17">${escapeHtml(m.code)}</text>
+            </g>`;
+        });
+
+        /* Kategória felirat 2 sorban, feljebb, nagyobb betűvel */
+        const nm = catName(key);
+        let line1 = nm, line2 = "";
+        if (nm.includes(" ")) {
+            const words = nm.split(" ");
+            let best = 1, bestDiff = 1e9;
+            for (let w = 1; w < words.length; w++) {
+                const a = words.slice(0, w).join(" "), b = words.slice(w).join(" ");
+                const diff = Math.abs(a.length - b.length);
+                if (diff < bestDiff) { bestDiff = diff; best = w; }
+            }
+            line1 = words.slice(0, best).join(" ");
+            line2 = words.slice(best).join(" ");
+        }
+        const nameSvg = line2
+            ? `<text x="${px.toFixed(1)}" y="${(py + 6).toFixed(1)}" class="mm-node-text-cat" font-size="16" font-weight="800" fill="var(--txt)">${escapeHtml(line1)}</text>
+          <text x="${px.toFixed(1)}" y="${(py + 26).toFixed(1)}" class="mm-node-text-cat" font-size="16" font-weight="800" fill="var(--txt)">${escapeHtml(line2)}</text>`
+            : `<text x="${px.toFixed(1)}" y="${(py + 14).toFixed(1)}" class="mm-node-text-cat" font-size="16" font-weight="800" fill="var(--txt)">${escapeHtml(line1)}</text>`;
+        nodesSvg += `<g class="mm-circle-cat" data-cat="${key}">
+          <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${catRadius}" fill="var(--bg-1)" stroke="${color}" stroke-width="3" filter="url(#glow)"/>
+          <text x="${px.toFixed(1)}" y="${(py - 30).toFixed(1)}" class="mm-node-text" font-size="32">${c.ico}</text>
+          ${nameSvg}
+          <text x="${px.toFixed(1)}" y="${(py + 48).toFixed(1)}" class="mm-node-text-cat" font-size="14" font-weight="700" fill="${color}">${codes.length}</text>
+        </g>`;
+
+        angle += span;
+    });
+
+    let svg = `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="neonGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="4" result="blur"/><feFlood flood-color="#39ff14" flood-opacity="0.25" result="color"/><feComposite in="color" in2="blur" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="${size}" height="${size}" fill="rgba(0,0,0,0.25)" rx="18"/>
+      ${linesSvg}
+      <circle cx="${cx}" cy="${cy}" r="62" fill="var(--bg-1)" stroke="var(--cyan)" stroke-width="3" filter="url(#glow)"/>
+      <text x="${cx}" y="${cy}" class="mm-node-text" font-size="36" fill="var(--cyan)">CNC</text>
+      ${nodesSvg}
+    </svg>`;
+
+    view.innerHTML = `
+    <div class="mindmap-wrap">
+      <div class="mm-title">${t("mindmap_title")} · ${MCODES.length} M</div>
+      <div class="mm-controls">
+        <button id="mmZoomIn">${t("mm_zoom_in")}</button>
+        <button id="mmZoomOut">${t("mm_zoom_out")}</button>
+        <button id="mmReset">${t("mm_reset")}</button>
+        <button id="mmFull">${document.body.classList.contains("mm-full") ? t("mm_full_exit") : t("mm_full")}</button>
+      </div>
+      <div class="mm-container" id="mmContainer">${svg}</div>
+      <div class="mm-hint-txt" style="text-align:center;color:var(--txt-faint);font-size:20px;margin-top:12px;">${t("mm_hint")}</div>
+    </div>
+  `;
+
+    const container = document.getElementById("mmContainer");
+    const svgEl = container.querySelector("svg");
+
+    svgEl.querySelectorAll(".mm-code-rect").forEach(g => {
+        g.addEventListener("click", function() { openCodeModal(this.dataset.code); });
+    });
+    svgEl.querySelectorAll(".mm-circle-cat").forEach(g => {
+        g.addEventListener("click", function() { setPage("mcodes", this.dataset.cat); });
+    });
+
+    let scale = state.mmScale || 1;
+    let translateX = state.mmTranslateX || 0;
+    let translateY = state.mmTranslateY || 0;
+
+    function applyTransform() {
+        svgEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        svgEl.style.transformOrigin = "center center";
+    }
+    applyTransform();
+
+    document.getElementById("mmZoomIn").addEventListener("click", () => {
+        scale = Math.min(3, scale + 0.15); state.mmScale = scale; applyTransform();
+    });
+    document.getElementById("mmZoomOut").addEventListener("click", () => {
+        scale = Math.max(0.4, scale - 0.15); state.mmScale = scale; applyTransform();
+    });
+    document.getElementById("mmReset").addEventListener("click", () => {
+        scale = 1; translateX = 0; translateY = 0;
+        state.mmScale = 1; state.mmTranslateX = 0; state.mmTranslateY = 0;
+        applyTransform();
+    });
+    document.getElementById("mmFull").addEventListener("click", () => {
+        document.body.classList.toggle("mm-full");
+        window.scrollTo(0, 0);
+        const b = document.getElementById("mmFull");
+        b.textContent = document.body.classList.contains("mm-full") ? t("mm_full_exit") : t("mm_full");
+    });
+
+    /* Pan + pinch: pointer events → működik egérrel ÉS érintéssel */
+    const pointers = new Map();
+    let panStart = null, pinchStartDist = 0, pinchStartScale = 1;
+
+    container.addEventListener("pointerdown", e => {
+        if (e.target.closest(".mm-code-rect") || e.target.closest(".mm-circle-cat")) return;
+        container.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pointers.size === 1) {
+            panStart = { x: e.clientX, y: e.clientY, tx: translateX, ty: translateY };
+        } else if (pointers.size === 2) {
+            panStart = null;
+            const p = [...pointers.values()];
+            pinchStartDist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+            pinchStartScale = scale;
+        }
+    });
+    container.addEventListener("pointermove", e => {
+        if (!pointers.has(e.pointerId)) return;
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pointers.size === 2 && pinchStartDist > 0) {
+            const p = [...pointers.values()];
+            const d = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+            scale = Math.min(3, Math.max(0.4, pinchStartScale * d / pinchStartDist));
+            state.mmScale = scale;
+            applyTransform();
+        } else if (pointers.size === 1 && panStart) {
+            translateX = panStart.tx + (e.clientX - panStart.x);
+            translateY = panStart.ty + (e.clientY - panStart.y);
+            state.mmTranslateX = translateX; state.mmTranslateY = translateY;
+            applyTransform();
+        }
+    });
+    function endPointer(e) {
+        pointers.delete(e.pointerId);
+        if (pointers.size < 2) pinchStartDist = 0;
+        if (pointers.size === 1) {
+            const p = [...pointers.values()][0];
+            panStart = { x: p.x, y: p.y, tx: translateX, ty: translateY };
+        } else if (pointers.size === 0) panStart = null;
+    }
+    container.addEventListener("pointerup", endPointer);
+    container.addEventListener("pointercancel", endPointer);
+
+    container.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.08 : 0.08;
+        scale = Math.min(3, Math.max(0.4, scale + delta));
+        state.mmScale = scale;
+        applyTransform();
+    }, { passive: false });
+}
+
+/* ============================================================
+   KÓD MODAL (részletek)
+   ============================================================ */
+function openCodeModal(code) {
+    const m = byCode[code];
+    if (!m) return;
+    const c = CATS[m.cat];
+    const name = getText(m.name), exp = getText(m.exp), when = getText(m.when), warn = getText(m.warn);
+    let old = document.getElementById("codeModalBackdrop");
+    if (old) old.remove();
+    const wrap = document.createElement("div");
+    wrap.id = "codeModalBackdrop";
+    wrap.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;";
+    wrap.innerHTML = `
+    <div style="max-width:580px;width:100%;background:var(--bg-1);
+      border:1px solid ${c.color};border-radius:var(--radius);padding:30px 22px;
+      box-shadow:0 0 50px -10px ${c.color};position:relative;margin:auto 0;">
+      <button id="codeModalClose" style="position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:10px;
+        background:var(--glass);border:1px solid var(--stroke);color:var(--txt);font-size:20px;cursor:pointer;">✕</button>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;">
+        <div style="font-family:var(--mono);font-weight:800;font-size:40px;color:#06121a;background:${c.color};
+          padding:5px 16px;border-radius:12px;box-shadow:0 0 20px -3px ${c.color};">${escapeHtml(m.code)}</div>
+        <div style="min-width:0;"><div style="font-size:24px;font-weight:800;">${escapeHtml(name)}</div><div style="font-size:16px;color:var(--txt-dim);font-style:italic;">${escapeHtml(m.name.ro)}</div></div>
+      </div>
+      <div style="margin-top:14px;"><div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--txt-faint);font-weight:700;margin-bottom:4px;">📖 ${t("modal_exp")}</div>
+        <div style="font-size:21px;line-height:1.5;">${escapeHtml(exp)}</div></div>
+      <div style="margin-top:14px;"><div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--txt-faint);font-weight:700;margin-bottom:4px;">⏱️ ${t("modal_when")}</div>
+        <div style="font-size:19px;color:var(--txt-dim);">${escapeHtml(when)}</div></div>
+      <div style="margin-top:14px;"><div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--txt-faint);font-weight:700;margin-bottom:4px;">💡 ${t("modal_ex")}</div>
+        <div style="font-family:var(--mono);font-size:18px;color:var(--cyan);background:rgba(46,230,255,.08);border:1px solid var(--stroke-soft);padding:8px 12px;border-radius:10px;">${escapeHtml(m.ex).replace(/\n/g,"<br>")}</div></div>
+      ${warn ? `<div class="warn" style="margin-top:14px;"><span class="wi">⚠️</span><span>${escapeHtml(warn)}</span></div>` : ""}
+      <div class="ed-actions">
+        <button class="ed-btn ghost" id="codeModalEdit">✏️ ${t("ed_edit")}</button>
+        <button class="ed-btn ghost" id="codeModalOk">${t("modal_close")}</button>
+      </div>
+    </div>`;
+    document.body.appendChild(wrap);
+    wrap.addEventListener("click", (e) => { if (e.target === wrap) wrap.remove(); });
+    document.getElementById("codeModalClose").addEventListener("click", () => wrap.remove());
+    document.getElementById("codeModalOk").addEventListener("click", () => wrap.remove());
+    document.getElementById("codeModalEdit").addEventListener("click", () => { wrap.remove(); openEditor(code); });
+}
+
+/* ============================================================
+   M-KÓD SZERKESZTŐ (új / módosítás / törlés)
+   ============================================================ */
+let edState = null;
+
+function blankCode() {
+    const mk = () => ({ hu: "", ro: "", de: "", en: "" });
+    return { code: "", cat: "move", name: mk(), exp: mk(), when: mk(), ex: "", warn: mk() };
+}
+
+function openEditor(code) {
+    const m = code ? byCode[code] : null;
+    edState = {
+        orig: m ? m.code : null,
+        lang: state.lang,
+        data: m ? normalizeCode(JSON.parse(JSON.stringify(m))) : blankCode()
+    };
+    drawEditor();
+}
+
+function drawEditor() {
+    let old = document.getElementById("edBackdrop");
+    if (old) old.remove();
+    const d = edState.data;
+    const L = edState.lang;
+    const wrap = document.createElement("div");
+    wrap.id = "edBackdrop";
+    wrap.className = "ed-backdrop";
+    wrap.innerHTML = `
+    <div class="ed-modal">
+      <button class="ed-close" id="edClose">✕</button>
+      <h2>${edState.orig ? t("ed_title_edit") : t("ed_title_new")}</h2>
+      <div class="ed-hint">${t("ed_langhint")}</div>
+      <div class="ed-row">
+        <div class="ed-field">
+          <label>${t("ed_code")}</label>
+          <input id="edCode" class="mono" type="text" value="${escapeHtml(d.code)}" placeholder="M120">
+        </div>
+        <div class="ed-field">
+          <label>${t("ed_cat")}</label>
+          <select id="edCat">
+            ${Object.keys(CATS).map(k => `<option value="${k}" ${d.cat===k?"selected":""}>${CATS[k].ico} ${escapeHtml(catName(k))}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="ed-langtabs">
+        ${LANGS.map(l => `<button class="ed-langtab ${l===L?"active":""}" data-edlang="${l}">${l.toUpperCase()}</button>`).join("")}
+      </div>
+      <div class="ed-field">
+        <label>${t("ed_name")} (${L.toUpperCase()})</label>
+        <input id="edName" type="text" value="${escapeHtml(d.name[L])}">
+      </div>
+      <div class="ed-field">
+        <label>${t("ed_exp")} (${L.toUpperCase()})</label>
+        <textarea id="edExp">${escapeHtml(d.exp[L])}</textarea>
+      </div>
+      <div class="ed-field">
+        <label>${t("ed_when")} (${L.toUpperCase()})</label>
+        <textarea id="edWhen">${escapeHtml(d.when[L])}</textarea>
+      </div>
+      <div class="ed-field">
+        <label>${t("ed_warn")} (${L.toUpperCase()})</label>
+        <textarea id="edWarn">${escapeHtml(d.warn[L])}</textarea>
+      </div>
+      <div class="ed-field">
+        <label>${t("ed_ex")}</label>
+        <textarea id="edEx" class="mono">${escapeHtml(d.ex)}</textarea>
+      </div>
+      <div class="ed-actions">
+        <button class="ed-btn primary" id="edSave">${t("ed_save")}</button>
+        <button class="ed-btn ghost" id="edCancel">${t("ed_cancel")}</button>
+        ${edState.orig ? `<button class="ed-btn danger" id="edDelete">${t("ed_delete")}</button>` : ""}
+      </div>
+    </div>`;
+    document.body.appendChild(wrap);
+
+    wrap.addEventListener("click", e => { if (e.target === wrap) closeEditor(); });
+    document.getElementById("edClose").addEventListener("click", closeEditor);
+    document.getElementById("edCancel").addEventListener("click", closeEditor);
+    document.getElementById("edSave").addEventListener("click", saveEditor);
+    const del = document.getElementById("edDelete");
+    if (del) del.addEventListener("click", deleteFromEditor);
+    wrap.querySelectorAll("[data-edlang]").forEach(b => {
+        b.addEventListener("click", function() {
+            commitEditorInputs();
+            edState.lang = this.dataset.edlang;
+            drawEditor();
+        });
+    });
+}
+
+function commitEditorInputs() {
+    const d = edState.data, L = edState.lang;
+    d.code = document.getElementById("edCode").value.trim().toUpperCase();
+    d.cat = document.getElementById("edCat").value;
+    d.name[L] = document.getElementById("edName").value.trim();
+    d.exp[L] = document.getElementById("edExp").value.trim();
+    d.when[L] = document.getElementById("edWhen").value.trim();
+    d.warn[L] = document.getElementById("edWarn").value.trim();
+    d.ex = document.getElementById("edEx").value;
+}
+
+function fillLangs(o) {
+    const first = o.hu || o.ro || o.de || o.en || "";
+    LANGS.forEach(l => { if (!o[l]) o[l] = first; });
+}
+
+function saveEditor() {
+    commitEditorInputs();
+    const d = edState.data;
+    if (!/^M\d+[A-Z0-9]*$/.test(d.code)) { toast(t("ed_code_err")); return; }
+    if (d.code !== edState.orig && byCode[d.code]) { toast(t("ed_dup_err")); return; }
+    ["name", "exp", "when"].forEach(f => fillLangs(d[f]));
+    const anyWarn = LANGS.some(l => d.warn[l]);
+    if (anyWarn) fillLangs(d.warn);
+    if (!d.ex.trim()) d.ex = d.code;
+    if (edState.orig) {
+        const i = MCODES.findIndex(m => m.code === edState.orig);
+        if (i >= 0) MCODES[i] = d; else MCODES.push(d);
+        if (edState.orig !== d.code && state.notes[edState.orig]) {
+            state.notes[d.code] = state.notes[edState.orig];
+            delete state.notes[edState.orig];
+            save();
+        }
+    } else {
+        MCODES.push(d);
+    }
+    saveMcodes();
+    closeEditor();
+    render();
+    toast(t("ed_saved") + " · " + d.code);
+}
+
+function deleteFromEditor() {
+    if (!confirm(t("ed_confirm_del"))) return;
+    MCODES = MCODES.filter(m => m.code !== edState.orig);
+    saveMcodes();
+    closeEditor();
+    render();
+    toast(t("ed_deleted"));
+}
+
+function closeEditor() {
+    const el = document.getElementById("edBackdrop");
+    if (el) el.remove();
+    edState = null;
+}
+
+function resetToDefaults() {
+    if (!confirm(t("ed_reset_confirm"))) return;
+    MCODES = JSON.parse(JSON.stringify(DEFAULT_MCODES));
+    localStorage.removeItem(LS + "data");
+    rebuildIndex();
+    render();
+    toast(t("ed_reset_done"));
+}
+
+/* ============================================================
+   MUNKAMENETEK
+   ============================================================ */
+function renderFlows() {
+    const f = FLOWS.find(x => x.id === state.flow) || FLOWS[0];
+    const tabs = FLOWS.map(x => `<button class="flow-tab ${x.id===f.id?'active':''}" data-flow="${x.id}">${getText(x.name)}</button>`).join("");
+    const nodes = f.steps.map((s, i) => {
+        let html = "";
+        const m = s.code ? byCode[s.code] : null;
+        if (m) {
+            const c = CATS[m.cat];
+            html = `<div class="flow-node" style="--fc:${c.color}" data-code="${escapeHtml(m.code)}" title="${t('mm_hint')}">
+        <div class="fc-code">${escapeHtml(m.code)}</div>
+        <div class="fc-txt"><div class="fh">${escapeHtml(getText(m.name))}</div><div class="fr">${escapeHtml(m.name.ro)}</div></div>
+      </div>`;
+        } else if (s.code) {
+            html = `<div class="flow-node plain"><div class="fc-code">${escapeHtml(s.code)}</div><div class="fc-txt"><div class="fh">${escapeHtml(s.code)}</div></div></div>`;
+        } else {
+            const codeHint = s.code2 ? s.code2.join(" / ") : "•";
+            const plainText = s.plain ? getText(s.plain) : "•";
+            html = `<div class="flow-node plain"><div class="fc-code">${escapeHtml(codeHint)}</div><div class="fc-txt"><div class="fh">${escapeHtml(plainText)}</div></div></div>`;
+        }
+        const arrow = i < f.steps.length - 1 ? `<div class="flow-arrow"></div>` : "";
+        return `<div class="flow-step">${html}</div>${arrow}`;
+    }).join("");
+    view.innerHTML = `
+    <div class="flow-tabs">${tabs}</div>
+    <div class="flow-title">⚙️ ${getText(f.name)}</div>
+    <div class="flow-desc">${getText(f.desc)}</div>
+    <div class="flowchart">${nodes}</div>
+  `;
+    document.querySelectorAll(".flow-tab").forEach(el => el.addEventListener("click", function() { state.flow = this.dataset.flow; renderFlows(); }));
+    document.querySelectorAll(".flow-node[data-code]").forEach(el => el.addEventListener("click", function() { openCodeModal(this.dataset.code); }));
+}
+
+/* ============================================================
+   BIZTONSÁG
+   ============================================================ */
+function renderSafety() {
+    const data = {
+        hu: { common:["Orsó indítása szerszámcsere közben","Vákuum kikapcsolása szerszám felemelése előtt","Pumpa indítása vákuum bekapcsolása nélkül","M2 után további kódok írása"],
+            danger:["Forgó szerszám érintése","Vákuum nélküli marás (darab elmozdul)","Rossz asztal aktiválása (M26/M27)","Szerszám leengedése akadályra"],
+            not:["Ne indítsd az orsót, ha a szerszám nincs biztonságos helyen","Ne kapcsold ki a vákuumot szerszám leengedve","Ne hagyd figyelmen kívül a figyelmeztetéseket","Ne használj M2-t a program közepén"],
+            order:["1. Asztal kiválasztása (M20/M21)","2. Asztal aktiválása (M26/M27)","3. Pumpa indítása (M50/M52/M73)","4. Vákuum bekapcsolása (M54/M56/M75)","5. Szerszám leengedése (M120/M101/…)","6. Orsó indítása (M3)","7. Megmunkálás","8. Orsó leállítása (M5)","9. Szerszám felemelése (M121/…)","10. Vákuum kikapcsolása (M55/M57/M76)","11. Pumpa leállítása (M51/M53/M74)","12. Program vége (M2)"],
+            warn:["Mindig ellenőrizd a szerszám útját leengedés előtt!","Marás előtt győződj meg a darab tapadásáról!","Szerszámcsere előtt állítsd le az orsót!","Csak felemelt szerszámnál kapcsold ki a vákuumot!"] },
+        ro: { common:["Pornirea axului în timpul schimbării sculei","Oprirea vacuumului înainte de ridicarea sculei","Pornirea pompei fără a activa vacuumul","Scrierea de coduri după M2"],
+            danger:["Atingerea sculei rotative","Frezarea fără vacuum (piesa se deplasează)","Activarea greșită a mesei (M26/M27)","Coborârea sculei peste obstacole"],
+            not:["Nu porni axul dacă scula nu este în poziție sigură","Nu opri vacuumul cu scula coborâtă","Nu ignora avertismentele","Nu folosi M2 în mijlocul programului"],
+            order:["1. Selectarea mesei (M20/M21)","2. Activarea mesei (M26/M27)","3. Pornirea pompei (M50/M52/M73)","4. Pornirea vacuumului (M54/M56/M75)","5. Coborârea sculei (M120/M101/…)","6. Pornirea axului (M3)","7. Prelucrare","8. Oprirea axului (M5)","9. Ridicarea sculei (M121/…)","10. Oprirea vacuumului (M55/M57/M76)","11. Oprirea pompei (M51/M53/M74)","12. Sfârșit program (M2)"],
+            warn:["Verifică întotdeauna traiectoria sculei înainte de coborâre!","Înainte de frezare, asigură-te că piesa este fixată!","Înainte de schimbarea sculei, oprește axul!","Oprește vacuumul doar când scula este ridicată!"] },
+        de: { common:["Spindel während Werkzeugwechsel starten","Vakuum vor dem Anheben des Werkzeugs ausschalten","Pumpe ohne Vakuum-Aktivierung starten","Weitere Codes nach M2 schreiben"],
+            danger:["Berühren des rotierenden Werkzeugs","Fräsen ohne Vakuum (Werkstück verschiebt sich)","Falschen Tisch aktivieren (M26/M27)","Werkzeug auf ein Hindernis absenken"],
+            not:["Spindel nicht starten, wenn das Werkzeug nicht sicher positioniert ist","Vakuum nicht bei abgesenktem Werkzeug ausschalten","Warnungen nicht ignorieren","M2 nicht in der Mitte des Programms verwenden"],
+            order:["1. Tischauswahl (M20/M21)","2. Tischaktivierung (M26/M27)","3. Pumpe starten (M50/M52/M73)","4. Vakuum einschalten (M54/M56/M75)","5. Werkzeug absenken (M120/M101/…)","6. Spindel starten (M3)","7. Bearbeitung","8. Spindel stoppen (M5)","9. Werkzeug anheben (M121/…)","10. Vakuum ausschalten (M55/M57/M76)","11. Pumpe stoppen (M51/M53/M74)","12. Programmende (M2)"],
+            warn:["Vor dem Absenken immer den Werkzeugweg prüfen!","Vor dem Fräsen die Haftung des Werkstücks sicherstellen!","Vor dem Werkzeugwechsel die Spindel stoppen!","Vakuum nur bei angehobenem Werkzeug ausschalten!"] },
+        en: { common:["Starting the spindle during a tool change","Switching off vacuum before raising the tool","Starting the pump without turning on vacuum","Writing further codes after M2"],
+            danger:["Touching the rotating tool","Milling without vacuum (workpiece shifts)","Activating the wrong table (M26/M27)","Lowering the tool onto an obstruction"],
+            not:["Don't start the spindle if the tool isn't in a safe position","Don't switch off vacuum with the tool lowered","Don't ignore warnings","Don't use M2 in the middle of the program"],
+            order:["1. Table selection (M20/M21)","2. Table activation (M26/M27)","3. Pump start (M50/M52/M73)","4. Vacuum on (M54/M56/M75)","5. Tool down (M120/M101/…)","6. Spindle start (M3)","7. Machining","8. Spindle stop (M5)","9. Tool up (M121/…)","10. Vacuum off (M55/M57/M76)","11. Pump stop (M51/M53/M74)","12. Program end (M2)"],
+            warn:["Always check the tool path before lowering!","Make sure the workpiece is holding before milling!","Stop the spindle before a tool change!","Only switch off vacuum with the tool raised!"] }
+    };
+    const d = data[state.lang] || data.hu;
+    view.innerHTML = `
+    <div class="safety-grid">
+      <div class="safety-card"><h3>⚠️ ${t("safety_common")}</h3><ul>${d.common.map(x=>`<li>• ${x}</li>`).join("")}</ul></div>
+      <div class="safety-card"><h3>🔥 ${t("safety_danger")}</h3><ul>${d.danger.map(x=>`<li>• ${x}</li>`).join("")}</ul></div>
+      <div class="safety-card"><h3>🚫 ${t("safety_not")}</h3><ul>${d.not.map(x=>`<li>• ${x}</li>`).join("")}</ul></div>
+      <div class="safety-card"><h3>✅ ${t("safety_order")}</h3><ul>${d.order.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+      <div class="safety-card" style="grid-column:1/-1;"><h3>🛡️ ${t("safety_warn")}</h3><ul>${d.warn.map(x=>`<li>⚠️ ${x}</li>`).join("")}</ul></div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   CNC SZÓTÁR
+   ============================================================ */
+function renderDictionary() {
+    const sorted = [...MCODES].sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
+    const items = sorted.map(m => `<div class="dict-item" data-edit="${escapeHtml(m.code)}" style="cursor:pointer;">
+      <span class="d-code">${escapeHtml(m.code)}</span><span class="d-hu">${escapeHtml(getText(m.name))}</span><span class="d-ro">${escapeHtml(m.name.ro)}</span><span class="d-exp">${escapeHtml(getText(m.exp))}</span>
+    </div>`).join("");
+    view.innerHTML = `
+    <div class="dict-actions">
+      <button class="dict-dl" id="dlCsv">⬇️ ${t("dl_csv")}</button>
+      <button class="dict-dl" id="addCodeBtn">${t("ed_add")}</button>
+    </div>
+    <div class="dict-list">
+      <div class="dict-item" style="font-weight:700;background:var(--glass-strong);border-color:var(--stroke);">
+        <span>${t("dict_code")}</span><span>${t("dict_hu")}</span><span>${t("dict_ro")}</span><span>${t("dict_exp")}</span>
+      </div>
+      ${items}
+    </div>
+  `;
+    document.getElementById("dlCsv").addEventListener("click", downloadCsv);
+}
+
+/* ============================================================
+   LETÖLTÉS – CSV és teljes HTML (a szerkesztett adatokkal!)
+   ============================================================ */
+function downloadCsv() {
+    const rows = [["Code","Cat","HU","RO","DE","EN","Explanation_HU","Explanation_RO","Explanation_DE","Explanation_EN"]];
+    for (const m of MCODES) rows.push([m.code, m.cat, m.name.hu, m.name.ro, m.name.de, m.name.en, m.exp.hu, m.exp.ro, m.exp.de, m.exp.en]);
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "cnc_mkodok_szotar.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("CSV ⬇️");
+}
+
+function downloadFullHtml() {
+    /* A saját módosításokat beleírjuk a letöltött fájlba, így az bárhol megnyitva
+       a szerkesztett M-kódokat mutatja. */
+    const dataEl = document.getElementById("mcodeData");
+    if (dataEl) dataEl.textContent = JSON.stringify(MCODES).replace(/<\//g, "<\\/");
+    const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "cnc-mcod-tanulo.html";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast(t("toast_dl"));
+}
+
+/* ============================================================
+   GLOBÁLIS ESEMÉNYEK
+   ============================================================ */
+document.addEventListener("click", e => {
+    const tEl = e.target;
+    const nav = tEl.closest(".nav-item");
+    if (nav) { setPage(nav.dataset.page); return; }
+    if (tEl.closest("#addCodeBtn") || tEl.closest("#addBtnSide")) { openEditor(null); closeSidebar(); return; }
+    if (tEl.closest("#resetBtn")) { resetToDefaults(); return; }
+    const head = tEl.closest(".cat-head");
+    if (head && state.page === "mcodes") {
+        const k = head.dataset.toggle;
+        state.collapsed[k] = !state.collapsed[k];
+        save();
+        document.getElementById("cat-" + k).classList.toggle("collapsed", state.collapsed[k]);
+        return;
+    }
+    const note = tEl.closest("[data-note]");
+    if (note) {
+        const box = document.getElementById("note-" + note.dataset.note);
+        if (box) { box.classList.toggle("show"); if (box.classList.contains("show")) box.querySelector("textarea").focus(); }
+        return;
+    }
+    const copy = tEl.closest("[data-copy]");
+    if (copy) {
+        const m = byCode[copy.dataset.copy];
+        if (!m) return;
+        const txt = `${m.code} — ${getText(m.name)} (${m.name.ro})\n${getText(m.exp)}\n${t("card_when")}: ${getText(m.when)}\n${t("card_ex")}: ${m.ex}`;
+        navigator.clipboard?.writeText(txt).then(() => toast(m.code + " " + t("toast_copy")), () => toast(t("toast_copy_fail")));
+        return;
+    }
+    const ed = tEl.closest("[data-edit]");
+    if (ed) { openEditor(ed.dataset.edit); return; }
+    if (tEl.closest("#themeBtn")) { toggleTheme(); return; }
+    if (tEl.closest("#dlBtn")) { downloadFullHtml(); return; }
+    if (tEl.closest("#hamburger")) { $("#sidebar").classList.add("open"); $("#backdrop").classList.add("show"); return; }
+    if (tEl.closest("#backdrop")) { closeSidebar(); }
+});
+
+document.addEventListener("input", e => {
+    const ta = e.target.closest("[data-noteinput]");
+    if (ta) {
+        const code = ta.dataset.noteinput;
+        const v = ta.value.trim();
+        if (v) state.notes[code] = ta.value; else delete state.notes[code];
+        save();
+    }
+});
+
+$("#search").addEventListener("input", function() {
+    state.search = this.value;
+    $("#searchClear").style.display = this.value ? "block" : "none";
+    const ds = document.getElementById("dashSearch");
+    if (ds && ds.value !== this.value) ds.value = this.value;
+    if (state.page === "mcodes") renderMcodes();
+    else if (this.value.trim()) setPage("mcodes");
+});
+
+$("#searchClear").addEventListener("click", () => {
+    $("#search").value = ""; state.search = ""; $("#searchClear").style.display = "none";
+    const ds = document.getElementById("dashSearch");
+    if (ds) ds.value = "";
+    if (state.page === "mcodes") renderMcodes(); else render();
+    $("#search").focus();
+});
+
+function closeSidebar() { $("#sidebar").classList.remove("open"); $("#backdrop").classList.remove("show"); }
+
+function toggleTheme() {
+    const cur = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+    applyTheme(cur);
+    localStorage.setItem(LS + "theme", cur);
+    toast(t("toast_theme_" + cur));
+}
+function applyTheme(th) {
+    document.documentElement.setAttribute("data-theme", th);
+    $("#themeBtn").innerHTML = th === "light" ? "☀️ Temă" : "🌙 Temă";
+}
+
+document.addEventListener("keydown", e => {
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+    if (e.key === "/" && !typing) { e.preventDefault(); $("#search").focus(); return; }
+    if (e.key === "Escape") {
+        const edm = document.getElementById("edBackdrop"); if (edm) { closeEditor(); return; }
+        const modal = document.getElementById("codeModalBackdrop"); if (modal) modal.remove();
+        if (typing) document.activeElement.blur();
+        return;
+    }
+    if (typing) return;
+    const pages = ["dashboard", "mcodes", "mindmap", "flows", "safety", "dictionary"];
+    if (["1","2","3","4","5","6"].includes(e.key)) { setPage(pages[+e.key - 1]); return; }
+    if (e.key.toLowerCase() === "t") { toggleTheme(); return; }
+    if (e.key.toLowerCase() === "n") { openEditor(null); return; }
+});
+
+(function init() {
+    applyTheme(localStorage.getItem(LS + "theme") || "dark");
+    state.lang = localStorage.getItem(LS + "lang") || "ro";
+    setPage("dashboard");
+})();
+</script>
+</body>
+</html>
