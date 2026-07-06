@@ -242,6 +242,14 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .ed-btn.danger{background:rgba(255,107,129,.15);border:1px solid rgba(255,107,129,.45);color:#ff8a9a;margin-left:auto}
 .ed-close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:10px;background:var(--glass);border:1px solid var(--stroke);color:var(--txt);font-size:20px;cursor:pointer}
 .toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+/* ---------- TELJES KÉPERNYŐS ELMETÉRKÉP ---------- */
+body.mm-full .sidebar,body.mm-full .topbar,body.mm-full .print-title,body.mm-full .mm-title,body.mm-full .mm-hint-txt{display:none !important}
+body.mm-full .app{grid-template-columns:1fr}
+body.mm-full .main{padding:8px 10px;max-width:100%}
+body.mm-full .mindmap-wrap{max-width:100%;padding:0}
+body.mm-full .mm-controls{margin-bottom:8px}
+body.mm-full .mm-container{height:calc(100vh - 88px)}
+body.mm-full{overflow:hidden}
 @media(max-width:900px){
   .app{grid-template-columns:1fr}
   .sidebar{position:fixed;left:0;top:0;z-index:50;width:min(340px,86vw);transform:translateX(-105%);transition:transform .3s}
@@ -255,7 +263,11 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 @media(max-width:560px){
   body{font-size:18px}
   .cards{grid-template-columns:1fr}
-  .dash-cats{grid-template-columns:1fr 1fr;gap:12px}
+  .dash-cats{grid-template-columns:repeat(6,1fr);gap:8px}
+  .dash-cat{grid-column:span 2;padding:13px 5px}
+  .dash-cat:nth-child(4),.dash-cat:nth-child(5){grid-column:span 3}
+  .dash-cat .name{font-size:11px;font-weight:700;letter-spacing:-0.3px;overflow-wrap:break-word}
+  .dash-cat .count{font-size:11.5px}
   .mm-container{height:70vh;padding:6px}
   .dict-item{grid-template-columns:80px 1fr;gap:4px;font-size:17px}
   .dict-item .d-ro{grid-column:2}
@@ -274,9 +286,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
   .cat-ico{width:44px;height:44px;flex-basis:44px;font-size:20px}
   .dash-lang .lang-btn{font-size:18px;padding:6px 14px}
   .dash-search input{font-size:18px;padding:14px 18px 14px 50px}
-  .dash-cat .ico{font-size:36px}
-  .dash-cat .name{font-size:16px}
-  .dash-cat .count{font-size:13px}
+  .dash-cat .ico{font-size:32px}
   .dash-info{font-size:15px}
   .flow-tab{font-size:17px;padding:8px 13px}
   .flow-node .fc-code{font-size:19px;min-width:52px}
@@ -346,7 +356,6 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
         <div class="page-sub" id="ptSub">Prezentare generală</div>
       </div>
       <div class="spacer"></div>
-      <div class="stat-pill" id="statPill"></div>
     </div>
     <div class="print-title">Referință CNC M-cod</div>
     <div id="view"></div>
@@ -530,7 +539,7 @@ const UI_TEXTS = {
         safety_common:"Gyakori hibák", safety_danger:"Veszélyek", safety_not:"Mit nem szabad", safety_order:"Helyes sorrend", safety_warn:"Biztonsági figyelmeztetések",
         toast_fav_add:"⭐ kedvenc", toast_fav_remove:"eltávolítva a kedvencekből", toast_copy:"a vágólapon 📋", toast_copy_fail:"Másolás nem sikerült",
         toast_theme_light:"☀️ Világos mód", toast_theme_dark:"🌙 Sötét mód", toast_dl:"⬇️ HTML letöltve (a módosításaiddal együtt)",
-        mm_zoom_in:"🔍+ Nagyítás", mm_zoom_out:"🔍− Kicsinyítés", mm_reset:"↺ Alaphelyzet", mm_hint:"💡 Kattints egy M-kódra a teljes magyarázatért · húzd az ujjaddal / egérrel a mozgatáshoz",
+        mm_zoom_in:"🔍+ Nagyítás", mm_zoom_out:"🔍− Kicsinyítés", mm_reset:"↺ Alaphelyzet", mm_full:"⛶ Teljes képernyő", mm_full_exit:"✕ Kilépés", mm_hint:"💡 Kattints egy M-kódra a teljes magyarázatért · húzd az ujjaddal / egérrel a mozgatáshoz",
         dict_code:"Kód", dict_hu:"Magyar", dict_ro:"Román", dict_exp:"Magyarázat", dl_html:"HTML letöltése", dl_csv:"CSV letöltése",
         modal_exp:"Magyarázat", modal_when:"Mikor használjuk", modal_ex:"Példa kód", modal_warn:"Figyelem", modal_close:"Bezárás",
         ed_add:"➕ Új M-kód", ed_add_short:"Új M-kód", ed_edit:"Szerkesztés", ed_title_new:"➕ Új M-kód", ed_title_edit:"✏️ M-kód szerkesztése",
@@ -551,7 +560,7 @@ const UI_TEXTS = {
         safety_common:"Erori frecvente", safety_danger:"Pericole", safety_not:"Ce nu trebuie făcut", safety_order:"Ordine corectă", safety_warn:"Avertismente de siguranță",
         toast_fav_add:"⭐ favorit", toast_fav_remove:"eliminat din favorite", toast_copy:"pe clipboard 📋", toast_copy_fail:"Copierea a eșuat",
         toast_theme_light:"☀️ Mod luminos", toast_theme_dark:"🌙 Mod întunecat", toast_dl:"⬇️ HTML descărcat (cu modificările tale)",
-        mm_zoom_in:"🔍+ Mărire", mm_zoom_out:"🔍− Micșorare", mm_reset:"↺ Resetare", mm_hint:"💡 Apasă pe un cod M pentru explicația completă · trage cu degetul / mouse-ul pentru a muta",
+        mm_zoom_in:"🔍+ Mărire", mm_zoom_out:"🔍− Micșorare", mm_reset:"↺ Resetare", mm_full:"⛶ Ecran complet", mm_full_exit:"✕ Ieșire", mm_hint:"💡 Apasă pe un cod M pentru explicația completă · trage cu degetul / mouse-ul pentru a muta",
         dict_code:"Cod", dict_hu:"Maghiară", dict_ro:"Română", dict_exp:"Explicație", dl_html:"Descarcă HTML", dl_csv:"Descarcă CSV",
         modal_exp:"Explicație", modal_when:"Când se folosește", modal_ex:"Exemplu de cod", modal_warn:"Atenție", modal_close:"Închide",
         ed_add:"➕ Cod M nou", ed_add_short:"Cod M nou", ed_edit:"Editare", ed_title_new:"➕ Cod M nou", ed_title_edit:"✏️ Editare cod M",
@@ -572,7 +581,7 @@ const UI_TEXTS = {
         safety_common:"Häufige Fehler", safety_danger:"Gefahren", safety_not:"Was nicht erlaubt ist", safety_order:"Richtige Reihenfolge", safety_warn:"Sicherheitshinweise",
         toast_fav_add:"⭐ Favorit", toast_fav_remove:"aus Favoriten entfernt", toast_copy:"in die Zwischenablage kopiert 📋", toast_copy_fail:"Kopieren fehlgeschlagen",
         toast_theme_light:"☀️ Heller Modus", toast_theme_dark:"🌙 Dunkler Modus", toast_dl:"⬇️ HTML heruntergeladen (mit deinen Änderungen)",
-        mm_zoom_in:"🔍+ Vergrößern", mm_zoom_out:"🔍− Verkleinern", mm_reset:"↺ Zurücksetzen", mm_hint:"💡 Klicke auf einen M-Code für die vollständige Erklärung · zum Verschieben ziehen",
+        mm_zoom_in:"🔍+ Vergrößern", mm_zoom_out:"🔍− Verkleinern", mm_reset:"↺ Zurücksetzen", mm_full:"⛶ Vollbild", mm_full_exit:"✕ Beenden", mm_hint:"💡 Klicke auf einen M-Code für die vollständige Erklärung · zum Verschieben ziehen",
         dict_code:"Code", dict_hu:"Ungarisch", dict_ro:"Rumänisch", dict_exp:"Erklärung", dl_html:"HTML herunterladen", dl_csv:"CSV herunterladen",
         modal_exp:"Erklärung", modal_when:"Wann verwenden", modal_ex:"Codebeispiel", modal_warn:"Achtung", modal_close:"Schließen",
         ed_add:"➕ Neuer M-Code", ed_add_short:"Neuer M-Code", ed_edit:"Bearbeiten", ed_title_new:"➕ Neuer M-Code", ed_title_edit:"✏️ M-Code bearbeiten",
@@ -593,7 +602,7 @@ const UI_TEXTS = {
         safety_common:"Common mistakes", safety_danger:"Hazards", safety_not:"What not to do", safety_order:"Correct sequence", safety_warn:"Safety warnings",
         toast_fav_add:"⭐ favorite", toast_fav_remove:"removed from favorites", toast_copy:"copied to clipboard 📋", toast_copy_fail:"Copy failed",
         toast_theme_light:"☀️ Light mode", toast_theme_dark:"🌙 Dark mode", toast_dl:"⬇️ HTML downloaded (with your edits)",
-        mm_zoom_in:"🔍+ Zoom in", mm_zoom_out:"🔍− Zoom out", mm_reset:"↺ Reset", mm_hint:"💡 Click an M-code for the full explanation · drag to pan",
+        mm_zoom_in:"🔍+ Zoom in", mm_zoom_out:"🔍− Zoom out", mm_reset:"↺ Reset", mm_full:"⛶ Full screen", mm_full_exit:"✕ Exit", mm_hint:"💡 Click an M-code for the full explanation · drag to pan",
         dict_code:"Code", dict_hu:"Hungarian", dict_ro:"Romanian", dict_exp:"Explanation", dl_html:"Download HTML", dl_csv:"Download CSV",
         modal_exp:"Explanation", modal_when:"When to use it", modal_ex:"Example code", modal_warn:"Warning", modal_close:"Close",
         ed_add:"➕ New M-code", ed_add_short:"New M-code", ed_edit:"Edit", ed_title_new:"➕ New M-code", ed_title_edit:"✏️ Edit M-code",
@@ -714,6 +723,7 @@ const PAGE_META = {
 
 function setPage(page, filterCat) {
     state.page = page;
+    if (page !== "mindmap") document.body.classList.remove("mm-full");
     if (filterCat) state.filterCat = filterCat;
     else if (page !== 'mcodes') state.filterCat = null;
     document.querySelectorAll(".nav-item").forEach(el => el.classList.toggle("active", el.dataset.page === page));
@@ -739,14 +749,7 @@ function render() {
     else if (page === "dictionary") renderDictionary();
 }
 
-function updateStat() {
-    const total = MCODES.length, cats = Object.keys(CATS).length, flows = FLOWS.length;
-    if (state.page === "dashboard") {
-        $("#statPill").textContent = `📊 ${total} M · ${cats} · ${flows}`;
-    } else {
-        $("#statPill").textContent = `${total} M-cod`;
-    }
-}
+function updateStat() { /* jelvény eltávolítva kérésre */ }
 
 function applyLangToUI() {
     document.querySelectorAll("[data-key]").forEach(el => {
@@ -879,10 +882,10 @@ function renderMindmap() {
     const cats = Object.keys(CATS).filter(k => MCODES.some(m => m.cat === k));
     const total = MCODES.length || 1;
     const size = 1200, cx = size / 2, cy = size / 2;
-    const R_CAT = 240;      // kategória körök távolsága a középponttól
-    const R_RING1 = 400;    // belső kód-gyűrű
-    const R_RING2 = 505;    // külső kód-gyűrű
-    const catRadius = 56;
+    const R_CAT = 255;      // kategória körök távolsága a középponttól
+    const R_RING1 = 410;    // belső kód-gyűrű
+    const R_RING2 = 520;    // külső kód-gyűrű
+    const catRadius = 73;
     const BOX_W = 78, BOX_H = 38;
 
     let nodesSvg = "", linesSvg = "";
@@ -892,7 +895,7 @@ function renderMindmap() {
         const c = CATS[key];
         const color = c.hex || "#2ee6ff";
         const codes = MCODES.filter(m => m.cat === key);
-        const span = 360 * codes.length / total;
+        const span = 360 * (0.5 / cats.length + 0.5 * codes.length / total);
         const midDeg = angle + span / 2;
         const midRad = midDeg * Math.PI / 180;
         const px = cx + R_CAT * Math.cos(midRad);
@@ -903,7 +906,7 @@ function renderMindmap() {
         codes.forEach((m, j) => {
             const aDeg = angle + span * (j + 0.5) / codes.length;
             const aRad = aDeg * Math.PI / 180;
-            const r = (codes.length > 6 && j % 2 === 1) ? R_RING2 : R_RING1;
+            const r = (j % 2 === 1) ? R_RING2 : R_RING1;
             const nx = cx + r * Math.cos(aRad);
             const ny = cy + r * Math.sin(aRad);
             const sx = px + catRadius * Math.cos(aRad);
@@ -915,11 +918,29 @@ function renderMindmap() {
             </g>`;
         });
 
+        /* Kategória felirat 2 sorban, feljebb, nagyobb betűvel */
+        const nm = catName(key);
+        let line1 = nm, line2 = "";
+        if (nm.includes(" ")) {
+            const words = nm.split(" ");
+            let best = 1, bestDiff = 1e9;
+            for (let w = 1; w < words.length; w++) {
+                const a = words.slice(0, w).join(" "), b = words.slice(w).join(" ");
+                const diff = Math.abs(a.length - b.length);
+                if (diff < bestDiff) { bestDiff = diff; best = w; }
+            }
+            line1 = words.slice(0, best).join(" ");
+            line2 = words.slice(best).join(" ");
+        }
+        const nameSvg = line2
+            ? `<text x="${px.toFixed(1)}" y="${(py + 6).toFixed(1)}" class="mm-node-text-cat" font-size="16" font-weight="800" fill="var(--txt)">${escapeHtml(line1)}</text>
+          <text x="${px.toFixed(1)}" y="${(py + 26).toFixed(1)}" class="mm-node-text-cat" font-size="16" font-weight="800" fill="var(--txt)">${escapeHtml(line2)}</text>`
+            : `<text x="${px.toFixed(1)}" y="${(py + 14).toFixed(1)}" class="mm-node-text-cat" font-size="16" font-weight="800" fill="var(--txt)">${escapeHtml(line1)}</text>`;
         nodesSvg += `<g class="mm-circle-cat" data-cat="${key}">
           <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${catRadius}" fill="var(--bg-1)" stroke="${color}" stroke-width="3" filter="url(#glow)"/>
-          <text x="${px.toFixed(1)}" y="${(py - 12).toFixed(1)}" class="mm-node-text" font-size="28">${c.ico}</text>
-          <text x="${px.toFixed(1)}" y="${(py + 22).toFixed(1)}" class="mm-node-text-cat" font-size="13">${escapeHtml(catName(key))}</text>
-          <text x="${px.toFixed(1)}" y="${(py + 38).toFixed(1)}" class="mm-node-text-cat" font-size="12" fill="${color}">${codes.length}</text>
+          <text x="${px.toFixed(1)}" y="${(py - 30).toFixed(1)}" class="mm-node-text" font-size="32">${c.ico}</text>
+          ${nameSvg}
+          <text x="${px.toFixed(1)}" y="${(py + 48).toFixed(1)}" class="mm-node-text-cat" font-size="14" font-weight="700" fill="${color}">${codes.length}</text>
         </g>`;
 
         angle += span;
@@ -944,9 +965,10 @@ function renderMindmap() {
         <button id="mmZoomIn">${t("mm_zoom_in")}</button>
         <button id="mmZoomOut">${t("mm_zoom_out")}</button>
         <button id="mmReset">${t("mm_reset")}</button>
+        <button id="mmFull">${document.body.classList.contains("mm-full") ? t("mm_full_exit") : t("mm_full")}</button>
       </div>
       <div class="mm-container" id="mmContainer">${svg}</div>
-      <div style="text-align:center;color:var(--txt-faint);font-size:20px;margin-top:12px;">${t("mm_hint")}</div>
+      <div class="mm-hint-txt" style="text-align:center;color:var(--txt-faint);font-size:20px;margin-top:12px;">${t("mm_hint")}</div>
     </div>
   `;
 
@@ -980,6 +1002,12 @@ function renderMindmap() {
         scale = 1; translateX = 0; translateY = 0;
         state.mmScale = 1; state.mmTranslateX = 0; state.mmTranslateY = 0;
         applyTransform();
+    });
+    document.getElementById("mmFull").addEventListener("click", () => {
+        document.body.classList.toggle("mm-full");
+        window.scrollTo(0, 0);
+        const b = document.getElementById("mmFull");
+        b.textContent = document.body.classList.contains("mm-full") ? t("mm_full_exit") : t("mm_full");
     });
 
     /* Pan + pinch: pointer events → működik egérrel ÉS érintéssel */
