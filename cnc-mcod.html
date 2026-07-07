@@ -250,6 +250,25 @@ body.mm-full .mindmap-wrap{max-width:100%;padding:0}
 body.mm-full .mm-controls{margin-bottom:8px}
 body.mm-full .mm-container{height:calc(100vh - 88px)}
 body.mm-full{overflow:hidden}
+body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
+/* ---------- MINI MENÜ (összecsukott ikonsáv) ---------- */
+.nav-mini-btn{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:9px;background:var(--glass);border:1px solid var(--stroke);color:var(--txt-dim);cursor:pointer;font-size:16px;font-weight:800;display:none;z-index:5}
+.nav-mini-btn:hover{color:var(--txt);border-color:var(--cyan)}
+@media(min-width:901px){
+  .nav-mini-btn{display:block}
+  body.nav-mini .app{grid-template-columns:80px 1fr}
+  body.nav-mini .sidebar{padding:54px 10px 20px}
+  body.nav-mini .brand div:last-child,
+  body.nav-mini .search-wrap,
+  body.nav-mini .nav-title,
+  body.nav-mini .worker-box,
+  body.nav-mini .sidebar .theme-btn{display:none}
+  body.nav-mini .brand{justify-content:center;margin-bottom:8px}
+  body.nav-mini .brand .logo{width:46px;height:46px;font-size:24px}
+  body.nav-mini .nav-item{justify-content:center;padding:11px 6px;gap:0}
+  body.nav-mini .nav-item span:not(.ico){display:none}
+  body.nav-mini .nav-item .ico{width:auto;font-size:26px}
+}
 @media(max-width:900px){
   .app{grid-template-columns:1fr}
   .sidebar{position:fixed;left:0;top:0;z-index:50;width:min(340px,86vw);transform:translateX(-105%);transition:transform .3s}
@@ -329,7 +348,8 @@ body.mm-full{overflow:hidden}
 .dng-badge{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--glass);border:1px solid var(--stroke);color:var(--txt-dim)}
 .dng-badge.big{font-size:17px;padding:6px 14px}
 /* ---------- SZIMULÁTOR ---------- */
-.sim-wrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,1fr);gap:18px}
+.sim-wrap{display:flex;flex-direction:column;gap:14px}
+.sim-machine-box{max-width:1250px;width:100%;margin:0 auto}
 .sim-machine-box{background:var(--glass);border:1px solid var(--stroke);border-radius:var(--radius);padding:12px;position:relative;overflow:hidden}
 .sim-machine-box svg{display:block;width:100%;height:auto}
 .sim-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
@@ -339,8 +359,8 @@ body.mm-full{overflow:hidden}
 .sim-speed{display:flex;gap:4px;background:var(--glass);border:1px solid var(--stroke);border-radius:999px;padding:4px}
 .sim-speed button{background:transparent;border:none;color:var(--txt-dim);font-weight:700;font-size:17px;padding:7px 13px;border-radius:999px;cursor:pointer;font-family:var(--sans)}
 .sim-speed button.active{background:var(--cyan);color:#06121a}
-.sim-proglist{background:var(--glass);border:1px solid var(--stroke);border-radius:var(--radius);padding:12px;max-height:560px;overflow-y:auto}
-.sim-step{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:11px;margin-bottom:4px;border:1px solid transparent;font-size:19px;cursor:pointer;transition:.15s}
+.sim-proglist{background:var(--glass);border:1px solid var(--stroke);border-radius:var(--radius);padding:12px;max-height:300px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:5px;align-content:start}
+.sim-step{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:11px;margin-bottom:0;border:1px solid transparent;font-size:19px;cursor:pointer;transition:.15s}
 .sim-step:hover{background:var(--glass-strong)}
 .sim-step .sc{font-family:var(--mono);font-weight:800;min-width:64px;color:var(--cyan)}
 .sim-step .sn{color:var(--txt-dim);font-size:16px;flex:1;min-width:0}
@@ -598,6 +618,7 @@ body.mm-full{overflow:hidden}
 
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar">
+    <button class="nav-mini-btn" id="navMini">«</button>
     <div class="brand">
       <div class="logo">🛠️</div>
       <div><h1>CNC M-cod</h1><span>Învățare · HMI</span></div>
@@ -621,7 +642,6 @@ body.mm-full{overflow:hidden}
       <a class="nav-item" data-page="realprog"><span class="ico">📜</span><span data-key="nav_realprog">Program real</span></a>
       <div class="nav-title" data-key="nav_training">Antrenament</div>
       <a class="nav-item" data-page="sim"><span class="ico">🕹️</span><span data-key="nav_sim">Simulator CNC</span></a>
-      <a class="nav-item" data-page="machine3d"><span class="ico">🏭</span><span data-key="nav_3d">Mașină 3D</span></a>
       <a class="nav-item" data-page="flash"><span class="ico">🃏</span><span data-key="nav_flash">Flashcard</span></a>
       <a class="nav-item" data-page="dnd"><span class="ico">🧩</span><span data-key="nav_dnd">Exercițiu ordine</span></a>
       <a class="nav-item" data-page="exam"><span class="ico">🎓</span><span data-key="nav_exam">Examen</span></a>
@@ -1036,7 +1056,6 @@ const PAGE_META = {
     infog: { ico: "🖼️", titleKey: "infog_title", subKey: "infog_sub" },
     realprog: { ico: "📜", titleKey: "rp_title", subKey: "rp_sub" },
     sim: { ico: "🕹️", titleKey: "sim_title", subKey: "sim_sub" },
-    machine3d: { ico: "🏭", titleKey: "m3d_title", subKey: "m3d_sub" },
     flash: { ico: "🃏", titleKey: "flash_title", subKey: "flash_sub" },
     dnd: { ico: "🧩", titleKey: "dnd_title", subKey: "dnd_sub" },
     exam: { ico: "🎓", titleKey: "exam_title", subKey: "exam_sub" },
@@ -1049,7 +1068,8 @@ const PAGE_META = {
 
 function setPage(page, filterCat) {
     state.page = page;
-    if (page !== "mindmap" && page !== "prez") document.body.classList.remove("mm-full");
+    document.body.dataset.page = page;
+    if (page !== "mindmap" && page !== "prez" && page !== "sim") document.body.classList.remove("mm-full");
     if (filterCat) state.filterCat = filterCat;
     else if (page !== 'mcodes') state.filterCat = null;
     document.querySelectorAll(".nav-item").forEach(el => el.classList.toggle("active", el.dataset.page === page));
@@ -1078,7 +1098,6 @@ function render() {
     else if (page === "infog") renderInfog();
     else if (page === "realprog") renderRealprog();
     else if (page === "sim") renderSim();
-    else if (page === "machine3d") render3D();
     else if (page === "flash") renderFlash();
     else if (page === "dnd") renderDnd();
     else if (page === "exam") renderExam();
@@ -2395,6 +2414,7 @@ function renderSim(presetCodes, autoplay) {
         <button class="sim-btn" id="simPrevBtn" title="${t("sim_prev")}">⏪</button>
         <button class="sim-btn play" id="simPlayBtn" title="${t("sim_play")}">▶</button>
         <button class="sim-btn" id="simNextBtn" title="${t("sim_next")}">⏩</button>
+        <button class="sim-btn" id="simFullBtn" title="${t("mm_full")}">⛶</button>
         <div class="sim-speed">
           <button data-spd="0.25">0.25x</button><button data-spd="0.5">0.5x</button>
           <button data-spd="1" class="active">1x</button><button data-spd="2">2x</button>
@@ -2423,6 +2443,7 @@ function renderSim(presetCodes, autoplay) {
   document.getElementById("simNextBtn").addEventListener("click", () => { simPause(); simNext(); });
   document.getElementById("simPrevBtn").addEventListener("click", () => { simPause(); simPrev(); });
   document.getElementById("simResetBtn").addEventListener("click", () => { simPause(); simReset(); });
+  document.getElementById("simFullBtn").addEventListener("click", () => document.body.classList.toggle("mm-full"));
   document.querySelectorAll(".sim-speed button").forEach(b => b.addEventListener("click", () => simSetSpeed(+b.dataset.spd)));
   document.getElementById("simList").addEventListener("click", e => {
     const el = e.target.closest("[data-simgoto]");
@@ -4185,6 +4206,25 @@ document.addEventListener("click", e => {
     localStorage.setItem(LS + "worker", inp.value.trim());
     getProfile();
     toast("👤 " + (inp.value.trim() || "—"));
+  });
+})();
+/* ---------- MINI MENÜ ---------- */
+(function initNavMini() {
+  const btn = document.getElementById("navMini");
+  if (!btn) return;
+  const apply = on => {
+    document.body.classList.toggle("nav-mini", on);
+    btn.textContent = on ? "»" : "«";
+    document.querySelectorAll(".nav-item").forEach(a => {
+      const s = a.querySelector("span:not(.ico)");
+      if (s) a.title = s.textContent;
+    });
+  };
+  apply(localStorage.getItem(LS + "navmini") === "1");
+  btn.addEventListener("click", () => {
+    const on = !document.body.classList.contains("nav-mini");
+    localStorage.setItem(LS + "navmini", on ? "1" : "0");
+    apply(on);
   });
 })();
 /* ---------- INIT ---------- */
