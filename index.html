@@ -356,19 +356,56 @@ body.mm-full{overflow:hidden}
 .svg-clickable{cursor:pointer}
 .svg-clickable:hover{filter:brightness(1.4)}
 .pump-rotor{transform-box:fill-box;transform-origin:center}
-.pump.on .pump-rotor{animation:spinRot calc(1.2s/var(--simspeed,1)) linear infinite}
+.pump.on .pump-rotor{animation:spinRot calc(.9s/var(--simspeed,1)) linear infinite}
+.pump.on>rect{stroke:#b085ff;filter:drop-shadow(0 0 6px rgba(176,133,255,.6))}
 .spindle-rotor{transform-box:fill-box;transform-origin:center}
-.spindle.on .spindle-rotor{animation:spinRot calc(.5s/var(--simspeed,1)) linear infinite}
+.spindle.on .spindle-rotor{animation:spinRot calc(.3s/var(--simspeed,1)) linear infinite}
+.spindle.on>rect{stroke:#2ee6ff;filter:drop-shadow(0 0 8px rgba(46,230,255,.6))}
 @keyframes spinRot{to{transform:rotate(360deg)}}
-.tool-grp{transition:transform calc(.8s/var(--simspeed,1)) ease}
-.tool-grp.down{transform:translateY(84px)}
+/* szerszám: mély lesüllyedés a darabig */
+.tool-grp{transition:transform calc(.9s/var(--simspeed,1)) cubic-bezier(.34,1.35,.64,1)}
+.tool-grp.down{transform:translateY(114px)}
+/* pörgő szerszámhegy */
+.tool-grp .tip{transform-box:fill-box;transform-origin:center}
+.tool-grp.spin .tip{animation:tipSpin calc(.22s/var(--simspeed,1)) linear infinite}
+.tool-grp.cutting .tip{filter:drop-shadow(0 0 6px #2ee6ff)}
+@keyframes tipSpin{0%{transform:scaleX(1)}50%{transform:scaleX(-1)}100%{transform:scaleX(1)}}
+/* forgács repked vágás közben */
+.tool-grp .chips{opacity:0}
+.tool-grp.cutting .chips{opacity:1}
+.chip{transform-box:fill-box;transform-origin:center}
+.tool-grp.cutting .chip:nth-child(1){animation:chipFly1 calc(.55s/var(--simspeed,1)) ease-out infinite}
+.tool-grp.cutting .chip:nth-child(2){animation:chipFly2 calc(.7s/var(--simspeed,1)) ease-out infinite;animation-delay:.18s}
+.tool-grp.cutting .chip:nth-child(3){animation:chipFly3 calc(.62s/var(--simspeed,1)) ease-out infinite;animation-delay:.32s}
+@keyframes chipFly1{0%{transform:translate(0,0);opacity:1}100%{transform:translate(-26px,-16px);opacity:0}}
+@keyframes chipFly2{0%{transform:translate(0,0);opacity:1}100%{transform:translate(24px,-11px);opacity:0}}
+@keyframes chipFly3{0%{transform:translate(0,0);opacity:1}100%{transform:translate(-11px,14px);opacity:0}}
+/* asztal: aktiváláskor beáll, megmunkálás alatt előtolás a darabbal */
+.tbl-grp{transition:transform calc(1s/var(--simspeed,1)) ease}
+.tblL.act{transform:translateX(14px)}
+.tblR.act{transform:translateX(-14px)}
+.tblL.feed{animation:feedL calc(3.2s/var(--simspeed,1)) ease-in-out infinite}
+.tblR.feed{animation:feedR calc(3.2s/var(--simspeed,1)) ease-in-out infinite}
+@keyframes feedL{0%,100%{transform:translateX(14px)}25%{transform:translateX(32px)}75%{transform:translateX(-6px)}}
+@keyframes feedR{0%,100%{transform:translateX(-14px)}25%{transform:translateX(-32px)}75%{transform:translateX(6px)}}
 .vac-zone{opacity:0;transition:opacity calc(.6s/var(--simspeed,1))}
-.vac-zone.on{opacity:1;animation:vacPulse calc(1.6s/var(--simspeed,1)) ease-in-out infinite}
-@keyframes vacPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.vac-zone.on{opacity:1;animation:vacPulse calc(1.1s/var(--simspeed,1)) ease-in-out infinite}
+@keyframes vacPulse{0%,100%{opacity:.45}50%{opacity:1}}
+/* vákuum leszívó nyilak */
+.vac-arrows{opacity:0;transition:opacity .4s}
+.vac-arrows.on{opacity:1}
+.vac-arrows .va{transform-box:fill-box;transform-origin:center}
+.vac-arrows.on .va{animation:vacSuck calc(.9s/var(--simspeed,1)) ease-in infinite}
+.vac-arrows.on .va:nth-child(2){animation-delay:.3s}
+.vac-arrows.on .va:nth-child(3){animation-delay:.6s}
+@keyframes vacSuck{0%{transform:translateY(-10px);opacity:0}40%{opacity:1}100%{transform:translateY(6px);opacity:0}}
 .tbl-sel{transition:all .4s}
-.wp-piece{transition:transform .5s, opacity .5s}
+.wp-piece{transition:transform .5s, opacity .5s, filter .4s}
+.wp-piece.held{stroke:#b085ff;filter:drop-shadow(0 0 7px rgba(176,133,255,.9))}
 .wp-piece.flyoff{transform:translate(60px,-90px) rotate(35deg);opacity:0}
 .led{transition:fill .3s}
+.led.on{filter:drop-shadow(0 0 4px #34ffab);animation:ledPulse 1.5s ease-in-out infinite}
+@keyframes ledPulse{0%,100%{opacity:1}50%{opacity:.5}}
 /* ---------- 3D GÉP ---------- */
 .m3d-wrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr);gap:18px}
 .m3d-stage{position:relative;height:560px;background:radial-gradient(ellipse at 50% 120%,rgba(46,230,255,.08),transparent 60%),var(--glass);border:1px solid var(--stroke);border-radius:var(--radius);overflow:hidden;touch-action:none;perspective:1400px;cursor:grab}
@@ -389,7 +426,35 @@ body.mm-full{overflow:hidden}
 .m3d-sec{margin-top:10px;font-size:17px}
 .m3d-sec .lb{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--txt-faint);font-weight:700}
 .sp3d{animation:sp3dspin .5s linear infinite}
-@keyframes sp3dspin{to{transform:rotate(360deg)}}
+@keyframes sp3dspin{from{transform:var(--t) rotateY(0deg)}to{transform:var(--t) rotateY(360deg)}}
+/* ---- 3D DEMO animációk ---- */
+.m3d-part{transition:transform .9s cubic-bezier(.34,1.3,.64,1)}
+.d3-down{transform:var(--t) translate3d(0,var(--dd,60px),0)!important}
+.d3-spin{animation:d3spin .45s linear infinite!important}
+.d3-spin.d3-down{animation:d3spindown .45s linear infinite!important}
+@keyframes d3spin{from{transform:var(--t) rotateY(0deg)}to{transform:var(--t) rotateY(360deg)}}
+@keyframes d3spindown{from{transform:var(--t) translate3d(0,var(--dd,60px),0) rotateY(0deg)}to{transform:var(--t) translate3d(0,var(--dd,60px),0) rotateY(360deg)}}
+.d3-vacpulse .face{animation:d3glow 1s ease-in-out infinite}
+@keyframes d3glow{0%,100%{filter:brightness(1)}50%{filter:brightness(2.2)}}
+.d3-feedL{animation:d3feedL 3s ease-in-out infinite!important}
+.d3-feedR{animation:d3feedR 3s ease-in-out infinite!important}
+@keyframes d3feedL{0%,100%{transform:var(--t) translateX(0)}50%{transform:var(--t) translateX(60px)}}
+@keyframes d3feedR{0%,100%{transform:var(--t) translateX(0)}50%{transform:var(--t) translateX(-60px)}}
+/* ---------- G-KÓDOK OLDAL ---------- */
+.gc-search{width:100%;background:var(--glass);border:1px solid var(--stroke);color:var(--txt);border-radius:12px;padding:12px 16px;font-size:19px;margin-bottom:14px;font-family:var(--sans)}
+.gc-search:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
+.gc-grp-title{font-size:21px;font-weight:800;margin:22px 0 10px;display:flex;align-items:center;gap:10px}
+.gc-grp-title .dot{width:14px;height:14px;border-radius:50%}
+.gc-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px}
+.gc-row{background:var(--glass);border:1px solid var(--stroke);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.gc-row:hover{border-color:var(--cyan)}
+.gc-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gc-chip{font-family:var(--mono);font-weight:800;font-size:18px;color:#06121a;padding:3px 12px;border-radius:9px;white-space:nowrap}
+.gc-name{font-weight:700;font-size:18px}
+.gc-desc{color:var(--txt-dim);font-size:17px;line-height:1.5}
+.gc-ex{font-family:var(--mono);font-size:15.5px;background:rgba(0,0,0,.25);border:1px solid var(--stroke-soft);border-radius:9px;padding:6px 10px;color:var(--cyan);overflow-x:auto;white-space:nowrap}
+.gc-spec{font-size:14px;color:#ffc234;font-weight:700}
+@media (max-width:560px){.gc-list{grid-template-columns:1fr}}
 /* ---------- ELEMZŐ / HIBAKERESŐ ---------- */
 .ana-input{width:100%;min-height:170px;background:var(--glass);border:1px solid var(--stroke);color:var(--txt);border-radius:var(--radius);padding:14px;font-family:var(--mono);font-size:18px;resize:vertical}
 .ana-input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
@@ -511,6 +576,7 @@ body.mm-full{overflow:hidden}
       <a class="nav-item" data-page="flows"><span class="ico">⚙️</span><span data-key="nav_flows">Fluxuri</span></a>
       <a class="nav-item" data-page="safety"><span class="ico">⚠️</span><span data-key="nav_safety">Siguranță</span></a>
       <a class="nav-item" data-page="dictionary"><span class="ico">📖</span><span data-key="nav_dict">Dicționar CNC</span></a>
+      <a class="nav-item" data-page="gcodes"><span class="ico">🧭</span><span data-key="nav_gcode">Coduri G</span></a>
       <div class="nav-title" data-key="nav_training">Antrenament</div>
       <a class="nav-item" data-page="sim"><span class="ico">🕹️</span><span data-key="nav_sim">Simulator CNC</span></a>
       <a class="nav-item" data-page="machine3d"><span class="ico">🏭</span><span data-key="nav_3d">Mașină 3D</span></a>
@@ -552,6 +618,7 @@ body.mm-full{overflow:hidden}
 <div id="backdrop"></div>
 <div id="toast"></div>
 <script type="application/json" id="mcodeData"></script>
+<script type="application/json" id="gcodeData"></script>
 <script>
 /* ============================================================
    ADATBÁZIS: CATS + DEFAULT_MCODES (4 nyelv: hu, ro, de, en)
@@ -721,6 +788,7 @@ const UI_TEXTS = {
         flows_title:"Munkamenetek", flows_sub:"Vizuális folyamatábrák a gépi lépésekhez",
         safety_title:"Biztonság", safety_sub:"Gyakori hibák, veszélyek és helyes sorrendek",
         dict_title:"CNC Szótár", dict_sub:"ABC sorrendben minden M-kód",
+        nav_gcode:"G-kódok", gcode_title:"G-kódok", gcode_sub:"Szabványos G-kódok + a gép saját kódjai (G77, G79…)", gcode_search:"Keresés: G0, körív, fúróciklus…", gcode_ex:"Példa", gcode_note:"Megjegyzés", gcode_count:"kód", gc_add:"➕ Új G-kód",
         stat_codes:"M-kódok", stat_cats:"Kategóriák", stat_flows:"Munkamenetek", stat_favs:"Kedvencek",
         card_exp:"📖 Magyarázat", card_when:"⏱️ Mikor használjuk", card_ex:"💡 Példa", card_warn:"⚠️ Figyelem", card_note:"Saját jegyzet",
         safety_common:"Gyakori hibák", safety_danger:"Veszélyek", safety_not:"Mit nem szabad", safety_order:"Helyes sorrend", safety_warn:"Biztonsági figyelmeztetések",
@@ -742,6 +810,7 @@ const UI_TEXTS = {
         flows_title:"Fluxuri", flows_sub:"Diagrame vizuale pentru pașii mașinii",
         safety_title:"Siguranță", safety_sub:"Erori frecvente, pericole și ordine corecte",
         dict_title:"Dicționar CNC", dict_sub:"Toate codurile M în ordine alfabetică",
+        nav_gcode:"Coduri G", gcode_title:"Coduri G", gcode_sub:"Coduri G standard + codurile specifice mașinii (G77, G79…)", gcode_search:"Căutare: G0, arc, ciclu de găurire…", gcode_ex:"Exemplu", gcode_note:"Notă", gcode_count:"coduri", gc_add:"➕ Cod G nou",
         stat_codes:"Coduri M", stat_cats:"Categorii", stat_flows:"Fluxuri", stat_favs:"Favorite",
         card_exp:"📖 Explicație", card_when:"⏱️ Când se folosește", card_ex:"💡 Exemplu", card_warn:"⚠️ Atenție", card_note:"Nota ta",
         safety_common:"Erori frecvente", safety_danger:"Pericole", safety_not:"Ce nu trebuie făcut", safety_order:"Ordine corectă", safety_warn:"Avertismente de siguranță",
@@ -763,6 +832,7 @@ const UI_TEXTS = {
         flows_title:"Arbeitsabläufe", flows_sub:"Visuelle Ablaufdiagramme für die Maschinenschritte",
         safety_title:"Sicherheit", safety_sub:"Häufige Fehler, Gefahren und richtige Reihenfolgen",
         dict_title:"CNC-Wörterbuch", dict_sub:"Alle M-Codes in alphabetischer Reihenfolge",
+        nav_gcode:"G-Codes", gcode_title:"G-Codes", gcode_sub:"Standard-G-Codes + maschinenspezifische Codes (G77, G79…)", gcode_search:"Suche: G0, Kreisbogen, Bohrzyklus…", gcode_ex:"Beispiel", gcode_note:"Hinweis", gcode_count:"Codes", gc_add:"➕ Neuer G-Code",
         stat_codes:"M-Codes", stat_cats:"Kategorien", stat_flows:"Abläufe", stat_favs:"Favoriten",
         card_exp:"📖 Erklärung", card_when:"⏱️ Wann verwenden", card_ex:"💡 Beispiel", card_warn:"⚠️ Achtung", card_note:"Eigene Notiz",
         safety_common:"Häufige Fehler", safety_danger:"Gefahren", safety_not:"Was nicht erlaubt ist", safety_order:"Richtige Reihenfolge", safety_warn:"Sicherheitshinweise",
@@ -784,6 +854,7 @@ const UI_TEXTS = {
         flows_title:"Workflows", flows_sub:"Visual flowcharts for the machine steps",
         safety_title:"Safety", safety_sub:"Common mistakes, hazards, and correct sequences",
         dict_title:"CNC Dictionary", dict_sub:"All M-codes in alphabetical order",
+        nav_gcode:"G-codes", gcode_title:"G-codes", gcode_sub:"Standard G-codes + machine-specific codes (G77, G79…)", gcode_search:"Search: G0, arc, drilling cycle…", gcode_ex:"Example", gcode_note:"Note", gcode_count:"codes", gc_add:"➕ New G-code",
         stat_codes:"M-codes", stat_cats:"Categories", stat_flows:"Workflows", stat_favs:"Favorites",
         card_exp:"📖 Explanation", card_when:"⏱️ When to use it", card_ex:"💡 Example", card_warn:"⚠️ Warning", card_note:"Your note",
         safety_common:"Common mistakes", safety_danger:"Hazards", safety_not:"What not to do", safety_order:"Correct sequence", safety_warn:"Safety warnings",
@@ -906,6 +977,7 @@ const PAGE_META = {
     flows: { ico: "⚙️", titleKey: "flows_title", subKey: "flows_sub" },
     safety: { ico: "⚠️", titleKey: "safety_title", subKey: "safety_sub" },
     dictionary: { ico: "📖", titleKey: "dict_title", subKey: "dict_sub" },
+    gcodes: { ico: "🧭", titleKey: "gcode_title", subKey: "gcode_sub" },
     sim: { ico: "🕹️", titleKey: "sim_title", subKey: "sim_sub" },
     machine3d: { ico: "🏭", titleKey: "m3d_title", subKey: "m3d_sub" },
     flash: { ico: "🃏", titleKey: "flash_title", subKey: "flash_sub" },
@@ -944,6 +1016,7 @@ function render() {
     else if (page === "flows") renderFlows();
     else if (page === "safety") renderSafety();
     else if (page === "dictionary") renderDictionary();
+    else if (page === "gcodes") renderGcodes();
     else if (page === "sim") renderSim();
     else if (page === "machine3d") render3D();
     else if (page === "flash") renderFlash();
@@ -1596,6 +1669,8 @@ function downloadFullHtml() {
        a szerkesztett M-kódokat mutatja. */
     const dataEl = document.getElementById("mcodeData");
     if (dataEl) dataEl.textContent = JSON.stringify(MCODES).replace(/<\//g, "<\\/");
+    const gDataEl = document.getElementById("gcodeData");
+    if (gDataEl && typeof GCODES !== "undefined") gDataEl.textContent = JSON.stringify(GCODES).replace(/<\//g, "<\\/");
     const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
     const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8;" });
     const a = document.createElement("a");
@@ -2031,17 +2106,27 @@ function machineSvg(idPrefix) {
     <!-- gépágy -->
     <rect x="30" y="380" width="800" height="46" rx="8" fill="#1a2436" stroke="rgba(255,255,255,.12)"/>
     <!-- BAL asztal -->
-    <g id="${p}-tableL" class="svg-clickable" data-part="tableL">
+    <g id="${p}-tableL" class="tbl-grp tblL svg-clickable" data-part="tableL">
       <rect id="${p}-tblL" class="tbl-sel" x="70" y="330" width="330" height="50" rx="6" fill="#22304a" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
       <rect id="${p}-vacL" class="vac-zone" x="76" y="336" width="318" height="38" rx="4" fill="rgba(176,133,255,.4)"/>
       <rect id="${p}-wpL" class="wp-piece" x="140" y="300" width="190" height="30" rx="3" fill="#8b6f47" stroke="#a8895e"/>
+      <g id="${p}-vacArrL" class="vac-arrows">
+        <path class="va" d="M180 298 v16 m-6 -7 l6 7 l6 -7" stroke="#d5bfff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path class="va" d="M235 298 v16 m-6 -7 l6 7 l6 -7" stroke="#d5bfff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path class="va" d="M290 298 v16 m-6 -7 l6 7 l6 -7" stroke="#d5bfff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      </g>
       <text x="235" y="410" font-size="17" font-weight="700" fill="#93a1b5" text-anchor="middle">◀ ${" "}L</text>
     </g>
     <!-- JOBB asztal -->
-    <g id="${p}-tableR" class="svg-clickable" data-part="tableR">
+    <g id="${p}-tableR" class="tbl-grp tblR svg-clickable" data-part="tableR">
       <rect id="${p}-tblR" class="tbl-sel" x="460" y="330" width="330" height="50" rx="6" fill="#22304a" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
       <rect id="${p}-vacR" class="vac-zone" x="466" y="336" width="318" height="38" rx="4" fill="rgba(176,133,255,.4)"/>
       <rect id="${p}-wpR" class="wp-piece" x="530" y="300" width="190" height="30" rx="3" fill="#8b6f47" stroke="#a8895e"/>
+      <g id="${p}-vacArrR" class="vac-arrows">
+        <path class="va" d="M570 298 v16 m-6 -7 l6 7 l6 -7" stroke="#d5bfff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path class="va" d="M625 298 v16 m-6 -7 l6 7 l6 -7" stroke="#d5bfff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path class="va" d="M680 298 v16 m-6 -7 l6 7 l6 -7" stroke="#d5bfff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      </g>
       <text x="625" y="410" font-size="17" font-weight="700" fill="#93a1b5" text-anchor="middle">R ▶</text>
     </g>
     <!-- híd / gerenda -->
@@ -2052,7 +2137,12 @@ function machineSvg(idPrefix) {
     ${tools.map(tl => `
     <g id="${p}-tool-${tl.id}" class="tool-grp svg-clickable" data-part="tool-${tl.id}">
       <rect x="${tl.x-9}" y="94" width="18" height="70" rx="4" fill="#3d5378" stroke="rgba(255,255,255,.2)"/>
-      <polygon points="${tl.x-8},164 ${tl.x+8},164 ${tl.x},186" fill="#9fb6dd"/>
+      <polygon class="tip" points="${tl.x-8},164 ${tl.x+8},164 ${tl.x},186" fill="#9fb6dd"/>
+      <g class="chips">
+        <circle class="chip" cx="${tl.x-4}" cy="187" r="3" fill="#e8b04a"/>
+        <circle class="chip" cx="${tl.x+4}" cy="187" r="2.4" fill="#ffd27a"/>
+        <circle class="chip" cx="${tl.x}" cy="189" r="2" fill="#c98f3d"/>
+      </g>
       <circle id="${p}-act-${tl.id}" class="led" cx="${tl.x}" cy="104" r="5" fill="#39424f"/>
       <text x="${tl.x}" y="86" font-size="14" font-weight="800" fill="#93a1b5" text-anchor="middle">${tl.id}</text>
     </g>`).join("")}
@@ -2103,17 +2193,31 @@ function renderMachineState(p, st) {
   $id("pump1").classList.toggle("on", !!st.pump1);
   $id("pump2").classList.toggle("on", !!st.pump2);
   $id("spindle").classList.toggle("on", !!st.spindle);
+  const gTL = $id("tableL"), gTR = $id("tableR");
+  if (gTL) { gTL.classList.toggle("act", !!st.actL); gTL.classList.toggle("feed", !!(st.actL && st.spindle)); }
+  if (gTR) { gTR.classList.toggle("act", !!st.actR); gTR.classList.toggle("feed", !!(st.actR && st.spindle)); }
+  const wpL = $id("wpL"), wpR = $id("wpR");
+  if (wpL) wpL.classList.toggle("held", !!st.vac1);
+  if (wpR) wpR.classList.toggle("held", !!st.vac2);
+  const vaL = $id("vacArrL"), vaR = $id("vacArrR");
+  if (vaL) vaL.classList.toggle("on", !!st.vac1);
+  if (vaR) vaR.classList.toggle("on", !!st.vac2);
+  const setLed = (el, isOn) => { if (!el) return; el.setAttribute("fill", isOn ? on : off); el.classList.toggle("on", !!isOn); };
   ALL_TOOLS.forEach(tl => {
     const g = $id("tool-" + tl);
-    if (g) g.classList.toggle("down", !!st.down[tl]);
-    const led = $id("act-" + tl);
-    if (led) led.setAttribute("fill", st.act[tl] ? on : off);
+    const spinning = !!(st.act[tl] || (st.spindle && st.down[tl]));
+    if (g) {
+      g.classList.toggle("down", !!st.down[tl]);
+      g.classList.toggle("spin", spinning);
+      g.classList.toggle("cutting", !!(st.down[tl] && spinning));
+    }
+    setLed($id("act-" + tl), st.act[tl]);
   });
-  $id("ledSp").setAttribute("fill", st.spindle ? on : off);
-  $id("ledP1").setAttribute("fill", st.pump1 ? on : off);
-  $id("ledP2").setAttribute("fill", st.pump2 ? on : off);
-  $id("ledV1").setAttribute("fill", st.vac1 ? on : off);
-  $id("ledV2").setAttribute("fill", st.vac2 ? on : off);
+  setLed($id("ledSp"), st.spindle);
+  setLed($id("ledP1"), st.pump1);
+  setLed($id("ledP2"), st.pump2);
+  setLed($id("ledV1"), st.vac1);
+  setLed($id("ledV2"), st.vac2);
 }
 /* ---------- SZIMULÁTOR MOTOR ---------- */
 const SIM = { prog: [], i: -1, playing: false, speed: 1, timer: null, st: newMachineState(), issues: [], flow: "left" };
@@ -2354,7 +2458,7 @@ const PART_INFO = {
 function box3d(w, h, d, x, y, z, color, cls, part) {
   const hw = w/2, hh = h/2, hd = d/2;
   const faceStyle = `background:${color};`;
-  return `<div class="m3d-part ${cls||""}" ${part?`data-p3d="${part}"`:""} style="transform:translate3d(${x}px,${y}px,${z}px);width:0;height:0;">
+  return `<div class="m3d-part ${cls||""}" ${part?`data-p3d="${part}"`:""} style="--t:translate3d(${x}px,${y}px,${z}px);transform:var(--t);width:0;height:0;">
     <div class="face" style="width:${w}px;height:${h}px;transform:translate(-${hw}px,-${hh}px) translateZ(${hd}px);${faceStyle}filter:brightness(1.06)"></div>
     <div class="face" style="width:${w}px;height:${h}px;transform:translate(-${hw}px,-${hh}px) rotateY(180deg) translateZ(${hd}px);${faceStyle}filter:brightness(.7)"></div>
     <div class="face" style="width:${d}px;height:${h}px;transform:translate(-${hd}px,-${hh}px) rotateY(90deg) translateZ(${hw}px);${faceStyle}filter:brightness(.85)"></div>
@@ -2394,10 +2498,12 @@ function render3D() {
     <button data-view="side">${t("m3d_side")}</button>
     <button data-view="iso">${t("m3d_iso")}</button>
     <button data-view="op">${t("m3d_op")}</button>
+    <button id="m3dDemo" style="border-color:var(--cyan);color:var(--cyan);font-weight:800">🎬 ${t("btn_anim")}</button>
   </div>
   <div class="m3d-wrap">
     <div>
       <div class="m3d-stage" id="m3dStage"><div class="m3d-scene" id="m3dScene">${build3dScene()}</div></div>
+      <div class="sim-narr" id="m3dNarr" style="display:none;margin-top:10px;"></div>
       <div style="text-align:center;color:var(--txt-faint);font-size:17px;margin-top:10px;">${t("m3d_hint")}</div>
     </div>
     <div class="m3d-info" id="m3dInfo"><div style="color:var(--txt-dim);font-size:19px;">👆 ${t("m3d_pick")}</div></div>
@@ -2451,6 +2557,38 @@ function render3D() {
     M3D.zoom = Math.min(2.6, Math.max(.4, M3D.zoom + (e.deltaY > 0 ? -.1 : .1)));
     apply();
   }, { passive:false });
+  /* 🎬 3D demó: teljes megmunkálási ciklus látható mozgással */
+  let demoTimers = [];
+  function stopDemo() {
+    demoTimers.forEach(clearTimeout); demoTimers = [];
+    scene.querySelectorAll(".d3-spin,.d3-down,.d3-vacpulse,.d3-feedL,.d3-feedR").forEach(el =>
+      el.classList.remove("d3-spin","d3-down","d3-vacpulse","d3-feedL","d3-feedR"));
+  }
+  function runDemo() {
+    stopDemo();
+    const q = sel => scene.querySelectorAll(sel);
+    const narr = document.getElementById("m3dNarr");
+    narr.style.display = "block";
+    const say = code => { const m = byCode[code]; narr.innerHTML = `<b style="font-family:var(--mono);color:var(--cyan)">${code}</b> — ${m ? escapeHtml(getText(m.name)) : ""}`; };
+    const sp = q(".sp3dtool")[0];
+    if (sp) sp.style.setProperty("--dd","38px");
+    const steps = [
+      [200,  () => { say("M50"); q(".p3d-1,.p3d-2").forEach(e => e.classList.add("d3-vacpulse")); }],
+      [1700, () => { say("M54"); q(".vac3dL,.vac3dR").forEach(e => e.classList.add("d3-vacpulse")); }],
+      [3200, () => { say("M120"); if (sp) sp.classList.add("d3-down"); }],
+      [4700, () => { say("M3"); if (sp) sp.classList.add("d3-spin");
+        q('[data-p3d="tableL"],.vac3dL').forEach(e => e.classList.add("d3-feedL"));
+        q('[data-p3d="tableR"],.vac3dR').forEach(e => e.classList.add("d3-feedR")); }],
+      [10200,() => { say("M5"); if (sp) sp.classList.remove("d3-spin");
+        q(".d3-feedL,.d3-feedR").forEach(e => e.classList.remove("d3-feedL","d3-feedR")); }],
+      [11500,() => { say("M121"); if (sp) sp.classList.remove("d3-down"); }],
+      [12800,() => { say("M55"); q(".vac3dL,.vac3dR").forEach(e => e.classList.remove("d3-vacpulse")); }],
+      [14000,() => { say("M51"); q(".p3d-1,.p3d-2").forEach(e => e.classList.remove("d3-vacpulse"));
+        narr.innerHTML += ' <b style="color:var(--green)">✔</b>'; }]
+    ];
+    steps.forEach(([d, fn]) => demoTimers.push(setTimeout(() => { if (document.getElementById("m3dScene")) fn(); }, d)));
+  }
+  document.getElementById("m3dDemo").addEventListener("click", runDemo);
 }
 function select3dPart(part) {
   M3D.sel = part;
@@ -2497,6 +2635,213 @@ function animate3dPart(part) {
       if (++n > 5) clearInterval(iv);
     }, 260);
   }
+}
+
+/* ============================================================
+   G-KÓD REFERENCIA – szabványos ISO G-kódok + gép-specifikusak
+   ============================================================ */
+const GC_GRPS = {
+  motion: { hex:"#2ee6ff", name:{hu:"Mozgás",ro:"Mișcare",de:"Bewegung",en:"Motion"} },
+  plane: { hex:"#34ffab", name:{hu:"Sík kiválasztás",ro:"Selectare plan",de:"Ebenenauswahl",en:"Plane selection"} },
+  comp: { hex:"#ffc234", name:{hu:"Korrekció / kompenzáció",ro:"Compensare",de:"Kompensation",en:"Compensation"} },
+  coord: { hex:"#b085ff", name:{hu:"Koordináta-rendszerek",ro:"Sisteme de coordonate",de:"Koordinatensysteme",en:"Coordinate systems"} },
+  cycle: { hex:"#ff8a5c", name:{hu:"Fúró/menetciklusok",ro:"Cicluri de găurire/filetare",de:"Bohr-/Gewindezyklen",en:"Drilling/tapping cycles"} },
+  mode: { hex:"#7ab8ff", name:{hu:"Üzemmód / beállítás",ro:"Mod de lucru / setări",de:"Betriebsart / Einstellung",en:"Mode / settings"} },
+  spec: { hex:"#ff6b81", name:{hu:"Gép-specifikus (Xilog)",ro:"Specific mașinii (Xilog)",de:"Maschinenspezifisch (Xilog)",en:"Machine-specific (Xilog)"} }
+};
+const DEFAULT_GCODES = [
+  { g:"G0", grp:"motion", name:{hu:"Gyorsjárat",ro:"Deplasare rapidă",de:"Eilgang",en:"Rapid move"}, desc:{hu:"A szerszám maximális sebességgel megy a megadott pontra. NEM munkavégzésre való – csak pozicionálásra, levegőben!",ro:"Scula merge cu viteză maximă la punctul dat. NU pentru prelucrare – doar poziționare, în aer!",de:"Werkzeug fährt mit Höchstgeschwindigkeit zum Punkt. NICHT zum Bearbeiten – nur Positionieren, in der Luft!",en:"Tool moves at maximum speed to the point. NOT for cutting – positioning only, in the air!"}, ex:"G0 X42 Y612.835 Z30" },
+  { g:"G1", grp:"motion", name:{hu:"Egyenes interpoláció (munkamenet)",ro:"Interpolare liniară (avans de lucru)",de:"Lineare Interpolation (Vorschub)",en:"Linear interpolation (feed)"}, desc:{hu:"Egyenes vonalú mozgás F előtolással – ezzel vág a szerszám. Az F (mm/perc) kötelező vagy öröklődik.",ro:"Mișcare în linie dreaptă cu avans F – cu asta taie scula. F (mm/min) e obligatoriu sau moștenit.",de:"Geradlinige Bewegung mit Vorschub F – damit schneidet das Werkzeug. F (mm/min) nötig oder geerbt.",en:"Straight-line move at feed F – this is the cutting move. F (mm/min) required or inherited."}, ex:"G1 X42 Y612.835 Z-1.5 F3000" },
+  { g:"G2", grp:"motion", name:{hu:"Körív óramutató irányban",ro:"Arc de cerc în sens orar",de:"Kreisbogen im Uhrzeigersinn",en:"Circular arc clockwise"}, desc:{hu:"Köríven mozog óramutató járása szerint. Középpont: I,J vagy sugár: R.",ro:"Se mișcă pe arc în sens orar. Centru: I,J sau rază: R.",de:"Bewegt sich auf Kreisbogen im Uhrzeigersinn. Mittelpunkt: I,J oder Radius: R.",en:"Moves along an arc clockwise. Center: I,J or radius: R."}, ex:"G2 X50 Y30 I10 J0 F2000" },
+  { g:"G3", grp:"motion", name:{hu:"Körív óramutatóval ellentétesen",ro:"Arc de cerc în sens antiorar",de:"Kreisbogen gegen Uhrzeigersinn",en:"Circular arc counter-clockwise"}, desc:{hu:"Köríven mozog az óramutató járásával ellentétesen. Középpont: I,J vagy sugár: R.",ro:"Se mișcă pe arc în sens antiorar. Centru: I,J sau rază: R.",de:"Bewegt sich auf Kreisbogen gegen Uhrzeigersinn. Mittelpunkt: I,J oder Radius: R.",en:"Moves along an arc counter-clockwise. Center: I,J or radius: R."}, ex:"G3 X50 Y30 R15 F2000" },
+  { g:"G4", grp:"motion", name:{hu:"Várakozás (dwell)",ro:"Pauză (dwell)",de:"Verweilzeit (Dwell)",en:"Dwell (pause)"}, desc:{hu:"Megadott ideig vár (F vagy P = másodperc). Pl. orsó felpörgésének kivárása M3 után.",ro:"Așteaptă timpul dat (F sau P = secunde). Ex.: așteptarea turației după M3.",de:"Wartet die angegebene Zeit (F oder P = Sekunden). Z.B. Hochlauf der Spindel nach M3 abwarten.",en:"Waits the given time (F or P = seconds). E.g. wait for spindle to reach speed after M3."}, ex:"G4 F2  (2 mp várakozás)" },
+  { g:"G9", grp:"motion", name:{hu:"Pontos megállás (egy mondatra)",ro:"Oprire exactă (un bloc)",de:"Genauhalt (ein Satz)",en:"Exact stop (single block)"}, desc:{hu:"A mondat végén a gép pontosan megáll, csak utána indul a következő – éles sarkokhoz. Csak arra az egy sorra érvényes.",ro:"La sfârșitul blocului mașina se oprește exact, apoi pornește următorul – pentru colțuri precise. Valabil doar pentru acel bloc.",de:"Am Satzende hält die Maschine exakt an – für scharfe Ecken. Gilt nur für diesen einen Satz.",en:"Machine stops exactly at end of block before starting next – for sharp corners. Applies to that block only."}, ex:"G1 G9 X42 Z-1.5 F3000" },
+  { g:"G17", grp:"plane", name:{hu:"XY sík",ro:"Plan XY",de:"XY-Ebene",en:"XY plane"}, desc:{hu:"Körívek és fúróciklusok az XY síkban (felülnézet) – marógépen ez az alap.",ro:"Arcele și ciclurile în planul XY (vedere de sus) – standard pe freză.",de:"Bögen und Zyklen in der XY-Ebene (Draufsicht) – Standard bei Fräsen.",en:"Arcs and cycles in the XY plane (top view) – default on mills."}, ex:"G17 G2 X50 Y30 I10 J0" },
+  { g:"G18", grp:"plane", name:{hu:"XZ sík",ro:"Plan XZ",de:"XZ-Ebene",en:"XZ plane"}, desc:{hu:"Körív-interpoláció az XZ síkban – esztergán alapértelmezés.",ro:"Interpolare circulară în planul XZ – standard pe strung.",de:"Kreisinterpolation in der XZ-Ebene – Standard bei Drehmaschinen.",en:"Circular interpolation in the XZ plane – default on lathes."}, ex:"G18 G2 X40 Z-10 R8" },
+  { g:"G19", grp:"plane", name:{hu:"YZ sík",ro:"Plan YZ",de:"YZ-Ebene",en:"YZ plane"}, desc:{hu:"Körív-interpoláció az YZ síkban – ritkábban használt, oldalsó megmunkálásokhoz.",ro:"Interpolare circulară în planul YZ – mai rar, pentru prelucrări laterale.",de:"Kreisinterpolation in der YZ-Ebene – seltener, für seitliche Bearbeitung.",en:"Circular interpolation in the YZ plane – less common, for side operations."}, ex:"G19 G3 Y30 Z-5 R10" },
+  { g:"G20", grp:"mode", name:{hu:"Inch mértékegység",ro:"Unități inch",de:"Maßeinheit Inch",en:"Inch units"}, desc:{hu:"Minden méret hüvelykben (inch) értendő. Vigyázat: rossz egység = 25,4× hiba!",ro:"Toate cotele în inch. Atenție: unitate greșită = eroare de 25,4×!",de:"Alle Maße in Zoll (Inch). Achtung: falsche Einheit = 25,4-facher Fehler!",en:"All dimensions in inches. Warning: wrong unit = 25.4× error!"}, ex:"G20" },
+  { g:"G21", grp:"mode", name:{hu:"Milliméter mértékegység",ro:"Unități milimetri",de:"Maßeinheit Millimeter",en:"Millimeter units"}, desc:{hu:"Minden méret milliméterben – Európában ez a szokásos beállítás.",ro:"Toate cotele în milimetri – setarea uzuală în Europa.",de:"Alle Maße in Millimetern – in Europa üblich.",en:"All dimensions in millimeters – the usual setting in Europe."}, ex:"G21" },
+  { g:"G28", grp:"coord", name:{hu:"Referenciapontra állás",ro:"Revenire la punctul de referință",de:"Referenzpunkt anfahren",en:"Return to home position"}, desc:{hu:"A gép a referenciapontjára (home) megy, közbenső ponton át. Szerszámcsere előtt gyakori.",ro:"Mașina merge la punctul de referință (home), printr-un punct intermediar. Des înainte de schimbarea sculei.",de:"Maschine fährt zum Referenzpunkt (Home), über Zwischenpunkt. Oft vor Werkzeugwechsel.",en:"Machine returns to home position via intermediate point. Common before tool change."}, ex:"G28 G91 Z0" },
+  { g:"G30", grp:"coord", name:{hu:"2. referenciapont",ro:"Al 2-lea punct de referință",de:"2. Referenzpunkt",en:"2nd reference point"}, desc:{hu:"A második (pl. szerszámcsere-) pozícióra áll.",ro:"Merge la a doua poziție (ex. schimbare sculă).",de:"Fährt zur zweiten Position (z.B. Werkzeugwechsel).",en:"Moves to the second position (e.g. tool change)."}, ex:"G30 G91 Z0" },
+  { g:"G40", grp:"comp", name:{hu:"Sugárkorrekció KI",ro:"Compensare rază OPRITĂ",de:"Radiuskorrektur AUS",en:"Cutter compensation OFF"}, desc:{hu:"Kikapcsolja a szerszámsugár-korrekciót (G41/G42 után kötelező lezárni!).",ro:"Oprește compensarea razei sculei (obligatoriu după G41/G42!).",de:"Schaltet die Werkzeugradiuskorrektur aus (nach G41/G42 Pflicht!).",en:"Cancels cutter radius compensation (mandatory after G41/G42!)."}, ex:"G40 G1 X0 Y0" },
+  { g:"G41", grp:"comp", name:{hu:"Sugárkorrekció BALRA",ro:"Compensare rază STÂNGA",de:"Radiuskorrektur LINKS",en:"Cutter compensation LEFT"}, desc:{hu:"A szerszám a kontúr bal oldalán halad (haladási irányból nézve) – a D korrektorral megadott sugárral eltolva.",ro:"Scula merge pe partea stângă a conturului (privind în direcția de avans) – decalată cu raza din corectorul D.",de:"Werkzeug läuft links der Kontur (in Vorschubrichtung) – versetzt um den Radius aus Korrektor D.",en:"Tool runs on the left of the contour (viewed in feed direction) – offset by radius from D register."}, ex:"G41 D8 G1 X50 Y20" },
+  { g:"G42", grp:"comp", name:{hu:"Sugárkorrekció JOBBRA",ro:"Compensare rază DREAPTA",de:"Radiuskorrektur RECHTS",en:"Cutter compensation RIGHT"}, desc:{hu:"A szerszám a kontúr jobb oldalán halad – körbemarásnál, szélezésnél tipikus.",ro:"Scula merge pe partea dreaptă a conturului – tipic la conturare, tivire.",de:"Werkzeug läuft rechts der Kontur – typisch beim Umfräsen, Besäumen.",en:"Tool runs on the right of the contour – typical for contouring and trimming."}, ex:"G42 X50 Y612.835" },
+  { g:"G43", grp:"comp", name:{hu:"Hosszkorrekció +",ro:"Compensare lungime +",de:"Längenkorrektur +",en:"Tool length compensation +"}, desc:{hu:"A szerszámhossz-korrektort (H) hozzáadja a Z-hez – minden szerszámnál más a hossz!",ro:"Adaugă corectorul de lungime (H) la Z – fiecare sculă are altă lungime!",de:"Addiert den Längenkorrektor (H) zu Z – jedes Werkzeug hat andere Länge!",en:"Adds the length offset (H) to Z – every tool has a different length!"}, ex:"G43 H5 Z50" },
+  { g:"G44", grp:"comp", name:{hu:"Hosszkorrekció −",ro:"Compensare lungime −",de:"Längenkorrektur −",en:"Tool length compensation −"}, desc:{hu:"A hosszkorrektort kivonja a Z-ből (ritkán használt irány).",ro:"Scade corectorul de lungime din Z (direcție rar folosită).",de:"Subtrahiert den Längenkorrektor von Z (selten genutzt).",en:"Subtracts the length offset from Z (rarely used)."}, ex:"G44 H5 Z50" },
+  { g:"G49", grp:"comp", name:{hu:"Hosszkorrekció KI",ro:"Compensare lungime OPRITĂ",de:"Längenkorrektur AUS",en:"Length compensation OFF"}, desc:{hu:"Kikapcsolja a szerszámhossz-korrekciót.",ro:"Oprește compensarea de lungime.",de:"Schaltet die Längenkorrektur aus.",en:"Cancels tool length compensation."}, ex:"G49" },
+  { g:"G52", grp:"coord", name:{hu:"Helyi koordináta-rendszer",ro:"Sistem de coordonate local",de:"Lokales Koordinatensystem",en:"Local coordinate system"}, desc:{hu:"Ideiglenes nullapont-eltolás a munkadarab-nullaponthoz képest.",ro:"Decalare temporară de zero față de zeroul piesei.",de:"Temporäre Nullpunktverschiebung relativ zum Werkstücknullpunkt.",en:"Temporary zero shift relative to the work zero."}, ex:"G52 X100 Y50" },
+  { g:"G53", grp:"coord", name:{hu:"Gépi koordináta-rendszer",ro:"Sistem de coordonate mașină",de:"Maschinenkoordinatensystem",en:"Machine coordinate system"}, desc:{hu:"A megadott pozíció a GÉP nullapontjától értendő, nem a munkadarabtól. A te programjaid is ezzel kezdenek: G53 G90.",ro:"Poziția dată e față de zeroul MAȘINII, nu al piesei. Programele tale încep cu: G53 G90.",de:"Position bezieht sich auf den MASCHINEN-Nullpunkt, nicht aufs Werkstück. Deine Programme starten mit: G53 G90.",en:"Position is relative to MACHINE zero, not the workpiece. Your programs start with: G53 G90."}, ex:"G53 G90" },
+  { g:"G54", grp:"coord", name:{hu:"1. munkadarab-nullapont",ro:"Zero piesă nr. 1",de:"1. Werkstücknullpunkt",en:"Work offset #1"}, desc:{hu:"Az 1-es tárolt munkadarab-nullapontot aktiválja. A méretek innentől a darabhoz képest értendők.",ro:"Activează zeroul de piesă nr. 1. Cotele se măsoară de la piesă.",de:"Aktiviert den 1. gespeicherten Werkstücknullpunkt. Maße gelten ab Werkstück.",en:"Activates stored work offset #1. Dimensions are measured from the part."}, ex:"G54 G0 X0 Y0" },
+  { g:"G55 G56 G57 G58 G59", grp:"coord", name:{hu:"2–6. munkadarab-nullapont",ro:"Zero piesă nr. 2–6",de:"2.–6. Werkstücknullpunkt",en:"Work offsets #2–6"}, desc:{hu:"További tárolt nullapontok – több készülék/darab esetén. A képen: G59 X0 Y0 Z0 = a 6. nullapont beállítása.",ro:"Alte zerouri memorate – pentru mai multe piese/dispozitive. În poză: G59 X0 Y0 Z0 = setarea zeroului nr. 6.",de:"Weitere gespeicherte Nullpunkte – für mehrere Aufspannungen. Im Foto: G59 X0 Y0 Z0 = Nullpunkt Nr. 6 setzen.",en:"Additional stored zeros – for multiple setups. In the photo: G59 X0 Y0 Z0 = set offset #6."}, ex:"G59 X0 Y0 Z0" },
+  { g:"G61", grp:"mode", name:{hu:"Pontos megállás üzemmód",ro:"Mod oprire exactă",de:"Genauhalt-Modus",en:"Exact stop mode"}, desc:{hu:"Minden mondat végén pontos megállás (amíg G64 nem törli) – pontos sarkok, de lassabb.",ro:"Oprire exactă la fiecare bloc (până la G64) – colțuri precise, dar mai lent.",de:"Genauhalt an jedem Satzende (bis G64) – präzise Ecken, aber langsamer.",en:"Exact stop at every block end (until G64) – precise corners but slower."}, ex:"G61" },
+  { g:"G64", grp:"mode", name:{hu:"Folyamatos pálya üzemmód",ro:"Mod traiectorie continuă",de:"Bahnsteuerungsmodus",en:"Continuous path mode"}, desc:{hu:"A gép lekerekítve, megállás nélkül köti össze a mozgásokat – gyorsabb, simább felület.",ro:"Mașina leagă mișcările fără oprire, cu rotunjire – mai rapid, suprafață mai fină.",de:"Maschine verbindet Bewegungen ohne Halt, mit Verrundung – schneller, glattere Oberfläche.",en:"Machine blends moves without stopping – faster, smoother surface."}, ex:"G64" },
+  { g:"G68", grp:"coord", name:{hu:"Koordináta-forgatás BE",ro:"Rotire coordonate PORNITĂ",de:"Koordinatendrehung EIN",en:"Coordinate rotation ON"}, desc:{hu:"A programozott kontúrt megadott szög körül elforgatja.",ro:"Rotește conturul programat cu unghiul dat.",de:"Dreht die programmierte Kontur um den angegebenen Winkel.",en:"Rotates the programmed contour by the given angle."}, ex:"G68 X0 Y0 R45" },
+  { g:"G69", grp:"coord", name:{hu:"Koordináta-forgatás KI",ro:"Rotire coordonate OPRITĂ",de:"Koordinatendrehung AUS",en:"Coordinate rotation OFF"}, desc:{hu:"Kikapcsolja a G68 forgatást.",ro:"Oprește rotirea G68.",de:"Schaltet die G68-Drehung aus.",en:"Cancels G68 rotation."}, ex:"G69" },
+  { g:"G73", grp:"cycle", name:{hu:"Gyors mélyfúró ciklus",ro:"Ciclu de găurire adâncă rapid",de:"Schnell-Tieflochbohrzyklus",en:"High-speed peck drilling"}, desc:{hu:"Szakaszos fúrás rövid visszahúzásokkal – forgácstörés, gyorsabb mint G83.",ro:"Găurire în trepte cu retrageri scurte – rupe așchia, mai rapid ca G83.",de:"Bohren in Stufen mit kurzem Rückzug – Spanbruch, schneller als G83.",en:"Drilling in steps with short retracts – chip breaking, faster than G83."}, ex:"G73 Z-30 Q5 R2 F300" },
+  { g:"G74", grp:"cycle", name:{hu:"Balos menetfúró ciklus",ro:"Ciclu de filetare stânga",de:"Linksgewinde-Zyklus",en:"Left-hand tapping cycle"}, desc:{hu:"Menetfúrás bal menethez (fordított orsóforgással).",ro:"Filetare pentru filet stânga (rotire inversă a axului).",de:"Gewindebohren für Linksgewinde (umgekehrte Spindeldrehung).",en:"Tapping for left-hand threads (reversed spindle)."}, ex:"G74 Z-15 R3 F200" },
+  { g:"G76", grp:"cycle", name:{hu:"Finomfúró (kiesztergáló) ciklus",ro:"Ciclu de alezare fină",de:"Feinbohrzyklus",en:"Fine boring cycle"}, desc:{hu:"Pontos furat: alul az orsó megáll, a szerszám elhúz a faltól, úgy jön ki – nincs karcolás.",ro:"Alezare precisă: jos axul se oprește, scula se retrage de la perete – fără zgârieturi.",de:"Präzise Bohrung: unten stoppt die Spindel, Werkzeug rückt von der Wand ab – keine Kratzer.",en:"Precise bore: spindle stops at bottom, tool shifts off the wall before retract – no scratches."}, ex:"G76 Z-20 Q0.5 R2 F150" },
+  { g:"G80", grp:"cycle", name:{hu:"Ciklus törlése",ro:"Anulare ciclu",de:"Zyklus abwählen",en:"Cancel canned cycle"}, desc:{hu:"Lezárja az aktív fúróciklust (G81–G89). Ciklus után KÖTELEZŐ!",ro:"Închide ciclul activ (G81–G89). OBLIGATORIU după ciclu!",de:"Beendet den aktiven Zyklus (G81–G89). Nach Zyklus PFLICHT!",en:"Cancels the active cycle (G81–G89). MANDATORY after cycles!"}, ex:"G80" },
+  { g:"G81", grp:"cycle", name:{hu:"Egyszerű fúróciklus",ro:"Ciclu simplu de găurire",de:"Einfacher Bohrzyklus",en:"Simple drilling cycle"}, desc:{hu:"Lefúr Z mélységre, majd gyorsjáratban kiemel. Minden megadott pozícióban megismétli.",ro:"Găurește la adâncimea Z, apoi iese rapid. Se repetă la fiecare poziție dată.",de:"Bohrt auf Tiefe Z, zieht im Eilgang heraus. Wiederholt an jeder Position.",en:"Drills to depth Z, rapid retract. Repeats at every given position."}, ex:"G81 Z-12 R2 F400" },
+  { g:"G82", grp:"cycle", name:{hu:"Fúróciklus várakozással",ro:"Găurire cu pauză la fund",de:"Bohrzyklus mit Verweilzeit",en:"Drilling with dwell"}, desc:{hu:"Mint a G81, de a furat alján vár (P) – szebb furatfenék, süllyesztéshez.",ro:"Ca G81, dar așteaptă la fund (P) – fund de gaură mai curat, pentru lamaje.",de:"Wie G81, wartet aber am Grund (P) – sauberer Bohrgrund, für Senkungen.",en:"Like G81 but dwells at the bottom (P) – cleaner hole bottom, for counterbores."}, ex:"G82 Z-10 P0.5 R2 F350" },
+  { g:"G83", grp:"cycle", name:{hu:"Mélyfúró ciklus (forgácskihordás)",ro:"Ciclu de găurire adâncă (evacuare așchii)",de:"Tieflochbohrzyklus (Späneräumen)",en:"Deep hole peck drilling"}, desc:{hu:"Szakaszosan fúr (Q lépés), minden lépés után TELJESEN kiemel – kihordja a forgácsot mély furatból.",ro:"Găurește în trepte (pas Q), după fiecare iese COMPLET – evacuează așchiile din găuri adânci.",de:"Bohrt in Stufen (Q), zieht nach jeder Stufe GANZ heraus – räumt Späne aus tiefen Bohrungen.",en:"Drills in steps (Q), fully retracts after each – clears chips from deep holes."}, ex:"G83 Z-40 Q6 R2 F300" },
+  { g:"G84", grp:"cycle", name:{hu:"Menetfúró ciklus",ro:"Ciclu de filetare",de:"Gewindebohrzyklus",en:"Tapping cycle"}, desc:{hu:"Menetfúrás: előtolás = menetemelkedés × fordulat. Alul az orsó irányt vált és kihajt.",ro:"Filetare: avans = pas × turație. Jos axul inversează sensul și iese.",de:"Gewindebohren: Vorschub = Steigung × Drehzahl. Unten reversiert die Spindel.",en:"Tapping: feed = pitch × RPM. Spindle reverses at bottom and backs out."}, ex:"G84 Z-15 R3 F500" },
+  { g:"G85", grp:"cycle", name:{hu:"Dörzsár/kiesztergáló ciklus",ro:"Ciclu de alezare",de:"Reib-/Ausbohrzyklus",en:"Boring/reaming cycle"}, desc:{hu:"Lefelé ÉS felfelé is előtolással megy – sima, pontos furatfal.",ro:"Merge cu avans și în jos ȘI în sus – perete de gaură fin și precis.",de:"Fährt mit Vorschub abwärts UND aufwärts – glatte, genaue Bohrungswand.",en:"Feeds both down AND up – smooth, accurate hole wall."}, ex:"G85 Z-20 R2 F200" },
+  { g:"G86", grp:"cycle", name:{hu:"Kiesztergálás gyors kiemeléssel",ro:"Alezare cu retragere rapidă",de:"Ausbohren mit Eilgang-Rückzug",en:"Boring with rapid retract"}, desc:{hu:"Alul megáll az orsó, majd gyorsjáratban emel ki.",ro:"Jos axul se oprește, apoi iese în rapid.",de:"Unten stoppt die Spindel, Rückzug im Eilgang.",en:"Spindle stops at bottom, rapid retract."}, ex:"G86 Z-18 R2 F180" },
+  { g:"G90", grp:"mode", name:{hu:"Abszolút méretmegadás",ro:"Cotare absolută",de:"Absolutmaß",en:"Absolute positioning"}, desc:{hu:"Minden koordináta a nullaponttól értendő. A képen is: G53 G90 a program elején.",ro:"Toate coordonatele față de punctul zero. În poză: G53 G90 la începutul programului.",de:"Alle Koordinaten vom Nullpunkt aus. Im Foto: G53 G90 am Programmanfang.",en:"All coordinates measured from zero. In the photo: G53 G90 at program start."}, ex:"G90 G1 X100 Y50" },
+  { g:"G91", grp:"mode", name:{hu:"Növekményes méretmegadás",ro:"Cotare incrementală",de:"Kettenmaß (inkremental)",en:"Incremental positioning"}, desc:{hu:"Minden méret az ELŐZŐ ponttól számít. Vigyázz: G90/G91 keverése tipikus hibaforrás!",ro:"Fiecare cotă se măsoară de la punctul ANTERIOR. Atenție: amestecul G90/G91 e o greșeală tipică!",de:"Jedes Maß zählt vom VORHERIGEN Punkt. Achtung: G90/G91 mischen ist typische Fehlerquelle!",en:"Each dimension counts from the PREVIOUS point. Careful: mixing G90/G91 is a classic mistake!"}, ex:"G91 G1 X10  (10mm-rel arrébb)" },
+  { g:"G92", grp:"coord", name:{hu:"Pozíció beírása / nullapont-eltolás",ro:"Setare poziție / decalare zero",de:"Positionssetzen / Nullpunktverschiebung",en:"Set position / zero shift"}, desc:{hu:"Az aktuális pozíciónak új értéket ad (nem mozog!) – óvatosan, elállítja a rendszert.",ro:"Dă o valoare nouă poziției curente (nu se mișcă!) – atenție, decalează sistemul.",de:"Gibt der aktuellen Position neuen Wert (keine Bewegung!) – Vorsicht, verstellt das System.",en:"Assigns a new value to the current position (no motion!) – careful, it shifts the system."}, ex:"G92 X0 Y0" },
+  { g:"G94", grp:"mode", name:{hu:"Előtolás mm/perc",ro:"Avans mm/min",de:"Vorschub mm/min",en:"Feed per minute"}, desc:{hu:"Az F érték mm/perc-ben értendő – marógépen ez az alap.",ro:"F în mm/min – standard pe freză.",de:"F in mm/min – Standard beim Fräsen.",en:"F is in mm/min – default on mills."}, ex:"G94 G1 X50 F3000" },
+  { g:"G95", grp:"mode", name:{hu:"Előtolás mm/fordulat",ro:"Avans mm/rotație",de:"Vorschub mm/U",en:"Feed per revolution"}, desc:{hu:"Az F érték mm/fordulatban – esztergáláshoz, fúráshoz.",ro:"F în mm/rotație – pentru strunjire, găurire.",de:"F in mm/Umdrehung – für Drehen, Bohren.",en:"F is in mm/rev – for turning and drilling."}, ex:"G95 G1 Z-20 F0.2" },
+  { g:"G96", grp:"mode", name:{hu:"Állandó vágósebesség",ro:"Viteză de așchiere constantă",de:"Konstante Schnittgeschwindigkeit",en:"Constant surface speed"}, desc:{hu:"Az orsó fordulatszáma automatikusan változik, hogy a vágósebesség (S, m/perc) állandó legyen – eszterga.",ro:"Turația se schimbă automat ca viteza de așchiere (S, m/min) să fie constantă – strung.",de:"Drehzahl passt sich automatisch an, damit Schnittgeschwindigkeit (S, m/min) konstant bleibt – Drehen.",en:"RPM changes automatically to keep surface speed (S, m/min) constant – lathes."}, ex:"G96 S180" },
+  { g:"G97", grp:"mode", name:{hu:"Állandó fordulatszám",ro:"Turație constantă",de:"Konstante Drehzahl",en:"Constant RPM"}, desc:{hu:"Az S érték fix fordulat/perc – fúráshoz, menetfúráshoz kötelező.",ro:"S = rotații/min fixe – obligatoriu la găurire, filetare.",de:"S = feste U/min – Pflicht beim Bohren, Gewindebohren.",en:"S is fixed RPM – required for drilling and tapping."}, ex:"G97 S16000 M3" },
+  { g:"G77", grp:"spec", name:{hu:"Alprogram / címke hívása (Xilog)",ro:"Apel subprogram / etichetă (Xilog)",de:"Unterprogramm-/Label-Aufruf (Xilog)",en:"Subroutine / label call (Xilog)"}, desc:{hu:"A H-val megadott címkéjű programrészt hívja meg és végrehajtja – a te programodban: G77 H29 és G77 H810. Így ismételsz megmunkálást több pozícióban (L változókkal eltolva).",ro:"Apelează și execută secțiunea cu eticheta H – în programul tău: G77 H29 și G77 H810. Așa repeți prelucrarea în mai multe poziții (decalat cu variabile L).",de:"Ruft den Programmteil mit Label H auf – in deinem Programm: G77 H29 und G77 H810. So wiederholst du Bearbeitungen an mehreren Positionen (mit L-Variablen versetzt).",en:"Calls and runs the program section labeled H – in your program: G77 H29 and G77 H810. This repeats machining at multiple positions (offset via L variables)."}, ex:"N400 G77 H29\nN430 L1=L1+1639 L2=L2\nN440 G77 H29" },
+  { g:"G79", grp:"spec", name:{hu:"Ugrás mondatszámra (Xilog)",ro:"Salt la numărul de bloc (Xilog)",de:"Sprung zur Satznummer (Xilog)",en:"Jump to block number (Xilog)"}, desc:{hu:"Feltétel nélküli ugrás a megadott N mondatra – a képen: G79 N370 (visszaugrás ciklushoz) és G79 N9999 (ugrás a program végére).",ro:"Salt necondiționat la blocul N dat – în poză: G79 N370 (salt înapoi pentru ciclu) și G79 N9999 (salt la sfârșitul programului).",de:"Unbedingter Sprung zum Satz N – im Foto: G79 N370 (Rücksprung für Schleife) und G79 N9999 (Sprung ans Programmende).",en:"Unconditional jump to block N – in the photo: G79 N370 (loop back) and G79 N9999 (jump to program end)."}, ex:"N450 G79 N370\nN260 G79 N9999" }
+];
+/* G-kódok betöltése: localStorage → letöltött fájlba sütött adat → alaplista */
+function normalizeGcode(x) {
+  ["name","desc"].forEach(f => {
+    if (typeof x[f] !== "object" || x[f] === null) x[f] = { hu:String(x[f] ?? ""), ro:"", de:"", en:"" };
+    LANGS.forEach(l => { if (typeof x[f][l] !== "string") x[f][l] = ""; });
+  });
+  if (typeof x.ex !== "string") x.ex = String(x.ex ?? "");
+  if (!GC_GRPS[x.grp]) x.grp = "mode";
+  return x;
+}
+function loadGcodes() {
+  try {
+    const s = localStorage.getItem(LS + "gdata");
+    if (s) { const a = JSON.parse(s); if (Array.isArray(a) && a.length) return a.map(normalizeGcode); }
+  } catch (e) {}
+  try {
+    const el = document.getElementById("gcodeData");
+    if (el && el.textContent.trim()) { const a = JSON.parse(el.textContent); if (Array.isArray(a) && a.length) return a.map(normalizeGcode); }
+  } catch (e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_GCODES));
+}
+let GCODES = loadGcodes();
+function saveGcodes() { try { localStorage.setItem(LS + "gdata", JSON.stringify(GCODES)); } catch (e) {} }
+const GC_GRP_ORDER = ["motion","plane","comp","coord","cycle","mode","spec"];
+function renderGcodes() {
+  view.innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:4px;">
+      <input class="gc-search" id="gcSearch" placeholder="${t("gcode_search")}" style="flex:1;min-width:220px;margin-bottom:0;">
+      <button class="dict-dl" id="gcAddBtn">${t("gc_add")}</button>
+    </div>
+    <div style="color:var(--txt-dim);font-size:16px;margin:8px 0 4px;">${GCODES.length} ${t("gcode_count")}</div>
+    <div id="gcOut"></div>`;
+  const out = document.getElementById("gcOut");
+  function draw(filter) {
+    const f = (filter || "").trim().toLowerCase();
+    let html = "";
+    GC_GRP_ORDER.forEach(gk => {
+      const grp = GC_GRPS[gk];
+      const items = GCODES.filter(x => x.grp === gk).filter(x =>
+        !f || x.g.toLowerCase().includes(f) || getText(x.name).toLowerCase().includes(f) || getText(x.desc).toLowerCase().includes(f));
+      if (!items.length) return;
+      html += `<div class="gc-grp-title"><span class="dot" style="background:${grp.hex}"></span>${escapeHtml(getText(grp.name))}</div>
+      <div class="gc-list">` + items.map(x => `
+        <div class="gc-row" data-gcode="${escapeHtml(x.g)}" style="cursor:pointer;">
+          <div class="gc-head"><span class="gc-chip" style="background:${grp.hex}">${escapeHtml(x.g)}</span><span class="gc-name" style="flex:1;">${escapeHtml(getText(x.name))}</span>${x.grp==="spec"?`<span class="gc-spec">★ Xilog</span>`:""}<button class="icon-btn" data-gedit="${escapeHtml(x.g)}" title="${t("ed_edit")}">✏️</button></div>
+          <div class="gc-desc">${escapeHtml(getText(x.desc))}</div>
+          <div class="gc-ex">${escapeHtml(x.ex).replace(/\n/g,"<br>")}</div>
+        </div>`).join("") + `</div>`;
+    });
+    out.innerHTML = html || `<div style="color:var(--txt-dim);font-size:18px;padding:20px;">🔍 —</div>`;
+  }
+  draw("");
+  document.getElementById("gcSearch").addEventListener("input", e => draw(e.target.value));
+  document.getElementById("gcAddBtn").addEventListener("click", () => openGcodeEditor(null));
+  out.addEventListener("click", e => {
+    const ed = e.target.closest("[data-gedit]");
+    if (ed) { openGcodeEditor(ed.dataset.gedit); return; }
+    const row = e.target.closest("[data-gcode]");
+    if (row) openGcodeInfo(row.dataset.gcode);
+  });
+}
+/* G-kód részletes magyarázat modal (mint az M-kódoknál) */
+function openGcodeInfo(g) {
+  const x = GCODES.find(v => v.g === g);
+  if (!x) return;
+  const grp = GC_GRPS[x.grp];
+  let old = document.getElementById("gcInfoBackdrop");
+  if (old) old.remove();
+  const wrap = document.createElement("div");
+  wrap.id = "gcInfoBackdrop";
+  wrap.className = "ed-backdrop";
+  wrap.innerHTML = `<div class="ed-modal">
+    <button class="ed-close" id="gcInfoClose">✕</button>
+    <h2><span class="gc-chip" style="background:${grp.hex}">${escapeHtml(x.g)}</span> ${escapeHtml(getText(x.name))}</h2>
+    <div style="color:${grp.hex};font-weight:700;font-size:16px;margin-bottom:8px;">● ${escapeHtml(getText(grp.name))}${x.grp==="spec"?" · ★ Xilog":""}</div>
+    <div class="ed-field"><label>${t("modal_exp")}</label><div style="font-size:19px;line-height:1.6;">${escapeHtml(getText(x.desc))}</div></div>
+    <div class="ed-field"><label>${t("modal_ex")}</label><div class="gc-ex" style="font-size:17px;">${escapeHtml(x.ex).replace(/\n/g,"<br>")}</div></div>
+    <div class="ed-actions">
+      <button class="ed-btn primary" id="gcInfoEdit">✏️ ${t("ed_edit")}</button>
+      <button class="ed-btn ghost" id="gcInfoOk">${t("modal_close")}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  wrap.addEventListener("click", e => { if (e.target === wrap) wrap.remove(); });
+  document.getElementById("gcInfoClose").addEventListener("click", () => wrap.remove());
+  document.getElementById("gcInfoOk").addEventListener("click", () => wrap.remove());
+  document.getElementById("gcInfoEdit").addEventListener("click", () => { wrap.remove(); openGcodeEditor(g); });
+}
+/* G-kód szerkesztő: meglévő módosítása vagy új felvétele */
+function openGcodeEditor(g) {
+  const existing = g ? GCODES.find(v => v.g === g) : null;
+  let old = document.getElementById("gcEdBackdrop");
+  if (old) old.remove();
+  const grpOpts = GC_GRP_ORDER.map(k => `<option value="${k}" ${existing && existing.grp === k ? "selected" : ""}>${escapeHtml(getText(GC_GRPS[k].name))}</option>`).join("");
+  const wrap = document.createElement("div");
+  wrap.id = "gcEdBackdrop";
+  wrap.className = "ed-backdrop";
+  wrap.innerHTML = `<div class="ed-modal">
+    <button class="ed-close" id="gcEdClose">✕</button>
+    <h2>${existing ? "✏️" : "➕"} ${existing ? escapeHtml(existing.g) : t("gc_add").replace("➕ ","")}</h2>
+    <div style="color:var(--txt-faint);font-size:15px;margin-bottom:4px;">${t("ed_langhint")}</div>
+    <div class="ed-field"><label>${t("ed_code")}</label><input class="mono" id="gcEdCode" value="${existing ? escapeHtml(existing.g) : ""}" ${existing ? "disabled" : ""} placeholder="G100"></div>
+    <div class="ed-field"><label>${t("ed_cat")}</label><select id="gcEdGrp">${grpOpts}</select></div>
+    <div class="ed-field"><label>${t("ed_name")}</label><input id="gcEdName" value="${existing ? escapeHtml(getText(existing.name)) : ""}"></div>
+    <div class="ed-field"><label>${t("ed_exp")}</label><textarea id="gcEdDesc">${existing ? escapeHtml(getText(existing.desc)) : ""}</textarea></div>
+    <div class="ed-field"><label>${t("ed_ex")}</label><textarea class="mono" id="gcEdEx">${existing ? escapeHtml(existing.ex) : ""}</textarea></div>
+    <div class="ed-actions">
+      <button class="ed-btn primary" id="gcEdSave">${t("ed_save")}</button>
+      <button class="ed-btn ghost" id="gcEdCancel">${t("ed_cancel")}</button>
+      ${existing ? `<button class="ed-btn danger" id="gcEdDel">${t("ed_delete")}</button>` : ""}
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = () => wrap.remove();
+  wrap.addEventListener("click", e => { if (e.target === wrap) close(); });
+  document.getElementById("gcEdClose").addEventListener("click", close);
+  document.getElementById("gcEdCancel").addEventListener("click", close);
+  if (existing) document.getElementById("gcEdDel").addEventListener("click", () => {
+    if (!confirm(t("ed_confirm_del"))) return;
+    GCODES = GCODES.filter(v => v.g !== existing.g);
+    saveGcodes(); close(); renderGcodes(); toast(t("ed_deleted"));
+  });
+  document.getElementById("gcEdSave").addEventListener("click", () => {
+    const code = (existing ? existing.g : document.getElementById("gcEdCode").value.trim().toUpperCase());
+    const name = document.getElementById("gcEdName").value.trim();
+    const desc = document.getElementById("gcEdDesc").value.trim();
+    const ex = document.getElementById("gcEdEx").value.trim();
+    const grpv = document.getElementById("gcEdGrp").value;
+    if (!/^G\d+(\.\d+)?( G\d+(\.\d+)?)*$/.test(code) && !/^G\d/.test(code)) { toast(t("ed_code_err")); return; }
+    if (!existing && GCODES.some(v => v.g === code)) { toast(t("ed_dup_err")); return; }
+    if (existing) {
+      /* az aktuális nyelvet írjuk; a többi nyelv követi, ha eddig azonos volt */
+      const oldName = getText(existing.name), oldDesc = getText(existing.desc);
+      LANGS.forEach(l => {
+        if (l === state.lang || existing.name[l] === oldName || !existing.name[l]) existing.name[l] = name;
+        if (l === state.lang || existing.desc[l] === oldDesc || !existing.desc[l]) existing.desc[l] = desc;
+      });
+      existing.ex = ex; existing.grp = grpv;
+    } else {
+      GCODES.push(normalizeGcode({ g: code, grp: grpv,
+        name: { hu:name, ro:name, de:name, en:name },
+        desc: { hu:desc, ro:desc, de:desc, en:desc }, ex }));
+    }
+    saveGcodes(); close(); renderGcodes(); toast(t("ed_saved"));
+  });
 }
 
 /* ============================================================
