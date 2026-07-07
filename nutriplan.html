@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="hu" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#059669" />
+<title>NutriPlan</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NutriPlan">
+<meta name="application-name" content="NutriPlan">
+<link id="appIcon" rel="icon" href="">
+<link id="appIconTouch" rel="apple-touch-icon" href="">
+<link id="appManifest" rel="manifest">
+<script>
+(function(){
+  try {
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'>"+
+      "<rect width='512' height='512' rx='112' fill='#059669'/>"+
+      "<path d='M256 116 C 338 168 366 262 256 396 C 146 262 174 168 256 116 Z' fill='#ffffff'/>"+
+      "<path d='M256 150 L256 372' stroke='#059669' stroke-width='14' stroke-linecap='round'/></svg>";
+    var iconUrl = "data:image/svg+xml," + encodeURIComponent(svg);
+    var i1=document.getElementById("appIcon"); if(i1) i1.href=iconUrl;
+    var i2=document.getElementById("appIconTouch"); if(i2) i2.href=iconUrl;
+    var here=location.href.split("#")[0].split("?")[0];
+    var manifest={ name:"NutriPlan", short_name:"NutriPlan", start_url:here,
+      scope:here.replace(/[^\/]*$/,""), display:"standalone", orientation:"portrait",
+      background_color:"#f6f8f7", theme_color:"#059669",
+      icons:[{src:iconUrl, sizes:"any", type:"image/svg+xml", purpose:"any maskable"}] };
+    var m=document.getElementById("appManifest");
+    if(m) m.href=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:"application/manifest+json"}));
+  } catch(e){}
+})();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bl:#059669; }
+  * { -webkit-tap-highlight-color: transparent; }
+  body { font-family:'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif; }
+  .app-bg { background:
+      radial-gradient(1200px 400px at 100% -10%, rgba(16,185,129,.10), transparent 60%),
+      radial-gradient(900px 380px at -10% 0%, rgba(5,150,105,.08), transparent 55%), #f6f8f7; }
+  @media (prefers-color-scheme: dark) {
+    body { color:#f1f5f9; }
+    .app-bg { background: radial-gradient(1200px 400px at 100% -10%, rgba(16,185,129,.12), transparent 60%), #0f172a; }
+    .dark-card { background-color:#1e293b !important; border-color:#334155 !important; }
+    .dark-input { background-color:#334155 !important; border-color:#475569 !important; color:#fff !important; }
+    .dark-text { color:#f1f5f9 !important; }
+    .dark-muted { color:#94a3b8 !important; }
+  }
+  @keyframes pop { from{opacity:0; transform:translateY(6px) scale(.985);} to{opacity:1; transform:none;} }
+  .pop { animation:pop .2s cubic-bezier(.2,.7,.3,1) both; }
+  .press { transition:transform .08s ease, background-color .15s ease, color .15s ease; }
+  .press:active { transform:scale(.96); }
+  .tick { width:26px; height:26px; border-radius:8px; border:2px solid #cbd5e1; display:grid; place-items:center; transition:all .18s ease; flex:0 0 auto; }
+  .tick svg { opacity:0; transform:scale(.4); transition:all .18s ease; }
+  .item.done .tick { background:var(--bl); border-color:var(--bl); }
+  .item.done .tick svg { opacity:1; transform:scale(1); }
+  .item.done .label { text-decoration:line-through; color:#94a3b8; }
+  .nice-scroll::-webkit-scrollbar { width:6px; }
+  .nice-scroll::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:99px; }
+  select { background-repeat:no-repeat; background-position:right .6rem center; padding-right:1.7rem; -webkit-appearance:none; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); }
+  .sel-empty { background-color:#f1f5f9; color:#94a3b8; border-color:#e2e8f0; }
+  .sel-filled { background-color:#fff7ed; color:#9a3412; border-color:#fdba74; font-weight:700;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23ea580c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); }
+  @media (prefers-color-scheme: dark) {
+    .sel-empty { background-color:#475569; color:#cbd5e1; border-color:#64748b; }
+    .sel-filled { background-color:#4a2f17; color:#fdba74; border-color:#f59e0b; }
+  }
+  .seg { transition:all .15s ease; }
+  .seg.active { background:var(--bl); color:#fff; box-shadow:0 1px 4px rgba(5,150,105,.35); }
+  #toast { position:fixed; left:50%; bottom:24px; transform:translate(-50%,140%); z-index:60;
+    padding:12px 20px; border-radius:14px; font-size:16px; font-weight:600; color:#fff; background:#059669;
+    box-shadow:0 10px 30px rgba(0,0,0,.18); transition:transform .28s cubic-bezier(.2,.8,.2,1); max-width:90vw; text-align:center; }
+  #toast.show { transform:translate(-50%,0); }
+  #toast.err { background:#e11d48; }
+  @media (prefers-reduced-motion: reduce){ .pop{animation:none;} .press:active{transform:none;} }
+</style>
+</head>
+<body class="app-bg min-h-screen text-slate-800 antialiased">
+
+  <header class="sticky top-0 z-30 bg-gradient-to-br from-emerald-600 to-emerald-700 text-white shadow-lg shadow-emerald-900/10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2">
+      <div class="h-11 w-11 rounded-xl bg-white/15 grid place-items-center text-2xl backdrop-blur-sm ring-1 ring-white/20">🌿</div>
+      <div class="leading-tight">
+        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">NutriPlan</h1>
+        <p id="statLine" class="text-emerald-100 text-[13px] font-medium -mt-0.5">&nbsp;</p>
+      </div>
+      <button id="langBtn" class="press ml-auto text-sm bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg font-bold backdrop-blur-sm">🌐 HU</button>
+      <button id="expImpBtn" class="press text-sm bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg font-semibold backdrop-blur-sm">📦</button>
+    </div>
+    <div class="bg-emerald-800/40 border-t border-emerald-500/20 backdrop-blur-sm">
+      <div id="miniCalendar" class="max-w-6xl mx-auto px-3 py-2 flex justify-between gap-1 text-center"></div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-5 grid gap-5 lg:grid-cols-3">
+
+    <section class="space-y-4">
+      <div class="bg-white dark-card rounded-3xl shadow-sm ring-1 ring-slate-100 p-5">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">🍳</span>
+          <h2 id="formTitle" class="font-bold text-lg text-slate-900 dark-text"></h2>
+        </div>
+        <div class="space-y-3">
+          <input id="rName" type="text" autocomplete="off" class="w-full dark-input rounded-xl border border-slate-200 px-4 py-3 text-[16px] outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition" />
+          <textarea id="rIngs" rows="2" class="w-full dark-input rounded-xl border border-slate-200 px-4 py-3 text-[16px] outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition resize-none"></textarea>
+          <div class="flex gap-2">
+            <button id="addRecipeBtn" class="press flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 text-base shadow-sm"></button>
+            <button id="cancelEditBtn" class="press hidden rounded-xl bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200 font-semibold px-4 py-3 text-base"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white dark-card rounded-3xl shadow-sm ring-1 ring-slate-100 p-5">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-2xl">📚</span>
+          <h2 id="hRecipes" class="font-bold text-lg text-slate-900 dark-text"></h2>
+          <span id="recipeCount" class="ml-auto text-sm font-semibold text-emerald-700 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-300 px-2.5 py-1 rounded-full">0</span>
+        </div>
+        <input id="recipeSearch" type="text" autocomplete="off" class="w-full dark-input rounded-xl border border-slate-200 px-4 py-2.5 text-[15px] outline-none focus:border-emerald-500 transition mb-3" />
+        <div id="recipeList" class="space-y-2.5 max-h-[50vh] overflow-y-auto nice-scroll pr-1"></div>
+      </div>
+    </section>
+
+    <section class="bg-white dark-card rounded-3xl shadow-sm ring-1 ring-slate-100 p-5">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-2xl">🗓️</span>
+        <h2 id="hMeals" class="font-bold text-lg text-slate-900 dark-text"></h2>
+        <button id="clearPlanBtn" class="press ml-auto text-sm font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/40 dark:text-rose-400 hover:bg-rose-100 px-3 py-1.5 rounded-full"></button>
+      </div>
+      <div id="planBuffer"></div>
+      <div id="planList" class="space-y-3"></div>
+    </section>
+
+    <section class="bg-white dark-card rounded-3xl shadow-sm ring-1 ring-slate-100 p-5">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-2xl">🛒</span>
+        <h2 id="hShop" class="font-bold text-lg text-slate-900 dark-text"></h2>
+        <button id="shareBtn" class="press ml-auto text-sm bg-slate-100 dark:bg-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold"></button>
+        <span id="shopCount" class="text-sm font-semibold text-emerald-700 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-300 px-2.5 py-1 rounded-full">0</span>
+      </div>
+
+      <button id="buildListBtn" class="press w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 text-base shadow-sm mb-4"></button>
+
+      <div class="space-y-2 mb-4 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl border border-slate-100 dark:border-slate-700">
+        <div class="flex gap-2">
+          <input id="manualItem" type="text" autocomplete="off" class="flex-1 min-w-0 dark-input rounded-xl border border-slate-200 px-3 py-2.5 text-base outline-none focus:border-emerald-500 transition" />
+          <button id="addItemBtn" class="press shrink-0 rounded-xl bg-slate-900 dark:bg-emerald-600 text-white font-bold px-4 text-base">+</button>
+        </div>
+        <select id="manCat" class="w-full dark-input rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-500">
+          <option value="zoldseg"></option><option value="hus"></option><option value="tej"></option>
+          <option value="pekaru"></option><option value="magvak"></option><option value="szaraz"></option><option value="egyeb"></option>
+        </select>
+      </div>
+
+      <div id="shopFilter" class="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-3 text-sm font-bold text-slate-500 dark-muted">
+        <button class="seg active flex-1 py-2 rounded-lg" data-f="all"></button>
+        <button class="seg flex-1 py-2 rounded-lg" data-f="todo"></button>
+        <button class="seg flex-1 py-2 rounded-lg" data-f="done"></button>
+      </div>
+
+      <div class="mb-3">
+        <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+          <p id="shopProgress" class="text-sm font-medium text-slate-400 dark-muted"></p>
+          <div class="flex gap-3 text-sm font-semibold">
+            <button id="clearDoneBtn" class="press text-slate-400 hover:text-emerald-600"></button>
+            <button id="clearShopBtn" class="press text-slate-400 hover:text-rose-600"></button>
+          </div>
+        </div>
+        <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div id="shopBar" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div id="shopList" class="space-y-4 max-h-[50vh] overflow-y-auto nice-scroll pr-1"></div>
+    </section>
+  </main>
+
+  <div id="backupModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden grid place-items-center p-4">
+    <div class="bg-white dark-card rounded-3xl p-6 max-w-md w-full shadow-xl space-y-4">
+      <h3 id="bkTitle" class="font-bold text-lg text-slate-900 dark-text"></h3>
+      <p id="bkDesc" class="text-sm text-slate-400 dark-muted"></p>
+      <textarea id="backupData" rows="6" class="w-full dark-input text-sm font-mono p-3 border border-slate-200 rounded-xl resize-none outline-none focus:border-emerald-500"></textarea>
+      <div class="grid grid-cols-2 gap-2 text-sm font-bold">
+        <button id="copyBackupBtn" class="press bg-slate-100 dark:bg-slate-700 dark:text-slate-200 py-3 rounded-xl"></button>
+        <button id="downloadBackupBtn" class="press bg-slate-100 dark:bg-slate-700 dark:text-slate-200 py-3 rounded-xl"></button>
+        <button id="importBtn" class="press bg-emerald-600 text-white py-3 rounded-xl"></button>
+        <button id="closeModalBtn" class="press bg-slate-900 dark:bg-slate-600 text-white py-3 rounded-xl"></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+  <footer class="max-w-6xl mx-auto px-4 pb-8 pt-2 text-center"><p id="footText" class="text-[13px] text-slate-400 dark-muted"></p></footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ===== Nyelvek / i18n =====
+  const I18N = {
+    hu: {
+      days:["Hétfő","Kedd","Szerda","Csütörtök","Péntek","Szombat","Vasárnap"], abbr:["H","K","Sze","Cs","P","Szo","V"],
+      meals:{reggeli:"🌅 Reggeli",tizorai:"☕ Tízórai",ebed:"🍽️ Ebéd",uzsonna:"🍎 Uzsonna",vacsora:"🌙 Vacsora",nasi:"🥜 Nasi / rágcsa"},
+      cats:{zoldseg:"🥦 Zöldség & gyümölcs",hus:"🥩 Húsáru & hal",tej:"🧀 Tejtermék & tojás",pekaru:"🥖 Pékáru",magvak:"🥜 Magvak & édesség",szaraz:"🧂 Szárazáru & fűszer",egyeb:"📦 Egyéb"},
+      save:"Mentés", newRecipe:"Új recept felvétele", editRecipe:"Recept módosítása ✏️",
+      rNamePh:"Étel neve (pl. Tojásrántotta, Vegyes magvak)", rIngsPh:"Hozzávalók vesszővel (pl. dió, mandula, tökmag)",
+      saveRecipeBtn:"Mentés a recepttárba", cancel:"Mégse", myRecipes:"Saját receptek", searchPh:"🔍 Keresés receptek közt...",
+      noRecipes:"Nincs még recepted. Vegyél fel egyet! 👆", noResults:"Nincs találat erre: „{q}”", noIngs:"Nincs összetevő",
+      whichDay:"Melyik napra?", whichMeal:"‹ {day} – melyik étkezés?", dailyMeals:"Napi étkezések", clearPlan:"Terv ürítése",
+      clipboard:"📋 Vágólapon: {day} menüje", everywhere:"Mindenhova", today:"Ma",
+      shoppingList:"Bevásárlólista", shareBtn:"📤 Lista", buildList:"🔄 Listázás a napi menükből", itemPh:"Tétel neve...",
+      fAll:"Összes", fTodo:"Megveendő", fDone:"Kész", emptyList:"Üres lista", emptySlot:"üres", doneOf:"{d} / {t} kész",
+      clearDone:"Megvettek", allBtn:"Mind", noFiltered:"Nincs ilyen tétel a szűrőben.", nothingToBuy:"Nincs mit megvenni. 🛒",
+      bkTitle:"Adatmentés és visszaállítás", bkDesc:"Mentsd el a kódot (Másolás vagy Letöltés), vagy illessz be ide egy korábbit a visszaállításhoz.",
+      copy:"📋 Másolás", download:"⬇️ Letöltés", importBtn:"Importálás", close:"Bezárás",
+      footer:"Az adatok a böngésződben maradnak.", shareTitle:"🛒 NutriPlan – bevásárlólista",
+      tRecipeUpdated:"Recept frissítve ✏️", tRecipeSaved:"Recept mentve 🍳", tRecipeDeleted:"Recept törölve",
+      tPlanned:"{day} · {meal} betervezve", tCopied:"{day} menü vágólapra ⧉", tPasted:"{day} felülírva 📋",
+      tWeekPasted:"Az egész hétre beillesztve", tAdded:"{n} tétel hozzáadva", tNoNew:"Nincs új tétel",
+      tDoneCleared:"Megvett tételek törölve", tListClip:"Lista a vágólapra 📋", tShareFail:"Nem sikerült",
+      tShareUnsup:"Megosztás nem támogatott", tEmptyList:"Üres a lista", tCodeClip:"Kód a vágólapra másolva 📋",
+      tCopyManual:"Másold ki kézzel", tSaved:"Mentés letöltve ⬇️", tBadFormat:"Hibás adatformátum",
+      tImportOk:"Sikeres importálás ✅", tImportFail:"Nem sikerült beolvasni a kódot", stats:"{r} recept · {m} étkezés",
+      cDelRecipe:"Biztosan törlöd a receptet?", cDelDone:"Törlöd a már megvett tételeket?", cDelShop:"Törlöd a teljes bevásárlólistát?",
+      cClearPlan:"Kiüríted az összes napi étkezést?", loadError:"Hiba a betöltéskor. Frissítsd az oldalt."
+    },
+    en: {
+      days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], abbr:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+      meals:{reggeli:"🌅 Breakfast",tizorai:"☕ Snack (AM)",ebed:"🍽️ Lunch",uzsonna:"🍎 Snack (PM)",vacsora:"🌙 Dinner",nasi:"🥜 Nibbles"},
+      cats:{zoldseg:"🥦 Veg & fruit",hus:"🥩 Meat & fish",tej:"🧀 Dairy & eggs",pekaru:"🥖 Bakery",magvak:"🥜 Nuts & sweets",szaraz:"🧂 Dry goods & spices",egyeb:"📦 Other"},
+      save:"Save", newRecipe:"Add new recipe", editRecipe:"Edit recipe ✏️",
+      rNamePh:"Dish name (e.g. Omelette, Mixed nuts)", rIngsPh:"Ingredients, comma separated (e.g. walnut, almond, pumpkin seed)",
+      saveRecipeBtn:"Save to recipe book", cancel:"Cancel", myRecipes:"My recipes", searchPh:"🔍 Search recipes...",
+      noRecipes:"No recipes yet. Add one! 👆", noResults:"No results for “{q}”", noIngs:"No ingredients",
+      whichDay:"Which day?", whichMeal:"‹ {day} – which meal?", dailyMeals:"Daily meals", clearPlan:"Clear plan",
+      clipboard:"📋 Clipboard: {day} menu", everywhere:"To all days", today:"Today",
+      shoppingList:"Shopping list", shareBtn:"📤 List", buildList:"🔄 Build from daily menus", itemPh:"Item name...",
+      fAll:"All", fTodo:"To buy", fDone:"Done", emptyList:"Empty list", emptySlot:"empty", doneOf:"{d} / {t} done",
+      clearDone:"Bought", allBtn:"All", noFiltered:"No items match the filter.", nothingToBuy:"Nothing to buy. 🛒",
+      bkTitle:"Backup & restore", bkDesc:"Save the code (Copy or Download), or paste a previous one here to restore.",
+      copy:"📋 Copy", download:"⬇️ Download", importBtn:"Import", close:"Close",
+      footer:"Your data stays in your browser.", shareTitle:"🛒 NutriPlan – shopping list",
+      tRecipeUpdated:"Recipe updated ✏️", tRecipeSaved:"Recipe saved 🍳", tRecipeDeleted:"Recipe deleted",
+      tPlanned:"{day} · {meal} planned", tCopied:"{day} menu copied ⧉", tPasted:"{day} overwritten 📋",
+      tWeekPasted:"Pasted to the whole week", tAdded:"{n} items added", tNoNew:"No new items",
+      tDoneCleared:"Bought items cleared", tListClip:"List copied 📋", tShareFail:"Failed",
+      tShareUnsup:"Share not supported", tEmptyList:"List is empty", tCodeClip:"Code copied 📋",
+      tCopyManual:"Copy manually", tSaved:"Backup downloaded ⬇️", tBadFormat:"Invalid data format",
+      tImportOk:"Import successful ✅", tImportFail:"Couldn't read the code", stats:"{r} recipes · {m} meals",
+      cDelRecipe:"Delete this recipe?", cDelDone:"Delete bought items?", cDelShop:"Clear the whole shopping list?",
+      cClearPlan:"Clear all daily meals?", loadError:"Loading error. Refresh the page."
+    },
+    ro: {
+      days:["Luni","Marți","Miercuri","Joi","Vineri","Sâmbătă","Duminică"], abbr:["Lu","Ma","Mi","Jo","Vi","Sâ","Du"],
+      meals:{reggeli:"🌅 Mic dejun",tizorai:"☕ Gustare AM",ebed:"🍽️ Prânz",uzsonna:"🍎 Gustare PM",vacsora:"🌙 Cină",nasi:"🥜 Ronțăit"},
+      cats:{zoldseg:"🥦 Legume & fructe",hus:"🥩 Carne & pește",tej:"🧀 Lactate & ouă",pekaru:"🥖 Panificație",magvak:"🥜 Semințe & dulciuri",szaraz:"🧂 Uscate & condimente",egyeb:"📦 Altele"},
+      save:"Salvare", newRecipe:"Adaugă rețetă", editRecipe:"Editează rețeta ✏️",
+      rNamePh:"Nume fel (ex. Omletă, Semințe mixte)", rIngsPh:"Ingrediente separate prin virgulă (ex. nucă, migdale, semințe)",
+      saveRecipeBtn:"Salvează în rețetar", cancel:"Anulează", myRecipes:"Rețetele mele", searchPh:"🔍 Caută rețete...",
+      noRecipes:"Nicio rețetă încă. Adaugă una! 👆", noResults:"Niciun rezultat pentru „{q}”", noIngs:"Fără ingrediente",
+      whichDay:"Pentru ce zi?", whichMeal:"‹ {day} – ce masă?", dailyMeals:"Mese zilnice", clearPlan:"Golește planul",
+      clipboard:"📋 Clipboard: meniul {day}", everywhere:"Peste tot", today:"Azi",
+      shoppingList:"Listă cumpărături", shareBtn:"📤 Listă", buildList:"🔄 Generează din meniuri", itemPh:"Nume produs...",
+      fAll:"Toate", fTodo:"De cumpărat", fDone:"Gata", emptyList:"Listă goală", emptySlot:"gol", doneOf:"{d} / {t} gata",
+      clearDone:"Cumpărate", allBtn:"Tot", noFiltered:"Niciun produs în filtru.", nothingToBuy:"Nimic de cumpărat. 🛒",
+      bkTitle:"Backup & restaurare", bkDesc:"Salvează codul (Copiază sau Descarcă), sau lipește unul anterior pentru restaurare.",
+      copy:"📋 Copiază", download:"⬇️ Descarcă", importBtn:"Importă", close:"Închide",
+      footer:"Datele rămân în browserul tău.", shareTitle:"🛒 NutriPlan – listă cumpărături",
+      tRecipeUpdated:"Rețetă actualizată ✏️", tRecipeSaved:"Rețetă salvată 🍳", tRecipeDeleted:"Rețetă ștearsă",
+      tPlanned:"{day} · {meal} planificat", tCopied:"Meniu {day} copiat ⧉", tPasted:"{day} suprascris 📋",
+      tWeekPasted:"Lipit pe toată săptămâna", tAdded:"{n} produse adăugate", tNoNew:"Niciun produs nou",
+      tDoneCleared:"Produse cumpărate șterse", tListClip:"Listă copiată 📋", tShareFail:"Eșuat",
+      tShareUnsup:"Partajare nesuportată", tEmptyList:"Lista e goală", tCodeClip:"Cod copiat 📋",
+      tCopyManual:"Copiază manual", tSaved:"Backup descărcat ⬇️", tBadFormat:"Format invalid",
+      tImportOk:"Import reușit ✅", tImportFail:"Nu am putut citi codul", stats:"{r} rețete · {m} mese",
+      cDelRecipe:"Ștergi rețeta?", cDelDone:"Ștergi produsele cumpărate?", cDelShop:"Golești toată lista?",
+      cClearPlan:"Golești toate mesele?", loadError:"Eroare la încărcare. Reîmprospătează pagina."
+    }
+  };
+  const LANG_ORDER = ["hu","en","ro"];
+  const MEAL_KEYS = ["reggeli","tizorai","ebed","uzsonna","vacsora","nasi"];
+  const CAT_KEYS  = ["zoldseg","hus","tej","pekaru","magvak","szaraz","egyeb"];
+  const K = { recipes:"np_recipes_v1", plan:"np_plan_v1", shop:"np_shop_v1", lang:"np_lang" };
+  const todayIdx = (new Date().getDay() + 6) % 7;
+
+  // Hozzávaló-felismerő kulcsszavak (HU + pár EN/RO)
+  const KW = {
+    zoldseg:["hagyma","fokhagyma","paradicsom","saláta","citrom","lime","krumpli","burgonya","répa","paprika","uborka","cukkini","brokkoli","karfiol","spenót","gomba","alma","banán","körte","szőlő","eper","gyümölcs","zöldség","padlizsán","kukorica","zeller","onion","tomato","apple","banana","ceapă","roșii","măr"],
+    hus:["hús","csirke","csirkemell","sertés","marha","darált","hal","lazac","tonhal","kolbász","szalonna","bacon","sonka","virsli","pulyka","chicken","beef","pork","fish","carne","pui","pește"],
+    tej:["tej","sajt","tejföl","vaj","tejszín","parmezán","mozzarella","túró","joghurt","tojás","kefir","milk","cheese","egg","butter","lapte","brânză","ou","unt"],
+    pekaru:["kenyér","zsemle","kifli","bagett","péksütemény","kalács","croissant","kruton","toast","tortilla","pita","bread","pâine"],
+    magvak:["dió","mandula","tökmag","mag","magvak","mogyoró","kesudió","pisztácia","napraforgó","csoki","csokoládé","keksz","müzli","granola","aszalt","datolya","chips","nut","almond","chocolate","nucă","migdale","semințe","ciocolată"],
+    szaraz:["liszt","cukor","rizs","tészta","spagetti","makaróni","só","bors","fűszer","olaj","ecet","méz","konzerv","bab","lencse","kávé","tea","kakaó","flour","sugar","rice","pasta","oil","salt","făină","zahăr","orez","ulei","sare"]
+  };
+
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const $ = id => document.getElementById(id);
+  const load = (key, fb) => { try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? fb : v; } catch(e){ return fb; } };
+  const save = (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){} };
+  const parseIngs = t => String(t||"").split(",").map(s => s.trim()).filter(Boolean);
+  const emptyDay = () => ({ reggeli:null, tizorai:null, ebed:null, uzsonna:null, vacsora:null, nasi:null });
+  const cloneDay = d => Object.assign(emptyDay(), d);
+
+  let lang = load(K.lang, null); if (LANG_ORDER.indexOf(lang) < 0) lang = "hu";
+  const dict = () => I18N[lang] || I18N.hu;
+  function t(key, p){ let s = dict()[key]; if (s == null) s = I18N.hu[key] != null ? I18N.hu[key] : key; if (p){ for (const k in p) s = s.replace("{"+k+"}", p[k]); } return s; }
+  const days = () => dict().days;
+  const abbr = () => dict().abbr;
+  const mealLabel = k => dict().meals[k];
+  const catLabel = k => dict().cats[k];
+
+  function autoCategory(name){
+    const n = name.toLowerCase();
+    for (const cat in KW){ if (KW[cat].some(kw => n.includes(kw))) return cat; }
+    return "egyeb";
+  }
+
+  let toastTimer = null;
+  function toast(msg, ok){ const el = $("toast"); if (!el) return; el.textContent = msg; el.className = ok === false ? "err show" : "show"; clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 1900); }
+
+  // ===== Betöltés + migráció =====
+  function loadRecipes(){
+    let r = load(K.recipes, null); if (Array.isArray(r)) return r;
+    let old = load("bl_recipes_v3", null); if (Array.isArray(old) && old.length) return old;
+    return [
+      { id: uid(), name:"Tojásrántotta", ings:["tojás","vaj","só","kenyér"] },
+      { id: uid(), name:"Joghurt müzlivel", ings:["joghurt","müzli","méz"] },
+      { id: uid(), name:"Bolognai spagetti", ings:["darált hús","hagyma","fokhagyma","paradicsom","spagetti","olívaolaj","só","bors"] },
+      { id: uid(), name:"Cézár saláta", ings:["római saláta","csirkemell","parmezán","kruton","tejföl","citrom"] },
+      { id: uid(), name:"Vegyes magvak", ings:["dió","mandula","tökmag"] },
+      { id: uid(), name:"Gyümölcstál", ings:["alma","banán","körte"] }
+    ];
+  }
+  function loadPlan(){
+    let p = load(K.plan, null);
+    if (Array.isArray(p) && p.length === 7 && p[0] && typeof p[0] === "object" && !Array.isArray(p[0])) return p.map(cloneDay);
+    let np = Array.from({length:7}, emptyDay);
+    let old = load("bl_plan_v3", null);
+    if (Array.isArray(old) && old.length === 7){ for (let i=0;i<7;i++){ if (old[i]) np[i].ebed = old[i]; } }
+    return np;
+  }
+  function loadShop(){
+    let s = load(K.shop, null); if (Array.isArray(s)) return s;
+    let old = load("bl_shop_v3", null);
+    if (Array.isArray(old)) return old.map(it => ({ id: it.id||uid(), name: it.name, done: !!it.done, cat: it.cat||"egyeb" }));
+    return [];
+  }
+
+  let recipes = loadRecipes();
+  let plan = loadPlan();
+  let shop = loadShop();
+  let editingId = null, filter = "all", recipeQuery = "";
+  let openDays = {}; openDays[todayIdx] = true;
+  let dayBuffer = null;
+
+  save(K.recipes, recipes); save(K.plan, plan); save(K.shop, shop);
+
+  const recipeById = id => recipes.find(r => r.id === id) || null;
+  const filledCount = d => MEAL_KEYS.reduce((n,k) => n + (plan[d][k] ? 1 : 0), 0);
+
+  // ===== Statikus feliratok lefordítása =====
+  function applyStatic(){
+    document.documentElement.lang = lang;
+    $("langBtn").textContent = "🌐 " + lang.toUpperCase();
+    $("expImpBtn").title = t("save");
+    $("formTitle").textContent = editingId ? t("editRecipe") : t("newRecipe");
+    $("rName").placeholder = t("rNamePh");
+    $("rIngs").placeholder = t("rIngsPh");
+    $("addRecipeBtn").textContent = t("saveRecipeBtn");
+    $("cancelEditBtn").textContent = t("cancel");
+    $("hRecipes").textContent = t("myRecipes");
+    $("recipeSearch").placeholder = t("searchPh");
+    $("hMeals").textContent = t("dailyMeals");
+    $("clearPlanBtn").textContent = t("clearPlan");
+    $("hShop").textContent = t("shoppingList");
+    $("shareBtn").textContent = t("shareBtn");
+    $("buildListBtn").textContent = t("buildList");
+    $("manualItem").placeholder = t("itemPh");
+    Array.prototype.forEach.call($("manCat").options, o => { o.textContent = catLabel(o.value); });
+    $("shopFilter").querySelector('[data-f="all"]').textContent = t("fAll");
+    $("shopFilter").querySelector('[data-f="todo"]').textContent = t("fTodo");
+    $("shopFilter").querySelector('[data-f="done"]').textContent = t("fDone");
+    $("clearDoneBtn").textContent = t("clearDone");
+    $("clearShopBtn").textContent = t("allBtn");
+    $("bkTitle").textContent = t("bkTitle");
+    $("bkDesc").textContent = t("bkDesc");
+    $("copyBackupBtn").textContent = t("copy");
+    $("downloadBackupBtn").textContent = t("download");
+    $("importBtn").textContent = t("importBtn");
+    $("closeModalBtn").textContent = t("close");
+    $("footText").textContent = t("footer");
+  }
+
+  // ===== Renderelők =====
+  function renderStats(){ let filled = 0; for (let d=0; d<7; d++) filled += filledCount(d); const el = $("statLine"); if (el) el.textContent = t("stats", { r: recipes.length, m: filled }); }
+
+  function renderMiniCalendar(){
+    const el = $("miniCalendar"); if (!el) return;
+    el.innerHTML = days().map((d,i) => {
+      const on = filledCount(i) > 0, isT = i === todayIdx;
+      return '<a href="#day-'+i+'" class="press flex-1 py-1.5 rounded-lg text-[13px] font-bold '+
+        (on ? 'bg-emerald-500 text-white shadow-sm' : 'bg-white/10 text-emerald-100 hover:bg-white/20')+(isT ? ' ring-2 ring-white' : '')+'">'+
+        '<div>'+abbr()[i]+'</div><div class="text-[11px] opacity-80">'+(on?filledCount(i):'·')+'</div></a>';
+    }).join("");
+  }
+
+  function dayButtonsHTML(rid){
+    return '<p class="text-[12px] font-semibold text-slate-400 mb-1.5">'+t("whichDay")+'</p><div class="flex flex-wrap gap-1">'+
+      abbr().map((a,d)=>'<button class="press assign-day text-sm font-semibold rounded-lg bg-emerald-600 text-white px-2.5 py-1.5" data-rid="'+rid+'" data-day="'+d+'">'+a+'</button>').join("")+'</div>';
+  }
+  function mealButtonsHTML(rid, day){
+    return '<button class="press assign-back text-[12px] font-semibold text-slate-400 mb-1.5" data-rid="'+rid+'">'+t("whichMeal",{day:days()[day]})+'</button>'+
+      '<div class="flex flex-wrap gap-1">'+
+      MEAL_KEYS.map(k=>'<button class="press assign-meal text-[13px] font-semibold rounded-lg bg-emerald-600 text-white px-2.5 py-1.5" data-rid="'+rid+'" data-day="'+day+'" data-meal="'+k+'">'+mealLabel(k)+'</button>').join("")+'</div>';
+  }
+
+  function renderRecipes(){
+    $("recipeCount").textContent = recipes.length;
+    const q = recipeQuery.trim().toLowerCase();
+    const list = q ? recipes.filter(r => r.name.toLowerCase().includes(q) || r.ings.some(i => i.toLowerCase().includes(q))) : recipes;
+    const el = $("recipeList");
+    if (recipes.length === 0){ el.innerHTML = '<div class="text-center py-6 text-slate-400 text-sm">'+t("noRecipes")+'</div>'; renderStats(); return; }
+    if (list.length === 0){ el.innerHTML = '<div class="text-center py-6 text-slate-400 text-sm">'+esc(t("noResults",{q:recipeQuery}))+'</div>'; renderStats(); return; }
+    el.innerHTML = list.map(r => {
+      const chips = r.ings.map(i => '<span class="inline-block text-[12px] bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 rounded-md px-2 py-0.5 mr-1 mb-1">'+esc(i)+'</span>').join("");
+      return '<article class="pop rounded-2xl border border-slate-100 bg-slate-50/60 dark:bg-slate-800/40 dark:border-slate-700 p-3">'+
+        '<div class="flex items-start gap-2">'+
+          '<h3 class="font-bold text-[16px] text-slate-900 dark:text-white leading-tight flex-1">'+esc(r.name)+'</h3>'+
+          '<button class="press edit-recipe h-9 w-9 grid place-items-center rounded-lg bg-white dark:bg-slate-700 ring-1 ring-slate-200 dark:ring-slate-600 text-sm" data-rid="'+r.id+'">✏️</button>'+
+          '<button class="press toggle-assign h-9 w-9 grid place-items-center rounded-lg bg-white dark:bg-slate-700 ring-1 ring-slate-200 dark:ring-slate-600 text-sm" data-rid="'+r.id+'">📅</button>'+
+          '<button class="press del-recipe h-9 w-9 grid place-items-center rounded-lg bg-white dark:bg-slate-700 ring-1 ring-slate-200 dark:ring-slate-600 text-sm" data-rid="'+r.id+'">🗑️</button>'+
+        '</div>'+
+        '<div class="mt-2 -mb-1">'+(chips || '<span class="text-sm text-slate-400">'+t("noIngs")+'</span>')+'</div>'+
+        '<div class="assign-panel hidden mt-2.5 pt-2.5 border-t border-slate-200 dark:border-slate-700" data-rid="'+r.id+'"></div>'+
+      '</article>';
+    }).join("");
+    renderStats();
+  }
+
+  function mealOptions(rid){
+    let opts = '<option value="">— '+t("emptySlot")+' —</option>' + recipes.map(r => '<option value="'+r.id+'">'+esc(r.name)+'</option>').join("");
+    if (rid) opts = opts.replace('value="'+rid+'"', 'value="'+rid+'" selected');
+    return opts;
+  }
+
+  function renderPlanBuffer(){
+    const el = $("planBuffer");
+    if (!dayBuffer){ el.classList.add("hidden"); el.innerHTML = ""; return; }
+    el.classList.remove("hidden");
+    el.innerHTML = '<div class="flex items-center gap-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl px-3 py-2 mb-3">'+
+      '<span class="text-[14px] font-semibold text-amber-700 dark:text-amber-300 flex-1">'+esc(t("clipboard",{day:dayBuffer.label}))+'</span>'+
+      '<button class="press buf-all text-[13px] font-bold text-white bg-amber-600 rounded-lg px-2.5 py-1.5">'+t("everywhere")+'</button>'+
+      '<button class="press buf-clear text-[16px] text-amber-600 px-1" aria-label="x">✕</button></div>';
+  }
+
+  function renderPlan(){
+    $("planList").innerHTML = days().map((day,d) => {
+      const n = filledCount(d), open = !!openDays[d], isT = d === todayIdx;
+      const cardCls = isT ? 'border-emerald-400 dark:border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/20'
+        : (n ? 'border-emerald-200 bg-emerald-50/20 dark:border-emerald-800' : 'border-slate-100 bg-slate-50/40 dark:border-slate-700 dark:bg-slate-800/10');
+      let rows = "";
+      if (open){
+        rows = MEAL_KEYS.map(k => {
+          let rid = plan[d][k]; let r = rid ? recipeById(rid) : null; if (rid && !r){ plan[d][k] = null; rid = null; }
+          return '<div class="flex items-center gap-2 mb-2">'+
+            '<span class="text-[14px] font-semibold text-slate-500 dark-muted w-[104px] shrink-0">'+mealLabel(k)+'</span>'+
+            '<select class="plan-select flex-1 min-w-0 border rounded-lg px-2.5 py-2.5 text-[14px] outline-none '+(r?'sel-filled':'sel-empty')+'" data-day="'+d+'" data-meal="'+k+'">'+mealOptions(rid)+'</select>'+
+            (r ? '<button class="press clear-meal text-[16px] text-slate-400 hover:text-rose-600 px-1" data-day="'+d+'" data-meal="'+k+'" aria-label="x">✕</button>' : '')+
+          '</div>';
+        }).join("");
+      }
+      const pasteBtn = dayBuffer ? '<button class="press paste-day h-8 w-8 grid place-items-center rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-sm" data-day="'+d+'">📋</button>' : '';
+      return '<div id="day-'+d+'" class="rounded-2xl border '+cardCls+' p-3">'+
+        '<div class="day-toggle flex items-center gap-2 cursor-pointer select-none" data-day="'+d+'">'+
+          '<span class="text-[15px] text-slate-400">'+(open?'▾':'▸')+'</span>'+
+          '<span class="text-[15px] font-extrabold text-slate-900 dark:text-white flex-1">'+day+(isT?' <span class="text-[12px] font-bold text-white bg-emerald-500 rounded-full px-2 py-0.5 align-middle">'+t("today")+'</span>':'')+'</span>'+
+          '<button class="press copy-day h-8 w-8 grid place-items-center rounded-lg bg-white dark:bg-slate-700 ring-1 ring-slate-200 dark:ring-slate-600 text-sm" data-day="'+d+'">⧉</button>'+
+          pasteBtn+
+          '<span class="text-[12px] font-bold '+(n?'text-emerald-700 bg-emerald-100 dark:bg-emerald-900 dark:text-emerald-300':'text-slate-400 bg-slate-100 dark:bg-slate-700')+' rounded-full px-2 py-0.5">'+n+'/'+MEAL_KEYS.length+'</span>'+
+        '</div>'+
+        (open ? '<div class="mt-3">'+rows+'</div>' : '')+
+      '</div>';
+    }).join("");
+    renderMiniCalendar(); renderStats();
+  }
+
+  function visibleShop(){ return shop.filter(it => filter === "all" || (filter === "todo" && !it.done) || (filter === "done" && it.done)); }
+  function renderShop(){
+    $("shopCount").textContent = shop.length;
+    const done = shop.filter(i => i.done).length;
+    $("shopBar").style.width = (shop.length ? Math.round(done/shop.length*100) : 0) + "%";
+    $("shopProgress").textContent = shop.length ? t("doneOf",{d:done,t:shop.length}) : t("emptyList");
+    const vis = visibleShop(), el = $("shopList");
+    if (vis.length === 0){ el.innerHTML = '<div class="text-center py-6 text-slate-400 text-sm">'+(shop.length ? t("noFiltered") : t("nothingToBuy"))+'</div>'; return; }
+    let html = "";
+    CAT_KEYS.forEach(key => {
+      const items = vis.filter(it => (it.cat||"egyeb") === key); if (!items.length) return;
+      html += '<div class="space-y-1.5"><h4 class="text-[13px] font-extrabold tracking-wider text-slate-400 uppercase">'+catLabel(key)+' <span class="text-slate-300">('+items.length+')</span></h4>';
+      html += items.map(it => {
+        const q = (it.qty && it.qty > 1) ? ' <span class="text-emerald-600 dark:text-emerald-400 font-bold">×'+it.qty+'</span>' : '';
+        return '<div class="item '+(it.done?'done':'')+' flex items-center gap-2.5 rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5">'+
+          '<button class="tick toggle-item" data-id="'+it.id+'"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>'+
+          '<span class="label flex-1 text-base font-medium dark:text-slate-200">'+esc(it.name)+q+'</span>'+
+          '<button class="press del-item text-slate-300 hover:text-rose-600 px-1 text-lg" data-id="'+it.id+'">✕</button>'+
+        '</div>';
+      }).join("");
+      html += '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function renderAll(){ applyStatic(); renderRecipes(); renderPlanBuffer(); renderPlan(); renderShop(); }
+
+  // ===== Műveletek =====
+  function saveRecipe(){
+    const name = $("rName").value.trim(); const ings = parseIngs($("rIngs").value);
+    if (!name){ $("rName").focus(); return; }
+    if (editingId){ const r = recipeById(editingId); if (r){ r.name = name; r.ings = ings; } editingId = null; $("formTitle").textContent = t("newRecipe"); $("cancelEditBtn").classList.add("hidden"); toast(t("tRecipeUpdated")); }
+    else { recipes.unshift({ id: uid(), name, ings }); toast(t("tRecipeSaved")); }
+    save(K.recipes, recipes); $("rName").value = ""; $("rIngs").value = ""; renderRecipes(); renderPlan();
+  }
+
+  $("langBtn").addEventListener("click", () => { lang = LANG_ORDER[(LANG_ORDER.indexOf(lang)+1) % LANG_ORDER.length]; save(K.lang, lang); renderAll(); });
+
+  $("addRecipeBtn").addEventListener("click", saveRecipe);
+  $("rName").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); $("rIngs").focus(); } });
+  $("cancelEditBtn").addEventListener("click", () => { editingId = null; $("rName").value = ""; $("rIngs").value = ""; $("formTitle").textContent = t("newRecipe"); $("cancelEditBtn").classList.add("hidden"); });
+  $("recipeSearch").addEventListener("input", e => { recipeQuery = e.target.value; renderRecipes(); });
+
+  $("recipeList").addEventListener("click", e => {
+    const btn = e.target.closest("button"); if (!btn) return;
+    const rid = btn.getAttribute("data-rid");
+    const panel = $("recipeList").querySelector('.assign-panel[data-rid="'+rid+'"]');
+    if (btn.classList.contains("del-recipe")){
+      if (confirm(t("cDelRecipe"))){
+        recipes = recipes.filter(r => r.id !== rid);
+        for (let d=0; d<7; d++){ MEAL_KEYS.forEach(k => { if (plan[d][k] === rid) plan[d][k] = null; }); }
+        if (editingId === rid){ editingId = null; $("rName").value=""; $("rIngs").value=""; $("formTitle").textContent=t("newRecipe"); $("cancelEditBtn").classList.add("hidden"); }
+        save(K.recipes, recipes); save(K.plan, plan); renderRecipes(); renderPlan(); toast(t("tRecipeDeleted"));
+      }
+    } else if (btn.classList.contains("edit-recipe")){
+      const r = recipeById(rid); if (r){ editingId = r.id; $("rName").value = r.name; $("rIngs").value = r.ings.join(", "); $("formTitle").textContent = t("editRecipe"); $("cancelEditBtn").classList.remove("hidden"); window.scrollTo({ top:0, behavior:"smooth" }); $("rName").focus(); }
+    } else if (btn.classList.contains("toggle-assign")){
+      if (panel){ if (panel.classList.contains("hidden")){ panel.innerHTML = dayButtonsHTML(rid); panel.classList.remove("hidden"); } else panel.classList.add("hidden"); }
+    } else if (btn.classList.contains("assign-day")){ if (panel) panel.innerHTML = mealButtonsHTML(rid, parseInt(btn.getAttribute("data-day"),10)); }
+    else if (btn.classList.contains("assign-back")){ if (panel) panel.innerHTML = dayButtonsHTML(rid); }
+    else if (btn.classList.contains("assign-meal")){
+      const d = parseInt(btn.getAttribute("data-day"),10), meal = btn.getAttribute("data-meal");
+      openDays[d] = true; plan[d][meal] = rid; save(K.plan, plan); if (panel) panel.classList.add("hidden"); renderPlan();
+      toast(t("tPlanned",{day:days()[d], meal:mealLabel(meal)}));
+    }
+  });
+
+  $("planList").addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if (btn){
+      const d = btn.dataset.day != null ? parseInt(btn.dataset.day,10) : null;
+      if (btn.classList.contains("copy-day")){ dayBuffer = { label: days()[d], meals: cloneDay(plan[d]) }; renderPlanBuffer(); renderPlan(); toast(t("tCopied",{day:days()[d]})); }
+      else if (btn.classList.contains("paste-day")){ if (dayBuffer){ openDays[d] = true; plan[d] = cloneDay(dayBuffer.meals); save(K.plan, plan); renderPlan(); toast(t("tPasted",{day:days()[d]})); } }
+      else if (btn.classList.contains("clear-meal")){ plan[d][btn.dataset.meal] = null; save(K.plan, plan); renderPlan(); }
+      return;
+    }
+    const hdr = e.target.closest(".day-toggle");
+    if (hdr){ const d = parseInt(hdr.dataset.day,10); openDays[d] = !openDays[d]; renderPlan(); }
+  });
+
+  $("planBuffer").addEventListener("click", e => {
+    const btn = e.target.closest("button"); if (!btn) return;
+    if (btn.classList.contains("buf-all")){ if (dayBuffer){ for (let d=0; d<7; d++) plan[d] = cloneDay(dayBuffer.meals); save(K.plan, plan); renderPlan(); toast(t("tWeekPasted")); } }
+    else if (btn.classList.contains("buf-clear")){ dayBuffer = null; renderPlanBuffer(); renderPlan(); }
+  });
+
+  $("planList").addEventListener("change", e => {
+    const s = e.target.closest(".plan-select"); if (!s) return;
+    plan[parseInt(s.getAttribute("data-day"),10)][s.getAttribute("data-meal")] = s.value || null;
+    save(K.plan, plan); renderPlan();
+  });
+
+  $("buildListBtn").addEventListener("click", () => {
+    const counts = {};
+    for (let d=0; d<7; d++){ MEAL_KEYS.forEach(k => { const r = plan[d][k] ? recipeById(plan[d][k]) : null; if (!r) return;
+      r.ings.forEach(ing => { const key = ing.toLowerCase(); if (!counts[key]) counts[key] = { name: ing, count: 0, cat: autoCategory(ing) }; counts[key].count++; }); }); }
+    let added = 0;
+    for (const key in counts){ const c = counts[key]; const ex = shop.find(it => it.name.toLowerCase() === key);
+      if (ex){ ex.qty = c.count; if (!ex.cat) ex.cat = c.cat; } else { shop.push({ id: uid(), name: c.name, done: false, cat: c.cat, qty: c.count }); added++; } }
+    save(K.shop, shop); renderShop();
+    toast(added ? t("tAdded",{n:added}) : t("tNoNew"), added > 0);
+  });
+
+  $("addItemBtn").addEventListener("click", () => {
+    const v = $("manualItem").value.trim(); if (!v) return;
+    const cat = $("manCat").value || "egyeb";
+    if (!shop.some(it => it.name.toLowerCase() === v.toLowerCase())){ shop.push({ id: uid(), name: v, done: false, cat }); save(K.shop, shop); renderShop(); }
+    $("manualItem").value = ""; $("manualItem").focus();
+  });
+  $("manualItem").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); $("addItemBtn").click(); } });
+
+  $("shopFilter").addEventListener("click", e => {
+    const b = e.target.closest(".seg"); if (!b) return;
+    filter = b.getAttribute("data-f");
+    Array.prototype.forEach.call($("shopFilter").children, c => c.classList.toggle("active", c === b));
+    renderShop();
+  });
+
+  $("shopList").addEventListener("click", e => {
+    const btn = e.target.closest("button"); if (!btn) return;
+    const id = btn.getAttribute("data-id");
+    if (btn.classList.contains("toggle-item")){ const it = shop.find(i => i.id === id); if (it) it.done = !it.done; }
+    else if (btn.classList.contains("del-item")){ shop = shop.filter(i => i.id !== id); }
+    save(K.shop, shop); renderShop();
+  });
+
+  $("clearDoneBtn").addEventListener("click", () => { if (!shop.some(i => i.done)) return; if (confirm(t("cDelDone"))){ shop = shop.filter(i => !i.done); save(K.shop, shop); renderShop(); toast(t("tDoneCleared")); } });
+  $("clearShopBtn").addEventListener("click", () => { if (shop.length && confirm(t("cDelShop"))){ shop = []; save(K.shop, shop); renderShop(); } });
+  $("clearPlanBtn").addEventListener("click", () => { if (confirm(t("cClearPlan"))){ plan = Array.from({length:7}, emptyDay); save(K.plan, plan); renderPlan(); } });
+
+  $("shareBtn").addEventListener("click", () => {
+    if (!shop.length){ toast(t("tEmptyList"), false); return; }
+    let lines = [t("shareTitle"), ""];
+    CAT_KEYS.forEach(key => { const items = shop.filter(it => (it.cat||"egyeb") === key); if (!items.length) return;
+      lines.push(catLabel(key)); items.forEach(it => lines.push((it.done?"☑":"☐") + " " + it.name + ((it.qty&&it.qty>1)?" ×"+it.qty:""))); lines.push(""); });
+    const text = lines.join("\n");
+    if (navigator.share){ navigator.share({ title:t("shoppingList"), text }).catch(() => {}); }
+    else if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(() => toast(t("tListClip"))).catch(() => toast(t("tShareFail"), false)); }
+    else toast(t("tShareUnsup"), false);
+  });
+
+  function makeBundle(){ return btoa(unescape(encodeURIComponent(JSON.stringify({ recipes, plan, shop })))); }
+  $("expImpBtn").addEventListener("click", () => { $("backupData").value = makeBundle(); $("backupModal").classList.remove("hidden"); });
+  $("closeModalBtn").addEventListener("click", () => $("backupModal").classList.add("hidden"));
+  $("backupModal").addEventListener("click", e => { if (e.target === $("backupModal")) $("backupModal").classList.add("hidden"); });
+  $("copyBackupBtn").addEventListener("click", () => {
+    const ta = $("backupData"); ta.select(); ta.setSelectionRange(0, 99999);
+    const fin = () => toast(t("tCodeClip"));
+    if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(ta.value).then(fin).catch(() => { try{ document.execCommand("copy"); fin(); }catch(e){ toast(t("tCopyManual"), false); } }); }
+    else { try{ document.execCommand("copy"); fin(); }catch(e){ toast(t("tCopyManual"), false); } }
+  });
+  $("downloadBackupBtn").addEventListener("click", () => {
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([$("backupData").value], { type:"text/plain" }));
+    a.download = "nutriplan-backup.txt"; document.body.appendChild(a); a.click(); document.body.removeChild(a); toast(t("tSaved"));
+  });
+  $("importBtn").addEventListener("click", () => {
+    try {
+      const p = JSON.parse(decodeURIComponent(escape(atob($("backupData").value.trim()))));
+      if (Array.isArray(p.recipes) && Array.isArray(p.plan) && Array.isArray(p.shop)){
+        recipes = p.recipes; plan = p.plan.map(d => (d && typeof d === "object" && !Array.isArray(d)) ? cloneDay(d) : emptyDay()); shop = p.shop;
+        save(K.recipes, recipes); save(K.plan, plan); save(K.shop, shop);
+        renderAll(); $("backupModal").classList.add("hidden"); toast(t("tImportOk"));
+      } else { toast(t("tBadFormat"), false); }
+    } catch(e){ toast(t("tImportFail"), false); }
+  });
+
+  try { renderAll(); }
+  catch(err){ console.error(err); document.body.insertAdjacentHTML("afterbegin", '<div style="background:#fee2e2;color:#991b1b;padding:12px;font:600 14px sans-serif">'+t("loadError")+'</div>'); }
+})();
+</script>
+</body>
+</html>
