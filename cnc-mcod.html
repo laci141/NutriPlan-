@@ -636,6 +636,7 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
       <a class="nav-item" data-page="prez"><span class="ico">🎬</span><span data-key="nav_prez">Prezentare</span></a>
       <a class="nav-item" data-page="infog"><span class="ico">🖼️</span><span data-key="nav_infog">Infografic</span></a>
       <a class="nav-item" data-page="proggen"><span class="ico">🛠️</span><span data-key="nav_proggen">Generator program</span></a>
+      <a class="nav-item" data-page="realprog"><span class="ico">📜</span><span data-key="nav_realprog">Program</span></a>
       <div class="nav-title" data-key="nav_practice">Practică</div>
       <a class="nav-item" data-page="sim"><span class="ico">🕹️</span><span data-key="nav_sim">Simulator CNC</span></a>
       <a class="nav-item" data-page="flash"><span class="ico">🃏</span><span data-key="nav_flash">Flashcard</span></a>
@@ -851,7 +852,7 @@ const UI_TEXTS = {
         nav_gcode:"G-kódok", gcode_title:"G-kódok", gcode_sub:"Szabványos G-kódok + a gép saját kódjai (G77, G79…)", gcode_search:"Keresés: G0, körív, fúróciklus…", gcode_ex:"Példa", gcode_note:"Megjegyzés", gcode_count:"kód", gc_add:"➕ Új G-kód",
         nav_prez:"Prezentáció", prez_title:"Prezentáció", prez_sub:"Hogyan dolgozik a gép az M-kódokkal – 3 nézetben", prez_zoom:"🔍 Zoom-prezi", prez_slides:"🎞️ Diák", prez_scroll:"📜 Görgetés", prez_play:"▶ Lejátszás", prez_pause:"⏸ Szünet",
         nav_infog:"Infografika", infog_title:"Infografika", infog_sub:"Egyoldalas összefoglaló – letölthető PNG-ben, nyomtatható", infog_dl:"⬇️ Letöltés képként (PNG)",
-        nav_realprog:"Valós program", rp_title:"Valós program – G+M együtt", rp_sub:"A gépről fotózott program soronként elmagyarázva", rp_src:"Program:", rp_own:"Saját program beillesztése…", rp_story:"Mi történik itt?", rp_codes:"Kódok ebben a sorban", rp_photo:"FLAPS program (a fotódról)", rp_cmt:"Megjegyzés a programban – a gép nem hajtja végre, a kezelőnek szól.", rp_hdr:"Programfej – a program neve/azonosítója a vezérlőnek.",
+        nav_realprog:"Program", rp_title:"Valós program – G+M együtt", rp_sub:"A gépről fotózott program soronként elmagyarázva", rp_src:"Program:", rp_own:"Saját program beillesztése…", rp_story:"Mi történik itt?", rp_codes:"Kódok ebben a sorban", rp_photo:"FLAPS program (a fotódról)", rp_cmt:"Megjegyzés a programban – a gép nem hajtja végre, a kezelőnek szól.", rp_hdr:"Programfej – a program neve/azonosítója a vezérlőnek.",
         stat_codes:"M-kódok", stat_cats:"Kategóriák", stat_flows:"Munkamenetek", stat_favs:"Kedvencek",
         card_exp:"📖 Magyarázat", card_when:"⏱️ Mikor használjuk", card_ex:"💡 Példa", card_warn:"⚠️ Figyelem", card_note:"Saját jegyzet",
         safety_common:"Gyakori hibák", safety_danger:"Veszélyek", safety_not:"Mit nem szabad", safety_order:"Helyes sorrend", safety_warn:"Biztonsági figyelmeztetések",
@@ -876,7 +877,7 @@ const UI_TEXTS = {
         nav_gcode:"Coduri G", gcode_title:"Coduri G", gcode_sub:"Coduri G standard + codurile specifice mașinii (G77, G79…)", gcode_search:"Căutare: G0, arc, ciclu de găurire…", gcode_ex:"Exemplu", gcode_note:"Notă", gcode_count:"coduri", gc_add:"➕ Cod G nou",
         nav_prez:"Prezentare", prez_title:"Prezentare", prez_sub:"Cum lucrează mașina cu codurile M – în 3 moduri", prez_zoom:"🔍 Zoom-prezi", prez_slides:"🎞️ Diapozitive", prez_scroll:"📜 Derulare", prez_play:"▶ Redare", prez_pause:"⏸ Pauză",
         nav_infog:"Infografic", infog_title:"Infografic", infog_sub:"Rezumat pe o pagină – descărcabil PNG, printabil", infog_dl:"⬇️ Descarcă ca imagine (PNG)",
-        nav_realprog:"Program real", rp_title:"Program real – G+M împreună", rp_sub:"Programul fotografiat de pe mașină, explicat rând cu rând", rp_src:"Program:", rp_own:"Lipește propriul program…", rp_story:"Ce se întâmplă aici?", rp_codes:"Coduri în acest rând", rp_photo:"Program FLAPS (din poza ta)", rp_cmt:"Comentariu în program – mașina nu îl execută, e pentru operator.", rp_hdr:"Antet de program – numele/ID-ul programului pentru comandă.",
+        nav_realprog:"Program", rp_title:"Program real – G+M împreună", rp_sub:"Programul fotografiat de pe mașină, explicat rând cu rând", rp_src:"Program:", rp_own:"Lipește propriul program…", rp_story:"Ce se întâmplă aici?", rp_codes:"Coduri în acest rând", rp_photo:"Program FLAPS (din poza ta)", rp_cmt:"Comentariu în program – mașina nu îl execută, e pentru operator.", rp_hdr:"Antet de program – numele/ID-ul programului pentru comandă.",
         stat_codes:"Coduri M", stat_cats:"Categorii", stat_flows:"Fluxuri", stat_favs:"Favorite",
         card_exp:"📖 Explicație", card_when:"⏱️ Când se folosește", card_ex:"💡 Exemplu", card_warn:"⚠️ Atenție", card_note:"Nota ta",
         safety_common:"Erori frecvente", safety_danger:"Pericole", safety_not:"Ce nu trebuie făcut", safety_order:"Ordine corectă", safety_warn:"Avertismente de siguranță",
@@ -901,7 +902,7 @@ const UI_TEXTS = {
         nav_gcode:"G-Codes", gcode_title:"G-Codes", gcode_sub:"Standard-G-Codes + maschinenspezifische Codes (G77, G79…)", gcode_search:"Suche: G0, Kreisbogen, Bohrzyklus…", gcode_ex:"Beispiel", gcode_note:"Hinweis", gcode_count:"Codes", gc_add:"➕ Neuer G-Code",
         nav_prez:"Präsentation", prez_title:"Präsentation", prez_sub:"Wie die Maschine mit M-Codes arbeitet – in 3 Ansichten", prez_zoom:"🔍 Zoom-Prezi", prez_slides:"🎞️ Folien", prez_scroll:"📜 Scrollen", prez_play:"▶ Abspielen", prez_pause:"⏸ Pause",
         nav_infog:"Infografik", infog_title:"Infografik", infog_sub:"Zusammenfassung auf einer Seite – als PNG herunterladbar", infog_dl:"⬇️ Als Bild herunterladen (PNG)",
-        nav_realprog:"Echtes Programm", rp_title:"Echtes Programm – G+M zusammen", rp_sub:"Das von der Maschine fotografierte Programm, Zeile für Zeile erklärt", rp_src:"Programm:", rp_own:"Eigenes Programm einfügen…", rp_story:"Was passiert hier?", rp_codes:"Codes in dieser Zeile", rp_photo:"FLAPS-Programm (von deinem Foto)", rp_cmt:"Kommentar im Programm – wird nicht ausgeführt, ist für den Bediener.", rp_hdr:"Programmkopf – Name/ID des Programms für die Steuerung.",
+        nav_realprog:"Programm", rp_title:"Echtes Programm – G+M zusammen", rp_sub:"Das von der Maschine fotografierte Programm, Zeile für Zeile erklärt", rp_src:"Programm:", rp_own:"Eigenes Programm einfügen…", rp_story:"Was passiert hier?", rp_codes:"Codes in dieser Zeile", rp_photo:"FLAPS-Programm (von deinem Foto)", rp_cmt:"Kommentar im Programm – wird nicht ausgeführt, ist für den Bediener.", rp_hdr:"Programmkopf – Name/ID des Programms für die Steuerung.",
         stat_codes:"M-Codes", stat_cats:"Kategorien", stat_flows:"Abläufe", stat_favs:"Favoriten",
         card_exp:"📖 Erklärung", card_when:"⏱️ Wann verwenden", card_ex:"💡 Beispiel", card_warn:"⚠️ Achtung", card_note:"Eigene Notiz",
         safety_common:"Häufige Fehler", safety_danger:"Gefahren", safety_not:"Was nicht erlaubt ist", safety_order:"Richtige Reihenfolge", safety_warn:"Sicherheitshinweise",
@@ -926,7 +927,7 @@ const UI_TEXTS = {
         nav_gcode:"G-codes", gcode_title:"G-codes", gcode_sub:"Standard G-codes + machine-specific codes (G77, G79…)", gcode_search:"Search: G0, arc, drilling cycle…", gcode_ex:"Example", gcode_note:"Note", gcode_count:"codes", gc_add:"➕ New G-code",
         nav_prez:"Presentation", prez_title:"Presentation", prez_sub:"How the machine works with M-codes – in 3 views", prez_zoom:"🔍 Zoom-prezi", prez_slides:"🎞️ Slides", prez_scroll:"📜 Scroll", prez_play:"▶ Play", prez_pause:"⏸ Pause",
         nav_infog:"Infographic", infog_title:"Infographic", infog_sub:"One-page summary – downloadable PNG, printable", infog_dl:"⬇️ Download as image (PNG)",
-        nav_realprog:"Real program", rp_title:"Real program – G+M together", rp_sub:"The program photographed from the machine, explained line by line", rp_src:"Program:", rp_own:"Paste your own program…", rp_story:"What happens here?", rp_codes:"Codes in this line", rp_photo:"FLAPS program (from your photo)", rp_cmt:"Comment in the program – not executed, meant for the operator.", rp_hdr:"Program header – the program's name/ID for the control.",
+        nav_realprog:"Program", rp_title:"Real program – G+M together", rp_sub:"The program photographed from the machine, explained line by line", rp_src:"Program:", rp_own:"Paste your own program…", rp_story:"What happens here?", rp_codes:"Codes in this line", rp_photo:"FLAPS program (from your photo)", rp_cmt:"Comment in the program – not executed, meant for the operator.", rp_hdr:"Program header – the program's name/ID for the control.",
         stat_codes:"M-codes", stat_cats:"Categories", stat_flows:"Workflows", stat_favs:"Favorites",
         card_exp:"📖 Explanation", card_when:"⏱️ When to use it", card_ex:"💡 Example", card_warn:"⚠️ Warning", card_note:"Your note",
         safety_common:"Common mistakes", safety_danger:"Hazards", safety_not:"What not to do", safety_order:"Correct sequence", safety_warn:"Safety warnings",
@@ -1050,6 +1051,7 @@ const PAGE_META = {
     prez: { ico: "🎬", titleKey: "prez_title", subKey: "prez_sub" },
     infog: { ico: "🖼️", titleKey: "infog_title", subKey: "infog_sub" },
     proggen: { ico: "🛠️", titleKey: "proggen_title", subKey: "proggen_sub" },
+    realprog: { ico: "📜", titleKey: "rp_title", subKey: "rp_sub" },
     sim: { ico: "🕹️", titleKey: "sim_title", subKey: "sim_sub" },
     flash: { ico: "🃏", titleKey: "flash_title", subKey: "flash_sub" },
     dnd: { ico: "🧩", titleKey: "dnd_title", subKey: "dnd_sub" },
@@ -1090,6 +1092,7 @@ function render() {
     else if (page === "prez") renderPrez();
     else if (page === "infog") renderInfog();
     else if (page === "proggen") renderProggen();
+    else if (page === "realprog") renderRealprog();
     else if (page === "sim") renderSim();
     else if (page === "flash") renderFlash();
     else if (page === "dnd") renderDnd();
@@ -1886,7 +1889,7 @@ hu: {
   fc_know:"✅ Tudom", fc_dontknow:"❌ Még nem tudom", fc_flip:"Kattints a fordításhoz", fc_shuffle:"🔀 Keverés", fc_next:"Következő ➡", fc_prev:"⬅ Előző",
   dnd_task:"Rakd helyes sorrendbe:", dnd_check:"✔ Ellenőrzés", dnd_showsol:"💡 Helyes sorrend", dnd_new:"🎲 Új feladat", dnd_ok:"✅ Tökéletes sorrend!", dnd_bad:"❌ hibás pozíció – piros = rossz helyen", dnd_play:"▶ Lejátszás animációval",
   proggen_form:"Program paraméterek", proggen_shape:"Alak", proggen_line:"Egyenes vonal", proggen_circle:"Kör", proggen_semicircle:"Félkör", proggen_angle:"Derékszög",
-  proggen_depth:"Mélység (mm)", proggen_feed:"Előtolás (mm/perc)", proggen_spindle:"Orsó sebesség (RPM)", proggen_rotations:"Ismétlések", proggen_generate:"Program generálása",
+  proggen_depth:"Mélység (mm)", proggen_feed:"Előtolás (mm/perc)", proggen_spindle:"Orsó sebesség (RPM)", proggen_rotations:"Ismétlések", proggen_generate:"Program generálása", proggen_copy:"Program másolása", proggen_dl:"Letöltés (.xxl)",
   st_mastered:"Megtanult kódok", st_weak:"Legtöbb hiba", st_time:"Tanulási idő", st_bycat:"Pontosság témakörönként", st_none:"Még nincs adat – kezdj tanulni a Tanulókártyákkal!", st_min:"perc", st_focus:"Ebben kell fejlődnöd",
   in_worker:"Dolgozó", in_best:"Legjobb", in_avg:"Átlag", in_flash:"Kártyák", in_mist:"Hibák", in_time:"Idő", in_common:"Leggyakoribb hibák (mindenki)", in_detail:"Részletek", in_none:"Még nincs rögzített dolgozó. A bal oldali mezőben adj meg egy nevet!",
   learn_how:"Működés", learn_ex:"Gyakorlati példa", learn_counter:"Ellenpélda (így NE!)", learn_mist:"Gyakori hibák", learn_when:"Mikor használd", learn_forbid:"Mikor TILOS", learn_dng:"Veszélyek", learn_conseq:"Hibás használat következménye",
@@ -1926,7 +1929,7 @@ ro: {
   fc_know:"✅ Știu", fc_dontknow:"❌ Nu știu încă", fc_flip:"Apasă pentru întoarcere", fc_shuffle:"🔀 Amestecă", fc_next:"Următorul ➡", fc_prev:"⬅ Anteriorul",
   dnd_task:"Aranjează în ordinea corectă:", dnd_check:"✔ Verificare", dnd_showsol:"💡 Ordinea corectă", dnd_new:"🎲 Sarcină nouă", dnd_ok:"✅ Ordine perfectă!", dnd_bad:"❌ poziții greșite – roșu = loc greșit", dnd_play:"▶ Redare cu animație",
   proggen_form:"Parametri program", proggen_shape:"Formă", proggen_line:"Linie dreaptă", proggen_circle:"Cerc", proggen_semicircle:"Semicerc", proggen_angle:"Unghi drept",
-  proggen_depth:"Adâncime (mm)", proggen_feed:"Avans (mm/min)", proggen_spindle:"Viteză ax (RPM)", proggen_rotations:"Repetări", proggen_generate:"Generează program",
+  proggen_depth:"Adâncime (mm)", proggen_feed:"Avans (mm/min)", proggen_spindle:"Viteză ax (RPM)", proggen_rotations:"Repetări", proggen_generate:"Generează program", proggen_copy:"Copiază programul", proggen_dl:"Descarcă (.xxl)",
   st_mastered:"Coduri învățate", st_weak:"Cele mai multe greșeli", st_time:"Timp de învățare", st_bycat:"Precizie pe categorii", st_none:"Încă nu există date – începe cu Flashcarduri!", st_min:"min", st_focus:"Aici trebuie să progresezi",
   in_worker:"Muncitor", in_best:"Cel mai bun", in_avg:"Media", in_flash:"Carduri", in_mist:"Greșeli", in_time:"Timp", in_common:"Cele mai frecvente greșeli (toți)", in_detail:"Detalii", in_none:"Niciun muncitor înregistrat. Introdu un nume în câmpul din stânga!",
   learn_how:"Funcționare", learn_ex:"Exemplu practic", learn_counter:"Contraexemplu (așa NU!)", learn_mist:"Greșeli frecvente", learn_when:"Când se folosește", learn_forbid:"Când este INTERZIS", learn_dng:"Pericole", learn_conseq:"Consecința utilizării greșite",
@@ -1966,7 +1969,7 @@ de: {
   fc_know:"✅ Ich weiß es", fc_dontknow:"❌ Noch nicht", fc_flip:"Zum Umdrehen klicken", fc_shuffle:"🔀 Mischen", fc_next:"Weiter ➡", fc_prev:"⬅ Zurück",
   dnd_task:"Bringe in die richtige Reihenfolge:", dnd_check:"✔ Prüfen", dnd_showsol:"💡 Richtige Reihenfolge", dnd_new:"🎲 Neue Aufgabe", dnd_ok:"✅ Perfekte Reihenfolge!", dnd_bad:"❌ falsche Positionen – rot = falscher Platz", dnd_play:"▶ Mit Animation abspielen",
   proggen_form:"Programmparameter", proggen_shape:"Form", proggen_line:"Gerade Linie", proggen_circle:"Kreis", proggen_semicircle:"Halbkreis", proggen_angle:"Rechter Winkel",
-  proggen_depth:"Tiefe (mm)", proggen_feed:"Vorschub (mm/min)", proggen_spindle:"Spindeldrehzahl (RPM)", proggen_rotations:"Wiederholungen", proggen_generate:"Programm generieren",
+  proggen_depth:"Tiefe (mm)", proggen_feed:"Vorschub (mm/min)", proggen_spindle:"Spindeldrehzahl (RPM)", proggen_rotations:"Wiederholungen", proggen_generate:"Programm generieren", proggen_copy:"Programm kopieren", proggen_dl:"Herunterladen (.xxl)",
   st_mastered:"Gelernte Codes", st_weak:"Meiste Fehler", st_time:"Lernzeit", st_bycat:"Genauigkeit nach Kategorie", st_none:"Noch keine Daten – beginne mit Lernkarten!", st_min:"Min", st_focus:"Hier musst du dich verbessern",
   in_worker:"Arbeiter", in_best:"Beste", in_avg:"Durchschnitt", in_flash:"Karten", in_mist:"Fehler", in_time:"Zeit", in_common:"Häufigste Fehler (alle)", in_detail:"Details", in_none:"Noch kein Arbeiter erfasst. Gib links einen Namen ein!",
   learn_how:"Funktionsweise", learn_ex:"Praxisbeispiel", learn_counter:"Gegenbeispiel (so NICHT!)", learn_mist:"Häufige Fehler", learn_when:"Wann verwenden", learn_forbid:"Wann VERBOTEN", learn_dng:"Gefahren", learn_conseq:"Folge falscher Anwendung",
@@ -2006,7 +2009,7 @@ en: {
   fc_know:"✅ I know it", fc_dontknow:"❌ Not yet", fc_flip:"Click to flip", fc_shuffle:"🔀 Shuffle", fc_next:"Next ➡", fc_prev:"⬅ Previous",
   dnd_task:"Put in the correct order:", dnd_check:"✔ Check", dnd_showsol:"💡 Correct order", dnd_new:"🎲 New task", dnd_ok:"✅ Perfect order!", dnd_bad:"❌ wrong positions – red = wrong place", dnd_play:"▶ Play with animation",
   proggen_form:"Program parameters", proggen_shape:"Shape", proggen_line:"Straight line", proggen_circle:"Circle", proggen_semicircle:"Semicircle", proggen_angle:"Right angle",
-  proggen_depth:"Depth (mm)", proggen_feed:"Feed rate (mm/min)", proggen_spindle:"Spindle speed (RPM)", proggen_rotations:"Repetitions", proggen_generate:"Generate program",
+  proggen_depth:"Depth (mm)", proggen_feed:"Feed rate (mm/min)", proggen_spindle:"Spindle speed (RPM)", proggen_rotations:"Repetitions", proggen_generate:"Generate program", proggen_copy:"Copy program", proggen_dl:"Download (.xxl)",
   st_mastered:"Mastered codes", st_weak:"Most mistakes", st_time:"Learning time", st_bycat:"Accuracy by category", st_none:"No data yet – start with Flashcards!", st_min:"min", st_focus:"You should improve here",
   in_worker:"Worker", in_best:"Best", in_avg:"Average", in_flash:"Cards", in_mist:"Mistakes", in_time:"Time", in_common:"Most common mistakes (everyone)", in_detail:"Details", in_none:"No workers recorded yet. Enter a name in the left field!",
   learn_how:"How it works", learn_ex:"Practical example", learn_counter:"Counter-example (NOT like this!)", learn_mist:"Common mistakes", learn_when:"When to use", learn_forbid:"When FORBIDDEN", learn_dng:"Dangers", learn_conseq:"Consequence of wrong use",
@@ -3234,7 +3237,408 @@ function renderProggen() {
 }
 
 function proggenGenerate(params) {
-  document.getElementById("pgResult").innerHTML = `<p style="color:var(--txt-dim);">Program generation not yet implemented</p>`;
+  const S = params.spindleSpeed, F = params.feedRate, Z = params.depth, R = params.rotations, shape = params.shape;
+  let n = 0;
+  const nx = () => { n += 10; return "N" + n; };
+  const L = (raw, hu, ro, de, en) => ({ raw, s: { hu, ro, de, en } });
+  const num = v => (Math.round(v * 1000) / 1000).toString();
+  const lines = [];
+
+  /* ---- fejléc ---- */
+  lines.push(L("START",
+    "A program eleje – innen indul a vezérlő.",
+    "Începutul programului.",
+    "Programmanfang.",
+    "Start of the program."));
+  lines.push(L("(MATERIAL: MDF)",
+    "Megjegyzés: az anyag MDF – ehhez választottuk a fordulatszámot és előtolást.",
+    "Comentariu: materialul este MDF.",
+    "Kommentar: Material ist MDF.",
+    "Comment: material is MDF."));
+  lines.push(L("(USE EXTRACTION)",
+    "Megjegyzés: elszívás kötelező – az MDF pora egészségre ártalmas!",
+    "Comentariu: aspirația e obligatorie – praful de MDF e nociv!",
+    "Kommentar: Absaugung erforderlich – MDF-Staub ist gesundheitsschädlich!",
+    "Comment: extraction required – MDF dust is harmful!"));
+  lines.push(L("%59 NAME/S",
+    "Programfej: az 59-es program kezdete, S = megmunkáló szakasz.",
+    "Antet: începutul programului 59, S = secțiunea de prelucrare.",
+    "Programmkopf: Beginn von Programm 59, S = Bearbeitungsteil.",
+    "Header: start of program 59, S = machining section."));
+  lines.push(L("( )", "Üres megjegyzés-sor (elválasztó).", "Rând de comentariu gol.", "Leere Kommentarzeile.", "Empty comment line."));
+  lines.push(L(nx() + " G53 G90",
+    "Gépi koordináta-rendszer (G53) + abszolút méretmegadás (G90): minden méret a GÉP nullapontjától számít.",
+    "Coordonate mașină (G53) + cotare absolută (G90).",
+    "Maschinenkoordinaten (G53) + Absolutmaß (G90).",
+    "Machine coordinates (G53) + absolute mode (G90)."));
+  lines.push(L(nx() + " G59 X0 Y0 Z0",
+    "A munkadarab-nullapont (G59) beállítása: innen számítanak a darab méretei.",
+    "Setarea zeroului de piesă (G59).",
+    "Werkstücknullpunkt (G59) setzen.",
+    "Set work offset (G59)."));
+
+  const shapeName = { line:{hu:"EGYENES VONAL",ro:"LINIE DREAPTĂ",de:"GERADE LINIE",en:"STRAIGHT LINE"},
+    circle:{hu:"KÖR",ro:"CERC",de:"KREIS",en:"CIRCLE"},
+    semicircle:{hu:"FÉLKÖR",ro:"SEMICERC",de:"HALBKREIS",en:"SEMICIRCLE"},
+    angle:{hu:"DERÉKSZÖG",ro:"UNGHI DREPT",de:"RECHTER WINKEL",en:"RIGHT ANGLE"} }[shape];
+  lines.push(L(`(OP 1 ${shapeName.en} PASS TOOL 21 T21 - D8MM ROUTER)`,
+    `Megjegyzés: 1. művelet – ${shapeName.hu} marás a 21-es szerszámmal (8 mm-es maró).`,
+    `Comentariu: operația 1 – frezare ${shapeName.ro} cu scula 21 (freză de 8 mm).`,
+    `Kommentar: Operation 1 – ${shapeName.de} fräsen mit Werkzeug 21 (8-mm-Fräser).`,
+    `Comment: operation 1 – ${shapeName.en} milling with tool 21 (8 mm router).`));
+  lines.push(L("(EFFECTIVE DIAMETER 8)",
+    "Megjegyzés: a szerszám tényleges átmérője 8 mm – ezzel számol a sugárkorrekció.",
+    "Comentariu: diametrul efectiv al sculei e 8 mm.",
+    "Kommentar: effektiver Werkzeugdurchmesser 8 mm.",
+    "Comment: effective tool diameter is 8 mm."));
+
+  /* ---- orsó + szerszám indítás ---- */
+  lines.push(L(`${nx()} M3 S${S} M140`,
+    `Az orsó elindul ${S.toLocaleString("hu")} ford/perc fordulaton (M3 S${S}), ÉS az 1-es szerszámcsoport bekapcsol (M140).`,
+    `Axul pornește la ${S} rot/min (M3 S${S}) ȘI agregatul 1 pornește (M140).`,
+    `Spindel startet mit ${S} U/min (M3 S${S}) UND Aggregat 1 schaltet ein (M140).`,
+    `Spindle starts at ${S} RPM (M3 S${S}) AND unit 1 switches on (M140).`));
+  lines.push(L(`${nx()} M3 S${S} M144`,
+    "Ugyanez a 144-es csoportra: az is bekapcsol, azonos fordulattal.",
+    "La fel pentru agregatul 144.",
+    "Dasselbe für Aggregat 144.",
+    "Same for unit 144."));
+  lines.push(L(nx() + " G4 F2",
+    "2 másodperc VÁRAKOZÁS (G4 F2): megvárjuk, amíg az orsó eléri a teljes fordulatszámot.",
+    "PAUZĂ de 2 secunde (G4 F2): așteptăm turația completă.",
+    "2 Sekunden WARTEN (G4 F2): volle Drehzahl abwarten.",
+    "2 second DWELL (G4 F2): wait for full spindle speed."));
+  lines.push(L(nx() + " M120",
+    "A T1 szerszám leereszkedik munkapozícióba.",
+    "Scula T1 coboară în poziția de lucru.",
+    "Werkzeug T1 senkt sich in Arbeitsposition.",
+    "Tool T1 descends into working position."));
+  lines.push(L(nx() + " M124",
+    "A 124-es szerszám/agregát is leereszkedik.",
+    "Și scula/agregatul 124 coboară.",
+    "Auch Werkzeug/Aggregat 124 senkt sich.",
+    "Tool/unit 124 descends too."));
+  lines.push(L(nx() + " G4 F2",
+    "Újabb 2 mp várakozás: a szerszám leérkezését is ki kell várni.",
+    "Încă 2 s pauză: așteptăm coborârea sculei.",
+    "Weitere 2 s: Absenken abwarten.",
+    "Another 2 s dwell: wait for the tool to arrive."));
+  lines.push(L(nx() + " G77 H810",
+    "A 810-es címkéjű alprogram meghívása (G77) – Xilog-specifikus kód.",
+    "Apelarea subprogramului 810 (G77) – cod specific Xilog.",
+    "Aufruf des Unterprogramms 810 (G77) – Xilog-spezifisch.",
+    "Call of subroutine 810 (G77) – Xilog-specific."));
+  lines.push(L(nx() + " D01",
+    "A D1-es szerszámkorrektor aktiválása – a gép tudja a szerszám pontos sugarát.",
+    "Activarea corectorului D1.",
+    "Korrektor D1 aktivieren.",
+    "Activate offset D1."));
+
+  /* ---- alakzat-menetek (ismétlésenként egyre mélyebbre) ---- */
+  const passes = [];
+  for (let k = 1; k <= R; k++) passes.push(Math.round(Z * k / R * 100) / 100);
+
+  const cx = 300, cy = 400, r = 50;
+  passes.forEach((z, pi) => {
+    const passInfo = R > 1 ? {
+      hu: ` (${pi+1}. fogás / ${R}, mélység: ${z} mm)`,
+      ro: ` (trecerea ${pi+1} / ${R}, adâncime: ${z} mm)`,
+      de: ` (Zustellung ${pi+1} / ${R}, Tiefe: ${z} mm)`,
+      en: ` (pass ${pi+1} / ${R}, depth: ${z} mm)`
+    } : { hu:"", ro:"", de:"", en:"" };
+
+    if (shape === "line") {
+      lines.push(L(`${nx()} G0 X100 Y${cy} Z30`,
+        "GYORSJÁRAT (G0) a kezdőpont fölé – még 30 mm-rel a darab FÖLÖTT!" + passInfo.hu,
+        "RAPID (G0) deasupra punctului de start – 30 mm DEASUPRA piesei!" + passInfo.ro,
+        "EILGANG (G0) über den Startpunkt – 30 mm ÜBER dem Teil!" + passInfo.de,
+        "RAPID (G0) above the start point – 30 mm ABOVE the part!" + passInfo.en));
+      lines.push(L(`${nx()} G1 G9 X100 Y${cy} Z${z} F3000`,
+        `MUNKAMENET (G1): lesüllyed ${z} mm mélyre – belemar a darabba. A G9 pontos megállást kér.`,
+        `AVANS DE LUCRU (G1): coboară la ${z} mm. G9 cere oprire exactă.`,
+        `ARBEITSGANG (G1): senkt auf ${z} mm. G9 fordert Genauhalt.`,
+        `FEED MOVE (G1): plunges to ${z} mm. G9 requests exact stop.`));
+      lines.push(L(`${nx()} G9 X500 Y${cy} F${F}`,
+        `Egyenes vágás X100-ból X500-ba ${F} mm/perc előtolással – 400 mm hosszú vonal.`,
+        `Tăiere dreaptă de la X100 la X500 cu ${F} mm/min – linie de 400 mm.`,
+        `Gerader Schnitt von X100 nach X500 mit ${F} mm/min – 400 mm lange Linie.`,
+        `Straight cut from X100 to X500 at ${F} mm/min – 400 mm long line.`));
+    } else if (shape === "angle") {
+      lines.push(L(`${nx()} G0 X100 Y${cy} Z30`,
+        "GYORSJÁRAT (G0) a kezdőpont fölé, biztonságos magasságban." + passInfo.hu,
+        "RAPID (G0) deasupra punctului de start." + passInfo.ro,
+        "EILGANG (G0) über den Startpunkt." + passInfo.de,
+        "RAPID (G0) above the start point." + passInfo.en));
+      lines.push(L(`${nx()} G1 G9 X100 Y${cy} Z${z} F3000`,
+        `MUNKAMENET (G1): lesüllyed ${z} mm mélyre.`,
+        `AVANS DE LUCRU (G1): coboară la ${z} mm.`,
+        `ARBEITSGANG (G1): senkt auf ${z} mm.`,
+        `FEED MOVE (G1): plunges to ${z} mm.`));
+      lines.push(L(`${nx()} G9 X500 Y${cy} F${F}`,
+        `Első szár: vízszintes vágás X irányban, 400 mm hosszan, ${F} mm/perc előtolással.`,
+        `Primul segment: tăiere orizontală pe X, 400 mm, ${F} mm/min.`,
+        `Erster Schenkel: horizontaler Schnitt in X, 400 mm, ${F} mm/min.`,
+        `First leg: horizontal cut in X, 400 mm, ${F} mm/min.`));
+      lines.push(L(`${nx()} G9 X500 Y${cy + 300}`,
+        "Második szár: 90°-os fordulat után függőleges vágás Y irányban, 300 mm hosszan – ez adja a DERÉKSZÖGET.",
+        "Al doilea segment: după viraj de 90°, tăiere verticală pe Y, 300 mm – UNGHIUL DREPT.",
+        "Zweiter Schenkel: nach 90°-Wende vertikaler Schnitt in Y, 300 mm – der RECHTE WINKEL.",
+        "Second leg: after a 90° turn, vertical cut in Y, 300 mm – the RIGHT ANGLE."));
+    } else if (shape === "circle") {
+      const p1x = cx + r * Math.cos(-Math.PI/6), p1y = cy + r * Math.sin(-Math.PI/6);
+      const p2x = cx - r * Math.cos(-Math.PI/6), p2y = p1y;
+      lines.push(L(`${nx()} G0 X${cx} Y${cy} Z30`,
+        "GYORSJÁRAT (G0) a kör KÖZÉPPONTJA fölé, biztonságos magasságban." + passInfo.hu,
+        "RAPID (G0) deasupra CENTRULUI cercului." + passInfo.ro,
+        "EILGANG (G0) über den KREISMITTELPUNKT." + passInfo.de,
+        "RAPID (G0) above the circle CENTER." + passInfo.en));
+      lines.push(L(`${nx()} G1 G9 X${cx} Y${cy} Z${z} F3000`,
+        `Lesüllyedés a középpontban ${z} mm mélyre.`,
+        `Coborâre în centru la ${z} mm.`,
+        `Eintauchen im Zentrum auf ${z} mm.`,
+        `Plunge at the center to ${z} mm.`));
+      lines.push(L(`${nx()} G9 F${F} S${S}`,
+        `Az előtolás beáll ${F} mm/percre, a fordulatszám ${S} – jöhet a körmarás!`,
+        `Avansul devine ${F} mm/min, turația ${S} – urmează cercul!`,
+        `Vorschub ${F} mm/min, Drehzahl ${S} – jetzt der Kreis!`,
+        `Feed set to ${F} mm/min, RPM ${S} – circle milling begins!`));
+      lines.push(L(`${nx()} G42 X${cx} Y${cy + r}`,
+        `Sugárkorrekció JOBBRA (G42): kiáll a kör kerületére (sugár: ${r} mm), a 8 mm-es szerszám 4 mm-es sugarával eltolva.`,
+        `Compensare la DREAPTA (G42): iese pe circumferință (rază: ${r} mm).`,
+        `Korrektur RECHTS (G42): fährt auf den Umfang (Radius: ${r} mm).`,
+        `Compensation RIGHT (G42): moves to the circumference (radius: ${r} mm).`));
+      lines.push(L(`${nx()} G2 X${num(p1x)} Y${num(p1y)} R${r}`,
+        "Körív ÓRAMUTATÓ irányban (G2): a kör első harmada (120°), R sugárral megadva.",
+        "Arc în sens ORAR (G2): prima treime a cercului (120°).",
+        "Bogen im UHRZEIGERSINN (G2): erstes Drittel (120°).",
+        "CLOCKWISE arc (G2): first third of the circle (120°)."));
+      lines.push(L(`${nx()} G2 X${num(p2x)} Y${num(p2y)} R${r}`,
+        "A kör második harmada (120°–240°).",
+        "A doua treime a cercului.",
+        "Zweites Drittel des Kreises.",
+        "Second third of the circle."));
+      lines.push(L(`${nx()} G2 X${cx} Y${cy + r} R${r}`,
+        "A kör utolsó harmada – visszaérünk a kiindulópontra: a KÖR BEZÁRULT.",
+        "Ultima treime – înapoi la punctul de start: CERCUL e ÎNCHIS.",
+        "Letztes Drittel – zurück zum Start: der KREIS ist GESCHLOSSEN.",
+        "Last third – back to the start point: the CIRCLE is CLOSED."));
+      lines.push(L(nx() + " G1 G9",
+        "Pontos megállás a kontúr végén (G9).",
+        "Oprire exactă la sfârșitul conturului (G9).",
+        "Genauhalt am Konturende (G9).",
+        "Exact stop at the end of the contour (G9)."));
+      lines.push(L(`${nx()} G40 G9 X${cx} Y${cy}`,
+        "Sugárkorrekció KI (G40): visszaáll a középpontba, korrekció nélkül.",
+        "Compensarea OPRITĂ (G40): înapoi în centru.",
+        "Korrektur AUS (G40): zurück zum Zentrum.",
+        "Compensation OFF (G40): back to the center."));
+    } else { /* semicircle */
+      lines.push(L(`${nx()} G0 X${cx - r} Y${cy} Z30`,
+        "GYORSJÁRAT (G0) a félkör BAL végpontja fölé." + passInfo.hu,
+        "RAPID (G0) deasupra capătului STÂNG al semicercului." + passInfo.ro,
+        "EILGANG (G0) über den LINKEN Endpunkt des Halbkreises." + passInfo.de,
+        "RAPID (G0) above the LEFT end of the semicircle." + passInfo.en));
+      lines.push(L(`${nx()} G1 G9 X${cx - r} Y${cy} Z${z} F3000`,
+        `Lesüllyedés ${z} mm mélyre a kezdőpontban.`,
+        `Coborâre la ${z} mm în punctul de start.`,
+        `Eintauchen auf ${z} mm am Startpunkt.`,
+        `Plunge to ${z} mm at the start point.`));
+      lines.push(L(`${nx()} G9 F${F} S${S}`,
+        `Előtolás: ${F} mm/perc, fordulatszám: ${S} – jöhet a félkör!`,
+        `Avans: ${F} mm/min, turație: ${S} – urmează semicercul!`,
+        `Vorschub: ${F} mm/min, Drehzahl: ${S} – jetzt der Halbkreis!`,
+        `Feed: ${F} mm/min, RPM: ${S} – semicircle begins!`));
+      lines.push(L(`${nx()} G3 X${cx} Y${cy + r} R${r}`,
+        `Körív ÓRAMUTATÓVAL ELLENTÉTES irányban (G3): a félkör első negyede, fel a tetőpontra (sugár: ${r} mm).`,
+        `Arc ANTIORAR (G3): primul sfert, până sus (rază: ${r} mm).`,
+        `Bogen GEGEN den Uhrzeigersinn (G3): erstes Viertel, bis zum Scheitel (Radius: ${r} mm).`,
+        `COUNTER-CLOCKWISE arc (G3): first quarter, up to the top (radius: ${r} mm).`));
+      lines.push(L(`${nx()} G3 X${cx + r} Y${cy} R${r}`,
+        "A félkör második negyede: le a JOBB végpontra – a FÉLKÖR KÉSZ.",
+        "Al doilea sfert: jos la capătul DREPT – SEMICERCUL e GATA.",
+        "Zweites Viertel: hinunter zum RECHTEN Endpunkt – der HALBKREIS ist FERTIG.",
+        "Second quarter: down to the RIGHT end – the SEMICIRCLE is DONE."));
+    }
+    lines.push(L(nx() + " G0 Z30",
+      "Visszaemelkedés gyorsjáratban 30 mm-re a darab fölé – biztonságos magasság.",
+      "Ridicare rapidă la 30 mm deasupra piesei.",
+      "Schnelles Anheben auf 30 mm über das Teil.",
+      "Rapid retract to 30 mm above the part."));
+  });
+
+  /* ---- lezárás ---- */
+  lines.push(L(nx() + " M129",
+    "Szerszám FELEMELÉSE (M129) – a megmunkálás után minden szerszám felmegy.",
+    "RIDICAREA sculei (M129).",
+    "Werkzeug HEBEN (M129).",
+    "Tool UP (M129)."));
+  lines.push(L(nx() + " G0 Z-75 D00",
+    "Gyorsjáratban Z-75-re áll (biztonsági szint), a korrektor kikapcsolva (D00).",
+    "Rapid la Z-75 (nivel de siguranță), corectorul oprit (D00).",
+    "Eilgang auf Z-75 (Sicherheitshöhe), Korrektor aus (D00).",
+    "Rapid to Z-75 (safe level), offset cancelled (D00)."));
+  lines.push(L(nx() + " M149",
+    "A szerszámcsoport kikapcsolása (M149).",
+    "Oprirea agregatului (M149).",
+    "Aggregat ausschalten (M149).",
+    "Unit off (M149)."));
+  lines.push(L(nx() + " G79 N9999",
+    "UGRÁS (G79) a N9999-es sorra – egyenesen a szakasz végére.",
+    "SALT (G79) la blocul N9999.",
+    "SPRUNG (G79) zu Satz N9999.",
+    "JUMP (G79) to block N9999."));
+  lines.push(L(nx() + " M2",
+    "PROGRAMVÉG (M2): az S szakasz lezárult, minden funkció leáll.",
+    "SFÂRȘIT DE PROGRAM (M2).",
+    "PROGRAMMENDE (M2).",
+    "PROGRAM END (M2)."));
+  lines.push(L("N9999",
+    "A 9999-es célsor: ide érkezik a G79-es ugrás.",
+    "Blocul țintă 9999.",
+    "Zielsatz 9999.",
+    "Target block 9999."));
+
+  /* ---- P szakasz: tandem rakodás ---- */
+  lines.push(L("%60 NAME/P",
+    "Új programfej: a 60-as program, P = pozicionáló/rakodó szakasz kezdődik.",
+    "Antet nou: programul 60, P = secțiunea de poziționare/încărcare.",
+    "Neuer Kopf: Programm 60, P = Positionier-/Ladeteil.",
+    "New header: program 60, P = positioning/loading section."));
+  lines.push(L("( )", "Üres megjegyzés-sor.", "Rând gol.", "Leere Zeile.", "Empty line."));
+  lines.push(L(`${nx()} (THE MACHINE WILL TANDEM LOAD)`,
+    "Megjegyzés: a gép TANDEM módban rakodik – amíg az egyik asztalon dolgozik, a másikon TE cserélsz darabot.",
+    "Comentariu: mașina încarcă în TANDEM.",
+    "Kommentar: TANDEM-Beladung.",
+    "Comment: TANDEM loading."));
+  lines.push(L(nx() + " G53 G90",
+    "Ismét gépi koordináták + abszolút méretmegadás.",
+    "Din nou coordonate mașină + cotare absolută.",
+    "Wieder Maschinenkoordinaten + Absolutmaß.",
+    "Machine coordinates + absolute mode again."));
+  lines.push(L(nx() + " G59 X0 Y0 Z0",
+    "A nullapont újra beállítva.",
+    "Zeroul setat din nou.",
+    "Nullpunkt erneut gesetzt.",
+    "Zero set again."));
+  lines.push(L(nx() + " G0 Z-75 D0",
+    "Gyorsjáratban Z-75-re (biztonsági szint), korrektor ki (D0).",
+    "Rapid la Z-75, corector oprit (D0).",
+    "Eilgang auf Z-75, Korrektor aus (D0).",
+    "Rapid to Z-75, offset off (D0)."));
+  lines.push(L(nx() + " M129", "Szerszám fel (M129).", "Scula sus (M129).", "Werkzeug hoch (M129).", "Tool up (M129)."));
+  lines.push(L(nx() + " M149", "Szerszámcsoport ki (M149).", "Agregat oprit (M149).", "Aggregat aus (M149).", "Unit off (M149)."));
+  lines.push(L(nx() + " M73",
+    "A 3-as vákuumkör pumpája bekapcsol (M73) – készül a rögzítés az új darabnak.",
+    "Pompa circuitului 3 pornește (M73).",
+    "Pumpe von Kreis 3 ein (M73).",
+    "Circuit 3 pump on (M73)."));
+  lines.push(L(nx() + " M58",
+    "Gép-specifikus segédfunkció (M58) – leszorítók/ütközők vezérlése.",
+    "Funcție auxiliară specifică mașinii (M58).",
+    "Maschinenspezifische Hilfsfunktion (M58).",
+    "Machine-specific auxiliary function (M58)."));
+  lines.push(L(nx() + " M71",
+    "Segédfunkció (M71) – a rakodáshoz tartozik.",
+    "Funcție auxiliară (M71).",
+    "Hilfsfunktion (M71).",
+    "Auxiliary function (M71)."));
+  const m20N = "N" + (n + 10);
+  lines.push(L(nx() + " M20",
+    "BAL ASZTAL kiválasztása (M20) – ide kerül az új darab. A ciklus végén IDE ugrik vissza a G79!",
+    "Selectarea MESEI STÂNGI (M20). G79 sare ÎNAPOI AICI!",
+    "LINKEN TISCH wählen (M20). G79 springt HIERHER zurück!",
+    "Select LEFT TABLE (M20). The G79 jumps BACK HERE!"));
+  lines.push(L(nx() + " L3=400 L4=400",
+    "L-változók: a darab mérete 400×400 mm – ezt használja az alprogram.",
+    "Variabile L: piesa are 400×400 mm.",
+    "L-Variablen: Teilgröße 400×400 mm.",
+    "L variables: part size 400×400 mm."));
+  lines.push(L(nx() + " L1=729 L2=75",
+    "A darab pozíciója X=729, Y=75 – az 1. darab helye a BAL asztalon.",
+    "Poziția piesei X=729, Y=75 – pe masa STÂNGĂ.",
+    "Position X=729, Y=75 – auf dem LINKEN Tisch.",
+    "Position X=729, Y=75 – on the LEFT table."));
+  lines.push(L(nx() + " G77 H29",
+    "Az 59-es megmunkáló alprogram hívása (G77): megmunkálja a darabot az L-változók helyén.",
+    "Apelarea subprogramului de prelucrare (G77).",
+    "Aufruf des Bearbeitungs-Unterprogramms (G77).",
+    "Call the machining subroutine (G77)."));
+  lines.push(L(nx() + " M21",
+    "Most a JOBB ASZTAL következik (M21) – tandem váltás!",
+    "Acum MASA DREAPTĂ (M21) – schimb tandem!",
+    "Jetzt der RECHTE TISCH (M21) – Tandem-Wechsel!",
+    "Now the RIGHT TABLE (M21) – tandem switch!"));
+  lines.push(L(nx() + " L3=400 L4=400",
+    "A darabméret ugyanaz: 400×400.",
+    "Aceeași dimensiune: 400×400.",
+    "Gleiche Teilgröße: 400×400.",
+    "Same part size: 400×400."));
+  lines.push(L(nx() + " L1=L1+1639 L2=L2",
+    "Az X-eltolás 1639 mm-rel NŐ: ez már a JOBB asztalon lévő darab helye! Így számol a gép változókkal.",
+    "Decalajul X CREȘTE cu 1639 mm: poziția de pe masa DREAPTĂ!",
+    "X-Versatz WÄCHST um 1639 mm: Position auf dem RECHTEN Tisch!",
+    "X offset GROWS by 1639 mm: the position on the RIGHT table!"));
+  lines.push(L(nx() + " G77 H29",
+    "Újra az alprogram – UGYANAZ a megmunkálás az új pozícióban.",
+    "Din nou subprogramul – ACEEAȘI prelucrare în poziția nouă.",
+    "Wieder das Unterprogramm – DIESELBE Bearbeitung an neuer Position.",
+    "The subroutine again – the SAME machining at the new position."));
+  lines.push(L(`${nx()} G79 ${m20N}`,
+    `UGRÁS VISSZA a ${m20N}-ra (G79): VÉGTELEN CIKLUS! A gép tandem üzemben váltakozva dolgozik a két asztalon.`,
+    `SALT ÎNAPOI la ${m20N} (G79): CICLU INFINIT!`,
+    `RÜCKSPRUNG zu ${m20N} (G79): ENDLOSSCHLEIFE!`,
+    `JUMP BACK to ${m20N} (G79): INFINITE LOOP!`));
+  lines.push(L(nx() + " M2",
+    "Programvég (M2) – ide csak akkor jut el a gép, ha megszakítod a ciklust.",
+    "Sfârșit de program (M2).",
+    "Programmende (M2).",
+    "Program end (M2)."));
+
+  /* ---- megjelenítés: kódlista + lépésenkénti magyarázat + gépállapot ---- */
+  RP.lines = lines; RP.i = 0; RP.own = true;
+  const progText = lines.map(l => l.raw).join("\n");
+  document.getElementById("pgResult").innerHTML = `
+  <div style="display:flex;gap:10px;margin:6px 0 12px;flex-wrap:wrap;">
+    <button class="dict-dl" id="pgCopy">📋 ${t("proggen_copy")}</button>
+    <button class="dict-dl" id="pgDl">⬇️ ${t("proggen_dl")}</button>
+  </div>
+  <div class="rp-grid">
+    <div class="rp-list" id="rpList"></div>
+    <div>
+      <div class="rp-card" id="rpCard"></div>
+      <div class="prez-ctl">
+        <button class="sim-btn" id="rpPrev">⏪</button>
+        <button class="sim-btn" id="rpNext">⏩</button>
+        <span id="rpCnt" style="font-family:var(--mono);color:var(--txt-dim);font-size:16px;"></span>
+      </div>
+      <div class="rp-machine" style="margin-top:12px;">${machineSvg("rp")}</div>
+    </div>
+  </div>`;
+  document.getElementById("pgCopy").addEventListener("click", () => {
+    const ta = document.createElement("textarea");
+    ta.value = progText; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); toast("📋 ✅"); } catch (e) {}
+    ta.remove();
+  });
+  document.getElementById("pgDl").addEventListener("click", () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([progText], { type:"text/plain;charset=utf-8" }));
+    a.download = "cnc-program.xxl"; a.click(); URL.revokeObjectURL(a.href);
+  });
+  document.getElementById("rpPrev").addEventListener("click", () => rpShow(RP.i - 1));
+  document.getElementById("rpNext").addEventListener("click", () => rpShow(RP.i + 1));
+  document.getElementById("rpList").addEventListener("click", e => {
+    const l = e.target.closest("[data-rpi]");
+    if (l) rpShow(+l.dataset.rpi);
+  });
+  document.getElementById("rpCard").addEventListener("click", e => {
+    const chip = e.target.closest("[data-rpg],[data-rpm]");
+    if (!chip) return;
+    if (chip.dataset.rpm) openCodeModal(chip.dataset.rpm);
+    else openGcodeInfo(chip.dataset.rpg);
+  });
+  rpDrawList();
+  rpShow(0);
 }
 
 /* ============================================================
@@ -3337,6 +3741,11 @@ function rpDrawList() {
   }).join("");
 }
 function rpShow(i) {
+  if (!RP.lines.length) {
+    const c = document.getElementById("rpCard"); if (c) c.innerHTML = "";
+    const cn = document.getElementById("rpCnt"); if (cn) cn.textContent = "0 / 0";
+    return;
+  }
   RP.i = Math.max(0, Math.min(RP.lines.length - 1, i));
   const line = RP.lines[RP.i];
   document.querySelectorAll("#rpList .rp-line").forEach((el, ix) => {
