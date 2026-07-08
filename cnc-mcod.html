@@ -624,7 +624,7 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
     <button class="nav-mini-btn" id="navMini">«</button>
     <div class="brand">
       <div class="logo">🛠️</div>
-      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v8</span></div>
+      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v9</span></div>
     </div>
     <div class="search-wrap">
       <span class="ico">🔎</span>
@@ -980,13 +980,19 @@ function saveMcodes() {
 /* ============================================================
    ÁLLAPOT
    ============================================================ */
+/* biztonságos localStorage-JSON olvasás: sérült érték SEM állíthatja meg a
+   szkriptet (különben oldalsáv látszik, de a fő panel üres marad) */
+function lsParse(key, fb) {
+    try { const v = localStorage.getItem(LS + key); return v ? JSON.parse(v) : JSON.parse(fb); }
+    catch (e) { try { localStorage.removeItem(LS + key); } catch (e2) {} return JSON.parse(fb); }
+}
 let state = {
     page: "dashboard",
     search: "",
     filterCat: null,
     filters: { prog: true, table: true, vac: true, move: true, act: true },
-    collapsed: JSON.parse(localStorage.getItem(LS + "collapsed") || "{}"),
-    notes: JSON.parse(localStorage.getItem(LS + "notes") || "{}"),
+    collapsed: lsParse("collapsed", "{}"),
+    notes: lsParse("notes", "{}"),
     flow: "main",
     lang: localStorage.getItem(LS + "lang") || "ro",
     mmScale: 1, mmTranslateX: 0, mmTranslateY: 0,
