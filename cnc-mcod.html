@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>CNC M-cod · HMI Dashboard</title>
 <style>
 /* ============================================================
@@ -621,7 +624,7 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
     <button class="nav-mini-btn" id="navMini">«</button>
     <div class="brand">
       <div class="logo">🛠️</div>
-      <div><h1>CNC M-cod</h1><span>Învățare · HMI</span></div>
+      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v8</span></div>
     </div>
     <div class="search-wrap">
       <span class="ico">🔎</span>
@@ -3324,15 +3327,21 @@ function pgDrawOps() {
    íves mód – minden pont sugárirányban tolódik a középponttól, R nő/csökken;
    szögletes mód – minden pont tengelyenként tolódik kifelé/befelé */
 function pgOffsetCode(txt, d, mode) {
-  const tokRe = /(?<![A-Za-z])([XYR])(-?\d+(?:\.\d+)?)/g;
+  /* előtag-karakter külön csoportban (nincs lookbehind – régi böngészőkön is fut):
+     így az "ER30" / "EF0.25" tokenek R/F-je NEM illeszkedik, csak a szabad X/Y/R */
+  const mkRe = () => /(^|[^A-Za-z])([XYR])(-?\d+(?:\.\d+)?)/g;
   const rows = txt.split(/\n/);
   const rnd = v => Math.round(v * 1000) / 1000;
+  const readXY = l => {
+    let x = null, y = null, m, re = mkRe();
+    while ((m = re.exec(l)) !== null) { if (m[2] === "X") x = +m[3]; else if (m[2] === "Y") y = +m[3]; }
+    return [x, y];
+  };
   let mx = null, my = null;
   const pts = [];
   rows.forEach(l => {
     if (/^\s*[('%]/.test(l)) return;
-    let x = null, y = null;
-    for (const m of l.matchAll(tokRe)) { if (m[1] === "X") x = +m[2]; else if (m[1] === "Y") y = +m[2]; }
+    const [x, y] = readXY(l);
     if (x !== null) mx = x;
     if (y !== null) my = y;
     if (x !== null || y !== null) pts.push([mx, my]);
@@ -3345,8 +3354,7 @@ function pgOffsetCode(txt, d, mode) {
   let curX = null, curY = null;
   return rows.map(l => {
     if (/^\s*[('%]/.test(l)) return l;
-    let x = null, y = null;
-    for (const m of l.matchAll(tokRe)) { if (m[1] === "X") x = +m[2]; else if (m[1] === "Y") y = +m[2]; }
+    const [x, y] = readXY(l);
     if (x !== null) curX = x;
     if (y !== null) curY = y;
     let nx2 = curX, ny2 = curY;
@@ -3359,10 +3367,10 @@ function pgOffsetCode(txt, d, mode) {
         ny2 = curY + Math.sign(curY - cy) * d;
       }
     }
-    return l.replace(tokRe, (mm, ax, val) => {
-      if (ax === "R") return "R" + rnd(Math.max(0.01, +val + d));
-      if (ax === "X" && x !== null) return "X" + rnd(nx2);
-      if (ax === "Y" && y !== null) return "Y" + rnd(ny2);
+    return l.replace(mkRe(), (mm, pre, ax, val) => {
+      if (ax === "R") return pre + "R" + rnd(Math.max(0.01, +val + d));
+      if (ax === "X" && x !== null) return pre + "X" + rnd(nx2);
+      if (ax === "Y" && y !== null) return pre + "Y" + rnd(ny2);
       return mm;
     });
   }).join("\n");
