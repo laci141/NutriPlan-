@@ -628,27 +628,25 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
       <input id="search" type="text" placeholder="Căutare: M120, ax, coborâre…" autocomplete="off">
       <button class="search-clear" id="searchClear" title="Șterge" style="display:none">✕</button>
     </div>
-    <div class="nav-title" data-key="nav_main">Meniu principal</div>
     <nav class="nav-list" id="navList">
       <a class="nav-item active" data-page="dashboard"><span class="ico">🏠</span><span data-key="nav_dashboard">Dashboard</span></a>
       <a class="nav-item" data-page="mcodes"><span class="ico">📚</span><span data-key="nav_mcodes">Coduri M</span></a>
-      <a class="nav-item" data-page="mindmap"><span class="ico">🧠</span><span data-key="nav_mindmap">Hartă mentală</span></a>
-      <a class="nav-item" data-page="flows"><span class="ico">⚙️</span><span data-key="nav_flows">Fluxuri</span></a>
-      <a class="nav-item" data-page="safety"><span class="ico">⚠️</span><span data-key="nav_safety">Siguranță</span></a>
-      <a class="nav-item" data-page="dictionary"><span class="ico">📖</span><span data-key="nav_dict">Dicționar CNC</span></a>
       <a class="nav-item" data-page="gcodes"><span class="ico">🧭</span><span data-key="nav_gcode">Coduri G</span></a>
+      <a class="nav-item" data-page="mindmap"><span class="ico">🧠</span><span data-key="nav_mindmap">Hartă mentală</span></a>
       <a class="nav-item" data-page="prez"><span class="ico">🎬</span><span data-key="nav_prez">Prezentare</span></a>
       <a class="nav-item" data-page="infog"><span class="ico">🖼️</span><span data-key="nav_infog">Infografic</span></a>
-      <a class="nav-item" data-page="realprog"><span class="ico">📜</span><span data-key="nav_realprog">Program real</span></a>
-      <div class="nav-title" data-key="nav_training">Antrenament</div>
+      <a class="nav-item" data-page="proggen"><span class="ico">🛠️</span><span data-key="nav_proggen">Generator program</span></a>
+      <div class="nav-title" data-key="nav_practice">Practică</div>
       <a class="nav-item" data-page="sim"><span class="ico">🕹️</span><span data-key="nav_sim">Simulator CNC</span></a>
       <a class="nav-item" data-page="flash"><span class="ico">🃏</span><span data-key="nav_flash">Flashcard</span></a>
       <a class="nav-item" data-page="dnd"><span class="ico">🧩</span><span data-key="nav_dnd">Exercițiu ordine</span></a>
-      <a class="nav-item" data-page="exam"><span class="ico">🎓</span><span data-key="nav_exam">Examen</span></a>
+      <a class="nav-item" data-page="errsim"><span class="ico">💥</span><span data-key="nav_errsim">Căutare erori</span></a>
       <div class="nav-title" data-key="nav_analysis">Analiză</div>
       <a class="nav-item" data-page="analyzer"><span class="ico">🔬</span><span data-key="nav_analyzer">Analizor program</span></a>
       <a class="nav-item" data-page="debugger"><span class="ico">🐞</span><span data-key="nav_debugger">Depanator</span></a>
-      <a class="nav-item" data-page="errsim"><span class="ico">💥</span><span data-key="nav_errsim">Simulator erori</span></a>
+      <div class="nav-title" data-key="nav_reference">Referință</div>
+      <a class="nav-item" data-page="safety"><span class="ico">⚠️</span><span data-key="nav_safety">Siguranță</span></a>
+      <a class="nav-item" data-page="flows"><span class="ico">⚙️</span><span data-key="nav_flows">Fluxuri</span></a>
       <div class="nav-title" data-key="nav_progress">Progres</div>
       <a class="nav-item" data-page="stats"><span class="ico">📈</span><span data-key="nav_stats">Statistici</span></a>
       <a class="nav-item" data-page="instructor"><span class="ico">👨‍🏫</span><span data-key="nav_instructor">Mod instructor</span></a>
@@ -1047,21 +1045,19 @@ function escapeHtml(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "
 const PAGE_META = {
     dashboard: { ico: "🏠", titleKey: "dashboard_title", subKey: "dashboard_sub" },
     mcodes: { ico: "📚", titleKey: "mcodes_title", subKey: "mcodes_sub" },
-    mindmap: { ico: "🧠", titleKey: "mindmap_title", subKey: "mindmap_sub" },
-    flows: { ico: "⚙️", titleKey: "flows_title", subKey: "flows_sub" },
-    safety: { ico: "⚠️", titleKey: "safety_title", subKey: "safety_sub" },
-    dictionary: { ico: "📖", titleKey: "dict_title", subKey: "dict_sub" },
     gcodes: { ico: "🧭", titleKey: "gcode_title", subKey: "gcode_sub" },
+    mindmap: { ico: "🧠", titleKey: "mindmap_title", subKey: "mindmap_sub" },
     prez: { ico: "🎬", titleKey: "prez_title", subKey: "prez_sub" },
     infog: { ico: "🖼️", titleKey: "infog_title", subKey: "infog_sub" },
-    realprog: { ico: "📜", titleKey: "rp_title", subKey: "rp_sub" },
+    proggen: { ico: "🛠️", titleKey: "proggen_title", subKey: "proggen_sub" },
     sim: { ico: "🕹️", titleKey: "sim_title", subKey: "sim_sub" },
     flash: { ico: "🃏", titleKey: "flash_title", subKey: "flash_sub" },
     dnd: { ico: "🧩", titleKey: "dnd_title", subKey: "dnd_sub" },
-    exam: { ico: "🎓", titleKey: "exam_title", subKey: "exam_sub" },
+    errsim: { ico: "💥", titleKey: "errsim_title", subKey: "errsim_sub" },
     analyzer: { ico: "🔬", titleKey: "ana_title", subKey: "ana_sub" },
     debugger: { ico: "🐞", titleKey: "dbg_title", subKey: "dbg_sub" },
-    errsim: { ico: "💥", titleKey: "errsim_title", subKey: "errsim_sub" },
+    safety: { ico: "⚠️", titleKey: "safety_title", subKey: "safety_sub" },
+    flows: { ico: "⚙️", titleKey: "flows_title", subKey: "flows_sub" },
     stats: { ico: "📈", titleKey: "stats_title", subKey: "stats_sub" },
     instructor: { ico: "👨‍🏫", titleKey: "instr_title", subKey: "instr_sub" }
 };
@@ -1089,21 +1085,19 @@ function render() {
     const page = state.page;
     if (page === "dashboard") renderDashboard();
     else if (page === "mcodes") renderMcodes();
-    else if (page === "mindmap") renderMindmap();
-    else if (page === "flows") renderFlows();
-    else if (page === "safety") renderSafety();
-    else if (page === "dictionary") renderDictionary();
     else if (page === "gcodes") renderGcodes();
+    else if (page === "mindmap") renderMindmap();
     else if (page === "prez") renderPrez();
     else if (page === "infog") renderInfog();
-    else if (page === "realprog") renderRealprog();
+    else if (page === "proggen") renderProggen();
     else if (page === "sim") renderSim();
     else if (page === "flash") renderFlash();
     else if (page === "dnd") renderDnd();
-    else if (page === "exam") renderExam();
+    else if (page === "errsim") renderErrsim();
     else if (page === "analyzer") renderAnalyzer();
     else if (page === "debugger") renderDebugger();
-    else if (page === "errsim") renderErrsim();
+    else if (page === "safety") renderSafety();
+    else if (page === "flows") renderFlows();
     else if (page === "stats") renderStats();
     else if (page === "instructor") renderInstructor();
 }
@@ -1860,14 +1854,16 @@ document.addEventListener("keydown", e => {
    ============================================================ */
 const UI2 = {
 hu: {
-  nav_training:"Betanítás", nav_sim:"CNC Szimulátor", nav_3d:"3D Gép", nav_flash:"Tanulókártyák", nav_dnd:"Sorrend gyakorlás", nav_exam:"Vizsga",
-  nav_analysis:"Elemzés", nav_analyzer:"Program elemző", nav_debugger:"Hibakereső", nav_errsim:"Hiba-szimulátor",
+  nav_practice:"Gyakorlat", nav_sim:"CNC Szimulátor", nav_flash:"Tanulókártyák", nav_dnd:"Sorrend gyakorlás", nav_errsim:"Hibakeresés",
+  nav_analysis:"Elemzés", nav_analyzer:"Program elemző", nav_debugger:"Hibakereső",
+  nav_reference:"Referencia", nav_safety:"Biztonság", nav_flows:"Folyamatok",
+  nav_proggen:"Generator program",
   nav_progress:"Haladás", nav_stats:"Statisztika", nav_instructor:"Oktatói mód", worker_label:"Dolgozó neve",
   sim_title:"CNC Szimulátor", sim_sub:"Lejátszás lépésről lépésre, animációval",
   m3d_title:"3D Gépmodell", m3d_sub:"Forgasd, nagyítsd, kattints az alkatrészekre",
   flash_title:"Tanulókártyák", flash_sub:"Kártya elöl a kód, hátul a jelentés",
   dnd_title:"Sorrend gyakorlás", dnd_sub:"Húzd az M-kódokat helyes sorrendbe",
-  exam_title:"Vizsga", exam_sub:"Időre menő teszt 3 szinten",
+  proggen_title:"Generator program", proggen_sub:"Saját CNC program létrehozása geometriáből",
   ana_title:"Program elemző", ana_sub:"Illessz be teljes CNC programot elemzésre",
   dbg_title:"Hibakereső", dbg_sub:"Írj be M-kód sorrendet – megmutatjuk a hibát",
   errsim_title:"Hiba-szimulátor", errsim_sub:"100+ hibás program – találd meg a hibát!",
@@ -1889,24 +1885,25 @@ hu: {
   err_q:"Mi a hiba ebben a programban?", err_check:"Válasz ellenőrzése", err_next:"Következő feladat", err_good:"✅ Helyes! Megtaláltad a hibát.", err_bad:"❌ Nem ez a hiba.", err_expl:"Magyarázat", err_danger:"Veszélyelemzés", err_solution:"Helyes megoldás", err_progress:"Feladat", err_anim:"▶ Hiba lejátszása animációval",
   fc_know:"✅ Tudom", fc_dontknow:"❌ Még nem tudom", fc_flip:"Kattints a fordításhoz", fc_shuffle:"🔀 Keverés", fc_next:"Következő ➡", fc_prev:"⬅ Előző",
   dnd_task:"Rakd helyes sorrendbe:", dnd_check:"✔ Ellenőrzés", dnd_showsol:"💡 Helyes sorrend", dnd_new:"🎲 Új feladat", dnd_ok:"✅ Tökéletes sorrend!", dnd_bad:"❌ hibás pozíció – piros = rossz helyen", dnd_play:"▶ Lejátszás animációval",
-  exam_start:"Vizsga indítása", exam_lvl1:"Kezdő", exam_lvl2:"Haladó", exam_lvl3:"Profi",
-  exam_lvl1d:"10 kérdés · 5 perc · alap kódok", exam_lvl2d:"15 kérdés · 6 perc · sorrendek is", exam_lvl3d:"20 kérdés · 6 perc · hibakeresés is",
-  exam_q:"Kérdés", exam_score:"Eredmény", exam_time:"Idő", exam_pass:"✅ SIKERES VIZSGA", exam_fail:"❌ SIKERTELEN – gyakorolj még!", exam_mist:"Hibáid", exam_again:"Új vizsga", exam_history:"Korábbi vizsgák", exam_timeout:"⏰ Lejárt az idő!",
-  st_mastered:"Megtanult kódok", st_weak:"Legtöbb hiba", st_time:"Tanulási idő", st_bycat:"Pontosság témakörönként", st_exams:"Vizsgaeredmények alakulása", st_none:"Még nincs adat – kezdj tanulni a Tanulókártyákkal vagy a Vizsgával!", st_min:"perc", st_focus:"Ebben kell fejlődnöd",
-  in_worker:"Dolgozó", in_exams:"Vizsgák", in_best:"Legjobb", in_avg:"Átlag", in_flash:"Kártyák", in_mist:"Hibák", in_time:"Idő", in_common:"Leggyakoribb hibák (mindenki)", in_detail:"Részletek", in_none:"Még nincs rögzített dolgozó. A bal oldali mezőben adj meg egy nevet!",
+  proggen_form:"Program paraméterek", proggen_shape:"Alak", proggen_line:"Egyenes vonal", proggen_circle:"Kör", proggen_semicircle:"Félkör", proggen_angle:"Derékszög",
+  proggen_depth:"Mélység (mm)", proggen_feed:"Előtolás (mm/perc)", proggen_spindle:"Orsó sebesség (RPM)", proggen_rotations:"Ismétlések", proggen_generate:"Program generálása",
+  st_mastered:"Megtanult kódok", st_weak:"Legtöbb hiba", st_time:"Tanulási idő", st_bycat:"Pontosság témakörönként", st_none:"Még nincs adat – kezdj tanulni a Tanulókártyákkal!", st_min:"perc", st_focus:"Ebben kell fejlődnöd",
+  in_worker:"Dolgozó", in_best:"Legjobb", in_avg:"Átlag", in_flash:"Kártyák", in_mist:"Hibák", in_time:"Idő", in_common:"Leggyakoribb hibák (mindenki)", in_detail:"Részletek", in_none:"Még nincs rögzített dolgozó. A bal oldali mezőben adj meg egy nevet!",
   learn_how:"Működés", learn_ex:"Gyakorlati példa", learn_counter:"Ellenpélda (így NE!)", learn_mist:"Gyakori hibák", learn_when:"Mikor használd", learn_forbid:"Mikor TILOS", learn_dng:"Veszélyek", learn_conseq:"Hibás használat következménye",
   skip_title:"Mi történik, ha kihagyod:", skip_correct:"Így kell helyesen",
   wf_anim:"▶ Lejátszás a szimulátorban"
 },
 ro: {
-  nav_training:"Instruire", nav_sim:"Simulator CNC", nav_3d:"Mașină 3D", nav_flash:"Flashcarduri", nav_dnd:"Exercițiu ordine", nav_exam:"Examen",
-  nav_analysis:"Analiză", nav_analyzer:"Analizor program", nav_debugger:"Depanator", nav_errsim:"Simulator erori",
+  nav_practice:"Practică", nav_sim:"Simulator CNC", nav_flash:"Flashcarduri", nav_dnd:"Exercițiu ordine", nav_errsim:"Căutare erori",
+  nav_analysis:"Analiză", nav_analyzer:"Analizor program", nav_debugger:"Depanator",
+  nav_reference:"Referință", nav_safety:"Siguranță", nav_flows:"Fluxuri",
+  nav_proggen:"Generator program",
   nav_progress:"Progres", nav_stats:"Statistici", nav_instructor:"Mod instructor", worker_label:"Nume muncitor",
   sim_title:"Simulator CNC", sim_sub:"Redare pas cu pas, cu animație",
   m3d_title:"Model 3D", m3d_sub:"Rotește, mărește, apasă pe componente",
   flash_title:"Flashcarduri", flash_sub:"Față: codul · verso: explicația",
   dnd_title:"Exercițiu ordine", dnd_sub:"Trage codurile M în ordinea corectă",
-  exam_title:"Examen", exam_sub:"Test contra timp pe 3 niveluri",
+  proggen_title:"Generator program", proggen_sub:"Creează propriul program CNC din geometrie",
   ana_title:"Analizor program", ana_sub:"Lipește un program CNC complet",
   dbg_title:"Depanator", dbg_sub:"Scrie o secvență de coduri M – arătăm greșeala",
   errsim_title:"Simulator erori", errsim_sub:"100+ programe greșite – găsește eroarea!",
@@ -1928,24 +1925,25 @@ ro: {
   err_q:"Care este eroarea din acest program?", err_check:"Verifică răspunsul", err_next:"Sarcina următoare", err_good:"✅ Corect! Ai găsit eroarea.", err_bad:"❌ Nu aceasta este eroarea.", err_expl:"Explicație", err_danger:"Analiză de pericol", err_solution:"Soluția corectă", err_progress:"Sarcina", err_anim:"▶ Redă eroarea cu animație",
   fc_know:"✅ Știu", fc_dontknow:"❌ Nu știu încă", fc_flip:"Apasă pentru întoarcere", fc_shuffle:"🔀 Amestecă", fc_next:"Următorul ➡", fc_prev:"⬅ Anteriorul",
   dnd_task:"Aranjează în ordinea corectă:", dnd_check:"✔ Verificare", dnd_showsol:"💡 Ordinea corectă", dnd_new:"🎲 Sarcină nouă", dnd_ok:"✅ Ordine perfectă!", dnd_bad:"❌ poziții greșite – roșu = loc greșit", dnd_play:"▶ Redare cu animație",
-  exam_start:"Începe examenul", exam_lvl1:"Începător", exam_lvl2:"Avansat", exam_lvl3:"Profesionist",
-  exam_lvl1d:"10 întrebări · 5 min · coduri de bază", exam_lvl2d:"15 întrebări · 6 min · și secvențe", exam_lvl3d:"20 întrebări · 6 min · și depanare",
-  exam_q:"Întrebarea", exam_score:"Rezultat", exam_time:"Timp", exam_pass:"✅ EXAMEN REUȘIT", exam_fail:"❌ NEREUȘIT – mai exersează!", exam_mist:"Greșelile tale", exam_again:"Examen nou", exam_history:"Examene anterioare", exam_timeout:"⏰ Timpul a expirat!",
-  st_mastered:"Coduri învățate", st_weak:"Cele mai multe greșeli", st_time:"Timp de învățare", st_bycat:"Precizie pe categorii", st_exams:"Evoluția rezultatelor", st_none:"Încă nu există date – începe cu Flashcarduri sau Examen!", st_min:"min", st_focus:"Aici trebuie să progresezi",
-  in_worker:"Muncitor", in_exams:"Examene", in_best:"Cel mai bun", in_avg:"Media", in_flash:"Carduri", in_mist:"Greșeli", in_time:"Timp", in_common:"Cele mai frecvente greșeli (toți)", in_detail:"Detalii", in_none:"Niciun muncitor înregistrat. Introdu un nume în câmpul din stânga!",
+  proggen_form:"Parametri program", proggen_shape:"Formă", proggen_line:"Linie dreaptă", proggen_circle:"Cerc", proggen_semicircle:"Semicerc", proggen_angle:"Unghi drept",
+  proggen_depth:"Adâncime (mm)", proggen_feed:"Avans (mm/min)", proggen_spindle:"Viteză ax (RPM)", proggen_rotations:"Repetări", proggen_generate:"Generează program",
+  st_mastered:"Coduri învățate", st_weak:"Cele mai multe greșeli", st_time:"Timp de învățare", st_bycat:"Precizie pe categorii", st_none:"Încă nu există date – începe cu Flashcarduri!", st_min:"min", st_focus:"Aici trebuie să progresezi",
+  in_worker:"Muncitor", in_best:"Cel mai bun", in_avg:"Media", in_flash:"Carduri", in_mist:"Greșeli", in_time:"Timp", in_common:"Cele mai frecvente greșeli (toți)", in_detail:"Detalii", in_none:"Niciun muncitor înregistrat. Introdu un nume în câmpul din stânga!",
   learn_how:"Funcționare", learn_ex:"Exemplu practic", learn_counter:"Contraexemplu (așa NU!)", learn_mist:"Greșeli frecvente", learn_when:"Când se folosește", learn_forbid:"Când este INTERZIS", learn_dng:"Pericole", learn_conseq:"Consecința utilizării greșite",
   skip_title:"Ce se întâmplă dacă sari peste:", skip_correct:"Așa se face corect",
   wf_anim:"▶ Redare în simulator"
 },
 de: {
-  nav_training:"Schulung", nav_sim:"CNC-Simulator", nav_3d:"3D-Maschine", nav_flash:"Lernkarten", nav_dnd:"Reihenfolge üben", nav_exam:"Prüfung",
-  nav_analysis:"Analyse", nav_analyzer:"Programm-Analyse", nav_debugger:"Fehlersuche", nav_errsim:"Fehler-Simulator",
+  nav_practice:"Üben", nav_sim:"CNC-Simulator", nav_flash:"Lernkarten", nav_dnd:"Reihenfolge üben", nav_errsim:"Fehlersuche",
+  nav_analysis:"Analyse", nav_analyzer:"Programm-Analyse", nav_debugger:"Fehlersuche",
+  nav_reference:"Referenz", nav_safety:"Sicherheit", nav_flows:"Arbeitsabläufe",
+  nav_proggen:"Programmgenerator",
   nav_progress:"Fortschritt", nav_stats:"Statistik", nav_instructor:"Ausbilder-Modus", worker_label:"Name des Arbeiters",
   sim_title:"CNC-Simulator", sim_sub:"Schritt-für-Schritt-Wiedergabe mit Animation",
   m3d_title:"3D-Modell", m3d_sub:"Drehen, zoomen, Bauteile anklicken",
   flash_title:"Lernkarten", flash_sub:"Vorne: Code · hinten: Bedeutung",
   dnd_title:"Reihenfolge üben", dnd_sub:"Ziehe die M-Codes in die richtige Reihenfolge",
-  exam_title:"Prüfung", exam_sub:"Test auf Zeit, 3 Stufen",
+  proggen_title:"Programmgenerator", proggen_sub:"Erstelle ein CNC-Programm aus Geometrie",
   ana_title:"Programm-Analyse", ana_sub:"Komplettes CNC-Programm einfügen",
   dbg_title:"Fehlersuche", dbg_sub:"M-Code-Folge eingeben – wir zeigen den Fehler",
   errsim_title:"Fehler-Simulator", errsim_sub:"100+ fehlerhafte Programme – finde den Fehler!",
@@ -1967,24 +1965,25 @@ de: {
   err_q:"Was ist der Fehler in diesem Programm?", err_check:"Antwort prüfen", err_next:"Nächste Aufgabe", err_good:"✅ Richtig! Du hast den Fehler gefunden.", err_bad:"❌ Das ist nicht der Fehler.", err_expl:"Erklärung", err_danger:"Gefahrenanalyse", err_solution:"Richtige Lösung", err_progress:"Aufgabe", err_anim:"▶ Fehler mit Animation abspielen",
   fc_know:"✅ Ich weiß es", fc_dontknow:"❌ Noch nicht", fc_flip:"Zum Umdrehen klicken", fc_shuffle:"🔀 Mischen", fc_next:"Weiter ➡", fc_prev:"⬅ Zurück",
   dnd_task:"Bringe in die richtige Reihenfolge:", dnd_check:"✔ Prüfen", dnd_showsol:"💡 Richtige Reihenfolge", dnd_new:"🎲 Neue Aufgabe", dnd_ok:"✅ Perfekte Reihenfolge!", dnd_bad:"❌ falsche Positionen – rot = falscher Platz", dnd_play:"▶ Mit Animation abspielen",
-  exam_start:"Prüfung starten", exam_lvl1:"Anfänger", exam_lvl2:"Fortgeschritten", exam_lvl3:"Profi",
-  exam_lvl1d:"10 Fragen · 5 Min · Grundcodes", exam_lvl2d:"15 Fragen · 6 Min · auch Abläufe", exam_lvl3d:"20 Fragen · 6 Min · auch Fehlersuche",
-  exam_q:"Frage", exam_score:"Ergebnis", exam_time:"Zeit", exam_pass:"✅ PRÜFUNG BESTANDEN", exam_fail:"❌ NICHT BESTANDEN – übe weiter!", exam_mist:"Deine Fehler", exam_again:"Neue Prüfung", exam_history:"Frühere Prüfungen", exam_timeout:"⏰ Zeit abgelaufen!",
-  st_mastered:"Gelernte Codes", st_weak:"Meiste Fehler", st_time:"Lernzeit", st_bycat:"Genauigkeit nach Kategorie", st_exams:"Entwicklung der Ergebnisse", st_none:"Noch keine Daten – beginne mit Lernkarten oder Prüfung!", st_min:"Min", st_focus:"Hier musst du dich verbessern",
-  in_worker:"Arbeiter", in_exams:"Prüfungen", in_best:"Beste", in_avg:"Durchschnitt", in_flash:"Karten", in_mist:"Fehler", in_time:"Zeit", in_common:"Häufigste Fehler (alle)", in_detail:"Details", in_none:"Noch kein Arbeiter erfasst. Gib links einen Namen ein!",
+  proggen_form:"Programmparameter", proggen_shape:"Form", proggen_line:"Gerade Linie", proggen_circle:"Kreis", proggen_semicircle:"Halbkreis", proggen_angle:"Rechter Winkel",
+  proggen_depth:"Tiefe (mm)", proggen_feed:"Vorschub (mm/min)", proggen_spindle:"Spindeldrehzahl (RPM)", proggen_rotations:"Wiederholungen", proggen_generate:"Programm generieren",
+  st_mastered:"Gelernte Codes", st_weak:"Meiste Fehler", st_time:"Lernzeit", st_bycat:"Genauigkeit nach Kategorie", st_none:"Noch keine Daten – beginne mit Lernkarten!", st_min:"Min", st_focus:"Hier musst du dich verbessern",
+  in_worker:"Arbeiter", in_best:"Beste", in_avg:"Durchschnitt", in_flash:"Karten", in_mist:"Fehler", in_time:"Zeit", in_common:"Häufigste Fehler (alle)", in_detail:"Details", in_none:"Noch kein Arbeiter erfasst. Gib links einen Namen ein!",
   learn_how:"Funktionsweise", learn_ex:"Praxisbeispiel", learn_counter:"Gegenbeispiel (so NICHT!)", learn_mist:"Häufige Fehler", learn_when:"Wann verwenden", learn_forbid:"Wann VERBOTEN", learn_dng:"Gefahren", learn_conseq:"Folge falscher Anwendung",
   skip_title:"Was passiert, wenn du auslässt:", skip_correct:"So geht es richtig",
   wf_anim:"▶ Im Simulator abspielen"
 },
 en: {
-  nav_training:"Training", nav_sim:"CNC Simulator", nav_3d:"3D Machine", nav_flash:"Flashcards", nav_dnd:"Order practice", nav_exam:"Exam",
-  nav_analysis:"Analysis", nav_analyzer:"Program analyzer", nav_debugger:"Debugger", nav_errsim:"Error simulator",
+  nav_practice:"Practice", nav_sim:"CNC Simulator", nav_flash:"Flashcards", nav_dnd:"Order practice", nav_errsim:"Error search",
+  nav_analysis:"Analysis", nav_analyzer:"Program analyzer", nav_debugger:"Debugger",
+  nav_reference:"Reference", nav_safety:"Safety", nav_flows:"Flows",
+  nav_proggen:"Program generator",
   nav_progress:"Progress", nav_stats:"Statistics", nav_instructor:"Instructor mode", worker_label:"Worker name",
   sim_title:"CNC Simulator", sim_sub:"Step-by-step playback with animation",
   m3d_title:"3D Machine Model", m3d_sub:"Rotate, zoom, click on parts",
   flash_title:"Flashcards", flash_sub:"Front: the code · back: the meaning",
   dnd_title:"Order practice", dnd_sub:"Drag M-codes into the correct order",
-  exam_title:"Exam", exam_sub:"Timed test on 3 levels",
+  proggen_title:"Program generator", proggen_sub:"Create your own CNC program from geometry",
   ana_title:"Program analyzer", ana_sub:"Paste a complete CNC program",
   dbg_title:"Debugger", dbg_sub:"Type an M-code sequence – we show the mistake",
   errsim_title:"Error simulator", errsim_sub:"100+ faulty programs – find the error!",
@@ -2006,11 +2005,10 @@ en: {
   err_q:"What is the error in this program?", err_check:"Check answer", err_next:"Next task", err_good:"✅ Correct! You found the error.", err_bad:"❌ That's not the error.", err_expl:"Explanation", err_danger:"Danger analysis", err_solution:"Correct solution", err_progress:"Task", err_anim:"▶ Play the error with animation",
   fc_know:"✅ I know it", fc_dontknow:"❌ Not yet", fc_flip:"Click to flip", fc_shuffle:"🔀 Shuffle", fc_next:"Next ➡", fc_prev:"⬅ Previous",
   dnd_task:"Put in the correct order:", dnd_check:"✔ Check", dnd_showsol:"💡 Correct order", dnd_new:"🎲 New task", dnd_ok:"✅ Perfect order!", dnd_bad:"❌ wrong positions – red = wrong place", dnd_play:"▶ Play with animation",
-  exam_start:"Start exam", exam_lvl1:"Beginner", exam_lvl2:"Advanced", exam_lvl3:"Professional",
-  exam_lvl1d:"10 questions · 5 min · basic codes", exam_lvl2d:"15 questions · 6 min · sequences too", exam_lvl3d:"20 questions · 6 min · debugging too",
-  exam_q:"Question", exam_score:"Result", exam_time:"Time", exam_pass:"✅ EXAM PASSED", exam_fail:"❌ FAILED – keep practicing!", exam_mist:"Your mistakes", exam_again:"New exam", exam_history:"Previous exams", exam_timeout:"⏰ Time is up!",
-  st_mastered:"Mastered codes", st_weak:"Most mistakes", st_time:"Learning time", st_bycat:"Accuracy by category", st_exams:"Exam score history", st_none:"No data yet – start with Flashcards or an Exam!", st_min:"min", st_focus:"You should improve here",
-  in_worker:"Worker", in_exams:"Exams", in_best:"Best", in_avg:"Average", in_flash:"Cards", in_mist:"Mistakes", in_time:"Time", in_common:"Most common mistakes (everyone)", in_detail:"Details", in_none:"No workers recorded yet. Enter a name in the left field!",
+  proggen_form:"Program parameters", proggen_shape:"Shape", proggen_line:"Straight line", proggen_circle:"Circle", proggen_semicircle:"Semicircle", proggen_angle:"Right angle",
+  proggen_depth:"Depth (mm)", proggen_feed:"Feed rate (mm/min)", proggen_spindle:"Spindle speed (RPM)", proggen_rotations:"Repetitions", proggen_generate:"Generate program",
+  st_mastered:"Mastered codes", st_weak:"Most mistakes", st_time:"Learning time", st_bycat:"Accuracy by category", st_none:"No data yet – start with Flashcards!", st_min:"min", st_focus:"You should improve here",
+  in_worker:"Worker", in_best:"Best", in_avg:"Average", in_flash:"Cards", in_mist:"Mistakes", in_time:"Time", in_common:"Most common mistakes (everyone)", in_detail:"Details", in_none:"No workers recorded yet. Enter a name in the left field!",
   learn_how:"How it works", learn_ex:"Practical example", learn_counter:"Counter-example (NOT like this!)", learn_mist:"Common mistakes", learn_when:"When to use", learn_forbid:"When FORBIDDEN", learn_dng:"Dangers", learn_conseq:"Consequence of wrong use",
   skip_title:"What happens if you skip:", skip_correct:"The correct way",
   wf_anim:"▶ Play in simulator"
@@ -3623,12 +3621,6 @@ function profileEvent(type, ok, code) {
   if (!ok && code) p.mist[code] = (p.mist[code] || 0) + 1;
   saveProfiles(all);
 }
-function profileExam(result) {
-  const { all, p } = getProfile();
-  p.exams.push(result);
-  result.mistakes.forEach(c => { if (c) p.mist[c] = (p.mist[c] || 0) + 1; });
-  saveProfiles(all);
-}
 /* tanulási idő számláló (30 mp-enként, csak látható lapnál) */
 setInterval(() => {
   if (document.visibilityState === "visible") {
@@ -3786,127 +3778,6 @@ function setupDndDrag() {
   }
   list.addEventListener("pointerup", endDrag);
   list.addEventListener("pointercancel", endDrag);
-}
-/* ---------- VIZSGARENDSZER ---------- */
-const EXAM_LEVELS = {
-  1: { n:10, sec:300, pass:70 },
-  2: { n:15, sec:360, pass:75 },
-  3: { n:20, sec:360, pass:80 }
-};
-let EXAM = null;
-function pickRandom(arr, n) { const a = arr.slice().sort(() => Math.random() - .5); return a.slice(0, n); }
-function examQuestion(level) {
-  const types = level === 1 ? ["what","which"] : level === 2 ? ["what","which","next","danger"] : ["what","which","next","danger","bug"];
-  const type = types[Math.floor(Math.random() * types.length)];
-  const m = MCODES[Math.floor(Math.random() * MCODES.length)];
-  if (type === "what") {
-    const wrong = pickRandom(MCODES.filter(x => x.code !== m.code), 3).map(x => getText(x.exp));
-    const opts = pickRandom([getText(m.exp), ...wrong], 4);
-    return { q:`${m.code} — ?`, opts, correct:getText(m.exp), code:m.code };
-  }
-  if (type === "which") {
-    const wrong = pickRandom(MCODES.filter(x => x.code !== m.code), 3).map(x => x.code);
-    const opts = pickRandom([m.code, ...wrong], 4);
-    return { q:`„${getText(m.name)}" — ?`, opts, correct:m.code, code:m.code };
-  }
-  if (type === "danger") {
-    const lvl = dangerLevel(m.code);
-    const opts = pickRandom([0,1,2,3,4], 4);
-    if (!opts.includes(lvl)) opts[0] = lvl;
-    return { q:`${m.code} (${getText(m.name)}) — ${t("m3d_dng")}?`, opts:opts.map(l=>t("dng_"+l)), correct:t("dng_"+lvl), code:m.code };
-  }
-  const f = FLOWS[Math.floor(Math.random() * FLOWS.length)];
-  const codes = flowToCodes(f);
-  if (type === "next") {
-    const i = 1 + Math.floor(Math.random() * (codes.length - 2));
-    const shown = codes.slice(Math.max(0, i - 3), i);
-    const correct = codes[i];
-    const wrong = pickRandom(MCODES.filter(x => x.code !== correct).map(x => x.code), 3);
-    return { q:`${shown.join(" → ")} → ?`, opts:pickRandom([correct, ...wrong], 4), correct, code:correct };
-  }
-  /* bug: melyik sorrend hibás? */
-  const inj = ERR_INJECTORS[Math.floor(Math.random() * ERR_INJECTORS.length)];
-  const bad = inj.apply(codes);
-  if (!bad) return examQuestion(level);
-  const { issues } = validateSequence(bad);
-  if (!issues.length) return examQuestion(level);
-  const rule = issues[0].rule;
-  return { q:`${bad.slice(0, 12).join(" ")}${bad.length>12?" …":""}\n⚠️ ?`, opts:errRuleOptions(rule).map(r=>ruleText(r,"w")), correct:ruleText(rule,"w"), code:bad[issues[0].idx] };
-}
-function renderExam() {
-  EXAM = null;
-  const { p } = getProfile();
-  const hist = (p.exams || []).slice(-6).reverse().map(e =>
-    `<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--stroke-soft);font-size:16px;">
-      <span>${t("exam_lvl" + e.level)}</span><span style="font-family:var(--mono);color:${e.score>=EXAM_LEVELS[e.level].pass?"var(--green)":"#ff6b81"}">${e.score}%</span>
-      <span style="color:var(--txt-faint)">${new Date(e.date).toLocaleDateString()}</span></div>`).join("");
-  view.innerHTML = `
-  <div class="lvl-cards">
-    ${[1,2,3].map(l => `<div class="lvl-card" data-examlvl="${l}">
-      <div class="ic">${["🎓","🏅","🏆"][l-1]}</div><h3>${t("exam_lvl"+l)}</h3><p>${t("exam_lvl"+l+"d")}</p>
-      <button class="ed-btn primary" style="margin-top:10px;">${t("exam_start")}</button></div>`).join("")}
-  </div>
-  ${hist ? `<div class="chart-box" style="max-width:560px;margin:22px auto 0;"><h3>📜 ${t("exam_history")}</h3>${hist}</div>` : ""}`;
-  document.querySelectorAll("[data-examlvl]").forEach(el => el.addEventListener("click", () => startExam(+el.dataset.examlvl)));
-}
-function startExam(level) {
-  const cfg = EXAM_LEVELS[level];
-  EXAM = { level, cfg, i:0, good:0, mistakes:[], qs:Array.from({length:cfg.n}, () => examQuestion(level)), left:cfg.sec, timer:null };
-  EXAM.timer = setInterval(() => {
-    EXAM.left--;
-    const tm = document.getElementById("examTimer");
-    if (tm) { tm.textContent = `${Math.floor(EXAM.left/60)}:${String(EXAM.left%60).padStart(2,"0")}`; tm.classList.toggle("low", EXAM.left <= 30); }
-    if (EXAM.left <= 0) { toast(t("exam_timeout")); finishExam(); }
-  }, 1000);
-  showExamQ();
-}
-function showExamQ() {
-  const q = EXAM.qs[EXAM.i];
-  view.innerHTML = `
-  <div class="quiz-card">
-    <div class="quiz-meta">
-      <b>${t("exam_q")} ${EXAM.i+1} / ${EXAM.qs.length}</b>
-      <span class="quiz-timer" id="examTimer">${Math.floor(EXAM.left/60)}:${String(EXAM.left%60).padStart(2,"0")}</span>
-    </div>
-    <div class="quiz-q" style="white-space:pre-wrap;">${escapeHtml(q.q)}</div>
-    <div class="quiz-opts" id="examOpts">${q.opts.map(o => `<button class="quiz-opt">${escapeHtml(o)}</button>`).join("")}</div>
-  </div>`;
-  let done = false;
-  document.getElementById("examOpts").addEventListener("click", e => {
-    const btn = e.target.closest(".quiz-opt");
-    if (!btn || done) return;
-    done = true;
-    const ok = btn.textContent === q.correct;
-    if (ok) EXAM.good++; else EXAM.mistakes.push(q.code);
-    document.querySelectorAll("#examOpts .quiz-opt").forEach(b => {
-      if (b.textContent === q.correct) b.classList.add("correct");
-      else if (b === btn) b.classList.add("wrong");
-    });
-    setTimeout(() => { EXAM.i++; EXAM.i < EXAM.qs.length ? showExamQ() : finishExam(); }, 900);
-  });
-}
-function finishExam() {
-  clearInterval(EXAM.timer);
-  const score = Math.round(EXAM.good / EXAM.qs.length * 100);
-  const passed = score >= EXAM.cfg.pass;
-  const used = EXAM.cfg.sec - EXAM.left;
-  profileExam({ level:EXAM.level, score, total:EXAM.qs.length, good:EXAM.good, timeSec:used, date:Date.now(), mistakes:EXAM.mistakes });
-  const mistList = [...new Set(EXAM.mistakes)].filter(Boolean).map(c =>
-    `<span class="m3d-code-chip" data-animcode="${c}" style="background:#ff4d4d">${c}</span>`).join(" ");
-  view.innerHTML = `
-  <div class="quiz-card" style="text-align:center;">
-    <div style="font-size:52px;">${passed ? "🏆" : "😓"}</div>
-    <div style="font-size:28px;font-weight:800;color:${passed?"var(--green)":"#ff6b81"};margin:8px 0;">${passed?t("exam_pass"):t("exam_fail")}</div>
-    <div style="font-size:44px;font-weight:800;font-family:var(--mono);">${score}%</div>
-    <div style="color:var(--txt-dim);margin:6px 0 14px;">${t("exam_score")}: ${EXAM.good} / ${EXAM.qs.length} · ${t("exam_time")}: ${Math.floor(used/60)}:${String(used%60).padStart(2,"0")}</div>
-    ${mistList ? `<div style="margin-bottom:14px;"><b>${t("exam_mist")}:</b><div style="margin-top:8px;">${mistList}</div></div>` : ""}
-    <div class="fc-btns">
-      <button class="ed-btn primary" id="examAgain">${t("exam_again")}</button>
-      <button class="ed-btn ghost" id="examStats">📈 ${t("stats_title")}</button>
-    </div>
-  </div>`;
-  document.getElementById("examAgain").addEventListener("click", renderExam);
-  document.getElementById("examStats").addEventListener("click", () => setPage("stats"));
 }
 
 /* ============================================================
