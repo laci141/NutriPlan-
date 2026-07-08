@@ -3171,6 +3171,73 @@ function igDownload() {
   img.src = url;
 }
 /* ============================================================
+   PROGRAM GENERATOR – Parametric CNC program creation
+   ============================================================ */
+function renderProggen() {
+  view.innerHTML = `
+  <div class="proggen-wrap">
+    <h3>${t("proggen_form")}</h3>
+    <form id="proggenForm" style="max-width:500px;">
+      <div style="margin-bottom:14px;">
+        <label>${t("proggen_shape")}:</label>
+        <select id="pgShape" style="width:100%;padding:8px;margin-top:4px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);">
+          <option value="line">${t("proggen_line")}</option>
+          <option value="circle">${t("proggen_circle")}</option>
+          <option value="semicircle">${t("proggen_semicircle")}</option>
+          <option value="angle">${t("proggen_angle")}</option>
+        </select>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label>${t("proggen_depth")}: <input id="pgDepth" type="range" min="-1.5" max="4" step="0.5" value="-1" style="width:80%;vertical-align:middle;"> <span id="pgDepthVal">-1 mm</span></label>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label>${t("proggen_feed")}: <input id="pgFeed" type="range" min="50" max="500" step="50" value="200" style="width:80%;vertical-align:middle;"> <span id="pgFeedVal">200 mm/perc</span></label>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label>${t("proggen_spindle")}: <input id="pgSpindle" type="range" min="5000" max="20000" step="1000" value="12000" style="width:80%;vertical-align:middle;"> <span id="pgSpindleVal">12000 RPM</span></label>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label>${t("proggen_rotations")}: <input id="pgRotations" type="range" min="1" max="5" step="1" value="1" style="width:80%;vertical-align:middle;"> <span id="pgRotationsVal">1</span></label>
+      </div>
+      <button type="button" class="ed-btn primary" id="pgGenBtn" style="width:100%;">${t("proggen_generate")}</button>
+    </form>
+    <div id="pgResult" style="margin-top:20px;"></div>
+  </div>`;
+
+  document.getElementById("pgDepth").addEventListener("input", e => {
+    const v = parseFloat(e.target.value);
+    document.getElementById("pgDepthVal").textContent = v + " mm";
+  });
+  document.getElementById("pgFeed").addEventListener("input", e => {
+    const v = parseInt(e.target.value);
+    document.getElementById("pgFeedVal").textContent = v + " mm/perc";
+  });
+  document.getElementById("pgSpindle").addEventListener("input", e => {
+    const v = parseInt(e.target.value);
+    document.getElementById("pgSpindleVal").textContent = v + " RPM";
+  });
+  document.getElementById("pgRotations").addEventListener("input", e => {
+    const v = parseInt(e.target.value);
+    document.getElementById("pgRotationsVal").textContent = v;
+  });
+
+  document.getElementById("pgGenBtn").addEventListener("click", () => {
+    const params = {
+      shape: document.getElementById("pgShape").value,
+      depth: parseFloat(document.getElementById("pgDepth").value),
+      feedRate: parseInt(document.getElementById("pgFeed").value),
+      spindleSpeed: parseInt(document.getElementById("pgSpindle").value),
+      rotations: parseInt(document.getElementById("pgRotations").value)
+    };
+    proggenGenerate(params);
+  });
+}
+
+function proggenGenerate(params) {
+  document.getElementById("pgResult").innerHTML = `<p style="color:var(--txt-dim);">Program generation not yet implemented</p>`;
+}
+
+/* ============================================================
    VALÓS PROGRAM – G+M kombináció soronként (a fotó programja)
    ============================================================ */
 const RP_PARAMS = {
@@ -3221,59 +3288,13 @@ function rpChipDesc(tk) {
   if (tk.kind === "hdr") return t("rp_hdr");
   return "";
 }
-const RP_FLAPS = [
-  { raw:"START", s:{hu:"A program eleje – innen indul a vezérlő.",ro:"Începutul programului.",de:"Programmanfang.",en:"Start of the program."} },
-  { raw:"'(10401346_FLAPS)", s:{hu:"Megjegyzés: a munkadarab neve és rajzszáma (FLAPS – 10401346).",ro:"Comentariu: numele piesei și nr. desenului.",de:"Kommentar: Name und Zeichnungsnummer des Teils.",en:"Comment: part name and drawing number."} },
-  { raw:"%29 PNAME/S", s:{hu:"Programfej: a 29-es program kezdete, S = megmunkáló szakasz.",ro:"Antet: începutul programului 29, S = secțiunea de prelucrare.",de:"Programmkopf: Beginn von Programm 29, S = Bearbeitungsteil.",en:"Header: start of program 29, S = machining section."} },
-  { raw:"N10 G53 G90", s:{hu:"Gépi koordináta-rendszer (G53) + abszolút méretmegadás (G90): minden méret a GÉP nullapontjától számít. Így kezdődik szinte minden programod!",ro:"Coordonate mașină (G53) + cotare absolută (G90): totul se măsoară de la zeroul MAȘINII.",de:"Maschinenkoordinaten (G53) + Absolutmaß (G90): alles ab MASCHINEN-Nullpunkt.",en:"Machine coordinates (G53) + absolute mode (G90): everything measured from MACHINE zero."} },
-  { raw:"N20 G59 X0 Y0 Z0", s:{hu:"A 6-os munkadarab-nullapont (G59) beállítása: mostantól innen számítanak a darab méretei.",ro:"Setarea zeroului de piesă nr. 6 (G59): de aici se măsoară cotele piesei.",de:"Werkstücknullpunkt Nr. 6 (G59) setzen: ab hier zählen die Teilemaße.",en:"Set work offset #6 (G59): part dimensions are measured from here."} },
-  { raw:"'(OP 1  FINISH PASS  TOOL 21  T21 D8)", s:{hu:"Megjegyzés: 1. művelet – SIMÍTÓ menet a 21-es szerszámmal, D8 korrektorral.",ro:"Comentariu: operația 1 – trecere de FINISARE cu scula 21, corector D8.",de:"Kommentar: Operation 1 – SCHLICHTGANG mit Werkzeug 21, Korrektor D8.",en:"Comment: operation 1 – FINISH pass with tool 21, offset D8."} },
-  { raw:"'(EFFECTIVE DIAMETER 8)", s:{hu:"Megjegyzés: a szerszám tényleges átmérője 8 mm – ezzel számol a sugárkorrekció.",ro:"Comentariu: diametrul efectiv al sculei e 8 mm.",de:"Kommentar: effektiver Werkzeugdurchmesser 8 mm.",en:"Comment: effective tool diameter is 8 mm."} },
-  { raw:"N30 M3 S16000 M140", s:{hu:"EGY sorban több kód! Az orsó elindul 16 000 ford/perc fordulaton (M3 S16000), ÉS az 1-es szerszámcsoport bekapcsol (M140).",ro:"Mai multe coduri pe UN rând! Axul pornește la 16 000 rot/min (M3 S16000) ȘI agregatul 1 pornește (M140).",de:"Mehrere Codes in EINER Zeile! Spindel startet mit 16 000 U/min (M3 S16000) UND Aggregat 1 schaltet ein (M140).",en:"Several codes in ONE line! Spindle starts at 16,000 RPM (M3 S16000) AND unit 1 switches on (M140)."} },
-  { raw:"N40 M3 S16000 M144", s:{hu:"Ugyanez a 144-es csoportra: az is bekapcsol, szintén 16 000-es fordulattal.",ro:"La fel pentru agregatul 144: pornește și el la 16 000.",de:"Dasselbe für Aggregat 144: schaltet ebenfalls bei 16 000 ein.",en:"Same for unit 144: it switches on too, also at 16,000."} },
-  { raw:"N50 G4 F2", s:{hu:"2 másodperc VÁRAKOZÁS (G4 F2): megvárjuk, amíg az orsó tényleg eléri a teljes fordulatszámot. Enélkül fél fordulaton kezdene vágni!",ro:"PAUZĂ de 2 secunde (G4 F2): așteptăm ca axul să atingă turația completă.",de:"2 Sekunden WARTEN (G4 F2): wir warten, bis die Spindel volle Drehzahl erreicht.",en:"2 second DWELL (G4 F2): we wait until the spindle truly reaches full speed."} },
-  { raw:"N60 M120", s:{hu:"A T1 szerszám leereszkedik munkapozícióba – a szimulátorban is látod, ahogy lemegy!",ro:"Scula T1 coboară în poziția de lucru.",de:"Werkzeug T1 senkt sich in Arbeitsposition.",en:"Tool T1 descends into working position."} },
-  { raw:"N70 M124", s:{hu:"A 124-es szerszám/agregát is leereszkedik – két egység dolgozik majd párhuzamosan.",ro:"Și scula/agregatul 124 coboară – două unități lucrează în paralel.",de:"Auch Werkzeug/Aggregat 124 senkt sich – zwei Einheiten arbeiten parallel.",en:"Tool/unit 124 descends too – two units will work in parallel."} },
-  { raw:"N80 G4 F2", s:{hu:"Újabb 2 mp várakozás: a szerszám leérkezését is ki kell várni, mielőtt mozgás indul.",ro:"Încă 2 s pauză: așteptăm coborârea completă a sculei.",de:"Weitere 2 s Wartezeit: das vollständige Absenken abwarten.",en:"Another 2 s dwell: wait for the tool to fully arrive before moving."} },
-  { raw:"N90 G77 H810", s:{hu:"A 810-es címkéjű ALPROGRAM meghívása (G77): ott van leírva a tényleges marási pálya. Xilog-specifikus kód!",ro:"Apelarea SUBPROGRAMULUI cu eticheta 810 (G77): acolo e traseul real de frezare. Cod specific Xilog!",de:"Aufruf des UNTERPROGRAMMS mit Label 810 (G77): dort steht die eigentliche Fräsbahn. Xilog-spezifisch!",en:"Call of the SUBROUTINE labeled 810 (G77): the actual milling path lives there. Xilog-specific!"} },
-  { raw:"N100 D01", s:{hu:"A D1-es szerszámkorrektor aktiválása – a gép mostantól tudja a szerszám pontos sugarát.",ro:"Activarea corectorului D1 – mașina știe raza exactă a sculei.",de:"Korrektor D1 aktivieren – die Maschine kennt jetzt den genauen Radius.",en:"Activate offset D1 – the machine now knows the exact tool radius."} },
-  { raw:"N110 G0 X42 Y612.835 Z30", s:{hu:"GYORSJÁRAT (G0) a kezdőpont fölé: X42, Y612.835 – de még 30 mm-rel a darab FÖLÖTT, biztonságos magasságban!",ro:"RAPID (G0) deasupra punctului de start: X42, Y612.835 – dar încă 30 mm DEASUPRA piesei!",de:"EILGANG (G0) über den Startpunkt: X42, Y612.835 – aber noch 30 mm ÜBER dem Teil!",en:"RAPID (G0) above the start point: X42, Y612.835 – but still 30 mm ABOVE the part!"} },
-  { raw:"N120 G1 G9 X42 Y612.835 Z-1.5 F3000", s:{hu:"MUNKAMENET (G1): lesüllyed -1,5 mm mélyre 3000 mm/perc előtolással – belemar a darabba. A G9 pontos megállást kér a mondat végén.",ro:"AVANS DE LUCRU (G1): coboară la -1,5 mm cu 3000 mm/min – intră în piesă. G9 cere oprire exactă.",de:"ARBEITSGANG (G1): senkt auf -1,5 mm mit 3000 mm/min – taucht ins Teil ein. G9 fordert Genauhalt.",en:"FEED MOVE (G1): plunges to -1.5 mm at 3000 mm/min – cuts into the part. G9 requests exact stop."} },
-  { raw:"N130 G9 F9000 S16000", s:{hu:"Az előtolás felgyorsul 9000 mm/percre, a fordulatszám marad 16 000 – jöhet a kontúrmarás!",ro:"Avansul crește la 9000 mm/min, turația rămâne 16 000 – urmează conturul!",de:"Vorschub steigt auf 9000 mm/min, Drehzahl bleibt 16 000 – jetzt kommt die Kontur!",en:"Feed rises to 9000 mm/min, RPM stays 16,000 – contouring begins!"} },
-  { raw:"N140 G42 X50 Y612.835", s:{hu:"Sugárkorrekció JOBBRA (G42): a gép a 8 mm-es szerszám 4 mm-es sugarával eltolva vezeti a kést a kontúr mellett – így lesz méretpontos a darab.",ro:"Compensare la DREAPTA (G42): mașina decalează traseul cu raza de 4 mm – piesa iese la cotă.",de:"Korrektur RECHTS (G42): Bahn um den 4-mm-Radius versetzt – das Teil wird maßhaltig.",en:"Compensation RIGHT (G42): path offset by the 4 mm radius – the part comes out to size."} },
-  { raw:"…", s:{hu:"(A program itt a teljes kontúr marásával folytatódik – ezek a sorok nem látszanak a fotón.)",ro:"(Programul continuă cu frezarea întregului contur – rânduri care nu apar în poză.)",de:"(Das Programm setzt hier mit der kompletten Kontur fort – Zeilen nicht im Foto.)",en:"(The program continues milling the full contour – lines not visible in the photo.)"} },
-  { raw:"N260 G79 N9999", s:{hu:"UGRÁS (G79) a N9999-es sorra – átugorjuk a program hátralévő részét, egyenesen a végére.",ro:"SALT (G79) la blocul N9999 – sărim direct la sfârșit.",de:"SPRUNG (G79) zu Satz N9999 – direkt ans Ende.",en:"JUMP (G79) to block N9999 – straight to the end."} },
-  { raw:"N270 M2", s:{hu:"PROGRAMVÉG (M2): az S szakasz lezárult, minden funkció leáll.",ro:"SFÂRȘIT DE PROGRAM (M2): secțiunea S s-a încheiat.",de:"PROGRAMMENDE (M2): Abschnitt S ist abgeschlossen.",en:"PROGRAM END (M2): section S is finished."} },
-  { raw:"N9999", s:{hu:"A 9999-es célsor: ide érkezik a G79-es ugrás.",ro:"Blocul țintă 9999: aici ajunge saltul G79.",de:"Zielsatz 9999: hier landet der G79-Sprung.",en:"Target block 9999: the G79 jump lands here."} },
-  { raw:"%30 PNAME/P", s:{hu:"Új programfej: a 30-as program, P = pozicionáló/rakodó szakasz kezdődik.",ro:"Antet nou: programul 30, P = secțiunea de poziționare/încărcare.",de:"Neuer Kopf: Programm 30, P = Positionier-/Ladeteil.",en:"New header: program 30, P = positioning/loading section."} },
-  { raw:"N280 (THE MACHINE WILL TANDEM LOAD)", s:{hu:"Megjegyzés: a gép TANDEM módban rakodik – amíg az egyik asztalon dolgozik, a másikon TE cserélsz darabot. Ezért fontos tudni, melyik asztal aktív!",ro:"Comentariu: mașina încarcă în TANDEM – cât lucrează pe o masă, TU schimbi piesa pe cealaltă.",de:"Kommentar: TANDEM-Beladung – während eine Seite arbeitet, wechselst DU am anderen Tisch.",en:"Comment: TANDEM loading – while one table works, YOU swap the part on the other."} },
-  { raw:"N290 G53 G90", s:{hu:"Ismét gépi koordináták + abszolút méretmegadás – minden szakasz így kezdődik.",ro:"Din nou coordonate mașină + cotare absolută.",de:"Wieder Maschinenkoordinaten + Absolutmaß.",en:"Machine coordinates + absolute mode again."} },
-  { raw:"N300 G59 X0 Y0 Z0", s:{hu:"A G59-es nullapont újra beállítva.",ro:"Zeroul G59 setat din nou.",de:"G59-Nullpunkt erneut gesetzt.",en:"G59 zero set again."} },
-  { raw:"N310 G0 Z-75 D0", s:{hu:"Gyorsjáratban Z-75-re áll (biztonsági szint), a korrektor kikapcsolva (D0).",ro:"Rapid la Z-75 (nivel de siguranță), corectorul oprit (D0).",de:"Eilgang auf Z-75 (Sicherheitshöhe), Korrektor aus (D0).",en:"Rapid to Z-75 (safe level), offset cancelled (D0)."} },
-  { raw:"N320 M129", s:{hu:"Szerszám FELEMELÉSE (M129) – rakodás előtt minden szerszám felmegy.",ro:"RIDICAREA sculei (M129) – înainte de încărcare totul urcă.",de:"Werkzeug HEBEN (M129) – vor dem Beladen fährt alles hoch.",en:"Tool UP (M129) – everything rises before loading."} },
-  { raw:"N330 M149", s:{hu:"A szerszámcsoport kikapcsolása (M149).",ro:"Oprirea agregatului (M149).",de:"Aggregat ausschalten (M149).",en:"Unit off (M149)."} },
-  { raw:"N340 M73", s:{hu:"A 3-as vákuumkör pumpája bekapcsol (M73) – készül a rögzítés az új darabnak.",ro:"Pompa circuitului 3 pornește (M73) – se pregătește fixarea piesei noi.",de:"Pumpe von Kreis 3 ein (M73) – Spannung fürs neue Teil wird vorbereitet.",en:"Circuit 3 pump on (M73) – preparing to hold the new part."} },
-  { raw:"N350 M58", s:{hu:"Gép-specifikus segédfunkció (M58) – jellemzően leszorítók/ütközők vezérlése. Nézd meg a gépkönyvben!",ro:"Funcție auxiliară specifică mașinii (M58) – de obicei opritoare/prinderi. Vezi manualul!",de:"Maschinenspezifische Hilfsfunktion (M58) – meist Anschläge/Niederhalter. Siehe Handbuch!",en:"Machine-specific auxiliary function (M58) – typically stops/clamps. Check the manual!"} },
-  { raw:"N360 M71", s:{hu:"Segédfunkció (M71) – szintén gép-specifikus, a rakodáshoz tartozik.",ro:"Funcție auxiliară (M71) – tot specifică mașinii, ține de încărcare.",de:"Hilfsfunktion (M71) – ebenfalls maschinenspezifisch, gehört zum Beladen.",en:"Auxiliary function (M71) – also machine-specific, part of loading."} },
-  { raw:"N370 M20", s:{hu:"BAL ASZTAL kiválasztása (M20) – ide kerül az új darab. FONTOS: a N450-es G79 IDE ugrik vissza minden új darabnál!",ro:"Selectarea MESEI STÂNGI (M20). IMPORTANT: G79 din N450 sare ÎNAPOI AICI la fiecare piesă!",de:"LINKEN TISCH wählen (M20). WICHTIG: das G79 in N450 springt bei jedem Teil HIERHER zurück!",en:"Select LEFT TABLE (M20). IMPORTANT: the G79 at N450 jumps BACK HERE for every new part!"} },
-  { raw:"N380 L3=400 L4=400", s:{hu:"L-változók: a darab mérete 400×400 mm – ezt használja majd az alprogram.",ro:"Variabile L: piesa are 400×400 mm – folosite de subprogram.",de:"L-Variablen: Teilgröße 400×400 mm – vom Unterprogramm genutzt.",en:"L variables: part size 400×400 mm – used by the subroutine."} },
-  { raw:"N390 L1=729 L2=75", s:{hu:"További változók: a darab pozíciója X=729, Y=75 – az 1. darab helye a BAL asztalon.",ro:"Alte variabile: poziția piesei X=729, Y=75 – locul piesei 1 pe masa STÂNGĂ.",de:"Weitere Variablen: Position X=729, Y=75 – Platz von Teil 1 auf dem LINKEN Tisch.",en:"More variables: position X=729, Y=75 – part 1's place on the LEFT table."} },
-  { raw:"N400 G77 H29", s:{hu:"A 29-es alprogram hívása (G77): megmunkálja a darabot az L-változókkal megadott helyen.",ro:"Apelarea subprogramului 29 (G77): prelucrează piesa la poziția din variabilele L.",de:"Aufruf von Unterprogramm 29 (G77): bearbeitet das Teil an der L-Position.",en:"Call subroutine 29 (G77): machines the part at the L-variable position."} },
-  { raw:"N410 M21", s:{hu:"Most a JOBB ASZTAL következik (M21) – tandem váltás!",ro:"Acum urmează MASA DREAPTĂ (M21) – schimb tandem!",de:"Jetzt kommt der RECHTE TISCH (M21) – Tandem-Wechsel!",en:"Now the RIGHT TABLE (M21) – tandem switch!"} },
-  { raw:"N420 L3=400 L4=400", s:{hu:"A darabméret ugyanaz: 400×400.",ro:"Aceeași dimensiune: 400×400.",de:"Gleiche Teilgröße: 400×400.",en:"Same part size: 400×400."} },
-  { raw:"N430 L1=L1+1639 L2=L2", s:{hu:"Az X-eltolás 1639 mm-rel NŐ: L1=729+1639=2368 – ez már a JOBB asztalon lévő darab helye! Így számol a gép változókkal.",ro:"Decalajul X CREȘTE cu 1639 mm: L1=2368 – poziția piesei de pe masa DREAPTĂ!",de:"X-Versatz WÄCHST um 1639 mm: L1=2368 – die Position auf dem RECHTEN Tisch!",en:"X offset GROWS by 1639 mm: L1=2368 – the position on the RIGHT table!"} },
-  { raw:"N440 G77 H29", s:{hu:"Újra a 29-es alprogram – UGYANAZ a megmunkálás, csak az új pozícióban. Ezért éri meg alprogramot használni!",ro:"Din nou subprogramul 29 – ACEEAȘI prelucrare, doar în poziția nouă.",de:"Wieder Unterprogramm 29 – DIESELBE Bearbeitung, nur an neuer Position.",en:"Subroutine 29 again – the SAME machining, just at the new position."} },
-  { raw:"N450 G79 N370", s:{hu:"UGRÁS VISSZA a N370-re (G79): VÉGTELEN CIKLUS! A gép tandem üzemben váltakozva dolgozik a két asztalon, amíg le nem állítod.",ro:"SALT ÎNAPOI la N370 (G79): CICLU INFINIT! Mașina lucrează alternativ pe cele două mese.",de:"RÜCKSPRUNG zu N370 (G79): ENDLOSSCHLEIFE! Die Maschine arbeitet abwechselnd an beiden Tischen.",en:"JUMP BACK to N370 (G79): INFINITE LOOP! The machine alternates between the two tables."} },
-  { raw:"N460 M2", s:{hu:"Programvég (M2) – ide csak akkor jut el a gép, ha megszakítod a ciklust.",ro:"Sfârșit de program (M2) – se ajunge aici doar dacă întrerupi ciclul.",de:"Programmende (M2) – wird nur erreicht, wenn du die Schleife abbrichst.",en:"Program end (M2) – reached only if you break the loop."} }
-];
-const RP = { lines: RP_FLAPS, i: 0, own:false };
+const RP = { lines: [], i: 0, own:false };
 function renderRealprog() {
   view.innerHTML = `
   <div class="sim-src">
     <b>${t("rp_src")}</b>
-    <select id="rpSel"><option value="flaps">${t("rp_photo")}</option><option value="own" ${RP.own?"selected":""}>${t("rp_own")}</option></select>
-    <textarea id="rpOwn" rows="3" placeholder="N10 G53 G90&#10;N20 M3 S12000&#10;…" style="display:${RP.own?"block":"none"};flex:1;min-width:220px;font-family:var(--mono);"></textarea>
-    <button class="dict-dl" id="rpLoad" style="display:${RP.own?"inline-block":"none"};">${t("sim_load")}</button>
+    <textarea id="rpOwn" rows="3" placeholder="N10 G53 G90&#10;N20 M3 S12000&#10;…" style="flex:1;min-width:220px;font-family:var(--mono);"></textarea>
+    <button class="dict-dl" id="rpLoad">${t("sim_load")}</button>
   </div>
   <div class="rp-grid">
     <div class="rp-list" id="rpList"></div>
@@ -3287,12 +3308,6 @@ function renderRealprog() {
       <div class="rp-machine" style="margin-top:12px;">${machineSvg("rp")}</div>
     </div>
   </div>`;
-  document.getElementById("rpSel").addEventListener("change", function() {
-    const own = this.value === "own";
-    document.getElementById("rpOwn").style.display = own ? "block" : "none";
-    document.getElementById("rpLoad").style.display = own ? "inline-block" : "none";
-    if (!own) { RP.own = false; RP.lines = RP_FLAPS; RP.i = 0; rpDrawList(); rpShow(0); }
-  });
   document.getElementById("rpLoad").addEventListener("click", () => {
     const txt = document.getElementById("rpOwn").value;
     const lines = txt.split(/\n/).map(l => l.trim()).filter(Boolean).map(raw => ({ raw }));
