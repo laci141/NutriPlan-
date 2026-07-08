@@ -648,17 +648,9 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
       <div class="nav-title" data-key="nav_reference">Referință</div>
       <a class="nav-item" data-page="safety"><span class="ico">⚠️</span><span data-key="nav_safety">Siguranță</span></a>
       <a class="nav-item" data-page="flows"><span class="ico">⚙️</span><span data-key="nav_flows">Fluxuri</span></a>
-      <div class="nav-title" data-key="nav_progress">Progres</div>
-      <a class="nav-item" data-page="stats"><span class="ico">📈</span><span data-key="nav_stats">Statistici</span></a>
-      <a class="nav-item" data-page="instructor"><span class="ico">👨‍🏫</span><span data-key="nav_instructor">Mod instructor</span></a>
     </nav>
-    <div class="worker-box">
-      <div class="nav-title" data-key="worker_label">Muncitor</div>
-      <input id="workerName" type="text" placeholder="Nume…" autocomplete="off">
-    </div>
     <button class="theme-btn" id="addBtnSide">➕ <span data-key="ed_add_short">Cod M nou</span></button>
     <button class="theme-btn" id="themeBtn">🌙 Temă</button>
-    <button class="theme-btn" id="dlBtn">⬇️ <span data-key="dl_html">Descarcă HTML</span></button>
   </aside>
 
   <!-- ============ MAIN ============ -->
@@ -1059,9 +1051,7 @@ const PAGE_META = {
     analyzer: { ico: "🔬", titleKey: "ana_title", subKey: "ana_sub" },
     debugger: { ico: "🐞", titleKey: "dbg_title", subKey: "dbg_sub" },
     safety: { ico: "⚠️", titleKey: "safety_title", subKey: "safety_sub" },
-    flows: { ico: "⚙️", titleKey: "flows_title", subKey: "flows_sub" },
-    stats: { ico: "📈", titleKey: "stats_title", subKey: "stats_sub" },
-    instructor: { ico: "👨‍🏫", titleKey: "instr_title", subKey: "instr_sub" }
+    flows: { ico: "⚙️", titleKey: "flows_title", subKey: "flows_sub" }
 };
 
 function setPage(page, filterCat) {
@@ -1101,8 +1091,6 @@ function render() {
     else if (page === "debugger") renderDebugger();
     else if (page === "safety") renderSafety();
     else if (page === "flows") renderFlows();
-    else if (page === "stats") renderStats();
-    else if (page === "instructor") renderInstructor();
 }
 
 function updateStat() { /* jelvény eltávolítva kérésre */ }
@@ -1791,7 +1779,6 @@ document.addEventListener("click", e => {
     const ed = tEl.closest("[data-edit]");
     if (ed) { openEditor(ed.dataset.edit); return; }
     if (tEl.closest("#themeBtn")) { toggleTheme(); return; }
-    if (tEl.closest("#dlBtn")) { downloadFullHtml(); return; }
     if (tEl.closest("#hamburger")) { $("#sidebar").classList.add("open"); $("#backdrop").classList.add("show"); return; }
     if (tEl.closest("#backdrop")) { closeSidebar(); }
 });
