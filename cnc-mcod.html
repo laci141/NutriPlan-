@@ -36,6 +36,15 @@ html[data-theme="light"]{
   --txt:#132033; --txt-dim:#48586e; --txt-faint:#7d8da0;
   --shadow:0 18px 45px -20px rgba(30,50,90,.35);
 }
+/* Világos mód: a menüsáv TÖMÖR hátteret kap, különben mobilon átüt rajta
+   a sötét háttérfátyol és az egész menü kimosottnak látszik */
+html[data-theme="light"] .sidebar{
+  background:linear-gradient(180deg,#f7fafe,#edf1f8);
+}
+html[data-theme="light"] .nav-item{color:#3a4a62}
+html[data-theme="light"] .nav-item:hover,
+html[data-theme="light"] .nav-item.active{color:#0f1b2d}
+html[data-theme="light"] .nav-item.active{background:rgba(46,150,255,.10);box-shadow:0 0 18px rgba(46,150,255,.18) inset}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{font-family:var(--sans);color:var(--txt);background:var(--bg-0);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;font-size:28px}
@@ -626,7 +635,7 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
     <button class="nav-mini-btn" id="navMini">«</button>
     <div class="brand">
       <div class="logo">🛠️</div>
-      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v11</span></div>
+      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v12</span></div>
     </div>
     <div class="search-wrap">
       <span class="ico">🔎</span>
@@ -634,7 +643,7 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
       <button class="search-clear" id="searchClear" title="Șterge" style="display:none">✕</button>
     </div>
     <nav class="nav-list" id="navList">
-      <a class="nav-item active" data-page="dashboard"><span class="ico">🏠</span><span data-key="nav_dashboard">Dashboard</span></a>
+      <a class="nav-item active" data-page="dashboard"><span class="ico">🏠</span><span data-key="nav_dashboard">Pagina de start</span></a>
       <a class="nav-item" data-page="mcodes"><span class="ico">📚</span><span data-key="nav_mcodes">Coduri M</span></a>
       <a class="nav-item" data-page="gcodes"><span class="ico">🧭</span><span data-key="nav_gcode">Coduri G</span></a>
       <a class="nav-item" data-page="mindmap"><span class="ico">🧠</span><span data-key="nav_mindmap">Hartă mentală</span></a>
@@ -840,8 +849,8 @@ const FLOWS = [{
 }];
 
 const UI_TEXTS = {
-    hu: { nav_main:"Főmenü", nav_dashboard:"Dashboard", nav_mcodes:"M-kódok", nav_mindmap:"Elmetérkép", nav_flows:"Munkamenetek", nav_safety:"Biztonság", nav_dict:"CNC Szótár",
-        search_placeholder:"Keresés: M120, orsó, coborâre…", dashboard_title:"Dashboard", dashboard_sub:"Áttekintés",
+    hu: { nav_main:"Főmenü", nav_dashboard:"Kezdőlap", nav_mcodes:"M-kódok", nav_mindmap:"Elmetérkép", nav_flows:"Munkamenetek", nav_safety:"Biztonság", nav_dict:"CNC Szótár",
+        search_placeholder:"Keresés: M120, orsó, coborâre…", dashboard_title:"Kezdőlap", dashboard_sub:"Áttekintés",
         mcodes_title:"M-kódok", mcodes_sub:"Összes M-kód kártyákon, kategóriánként",
         mindmap_title:"Elmetérkép", mindmap_sub:"Interaktív térkép – kattints a kódra a részletekért",
         flows_title:"Munkamenetek", flows_sub:"Vizuális folyamatábrák a gépi lépésekhez",
@@ -859,14 +868,14 @@ const UI_TEXTS = {
         mm_zoom_in:"🔍+ Nagyítás", mm_zoom_out:"🔍− Kicsinyítés", mm_reset:"↺ Alaphelyzet", mm_full:"⛶ Teljes képernyő", mm_full_exit:"✕ Kilépés", mm_hint:"💡 Kattints egy M-kódra a teljes magyarázatért · húzd az ujjaddal / egérrel a mozgatáshoz",
         dict_code:"Kód", dict_hu:"Magyar", dict_ro:"Román", dict_exp:"Magyarázat", dl_html:"HTML letöltése", dl_csv:"CSV letöltése",
         modal_exp:"Magyarázat", modal_when:"Mikor használjuk", modal_ex:"Példa kód", modal_warn:"Figyelem", modal_close:"Bezárás",
-        ed_add:"➕ Új M-kód", ed_add_short:"Új M-kód", ed_edit:"Szerkesztés", ed_title_new:"➕ Új M-kód", ed_title_edit:"✏️ M-kód szerkesztése",
+        ed_add:"➕ Új M-kód", dash_add_m:"➕ M kód", dash_add_g:"➕ G kód", ed_add_short:"Új M-kód", ed_edit:"Szerkesztés", ed_title_new:"➕ Új M-kód", ed_title_edit:"✏️ M-kód szerkesztése",
         ed_code:"Kód (pl. M120)", ed_cat:"Kategória", ed_name:"Név", ed_exp:"Magyarázat", ed_when:"Mikor használjuk", ed_ex:"Példa kód", ed_warn:"Figyelmeztetés (üresen hagyható)",
         ed_save:"💾 Mentés", ed_cancel:"Mégse", ed_delete:"🗑️ Törlés", ed_confirm_del:"Biztosan törlöd ezt az M-kódot?",
         ed_saved:"💾 Mentve", ed_deleted:"🗑️ Törölve", ed_code_err:"Adj meg érvényes kódot (pl. M120)", ed_dup_err:"Ez a kód már létezik!",
         ed_reset:"↺ Alap adatok", ed_reset_confirm:"Minden saját módosítás és új kód elvész, visszaáll az eredeti lista. Folytatod?", ed_reset_done:"↺ Eredeti adatok visszaállítva",
         ed_langhint:"Töltsd ki amelyik nyelvet tudod – az üresen hagyott nyelvek automatikusan átveszik a kitöltött szöveget." },
-    ro: { nav_main:"Meniu principal", nav_dashboard:"Dashboard", nav_mcodes:"Coduri M", nav_mindmap:"Hartă mentală", nav_flows:"Fluxuri", nav_safety:"Siguranță", nav_dict:"Dicționar CNC",
-        search_placeholder:"Căutare: M120, ax, coborâre…", dashboard_title:"Dashboard", dashboard_sub:"Prezentare generală",
+    ro: { nav_main:"Meniu principal", nav_dashboard:"Pagina de start", nav_mcodes:"Coduri M", nav_mindmap:"Hartă mentală", nav_flows:"Fluxuri", nav_safety:"Siguranță", nav_dict:"Dicționar CNC",
+        search_placeholder:"Căutare: M120, ax, coborâre…", dashboard_title:"Pagina de start", dashboard_sub:"Prezentare generală",
         mcodes_title:"Coduri M", mcodes_sub:"Toate codurile M pe carduri, pe categorii",
         mindmap_title:"Hartă mentală", mindmap_sub:"Hartă interactivă – apasă pe un cod pentru detalii",
         flows_title:"Fluxuri", flows_sub:"Diagrame vizuale pentru pașii mașinii",
@@ -884,14 +893,14 @@ const UI_TEXTS = {
         mm_zoom_in:"🔍+ Mărire", mm_zoom_out:"🔍− Micșorare", mm_reset:"↺ Resetare", mm_full:"⛶ Ecran complet", mm_full_exit:"✕ Ieșire", mm_hint:"💡 Apasă pe un cod M pentru explicația completă · trage cu degetul / mouse-ul pentru a muta",
         dict_code:"Cod", dict_hu:"Maghiară", dict_ro:"Română", dict_exp:"Explicație", dl_html:"Descarcă HTML", dl_csv:"Descarcă CSV",
         modal_exp:"Explicație", modal_when:"Când se folosește", modal_ex:"Exemplu de cod", modal_warn:"Atenție", modal_close:"Închide",
-        ed_add:"➕ Cod M nou", ed_add_short:"Cod M nou", ed_edit:"Editare", ed_title_new:"➕ Cod M nou", ed_title_edit:"✏️ Editare cod M",
+        ed_add:"➕ Cod M nou", dash_add_m:"➕ Cod M", dash_add_g:"➕ Cod G", ed_add_short:"Cod M nou", ed_edit:"Editare", ed_title_new:"➕ Cod M nou", ed_title_edit:"✏️ Editare cod M",
         ed_code:"Cod (ex. M120)", ed_cat:"Categorie", ed_name:"Nume", ed_exp:"Explicație", ed_when:"Când se folosește", ed_ex:"Exemplu de cod", ed_warn:"Avertisment (poate rămâne gol)",
         ed_save:"💾 Salvare", ed_cancel:"Anulare", ed_delete:"🗑️ Ștergere", ed_confirm_del:"Sigur ștergi acest cod M?",
         ed_saved:"💾 Salvat", ed_deleted:"🗑️ Șters", ed_code_err:"Introdu un cod valid (ex. M120)", ed_dup_err:"Acest cod există deja!",
         ed_reset:"↺ Date implicite", ed_reset_confirm:"Toate modificările și codurile noi se pierd, lista revine la original. Continui?", ed_reset_done:"↺ Date originale restaurate",
         ed_langhint:"Completează limbile pe care le știi – limbile goale preiau automat textul completat." },
-    de: { nav_main:"Hauptmenü", nav_dashboard:"Dashboard", nav_mcodes:"M-Codes", nav_mindmap:"Mindmap", nav_flows:"Arbeitsabläufe", nav_safety:"Sicherheit", nav_dict:"CNC-Wörterbuch",
-        search_placeholder:"Suche: M120, Spindel, absenken…", dashboard_title:"Dashboard", dashboard_sub:"Übersicht",
+    de: { nav_main:"Hauptmenü", nav_dashboard:"Startseite", nav_mcodes:"M-Codes", nav_mindmap:"Mindmap", nav_flows:"Arbeitsabläufe", nav_safety:"Sicherheit", nav_dict:"CNC-Wörterbuch",
+        search_placeholder:"Suche: M120, Spindel, absenken…", dashboard_title:"Startseite", dashboard_sub:"Übersicht",
         mcodes_title:"M-Codes", mcodes_sub:"Alle M-Codes als Karten, nach Kategorie",
         mindmap_title:"Mindmap", mindmap_sub:"Interaktive Karte – klicke auf einen Code für Details",
         flows_title:"Arbeitsabläufe", flows_sub:"Visuelle Ablaufdiagramme für die Maschinenschritte",
@@ -909,14 +918,14 @@ const UI_TEXTS = {
         mm_zoom_in:"🔍+ Vergrößern", mm_zoom_out:"🔍− Verkleinern", mm_reset:"↺ Zurücksetzen", mm_full:"⛶ Vollbild", mm_full_exit:"✕ Beenden", mm_hint:"💡 Klicke auf einen M-Code für die vollständige Erklärung · zum Verschieben ziehen",
         dict_code:"Code", dict_hu:"Ungarisch", dict_ro:"Rumänisch", dict_exp:"Erklärung", dl_html:"HTML herunterladen", dl_csv:"CSV herunterladen",
         modal_exp:"Erklärung", modal_when:"Wann verwenden", modal_ex:"Codebeispiel", modal_warn:"Achtung", modal_close:"Schließen",
-        ed_add:"➕ Neuer M-Code", ed_add_short:"Neuer M-Code", ed_edit:"Bearbeiten", ed_title_new:"➕ Neuer M-Code", ed_title_edit:"✏️ M-Code bearbeiten",
+        ed_add:"➕ Neuer M-Code", dash_add_m:"➕ M-Code", dash_add_g:"➕ G-Code", ed_add_short:"Neuer M-Code", ed_edit:"Bearbeiten", ed_title_new:"➕ Neuer M-Code", ed_title_edit:"✏️ M-Code bearbeiten",
         ed_code:"Code (z.B. M120)", ed_cat:"Kategorie", ed_name:"Name", ed_exp:"Erklärung", ed_when:"Wann verwenden", ed_ex:"Codebeispiel", ed_warn:"Warnung (kann leer bleiben)",
         ed_save:"💾 Speichern", ed_cancel:"Abbrechen", ed_delete:"🗑️ Löschen", ed_confirm_del:"Diesen M-Code wirklich löschen?",
         ed_saved:"💾 Gespeichert", ed_deleted:"🗑️ Gelöscht", ed_code_err:"Gültigen Code eingeben (z.B. M120)", ed_dup_err:"Dieser Code existiert bereits!",
         ed_reset:"↺ Standarddaten", ed_reset_confirm:"Alle Änderungen und neuen Codes gehen verloren. Fortfahren?", ed_reset_done:"↺ Originaldaten wiederhergestellt",
         ed_langhint:"Fülle die Sprachen aus, die du kennst – leere Sprachen übernehmen automatisch den ausgefüllten Text." },
-    en: { nav_main:"Main menu", nav_dashboard:"Dashboard", nav_mcodes:"M-codes", nav_mindmap:"Mind map", nav_flows:"Workflows", nav_safety:"Safety", nav_dict:"CNC Dictionary",
-        search_placeholder:"Search: M120, spindle, lower…", dashboard_title:"Dashboard", dashboard_sub:"Overview",
+    en: { nav_main:"Main menu", nav_dashboard:"Home", nav_mcodes:"M-codes", nav_mindmap:"Mind map", nav_flows:"Workflows", nav_safety:"Safety", nav_dict:"CNC Dictionary",
+        search_placeholder:"Search: M120, spindle, lower…", dashboard_title:"Home", dashboard_sub:"Overview",
         mcodes_title:"M-codes", mcodes_sub:"All M-codes as cards, grouped by category",
         mindmap_title:"Mind map", mindmap_sub:"Interactive map – click a code for details",
         flows_title:"Workflows", flows_sub:"Visual flowcharts for the machine steps",
@@ -934,7 +943,7 @@ const UI_TEXTS = {
         mm_zoom_in:"🔍+ Zoom in", mm_zoom_out:"🔍− Zoom out", mm_reset:"↺ Reset", mm_full:"⛶ Full screen", mm_full_exit:"✕ Exit", mm_hint:"💡 Click an M-code for the full explanation · drag to pan",
         dict_code:"Code", dict_hu:"Hungarian", dict_ro:"Romanian", dict_exp:"Explanation", dl_html:"Download HTML", dl_csv:"Download CSV",
         modal_exp:"Explanation", modal_when:"When to use it", modal_ex:"Example code", modal_warn:"Warning", modal_close:"Close",
-        ed_add:"➕ New M-code", ed_add_short:"New M-code", ed_edit:"Edit", ed_title_new:"➕ New M-code", ed_title_edit:"✏️ Edit M-code",
+        ed_add:"➕ New M-code", dash_add_m:"➕ M code", dash_add_g:"➕ G code", ed_add_short:"New M-code", ed_edit:"Edit", ed_title_new:"➕ New M-code", ed_title_edit:"✏️ Edit M-code",
         ed_code:"Code (e.g. M120)", ed_cat:"Category", ed_name:"Name", ed_exp:"Explanation", ed_when:"When to use it", ed_ex:"Example code", ed_warn:"Warning (may stay empty)",
         ed_save:"💾 Save", ed_cancel:"Cancel", ed_delete:"🗑️ Delete", ed_confirm_del:"Really delete this M-code?",
         ed_saved:"💾 Saved", ed_deleted:"🗑️ Deleted", ed_code_err:"Enter a valid code (e.g. M120)", ed_dup_err:"This code already exists!",
@@ -1148,8 +1157,9 @@ function renderDashboard() {
         </div>`;
       }).join('')}
     </div>
-    <div class="toolbar" style="justify-content:center;margin-top:26px;">
-      <button class="dict-dl" id="addCodeBtn">${t('ed_add')}</button>
+    <div class="toolbar" style="justify-content:center;margin-top:26px;gap:12px;flex-wrap:nowrap;">
+      <button class="dict-dl" id="addCodeBtn">${t('dash_add_m')}</button>
+      <button class="dict-dl" id="dashAddG">${t('dash_add_g')}</button>
     </div>
     <div class="dash-info">${t('mm_hint')}</div>
   `;
@@ -1734,6 +1744,7 @@ document.addEventListener("click", e => {
     const nav = tEl.closest(".nav-item");
     if (nav) { setPage(nav.dataset.page); return; }
     if (tEl.closest("#addCodeBtn") || tEl.closest("#addBtnSide")) { openEditor(null); closeSidebar(); return; }
+    if (tEl.closest("#dashAddG")) { openGcodeEditor(null); return; }
     if (tEl.closest("#resetBtn")) { resetToDefaults(); return; }
     const head = tEl.closest(".cat-head");
     if (head && state.page === "mcodes") {
@@ -1856,7 +1867,7 @@ hu: {
   err_q:"Mi a hiba ebben a programban?", err_check:"Válasz ellenőrzése", err_next:"Következő feladat", err_good:"✅ Helyes! Megtaláltad a hibát.", err_bad:"❌ Nem ez a hiba.", err_expl:"Magyarázat", err_danger:"Veszélyelemzés", err_solution:"Helyes megoldás", err_progress:"Feladat", err_anim:"▶ Hiba lejátszása animációval",
   fc_know:"✅ Tudom", fc_dontknow:"❌ Még nem tudom", fc_flip:"Kattints a fordításhoz", fc_shuffle:"🔀 Keverés", fc_next:"Következő ➡", fc_prev:"⬅ Előző",
   dnd_task:"Rakd helyes sorrendbe:", dnd_check:"✔ Ellenőrzés", dnd_showsol:"💡 Helyes sorrend", dnd_new:"🎲 Új feladat", dnd_ok:"✅ Tökéletes sorrend!", dnd_bad:"❌ hibás pozíció – piros = rossz helyen", dnd_play:"▶ Lejátszás animációval",
-  proggen_form:"Program paraméterek", proggen_shape:"Alak", proggen_line:"Egyenes vonal", proggen_circle:"Kör", proggen_semicircle:"Félkör", proggen_angle:"Derékszög", proggen_pocketc:"Kör zseb (belső kimarás)", proggen_pocketr:"Téglalap zseb (belső kimarás)", proggen_size2:"Magasság (mm, tégla)", proggen_drill:"Furatsor (G82)", proggen_roundrect:"Lekerekített tégla", proggen_slot:"Horony / nút", proggen_oval:"Ovál", proggen_count:"Furatok száma", proggen_resize:"Átméretezés (± mm)", proggen_apply:"Alkalmaz + újragenerál", proggen_paste:"Kódrészlet átméretezése (± mm)", nav_pedit:"Program szerkesztő", pedit_title:"Program szerkesztő", pedit_sub:"Kimásolt programrészlet átméretezése ± mm-rel", pedit_hint:"Példa: a lyukat a maró 7.5 mm-re készíti, de túl kicsi. Kimásolod a kör blokkját a Programból, ide beilleszted, beírod: +0.1 – és a kód át van írva 0.1 mm-rel nagyobbra. Mínusz is lehet, bármekkora érték. Tizedesjegy: PONTTAL (pl. 0.1).", pedit_in:"Beillesztett kódrészlet:", pedit_out:"Átírt kód:", proggen_paste_btn:"Átírás", proggen_mode_round:"Íves alak (kör, ovál)", proggen_mode_rect:"Szögletes alak (tégla)",
+  proggen_form:"Program paraméterek", proggen_shape:"Alak", proggen_line:"Egyenes vonal", proggen_circle:"Kör", proggen_semicircle:"Félkör", proggen_angle:"Derékszög", proggen_pocketc:"Kör zseb (belső kimarás)", proggen_pocketr:"Téglalap zseb (belső kimarás)", proggen_size2:"Magasság (mm, tégla)", proggen_drill:"Furatsor (G82)", proggen_roundrect:"Lekerekített tégla", proggen_slot:"Horony / nút", proggen_oval:"Ovál", proggen_count:"Furatok száma", proggen_resize:"Átméretezés (± mm)", proggen_apply:"Alkalmaz + újragenerál", proggen_paste:"Kódrészlet átméretezése (± mm)", nav_pedit:"Program szerkesztő", pedit_title:"Program szerkesztő", pedit_sub:"Kimásolt programrészlet átméretezése ± mm-rel", pedit_hint:"Példa: a lyukat a maró 7.5 mm-re készíti, de túl kicsi. Kimásolod a kör blokkját a Programból, ide beilleszted, beírod: +0.1 – és a kód át van írva 0.1 mm-rel nagyobbra. Mínusz is lehet, bármekkora érték. Tizedesjegy: PONTTAL (pl. 0.1).", pedit_in:"Beillesztett kódrészlet:", pedit_out:"Átírt kód:", pedit_bigger:"Nagyobb", pedit_smaller:"Kisebb", proggen_paste_btn:"Átírás", proggen_mode_round:"Íves alak (kör, ovál)", proggen_mode_rect:"Szögletes alak (tégla)",
   proggen_depth:"Mélység (mm)", proggen_feed:"Előtolás (mm/perc)", proggen_spindle:"Orsó sebesség (RPM)", proggen_rotations:"Ismétlések", proggen_generate:"Program generálása", proggen_copy:"Program másolása", proggen_dl:"Letöltés (.xxl)", proggen_add:"Alakzat hozzáadása", proggen_example:"Példa betöltése", proggen_clear:"Törlés", proggen_ops:"Program felépítése (műveletek)", proggen_size:"Méret / sugár (mm)", proggen_passes:"Fogások", proggen_empty:"Még nincs alakzat – adj hozzá egyet fent, vagy töltsd be a példát!",
   st_mastered:"Megtanult kódok", st_weak:"Legtöbb hiba", st_time:"Tanulási idő", st_bycat:"Pontosság témakörönként", st_none:"Még nincs adat – kezdj tanulni a Tanulókártyákkal!", st_min:"perc", st_focus:"Ebben kell fejlődnöd",
   in_worker:"Dolgozó", in_best:"Legjobb", in_avg:"Átlag", in_flash:"Kártyák", in_mist:"Hibák", in_time:"Idő", in_common:"Leggyakoribb hibák (mindenki)", in_detail:"Részletek", in_none:"Még nincs rögzített dolgozó. A bal oldali mezőben adj meg egy nevet!",
@@ -1896,7 +1907,7 @@ ro: {
   err_q:"Care este eroarea din acest program?", err_check:"Verifică răspunsul", err_next:"Sarcina următoare", err_good:"✅ Corect! Ai găsit eroarea.", err_bad:"❌ Nu aceasta este eroarea.", err_expl:"Explicație", err_danger:"Analiză de pericol", err_solution:"Soluția corectă", err_progress:"Sarcina", err_anim:"▶ Redă eroarea cu animație",
   fc_know:"✅ Știu", fc_dontknow:"❌ Nu știu încă", fc_flip:"Apasă pentru întoarcere", fc_shuffle:"🔀 Amestecă", fc_next:"Următorul ➡", fc_prev:"⬅ Anteriorul",
   dnd_task:"Aranjează în ordinea corectă:", dnd_check:"✔ Verificare", dnd_showsol:"💡 Ordinea corectă", dnd_new:"🎲 Sarcină nouă", dnd_ok:"✅ Ordine perfectă!", dnd_bad:"❌ poziții greșite – roșu = loc greșit", dnd_play:"▶ Redare cu animație",
-  proggen_form:"Parametri program", proggen_shape:"Formă", proggen_line:"Linie dreaptă", proggen_circle:"Cerc", proggen_semicircle:"Semicerc", proggen_angle:"Unghi drept", proggen_pocketc:"Buzunar circular (golire)", proggen_pocketr:"Buzunar dreptunghiular (golire)", proggen_size2:"Înălțime (mm, dreptunghi)", proggen_drill:"Rând de găuri (G82)", proggen_roundrect:"Dreptunghi rotunjit", proggen_slot:"Canal / nut", proggen_oval:"Oval", proggen_count:"Număr găuri", proggen_resize:"Redimensionare (± mm)", proggen_apply:"Aplică + regenerează", proggen_paste:"Redimensionare fragment de cod (± mm)", nav_pedit:"Editor program", pedit_title:"Editor program", pedit_sub:"Redimensionarea unui fragment copiat cu ± mm", pedit_hint:"Exemplu: freza face gaura la 7.5 mm, dar e prea mică. Copiezi blocul cercului din Program, îl lipești aici, scrii: +0.1 – și codul e rescris cu 0.1 mm mai mare. Se poate și minus, orice valoare. Zecimale: cu PUNCT (ex. 0.1).", pedit_in:"Fragment lipit:", pedit_out:"Cod rescris:", proggen_paste_btn:"Rescrie", proggen_mode_round:"Formă curbată (cerc, oval)", proggen_mode_rect:"Formă dreaptă (dreptunghi)",
+  proggen_form:"Parametri program", proggen_shape:"Formă", proggen_line:"Linie dreaptă", proggen_circle:"Cerc", proggen_semicircle:"Semicerc", proggen_angle:"Unghi drept", proggen_pocketc:"Buzunar circular (golire)", proggen_pocketr:"Buzunar dreptunghiular (golire)", proggen_size2:"Înălțime (mm, dreptunghi)", proggen_drill:"Rând de găuri (G82)", proggen_roundrect:"Dreptunghi rotunjit", proggen_slot:"Canal / nut", proggen_oval:"Oval", proggen_count:"Număr găuri", proggen_resize:"Redimensionare (± mm)", proggen_apply:"Aplică + regenerează", proggen_paste:"Redimensionare fragment de cod (± mm)", nav_pedit:"Editor program", pedit_title:"Editor program", pedit_sub:"Redimensionarea unui fragment copiat cu ± mm", pedit_hint:"Exemplu: freza face gaura la 7.5 mm, dar e prea mică. Copiezi blocul cercului din Program, îl lipești aici, scrii: +0.1 – și codul e rescris cu 0.1 mm mai mare. Se poate și minus, orice valoare. Zecimale: cu PUNCT (ex. 0.1).", pedit_in:"Fragment lipit:", pedit_out:"Cod rescris:", pedit_bigger:"Mai mare", pedit_smaller:"Mai mic", proggen_paste_btn:"Rescrie", proggen_mode_round:"Formă curbată (cerc, oval)", proggen_mode_rect:"Formă dreaptă (dreptunghi)",
   proggen_depth:"Adâncime (mm)", proggen_feed:"Avans (mm/min)", proggen_spindle:"Viteză ax (RPM)", proggen_rotations:"Repetări", proggen_generate:"Generează program", proggen_copy:"Copiază programul", proggen_dl:"Descarcă (.xxl)", proggen_add:"Adaugă formă", proggen_example:"Încarcă exemplul", proggen_clear:"Șterge", proggen_ops:"Structura programului (operații)", proggen_size:"Dimensiune / rază (mm)", proggen_passes:"Treceri", proggen_empty:"Încă nu există forme – adaugă una sau încarcă exemplul!",
   st_mastered:"Coduri învățate", st_weak:"Cele mai multe greșeli", st_time:"Timp de învățare", st_bycat:"Precizie pe categorii", st_none:"Încă nu există date – începe cu Flashcarduri!", st_min:"min", st_focus:"Aici trebuie să progresezi",
   in_worker:"Muncitor", in_best:"Cel mai bun", in_avg:"Media", in_flash:"Carduri", in_mist:"Greșeli", in_time:"Timp", in_common:"Cele mai frecvente greșeli (toți)", in_detail:"Detalii", in_none:"Niciun muncitor înregistrat. Introdu un nume în câmpul din stânga!",
@@ -1936,7 +1947,7 @@ de: {
   err_q:"Was ist der Fehler in diesem Programm?", err_check:"Antwort prüfen", err_next:"Nächste Aufgabe", err_good:"✅ Richtig! Du hast den Fehler gefunden.", err_bad:"❌ Das ist nicht der Fehler.", err_expl:"Erklärung", err_danger:"Gefahrenanalyse", err_solution:"Richtige Lösung", err_progress:"Aufgabe", err_anim:"▶ Fehler mit Animation abspielen",
   fc_know:"✅ Ich weiß es", fc_dontknow:"❌ Noch nicht", fc_flip:"Zum Umdrehen klicken", fc_shuffle:"🔀 Mischen", fc_next:"Weiter ➡", fc_prev:"⬅ Zurück",
   dnd_task:"Bringe in die richtige Reihenfolge:", dnd_check:"✔ Prüfen", dnd_showsol:"💡 Richtige Reihenfolge", dnd_new:"🎲 Neue Aufgabe", dnd_ok:"✅ Perfekte Reihenfolge!", dnd_bad:"❌ falsche Positionen – rot = falscher Platz", dnd_play:"▶ Mit Animation abspielen",
-  proggen_form:"Programmparameter", proggen_shape:"Form", proggen_line:"Gerade Linie", proggen_circle:"Kreis", proggen_semicircle:"Halbkreis", proggen_angle:"Rechter Winkel", proggen_pocketc:"Kreistasche (Ausräumen)", proggen_pocketr:"Rechtecktasche (Ausräumen)", proggen_size2:"Höhe (mm, Rechteck)", proggen_drill:"Bohrreihe (G82)", proggen_roundrect:"Abgerundetes Rechteck", proggen_slot:"Nut", proggen_oval:"Oval", proggen_count:"Anzahl Bohrungen", proggen_resize:"Größenänderung (± mm)", proggen_apply:"Anwenden + neu generieren", proggen_paste:"Codeabschnitt skalieren (± mm)", nav_pedit:"Programm-Editor", pedit_title:"Programm-Editor", pedit_sub:"Kopierten Programmteil um ± mm skalieren", pedit_hint:"Beispiel: der Fräser macht das Loch mit 7.5 mm, aber es ist zu klein. Du kopierst den Kreisblock aus dem Programm, fügst ihn hier ein, gibst +0.1 ein – und der Code ist 0.1 mm größer umgeschrieben. Auch minus möglich, beliebiger Wert. Dezimal: mit PUNKT (z. B. 0.1).", pedit_in:"Eingefügter Codeabschnitt:", pedit_out:"Umgeschriebener Code:", proggen_paste_btn:"Umschreiben", proggen_mode_round:"Runde Form (Kreis, Oval)", proggen_mode_rect:"Eckige Form (Rechteck)",
+  proggen_form:"Programmparameter", proggen_shape:"Form", proggen_line:"Gerade Linie", proggen_circle:"Kreis", proggen_semicircle:"Halbkreis", proggen_angle:"Rechter Winkel", proggen_pocketc:"Kreistasche (Ausräumen)", proggen_pocketr:"Rechtecktasche (Ausräumen)", proggen_size2:"Höhe (mm, Rechteck)", proggen_drill:"Bohrreihe (G82)", proggen_roundrect:"Abgerundetes Rechteck", proggen_slot:"Nut", proggen_oval:"Oval", proggen_count:"Anzahl Bohrungen", proggen_resize:"Größenänderung (± mm)", proggen_apply:"Anwenden + neu generieren", proggen_paste:"Codeabschnitt skalieren (± mm)", nav_pedit:"Programm-Editor", pedit_title:"Programm-Editor", pedit_sub:"Kopierten Programmteil um ± mm skalieren", pedit_hint:"Beispiel: der Fräser macht das Loch mit 7.5 mm, aber es ist zu klein. Du kopierst den Kreisblock aus dem Programm, fügst ihn hier ein, gibst +0.1 ein – und der Code ist 0.1 mm größer umgeschrieben. Auch minus möglich, beliebiger Wert. Dezimal: mit PUNKT (z. B. 0.1).", pedit_in:"Eingefügter Codeabschnitt:", pedit_out:"Umgeschriebener Code:", pedit_bigger:"Größer", pedit_smaller:"Kleiner", proggen_paste_btn:"Umschreiben", proggen_mode_round:"Runde Form (Kreis, Oval)", proggen_mode_rect:"Eckige Form (Rechteck)",
   proggen_depth:"Tiefe (mm)", proggen_feed:"Vorschub (mm/min)", proggen_spindle:"Spindeldrehzahl (RPM)", proggen_rotations:"Wiederholungen", proggen_generate:"Programm generieren", proggen_copy:"Programm kopieren", proggen_dl:"Herunterladen (.xxl)", proggen_add:"Form hinzufügen", proggen_example:"Beispiel laden", proggen_clear:"Löschen", proggen_ops:"Programmaufbau (Operationen)", proggen_size:"Größe / Radius (mm)", proggen_passes:"Zustellungen", proggen_empty:"Noch keine Formen – füge eine hinzu oder lade das Beispiel!",
   st_mastered:"Gelernte Codes", st_weak:"Meiste Fehler", st_time:"Lernzeit", st_bycat:"Genauigkeit nach Kategorie", st_none:"Noch keine Daten – beginne mit Lernkarten!", st_min:"Min", st_focus:"Hier musst du dich verbessern",
   in_worker:"Arbeiter", in_best:"Beste", in_avg:"Durchschnitt", in_flash:"Karten", in_mist:"Fehler", in_time:"Zeit", in_common:"Häufigste Fehler (alle)", in_detail:"Details", in_none:"Noch kein Arbeiter erfasst. Gib links einen Namen ein!",
@@ -1976,7 +1987,7 @@ en: {
   err_q:"What is the error in this program?", err_check:"Check answer", err_next:"Next task", err_good:"✅ Correct! You found the error.", err_bad:"❌ That's not the error.", err_expl:"Explanation", err_danger:"Danger analysis", err_solution:"Correct solution", err_progress:"Task", err_anim:"▶ Play the error with animation",
   fc_know:"✅ I know it", fc_dontknow:"❌ Not yet", fc_flip:"Click to flip", fc_shuffle:"🔀 Shuffle", fc_next:"Next ➡", fc_prev:"⬅ Previous",
   dnd_task:"Put in the correct order:", dnd_check:"✔ Check", dnd_showsol:"💡 Correct order", dnd_new:"🎲 New task", dnd_ok:"✅ Perfect order!", dnd_bad:"❌ wrong positions – red = wrong place", dnd_play:"▶ Play with animation",
-  proggen_form:"Program parameters", proggen_shape:"Shape", proggen_line:"Straight line", proggen_circle:"Circle", proggen_semicircle:"Semicircle", proggen_angle:"Right angle", proggen_pocketc:"Circle pocket (clear inside)", proggen_pocketr:"Rectangle pocket (clear inside)", proggen_size2:"Height (mm, rectangle)", proggen_drill:"Drill row (G82)", proggen_roundrect:"Rounded rectangle", proggen_slot:"Slot / groove", proggen_oval:"Oval", proggen_count:"Hole count", proggen_resize:"Resize (± mm)", proggen_apply:"Apply + regenerate", proggen_paste:"Resize code fragment (± mm)", nav_pedit:"Program editor", pedit_title:"Program editor", pedit_sub:"Resize a copied program fragment by ± mm", pedit_hint:"Example: the router makes the hole at 7.5 mm but it is too small. You copy the circle block from Program, paste it here, enter +0.1 – and the code is rewritten 0.1 mm bigger. Minus works too, any value. Decimals: use a DOT (e.g. 0.1).", pedit_in:"Pasted code fragment:", pedit_out:"Rewritten code:", proggen_paste_btn:"Rewrite", proggen_mode_round:"Curved shape (circle, oval)", proggen_mode_rect:"Square shape (rectangle)",
+  proggen_form:"Program parameters", proggen_shape:"Shape", proggen_line:"Straight line", proggen_circle:"Circle", proggen_semicircle:"Semicircle", proggen_angle:"Right angle", proggen_pocketc:"Circle pocket (clear inside)", proggen_pocketr:"Rectangle pocket (clear inside)", proggen_size2:"Height (mm, rectangle)", proggen_drill:"Drill row (G82)", proggen_roundrect:"Rounded rectangle", proggen_slot:"Slot / groove", proggen_oval:"Oval", proggen_count:"Hole count", proggen_resize:"Resize (± mm)", proggen_apply:"Apply + regenerate", proggen_paste:"Resize code fragment (± mm)", nav_pedit:"Program editor", pedit_title:"Program editor", pedit_sub:"Resize a copied program fragment by ± mm", pedit_hint:"Example: the router makes the hole at 7.5 mm but it is too small. You copy the circle block from Program, paste it here, enter +0.1 – and the code is rewritten 0.1 mm bigger. Minus works too, any value. Decimals: use a DOT (e.g. 0.1).", pedit_in:"Pasted code fragment:", pedit_out:"Rewritten code:", pedit_bigger:"Bigger", pedit_smaller:"Smaller", proggen_paste_btn:"Rewrite", proggen_mode_round:"Curved shape (circle, oval)", proggen_mode_rect:"Square shape (rectangle)",
   proggen_depth:"Depth (mm)", proggen_feed:"Feed rate (mm/min)", proggen_spindle:"Spindle speed (RPM)", proggen_rotations:"Repetitions", proggen_generate:"Generate program", proggen_copy:"Copy program", proggen_dl:"Download (.xxl)", proggen_add:"Add shape", proggen_example:"Load example", proggen_clear:"Clear", proggen_ops:"Program structure (operations)", proggen_size:"Size / radius (mm)", proggen_passes:"Passes", proggen_empty:"No shapes yet – add one above or load the example!",
   st_mastered:"Mastered codes", st_weak:"Most mistakes", st_time:"Learning time", st_bycat:"Accuracy by category", st_none:"No data yet – start with Flashcards!", st_min:"min", st_focus:"You should improve here",
   in_worker:"Worker", in_best:"Best", in_avg:"Average", in_flash:"Cards", in_mist:"Mistakes", in_time:"Time", in_common:"Most common mistakes (everyone)", in_detail:"Details", in_none:"No workers recorded yet. Enter a name in the left field!",
@@ -3065,21 +3076,20 @@ function infographicSvg() {
   const half = 6;
   const stepItem = (s, i) => {
     const col = i < half ? 40 : 445;
-    const y = 300 + (i % half) * 62;
-    return `<circle cx="${col+18}" cy="${y}" r="17" fill="${stepCols[i]}" opacity=".92"/>
-      <text x="${col+18}" y="${y+6}" font-size="17" font-weight="800" fill="#06121a" text-anchor="middle">${i+1}</text>
-      <rect x="${col+44}" y="${y-16}" width="${s[0].length > 6 ? 108 : 62}" height="30" rx="8" fill="${stepCols[i]}" opacity=".2" stroke="${stepCols[i]}"/>
-      <text x="${col+50}" y="${y+5}" font-size="15.5" font-weight="800" fill="${stepCols[i]}" font-family="'Courier New',monospace">${s[0]}</text>
-      <text x="${col+44+(s[0].length>6?116:70)}" y="${y+5}" font-size="15.5" fill="#dfe7f3" font-family="Arial,sans-serif">${s[1]}</text>
-      ${i % half < half-1 ? `<line x1="${col+18}" y1="${y+19}" x2="${col+18}" y2="${y+43}" stroke="${stepCols[i]}" stroke-width="2.5" opacity=".5"/>` : ""}`;
+    const y = 272 + (i % half) * 62;
+    return `<circle cx="${col+18}" cy="${y}" r="19" fill="${stepCols[i]}" opacity=".92"/>
+      <text x="${col+18}" y="${y+7}" font-size="20" font-weight="800" fill="#06121a" text-anchor="middle">${i+1}</text>
+      <rect x="${col+44}" y="${y-17}" width="${s[0].length > 6 ? 124 : 72}" height="34" rx="8" fill="${stepCols[i]}" opacity=".2" stroke="${stepCols[i]}"/>
+      <text x="${col+50}" y="${y+6}" font-size="18" font-weight="800" fill="${stepCols[i]}" font-family="'Courier New',monospace">${s[0]}</text>
+      <text x="${col+44+(s[0].length>6?132:80)}" y="${y+6}" font-size="18" fill="#dfe7f3" font-family="Arial,sans-serif">${s[1]}</text>
+      ${i % half < half-1 ? `<line x1="${col+18}" y1="${y+21}" x2="${col+18}" y2="${y+43}" stroke="${stepCols[i]}" stroke-width="2.5" opacity=".5"/>` : ""}`;
   };
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="860" height="1120" viewBox="0 0 860 1120" font-family="Arial,sans-serif">
-    <rect width="860" height="1120" rx="18" fill="#0b111c"/>
-    <rect x="0" y="0" width="860" height="96" rx="18" fill="#101a2c"/>
-    <text x="430" y="44" font-size="27" font-weight="900" fill="#2ee6ff" text-anchor="middle">${T.title}</text>
-    <text x="430" y="74" font-size="17" fill="#93a1b5" text-anchor="middle">${T.sub}</text>
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="860" height="1050" viewBox="0 0 860 1050" font-family="Arial,sans-serif">
+    <rect width="860" height="1050" rx="18" fill="#0b111c"/>
+    <rect x="0" y="0" width="860" height="64" rx="18" fill="#101a2c"/>
+    <text x="430" y="42" font-size="32" font-weight="900" fill="#2ee6ff" text-anchor="middle">${T.title}</text>
     <!-- mini gép -->
-    <g transform="translate(130,112) scale(.7)">
+    <g transform="translate(130,84) scale(.7)">
       <rect x="30" y="180" width="800" height="36" rx="8" fill="#1a2436" stroke="#2a3a58"/>
       <rect x="70" y="140" width="330" height="42" rx="6" fill="#22304a" stroke="#2ee6ff" stroke-width="2"/>
       <rect x="460" y="140" width="330" height="42" rx="6" fill="#22304a" stroke="#39424f"/>
@@ -3093,24 +3103,23 @@ function infographicSvg() {
       <rect x="60" y="118" width="66" height="42" rx="8" fill="#26334d" stroke="#b085ff"/>
       <rect x="734" y="118" width="66" height="42" rx="8" fill="#26334d" stroke="#b085ff"/>
     </g>
-    <text x="40" y="278" font-size="18" font-weight="900" fill="#34ffab">▶ ${T.start} + ${T.work}</text>
-    <text x="445" y="278" font-size="18" font-weight="900" fill="#ffc234">■ ${T.stop}</text>
+    <text x="40" y="250" font-size="21.5" font-weight="900" fill="#34ffab">▶ ${T.start} + ${T.work}</text>
+    <text x="445" y="250" font-size="21.5" font-weight="900" fill="#ffc234">■ ${T.stop}</text>
     ${T.steps.map(stepItem).join("")}
     <!-- veszélyszintek -->
-    <rect x="40" y="700" width="380" height="180" rx="14" fill="#101a2c" stroke="#2a3a58"/>
-    <text x="60" y="734" font-size="18" font-weight="900" fill="#dfe7f3">⚠ ${T.dngTitle}</text>
-    ${T.dng.map((d, i) => `<rect x="60" y="${752+i*23}" width="20" height="15" rx="4" fill="${dngCols[i]}"/><text x="90" y="${764+i*23}" font-size="14.5" fill="#b9c4d4">${i+1} – ${d}</text>`).join("")}
+    <rect x="40" y="672" width="380" height="196" rx="14" fill="#101a2c" stroke="#2a3a58"/>
+    <text x="60" y="708" font-size="21.5" font-weight="900" fill="#dfe7f3">⚠ ${T.dngTitle}</text>
+    ${T.dng.map((d, i) => `<rect x="60" y="${726+i*26}" width="22" height="17" rx="4" fill="${dngCols[i]}"/><text x="92" y="${740+i*26}" font-size="17" fill="#b9c4d4">${i+1} – ${d}</text>`).join("")}
     <!-- top hibák -->
-    <rect x="445" y="700" width="375" height="180" rx="14" fill="#1c1220" stroke="#ff6b81"/>
-    <text x="465" y="734" font-size="18" font-weight="900" fill="#ff8a9a">✖ ${T.mistTitle}</text>
-    ${T.mist.map((m, i) => `<text x="465" y="${762+i*24}" font-size="13.8" fill="#e8ccd2">${i+1}. ${m}</text>`).join("")}
+    <rect x="445" y="672" width="375" height="196" rx="14" fill="#1c1220" stroke="#ff6b81"/>
+    <text x="465" y="708" font-size="21.5" font-weight="900" fill="#ff8a9a">✖ ${T.mistTitle}</text>
+    ${T.mist.map((m, i) => `<text x="465" y="${736+i*27}" font-size="16" fill="#e8ccd2">${i+1}. ${m}</text>`).join("")}
     <!-- aranyszabály -->
-    <rect x="40" y="906" width="780" height="64" rx="14" fill="#0f2118" stroke="#34ffab" stroke-width="2"/>
-    <text x="430" y="945" font-size="19" font-weight="900" fill="#34ffab" text-anchor="middle">★ ${T.rule}</text>
-    <!-- lábléc: teljes sorrend -->
-    <text x="430" y="1010" font-size="15" fill="#93a1b5" text-anchor="middle" font-family="'Courier New',monospace">M20 → M26 → M50 → M54 → M120 → M140 → M3</text>
-    <text x="430" y="1034" font-size="15" fill="#93a1b5" text-anchor="middle" font-family="'Courier New',monospace">→ 🪚 → M5 → M141 → M121 → M55 → M51 → M2</text>
-    <text x="430" y="1082" font-size="12.5" fill="#5f6f84" text-anchor="middle">CNC M-cod · HMI</text>
+    <rect x="40" y="894" width="780" height="66" rx="14" fill="#0f2118" stroke="#34ffab" stroke-width="2"/>
+    <text x="430" y="935" font-size="22" font-weight="900" fill="#34ffab" text-anchor="middle">★ ${T.rule}</text>
+    <!-- teljes sorrend -->
+    <text x="430" y="1000" font-size="18" fill="#93a1b5" text-anchor="middle" font-family="'Courier New',monospace">M20 → M26 → M50 → M54 → M120 → M140 → M3</text>
+    <text x="430" y="1028" font-size="18" fill="#93a1b5" text-anchor="middle" font-family="'Courier New',monospace">→ 🪚 → M5 → M141 → M121 → M55 → M51 → M2</text>
   </svg>`;
 }
 function renderInfog() {
@@ -3129,8 +3138,21 @@ function renderProgedit() {
       <div style="color:var(--txt-dim);font-size:17px;margin-bottom:12px;">💡 ${t("pedit_hint")}</div>
       <b>${t("pedit_in")}</b>
       <textarea id="peIn" rows="9" placeholder="N440 G42 X120 Y258.25&#10;N450 G2 X122.815 Y253.376 R3.25&#10;N460 G2 X117.185 Y253.376 R3.25&#10;N470 G2 X120 Y258.25 R3.25" style="width:100%;margin-top:6px;font-family:var(--mono);font-size:16px;padding:10px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);"></textarea>
-      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:12px 0;">
-        <label style="font-size:19px;">± mm: <input id="peDelta" type="text" inputmode="decimal" value="0.1" style="width:100px;padding:8px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);font-family:var(--mono);font-size:18px;"></label>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0;">
+        <div style="display:flex;gap:6px;">
+          <button type="button" class="ed-btn primary" id="peSignP">➕ ${t("pedit_bigger")}</button>
+          <button type="button" class="ed-btn ghost" id="peSignM">➖ ${t("pedit_smaller")}</button>
+        </div>
+        <label style="font-size:19px;">mm: <input id="peDelta" type="text" inputmode="decimal" value="0.1" style="width:90px;padding:8px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);font-family:var(--mono);font-size:18px;"></label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="ed-btn ghost" data-pedelta="0.1">0.1</button>
+          <button type="button" class="ed-btn ghost" data-pedelta="0.2">0.2</button>
+          <button type="button" class="ed-btn ghost" data-pedelta="0.5">0.5</button>
+          <button type="button" class="ed-btn ghost" data-pedelta="1">1</button>
+          <button type="button" class="ed-btn ghost" data-pedelta="2">2</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:0 0 12px;">
         <label><input type="radio" name="peMode" value="round" checked> ${t("proggen_mode_round")}</label>
         <label><input type="radio" name="peMode" value="rect"> ${t("proggen_mode_rect")}</label>
       </div>
@@ -3140,13 +3162,23 @@ function renderProgedit() {
       <button type="button" class="ed-btn ghost" id="peCopy" style="margin-top:10px;">📋 ${t("proggen_copy")}</button>
     </div>
   </div>`;
+  let peSign = 1;
+  const peSignUi = () => {
+    document.getElementById("peSignP").className = "ed-btn " + (peSign > 0 ? "primary" : "ghost");
+    document.getElementById("peSignM").className = "ed-btn " + (peSign < 0 ? "primary" : "ghost");
+  };
+  document.getElementById("peSignP").addEventListener("click", () => { peSign = 1; peSignUi(); });
+  document.getElementById("peSignM").addEventListener("click", () => { peSign = -1; peSignUi(); });
+  view.querySelectorAll("[data-pedelta]").forEach(b => b.addEventListener("click", () => {
+    document.getElementById("peDelta").value = b.dataset.pedelta;
+  }));
   document.getElementById("peBtn").addEventListener("click", () => {
     const txt = document.getElementById("peIn").value;
-    const d = parseFloat(document.getElementById("peDelta").value) || 0;
+    const d = peSign * Math.abs(parseFloat(document.getElementById("peDelta").value) || 0);
     const mode = document.querySelector('input[name="peMode"]:checked').value;
     const res = pgOffsetCode(txt, d, mode);
     document.getElementById("peOut").value = res === null ? "" : res;
-    toast(res === null ? "⚠️ X/Y/R?" : "✏️ ± " + d + " mm ✅");
+    toast(res === null ? "⚠️ X/Y/R?" : "✏️ " + (d >= 0 ? "+" : "") + d + " mm ✅");
   });
   document.getElementById("peCopy").addEventListener("click", () => {
     const ta = document.getElementById("peOut");
@@ -3314,10 +3346,11 @@ function pgOffsetCode(txt, d, mode) {
   if (!vx.length && !vy.length) return null;
   const cx = vx.length ? vx.reduce((a, b) => a + b, 0) / vx.length : 0;
   const cy = vy.length ? vy.reduce((a, b) => a + b, 0) / vy.length : 0;
-  let curX = null, curY = null;
+  let curX = null, curY = null, newX = null, newY = null;
   return rows.map(l => {
     if (/^\s*[('%]/.test(l)) return l;
     const [x, y] = readXY(l);
+    const pOldX = curX, pOldY = curY, pNewX = newX, pNewY = newY;
     if (x !== null) curX = x;
     if (y !== null) curY = y;
     let nx2 = curX, ny2 = curY;
@@ -3330,12 +3363,22 @@ function pgOffsetCode(txt, d, mode) {
         ny2 = curY + Math.sign(curY - cy) * d;
       }
     }
-    return l.replace(mkRe(), (mm, pre, ax, val) => {
-      if (ax === "R") return pre + "R" + rnd(Math.max(0.01, +val + d));
+    /* ívsugár: a húr változásának ARÁNYÁBAN módosul – így a homorú (konkáv)
+       ívek is helyesek maradnak, nem torzul az alakzat */
+    let ratio = null;
+    if (curX !== null && curY !== null && pOldX !== null && pOldY !== null && pNewX !== null && pNewY !== null) {
+      const co = Math.hypot(curX - pOldX, curY - pOldY);
+      const cn = Math.hypot(nx2 - pNewX, ny2 - pNewY);
+      if (co > 1e-9) ratio = cn / co;
+    }
+    const out = l.replace(mkRe(), (mm, pre, ax, val) => {
+      if (ax === "R") return pre + "R" + rnd(Math.max(0.01, ratio === null ? +val + d : +val * ratio));
       if (ax === "X" && x !== null) return pre + "X" + rnd(nx2);
       if (ax === "Y" && y !== null) return pre + "Y" + rnd(ny2);
       return mm;
     });
+    if (curX !== null && curY !== null) { newX = nx2; newY = ny2; }
+    return out;
   }).join("\n");
 }
 function proggenGenerate() {
