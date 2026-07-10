@@ -160,8 +160,8 @@ body[data-page="infog"] .topbar{margin-bottom:8px}
 /* ---------- ELMETÉRKÉP (SVG) ---------- */
 .mindmap-wrap{max-width:1200px;margin:0 auto;padding:10px 0;overflow:hidden}
 .mm-title{text-align:center;font-size:32px;font-weight:800;margin-bottom:14px}
-.mm-controls{display:flex;gap:12px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
-.mm-controls button{background:var(--glass);border:1px solid var(--stroke);color:var(--txt);padding:9px 18px;border-radius:999px;cursor:pointer;font-size:24px;font-weight:600;transition:var(--transition);font-family:var(--sans)}
+.mm-controls{display:flex;gap:10px;justify-content:center;margin-bottom:4px;flex-wrap:nowrap}
+.mm-controls button{background:var(--glass);border:1px solid var(--stroke);color:var(--txt);width:56px;height:56px;padding:0;border-radius:14px;cursor:pointer;font-size:28px;font-weight:600;transition:var(--transition);font-family:var(--sans);display:grid;place-items:center;flex:0 0 auto}
 .mm-controls button:hover{border-color:var(--cyan);box-shadow:0 0 16px var(--cyan-glow)}
 .mm-container{
   position:relative;
@@ -329,8 +329,7 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
   .flow-desc{font-size:15px}
   .safety-card li{font-size:17px}
   .safety-card h3{font-size:18px}
-  .mm-title{font-size:22px}
-  .mm-controls button{font-size:17px;padding:8px 14px}
+  .mm-controls button{font-size:24px;width:50px;height:50px}
   .dict-dl{font-size:17px}
   #toast{font-size:17px}
   .ed-modal{padding:20px 14px}
@@ -635,7 +634,7 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
     <button class="nav-mini-btn" id="navMini">«</button>
     <div class="brand">
       <div class="logo">🛠️</div>
-      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v12</span></div>
+      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v13</span></div>
     </div>
     <div class="search-wrap">
       <span class="ico">🔎</span>
@@ -859,7 +858,7 @@ const UI_TEXTS = {
         nav_gcode:"G-kódok", gcode_title:"G-kódok", gcode_sub:"Szabványos G-kódok + a gép saját kódjai (G77, G79…)", gcode_search:"Keresés: G0, körív, fúróciklus…", gcode_ex:"Példa", gcode_note:"Megjegyzés", gcode_count:"kód", gc_add:"➕ Új G-kód",
         nav_prez:"Prezentáció", prez_title:"Prezentáció", prez_sub:"Hogyan dolgozik a gép az M-kódokkal – 3 nézetben", prez_zoom:"🔍 Zoom-prezi", prez_slides:"🎞️ Diák", prez_scroll:"📜 Görgetés", prez_play:"▶ Lejátszás", prez_pause:"⏸ Szünet",
         nav_infog:"Infografika", infog_title:"Infografika", infog_sub:"", infog_dl:"⬇️ Letöltés képként (PNG)",
-        nav_realprog:"Program", rp_title:"Valós program – G+M együtt", rp_sub:"A gépről beírt program soronként elmagyarázva", rp_src:"Program:", rp_own:"Saját program beillesztése…", rp_story:"Mi történik itt?", rp_codes:"Kódok ebben a sorban", rp_photo:"Minta program", rp_cmt:"Megjegyzés a programban – a gép nem hajtja végre, a kezelőnek szól.", rp_hdr:"Programfej – a program neve/azonosítója a vezérlőnek.", rp_blocks:"Műveleti blokkok – kimásolható részek", rp_blocks_d:"A program automatikusan szétszedve: egy blokk = egy összefüggő vágás (amíg a szerszám fel nem emelkedik). Mindegyik külön másolható.", blk_drill:"Fúrássorozat – {n} furat (G82 ciklus)", blk_drill_d:"A G82 ciklust egyszer definiálja, utána minden koordináta egy új furat. A blokkot a G80 zárja.", blk_circle:"Kör – középpont X{x} Y{y}, ív R{r}", blk_circle_d:"Merülés a középpontban, G42 korrekció, körívek, G40 – egy kör kimarása egyetlen szerszámemelés nélkül.", blk_semi:"Félkör – X{x} Y{y} környékén", blk_semi_d:"Két ív egyetlen folyamatos vágásban.", blk_line:"Egyenes vágás – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Merülés, egyenes húzás, emelés – egy vonal.", blk_contour:"Kontúr – {n} ív+egyenes EGYBEN kivágva", blk_contour_d:"A teljes kontúrt egyben vágja: a szerszám végig lent marad, egyenesek és ívek folyamatosan követik egymást.", blk_cut:"Megmunkálás", blk_header:"Programfej – koordináták és nullapont", blk_header_d:"A program eleje: gépi koordináta-rendszer és munkadarab-nullapont.", blk_setup:"Művelet-előkészítés – orsó + szerszám indítás", blk_setup_d:"Orsóindítás (M3), várakozás (G4), szerszám le, alprogram (G77), korrektor (D).", blk_close:"Művelet lezárása – szerszám fel", blk_close_d:"M129 emelés, biztonsági szint (Z-75), szerszámcsoport ki (M149).", blk_tandem:"Tandem rakodó szakasz (P)", blk_tandem_d:"A két asztal váltakozó rakodása L-változókkal – végtelen ciklus a G79-cel.",
+        nav_realprog:"Program", rp_title:"Valós program – G+M együtt", rp_sub:"A gépről beírt program soronként elmagyarázva", rp_src:"Program:", rp_own:"Saját program beillesztése…", rp_story:"Mi történik itt?", rp_codes:"Kódok ebben a sorban", rp_photo:"Minta program", rp_cmt:"Megjegyzés a programban – a gép nem hajtja végre, a kezelőnek szól.", rp_hdr:"Programfej – a program neve/azonosítója a vezérlőnek.", rp_blocks:"Műveleti blokkok – kimásolható részek", rp_clear:"Törlés", rp_cleared:"Törölve – jöhet az új program", rp_blocks_d:"A program automatikusan szétszedve: egy blokk = egy összefüggő vágás (amíg a szerszám fel nem emelkedik). Mindegyik külön másolható.", blk_drill:"Fúrássorozat – {n} furat (G82 ciklus)", blk_drill_d:"A G82 ciklust egyszer definiálja, utána minden koordináta egy új furat. A blokkot a G80 zárja.", blk_circle:"Kör – középpont X{x} Y{y}, ív R{r}", blk_circle_d:"Merülés a középpontban, G42 korrekció, körívek, G40 – egy kör kimarása egyetlen szerszámemelés nélkül.", blk_semi:"Félkör – X{x} Y{y} környékén", blk_semi_d:"Két ív egyetlen folyamatos vágásban.", blk_line:"Egyenes vágás – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Merülés, egyenes húzás, emelés – egy vonal.", blk_contour:"Kontúr – {n} ív+egyenes EGYBEN kivágva", blk_contour_d:"A teljes kontúrt egyben vágja: a szerszám végig lent marad, egyenesek és ívek folyamatosan követik egymást.", blk_cut:"Megmunkálás", blk_header:"Programfej – koordináták és nullapont", blk_header_d:"A program eleje: gépi koordináta-rendszer és munkadarab-nullapont.", blk_setup:"Művelet-előkészítés – orsó + szerszám indítás", blk_setup_d:"Orsóindítás (M3), várakozás (G4), szerszám le, alprogram (G77), korrektor (D).", blk_close:"Művelet lezárása – szerszám fel", blk_close_d:"M129 emelés, biztonsági szint (Z-75), szerszámcsoport ki (M149).", blk_tandem:"Tandem rakodó szakasz (P)", blk_tandem_d:"A két asztal váltakozó rakodása L-változókkal – végtelen ciklus a G79-cel.",
         stat_codes:"M-kódok", stat_cats:"Kategóriák", stat_flows:"Munkamenetek", stat_favs:"Kedvencek",
         card_exp:"📖 Magyarázat", card_when:"⏱️ Mikor használjuk", card_ex:"💡 Példa", card_warn:"⚠️ Figyelem", card_note:"Saját jegyzet",
         safety_common:"Gyakori hibák", safety_danger:"Veszélyek", safety_not:"Mit nem szabad", safety_order:"Helyes sorrend", safety_warn:"Biztonsági figyelmeztetések",
@@ -884,7 +883,7 @@ const UI_TEXTS = {
         nav_gcode:"Coduri G", gcode_title:"Coduri G", gcode_sub:"Coduri G standard + codurile specifice mașinii (G77, G79…)", gcode_search:"Căutare: G0, arc, ciclu de găurire…", gcode_ex:"Exemplu", gcode_note:"Notă", gcode_count:"coduri", gc_add:"➕ Cod G nou",
         nav_prez:"Prezentare", prez_title:"Prezentare", prez_sub:"Cum lucrează mașina cu codurile M – în 3 moduri", prez_zoom:"🔍 Zoom-prezi", prez_slides:"🎞️ Diapozitive", prez_scroll:"📜 Derulare", prez_play:"▶ Redare", prez_pause:"⏸ Pauză",
         nav_infog:"Infografic", infog_title:"Infografic", infog_sub:"", infog_dl:"⬇️ Descarcă ca imagine (PNG)",
-        nav_realprog:"Program", rp_title:"Program real – G+M împreună", rp_sub:"Programul de pe mașină, explicat rând cu rând", rp_src:"Program:", rp_own:"Lipește propriul program…", rp_story:"Ce se întâmplă aici?", rp_codes:"Coduri în acest rând", rp_photo:"Program exemplu", rp_cmt:"Comentariu în program – mașina nu îl execută, e pentru operator.", rp_hdr:"Antet de program – numele/ID-ul programului pentru comandă.", rp_blocks:"Blocuri de operații – părți copiabile", rp_blocks_d:"Programul e împărțit automat: un bloc = o tăiere continuă (până scula se ridică). Fiecare se poate copia separat.", blk_drill:"Serie de găuri – {n} găuri (ciclu G82)", blk_drill_d:"Ciclul G82 e definit o dată, apoi fiecare coordonată e o gaură nouă. Blocul se închide cu G80.", blk_circle:"Cerc – centru X{x} Y{y}, arc R{r}", blk_circle_d:"Coborâre în centru, compensare G42, arce, G40 – un cerc fără ridicarea sculei.", blk_semi:"Semicerc – lângă X{x} Y{y}", blk_semi_d:"Două arce într-o tăiere continuă.", blk_line:"Tăiere dreaptă – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Coborâre, tăiere dreaptă, ridicare – o linie.", blk_contour:"Contur – {n} arce+linii tăiate ÎMPREUNĂ", blk_contour_d:"Conturul întreg e tăiat dintr-o bucată: scula rămâne jos tot timpul.", blk_cut:"Prelucrare", blk_header:"Antet – coordonate și zero", blk_header_d:"Începutul programului: coordonate mașină și zero piesă.", blk_setup:"Pregătire operație – pornire ax + sculă", blk_setup_d:"Pornire ax (M3), pauză (G4), sculă jos, subprogram (G77), corector (D).", blk_close:"Închidere operație – scula sus", blk_close_d:"Ridicare M129, nivel de siguranță (Z-75), agregat oprit (M149).", blk_tandem:"Secțiune de încărcare tandem (P)", blk_tandem_d:"Încărcarea alternantă a celor două mese cu variabile L – ciclu infinit cu G79.",
+        nav_realprog:"Program", rp_title:"Program real – G+M împreună", rp_sub:"Programul de pe mașină, explicat rând cu rând", rp_src:"Program:", rp_own:"Lipește propriul program…", rp_story:"Ce se întâmplă aici?", rp_codes:"Coduri în acest rând", rp_photo:"Program exemplu", rp_cmt:"Comentariu în program – mașina nu îl execută, e pentru operator.", rp_hdr:"Antet de program – numele/ID-ul programului pentru comandă.", rp_blocks:"Blocuri de operații – părți copiabile", rp_clear:"Șterge", rp_cleared:"Șters – poți încărca alt program", rp_blocks_d:"Programul e împărțit automat: un bloc = o tăiere continuă (până scula se ridică). Fiecare se poate copia separat.", blk_drill:"Serie de găuri – {n} găuri (ciclu G82)", blk_drill_d:"Ciclul G82 e definit o dată, apoi fiecare coordonată e o gaură nouă. Blocul se închide cu G80.", blk_circle:"Cerc – centru X{x} Y{y}, arc R{r}", blk_circle_d:"Coborâre în centru, compensare G42, arce, G40 – un cerc fără ridicarea sculei.", blk_semi:"Semicerc – lângă X{x} Y{y}", blk_semi_d:"Două arce într-o tăiere continuă.", blk_line:"Tăiere dreaptă – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Coborâre, tăiere dreaptă, ridicare – o linie.", blk_contour:"Contur – {n} arce+linii tăiate ÎMPREUNĂ", blk_contour_d:"Conturul întreg e tăiat dintr-o bucată: scula rămâne jos tot timpul.", blk_cut:"Prelucrare", blk_header:"Antet – coordonate și zero", blk_header_d:"Începutul programului: coordonate mașină și zero piesă.", blk_setup:"Pregătire operație – pornire ax + sculă", blk_setup_d:"Pornire ax (M3), pauză (G4), sculă jos, subprogram (G77), corector (D).", blk_close:"Închidere operație – scula sus", blk_close_d:"Ridicare M129, nivel de siguranță (Z-75), agregat oprit (M149).", blk_tandem:"Secțiune de încărcare tandem (P)", blk_tandem_d:"Încărcarea alternantă a celor două mese cu variabile L – ciclu infinit cu G79.",
         stat_codes:"Coduri M", stat_cats:"Categorii", stat_flows:"Fluxuri", stat_favs:"Favorite",
         card_exp:"📖 Explicație", card_when:"⏱️ Când se folosește", card_ex:"💡 Exemplu", card_warn:"⚠️ Atenție", card_note:"Nota ta",
         safety_common:"Erori frecvente", safety_danger:"Pericole", safety_not:"Ce nu trebuie făcut", safety_order:"Ordine corectă", safety_warn:"Avertismente de siguranță",
@@ -909,7 +908,7 @@ const UI_TEXTS = {
         nav_gcode:"G-Codes", gcode_title:"G-Codes", gcode_sub:"Standard-G-Codes + maschinenspezifische Codes (G77, G79…)", gcode_search:"Suche: G0, Kreisbogen, Bohrzyklus…", gcode_ex:"Beispiel", gcode_note:"Hinweis", gcode_count:"Codes", gc_add:"➕ Neuer G-Code",
         nav_prez:"Präsentation", prez_title:"Präsentation", prez_sub:"Wie die Maschine mit M-Codes arbeitet – in 3 Ansichten", prez_zoom:"🔍 Zoom-Prezi", prez_slides:"🎞️ Folien", prez_scroll:"📜 Scrollen", prez_play:"▶ Abspielen", prez_pause:"⏸ Pause",
         nav_infog:"Infografik", infog_title:"Infografik", infog_sub:"", infog_dl:"⬇️ Als Bild herunterladen (PNG)",
-        nav_realprog:"Programm", rp_title:"Echtes Programm – G+M zusammen", rp_sub:"Das Maschinenprogramm, Zeile für Zeile erklärt", rp_src:"Programm:", rp_own:"Eigenes Programm einfügen…", rp_story:"Was passiert hier?", rp_codes:"Codes in dieser Zeile", rp_photo:"Beispielprogramm", rp_cmt:"Kommentar im Programm – wird nicht ausgeführt, ist für den Bediener.", rp_hdr:"Programmkopf – Name/ID des Programms für die Steuerung.", rp_blocks:"Operationsblöcke – kopierbare Teile", rp_blocks_d:"Das Programm ist automatisch zerlegt: ein Block = ein durchgehender Schnitt (bis das Werkzeug abhebt). Jeder einzeln kopierbar.", blk_drill:"Bohrserie – {n} Bohrungen (G82-Zyklus)", blk_drill_d:"Der G82-Zyklus wird einmal definiert, danach ist jede Koordinate eine neue Bohrung. G80 schließt den Block.", blk_circle:"Kreis – Mitte X{x} Y{y}, Bogen R{r}", blk_circle_d:"Eintauchen in der Mitte, G42-Korrektur, Bögen, G40 – ein Kreis ohne Werkzeugabheben.", blk_semi:"Halbkreis – bei X{x} Y{y}", blk_semi_d:"Zwei Bögen in einem durchgehenden Schnitt.", blk_line:"Gerader Schnitt – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Eintauchen, gerader Zug, Abheben – eine Linie.", blk_contour:"Kontur – {n} Bögen+Geraden in EINEM Stück", blk_contour_d:"Die ganze Kontur wird in einem Zug geschnitten: das Werkzeug bleibt die ganze Zeit unten.", blk_cut:"Bearbeitung", blk_header:"Programmkopf – Koordinaten und Nullpunkt", blk_header_d:"Programmanfang: Maschinenkoordinaten und Werkstücknullpunkt.", blk_setup:"Operationsvorbereitung – Spindel + Werkzeug", blk_setup_d:"Spindelstart (M3), Warten (G4), Werkzeug ab, Unterprogramm (G77), Korrektor (D).", blk_close:"Operationsende – Werkzeug hoch", blk_close_d:"M129 heben, Sicherheitshöhe (Z-75), Aggregat aus (M149).", blk_tandem:"Tandem-Ladeteil (P)", blk_tandem_d:"Wechselndes Beladen der zwei Tische mit L-Variablen – Endlosschleife mit G79.",
+        nav_realprog:"Programm", rp_title:"Echtes Programm – G+M zusammen", rp_sub:"Das Maschinenprogramm, Zeile für Zeile erklärt", rp_src:"Programm:", rp_own:"Eigenes Programm einfügen…", rp_story:"Was passiert hier?", rp_codes:"Codes in dieser Zeile", rp_photo:"Beispielprogramm", rp_cmt:"Kommentar im Programm – wird nicht ausgeführt, ist für den Bediener.", rp_hdr:"Programmkopf – Name/ID des Programms für die Steuerung.", rp_blocks:"Operationsblöcke – kopierbare Teile", rp_clear:"Löschen", rp_cleared:"Gelöscht – neues Programm möglich", rp_blocks_d:"Das Programm ist automatisch zerlegt: ein Block = ein durchgehender Schnitt (bis das Werkzeug abhebt). Jeder einzeln kopierbar.", blk_drill:"Bohrserie – {n} Bohrungen (G82-Zyklus)", blk_drill_d:"Der G82-Zyklus wird einmal definiert, danach ist jede Koordinate eine neue Bohrung. G80 schließt den Block.", blk_circle:"Kreis – Mitte X{x} Y{y}, Bogen R{r}", blk_circle_d:"Eintauchen in der Mitte, G42-Korrektur, Bögen, G40 – ein Kreis ohne Werkzeugabheben.", blk_semi:"Halbkreis – bei X{x} Y{y}", blk_semi_d:"Zwei Bögen in einem durchgehenden Schnitt.", blk_line:"Gerader Schnitt – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Eintauchen, gerader Zug, Abheben – eine Linie.", blk_contour:"Kontur – {n} Bögen+Geraden in EINEM Stück", blk_contour_d:"Die ganze Kontur wird in einem Zug geschnitten: das Werkzeug bleibt die ganze Zeit unten.", blk_cut:"Bearbeitung", blk_header:"Programmkopf – Koordinaten und Nullpunkt", blk_header_d:"Programmanfang: Maschinenkoordinaten und Werkstücknullpunkt.", blk_setup:"Operationsvorbereitung – Spindel + Werkzeug", blk_setup_d:"Spindelstart (M3), Warten (G4), Werkzeug ab, Unterprogramm (G77), Korrektor (D).", blk_close:"Operationsende – Werkzeug hoch", blk_close_d:"M129 heben, Sicherheitshöhe (Z-75), Aggregat aus (M149).", blk_tandem:"Tandem-Ladeteil (P)", blk_tandem_d:"Wechselndes Beladen der zwei Tische mit L-Variablen – Endlosschleife mit G79.",
         stat_codes:"M-Codes", stat_cats:"Kategorien", stat_flows:"Abläufe", stat_favs:"Favoriten",
         card_exp:"📖 Erklärung", card_when:"⏱️ Wann verwenden", card_ex:"💡 Beispiel", card_warn:"⚠️ Achtung", card_note:"Eigene Notiz",
         safety_common:"Häufige Fehler", safety_danger:"Gefahren", safety_not:"Was nicht erlaubt ist", safety_order:"Richtige Reihenfolge", safety_warn:"Sicherheitshinweise",
@@ -934,7 +933,7 @@ const UI_TEXTS = {
         nav_gcode:"G-codes", gcode_title:"G-codes", gcode_sub:"Standard G-codes + machine-specific codes (G77, G79…)", gcode_search:"Search: G0, arc, drilling cycle…", gcode_ex:"Example", gcode_note:"Note", gcode_count:"codes", gc_add:"➕ New G-code",
         nav_prez:"Presentation", prez_title:"Presentation", prez_sub:"How the machine works with M-codes – in 3 views", prez_zoom:"🔍 Zoom-prezi", prez_slides:"🎞️ Slides", prez_scroll:"📜 Scroll", prez_play:"▶ Play", prez_pause:"⏸ Pause",
         nav_infog:"Infographic", infog_title:"Infographic", infog_sub:"", infog_dl:"⬇️ Download as image (PNG)",
-        nav_realprog:"Program", rp_title:"Real program – G+M together", rp_sub:"The machine program, explained line by line", rp_src:"Program:", rp_own:"Paste your own program…", rp_story:"What happens here?", rp_codes:"Codes in this line", rp_photo:"Example program", rp_cmt:"Comment in the program – not executed, meant for the operator.", rp_hdr:"Program header – the program's name/ID for the control.", rp_blocks:"Operation blocks – copyable parts", rp_blocks_d:"The program is split automatically: one block = one continuous cut (until the tool lifts). Each can be copied separately.", blk_drill:"Drill series – {n} holes (G82 cycle)", blk_drill_d:"The G82 cycle is defined once, then every coordinate is a new hole. G80 closes the block.", blk_circle:"Circle – center X{x} Y{y}, arc R{r}", blk_circle_d:"Plunge at the center, G42 compensation, arcs, G40 – one circle without lifting the tool.", blk_semi:"Semicircle – near X{x} Y{y}", blk_semi_d:"Two arcs in one continuous cut.", blk_line:"Straight cut – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Plunge, straight pull, lift – one line.", blk_contour:"Contour – {n} arcs+lines cut in ONE piece", blk_contour_d:"The whole contour is cut in one go: the tool stays down the whole time.", blk_cut:"Machining", blk_header:"Program header – coordinates and zero", blk_header_d:"Program start: machine coordinates and work zero.", blk_setup:"Operation setup – spindle + tool start", blk_setup_d:"Spindle start (M3), dwell (G4), tool down, subroutine (G77), offset (D).", blk_close:"Operation close – tool up", blk_close_d:"M129 lift, safe level (Z-75), unit off (M149).", blk_tandem:"Tandem loading section (P)", blk_tandem_d:"Alternate loading of the two tables with L variables – infinite loop via G79.",
+        nav_realprog:"Program", rp_title:"Real program – G+M together", rp_sub:"The machine program, explained line by line", rp_src:"Program:", rp_own:"Paste your own program…", rp_story:"What happens here?", rp_codes:"Codes in this line", rp_photo:"Example program", rp_cmt:"Comment in the program – not executed, meant for the operator.", rp_hdr:"Program header – the program's name/ID for the control.", rp_blocks:"Operation blocks – copyable parts", rp_clear:"Clear", rp_cleared:"Cleared – ready for a new program", rp_blocks_d:"The program is split automatically: one block = one continuous cut (until the tool lifts). Each can be copied separately.", blk_drill:"Drill series – {n} holes (G82 cycle)", blk_drill_d:"The G82 cycle is defined once, then every coordinate is a new hole. G80 closes the block.", blk_circle:"Circle – center X{x} Y{y}, arc R{r}", blk_circle_d:"Plunge at the center, G42 compensation, arcs, G40 – one circle without lifting the tool.", blk_semi:"Semicircle – near X{x} Y{y}", blk_semi_d:"Two arcs in one continuous cut.", blk_line:"Straight cut – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Plunge, straight pull, lift – one line.", blk_contour:"Contour – {n} arcs+lines cut in ONE piece", blk_contour_d:"The whole contour is cut in one go: the tool stays down the whole time.", blk_cut:"Machining", blk_header:"Program header – coordinates and zero", blk_header_d:"Program start: machine coordinates and work zero.", blk_setup:"Operation setup – spindle + tool start", blk_setup_d:"Spindle start (M3), dwell (G4), tool down, subroutine (G77), offset (D).", blk_close:"Operation close – tool up", blk_close_d:"M129 lift, safe level (Z-75), unit off (M149).", blk_tandem:"Tandem loading section (P)", blk_tandem_d:"Alternate loading of the two tables with L variables – infinite loop via G79.",
         stat_codes:"M-codes", stat_cats:"Categories", stat_flows:"Workflows", stat_favs:"Favorites",
         card_exp:"📖 Explanation", card_when:"⏱️ When to use it", card_ex:"💡 Example", card_warn:"⚠️ Warning", card_note:"Your note",
         safety_common:"Common mistakes", safety_danger:"Hazards", safety_not:"What not to do", safety_order:"Correct sequence", safety_warn:"Safety warnings",
@@ -1332,15 +1331,14 @@ function renderMindmap() {
 
     view.innerHTML = `
     <div class="mindmap-wrap">
-      <div class="mm-title">${t("mindmap_title")} · ${MCODES.length} M</div>
       <div class="mm-controls">
-        <button id="mmZoomIn">${t("mm_zoom_in")}</button>
-        <button id="mmZoomOut">${t("mm_zoom_out")}</button>
-        <button id="mmReset">${t("mm_reset")}</button>
-        <button id="mmFull">${document.body.classList.contains("mm-full") ? t("mm_full_exit") : t("mm_full")}</button>
+        <button id="mmZoomIn" title="${t("mm_zoom_in")}">➕</button>
+        <button id="mmZoomOut" title="${t("mm_zoom_out")}">➖</button>
+        <button id="mmReset" title="${t("mm_reset")}">↺</button>
+        <button id="mmFull" title="${t("mm_full")}">${document.body.classList.contains("mm-full") ? "✕" : "⛶"}</button>
       </div>
       <div class="mm-container" id="mmContainer">${svg}</div>
-      <div class="mm-hint-txt" style="text-align:center;color:var(--txt-faint);font-size:20px;margin-top:12px;">${t("mm_hint")}</div>
+      <div class="mm-hint-txt" style="text-align:center;color:var(--txt-faint);font-size:18px;margin-top:10px;">${t("mm_hint")}</div>
     </div>
   `;
 
@@ -1867,7 +1865,7 @@ hu: {
   err_q:"Mi a hiba ebben a programban?", err_check:"Válasz ellenőrzése", err_next:"Következő feladat", err_good:"✅ Helyes! Megtaláltad a hibát.", err_bad:"❌ Nem ez a hiba.", err_expl:"Magyarázat", err_danger:"Veszélyelemzés", err_solution:"Helyes megoldás", err_progress:"Feladat", err_anim:"▶ Hiba lejátszása animációval",
   fc_know:"✅ Tudom", fc_dontknow:"❌ Még nem tudom", fc_flip:"Kattints a fordításhoz", fc_shuffle:"🔀 Keverés", fc_next:"Következő ➡", fc_prev:"⬅ Előző",
   dnd_task:"Rakd helyes sorrendbe:", dnd_check:"✔ Ellenőrzés", dnd_showsol:"💡 Helyes sorrend", dnd_new:"🎲 Új feladat", dnd_ok:"✅ Tökéletes sorrend!", dnd_bad:"❌ hibás pozíció – piros = rossz helyen", dnd_play:"▶ Lejátszás animációval",
-  proggen_form:"Program paraméterek", proggen_shape:"Alak", proggen_line:"Egyenes vonal", proggen_circle:"Kör", proggen_semicircle:"Félkör", proggen_angle:"Derékszög", proggen_pocketc:"Kör zseb (belső kimarás)", proggen_pocketr:"Téglalap zseb (belső kimarás)", proggen_size2:"Magasság (mm, tégla)", proggen_drill:"Furatsor (G82)", proggen_roundrect:"Lekerekített tégla", proggen_slot:"Horony / nút", proggen_oval:"Ovál", proggen_count:"Furatok száma", proggen_resize:"Átméretezés (± mm)", proggen_apply:"Alkalmaz + újragenerál", proggen_paste:"Kódrészlet átméretezése (± mm)", nav_pedit:"Program szerkesztő", pedit_title:"Program szerkesztő", pedit_sub:"Kimásolt programrészlet átméretezése ± mm-rel", pedit_hint:"Példa: a lyukat a maró 7.5 mm-re készíti, de túl kicsi. Kimásolod a kör blokkját a Programból, ide beilleszted, beírod: +0.1 – és a kód át van írva 0.1 mm-rel nagyobbra. Mínusz is lehet, bármekkora érték. Tizedesjegy: PONTTAL (pl. 0.1).", pedit_in:"Beillesztett kódrészlet:", pedit_out:"Átírt kód:", pedit_bigger:"Nagyobb", pedit_smaller:"Kisebb", proggen_paste_btn:"Átírás", proggen_mode_round:"Íves alak (kör, ovál)", proggen_mode_rect:"Szögletes alak (tégla)",
+  proggen_form:"Program paraméterek", proggen_shape:"Alak", proggen_line:"Egyenes vonal", proggen_circle:"Kör", proggen_semicircle:"Félkör", proggen_angle:"Derékszög", proggen_pocketc:"Kör zseb (belső kimarás)", proggen_pocketr:"Téglalap zseb (belső kimarás)", proggen_size2:"Magasság (mm, tégla)", proggen_drill:"Furatsor (G82)", proggen_roundrect:"Lekerekített tégla", proggen_slot:"Horony / nút", proggen_oval:"Ovál", proggen_keyhole:"Kulcslyuk (fej + szár)", proggen_count:"Furatok száma", proggen_resize:"Átméretezés (± mm)", proggen_apply:"Alkalmaz + újragenerál", proggen_paste:"Kódrészlet átméretezése (± mm)", nav_pedit:"Program szerkesztő", pedit_title:"Program szerkesztő", pedit_sub:"Kimásolt programrészlet átméretezése ± mm-rel", pedit_hint:"Példa: a lyukat a maró 7.5 mm-re készíti, de túl kicsi. Kimásolod a kör blokkját a Programból, ide beilleszted, beírod: +0.1 – és a kód át van írva 0.1 mm-rel nagyobbra. Mínusz is lehet, bármekkora érték. Tizedesjegy: PONTTAL (pl. 0.1).", pedit_in:"Beillesztett kódrészlet:", pedit_out:"Átírt kód:", pedit_bigger:"Nagyobb", pedit_smaller:"Kisebb", pedit_axis:"Tengelyenkénti méret (X / Y külön)", pedit_axis_btn:"Átírás tengelyenként", pedit_axis_hint:"Ahol 0 az érték, az a tengely NEM változik. Bármilyen pontosság megadható (pl. 0.3647).", proggen_paste_btn:"Átírás", proggen_mode_round:"Íves alak (kör, ovál)", proggen_mode_rect:"Szögletes alak (tégla)",
   proggen_depth:"Mélység (mm)", proggen_feed:"Előtolás (mm/perc)", proggen_spindle:"Orsó sebesség (RPM)", proggen_rotations:"Ismétlések", proggen_generate:"Program generálása", proggen_copy:"Program másolása", proggen_dl:"Letöltés (.xxl)", proggen_add:"Alakzat hozzáadása", proggen_example:"Példa betöltése", proggen_clear:"Törlés", proggen_ops:"Program felépítése (műveletek)", proggen_size:"Méret / sugár (mm)", proggen_passes:"Fogások", proggen_empty:"Még nincs alakzat – adj hozzá egyet fent, vagy töltsd be a példát!",
   st_mastered:"Megtanult kódok", st_weak:"Legtöbb hiba", st_time:"Tanulási idő", st_bycat:"Pontosság témakörönként", st_none:"Még nincs adat – kezdj tanulni a Tanulókártyákkal!", st_min:"perc", st_focus:"Ebben kell fejlődnöd",
   in_worker:"Dolgozó", in_best:"Legjobb", in_avg:"Átlag", in_flash:"Kártyák", in_mist:"Hibák", in_time:"Idő", in_common:"Leggyakoribb hibák (mindenki)", in_detail:"Részletek", in_none:"Még nincs rögzített dolgozó. A bal oldali mezőben adj meg egy nevet!",
@@ -1907,7 +1905,7 @@ ro: {
   err_q:"Care este eroarea din acest program?", err_check:"Verifică răspunsul", err_next:"Sarcina următoare", err_good:"✅ Corect! Ai găsit eroarea.", err_bad:"❌ Nu aceasta este eroarea.", err_expl:"Explicație", err_danger:"Analiză de pericol", err_solution:"Soluția corectă", err_progress:"Sarcina", err_anim:"▶ Redă eroarea cu animație",
   fc_know:"✅ Știu", fc_dontknow:"❌ Nu știu încă", fc_flip:"Apasă pentru întoarcere", fc_shuffle:"🔀 Amestecă", fc_next:"Următorul ➡", fc_prev:"⬅ Anteriorul",
   dnd_task:"Aranjează în ordinea corectă:", dnd_check:"✔ Verificare", dnd_showsol:"💡 Ordinea corectă", dnd_new:"🎲 Sarcină nouă", dnd_ok:"✅ Ordine perfectă!", dnd_bad:"❌ poziții greșite – roșu = loc greșit", dnd_play:"▶ Redare cu animație",
-  proggen_form:"Parametri program", proggen_shape:"Formă", proggen_line:"Linie dreaptă", proggen_circle:"Cerc", proggen_semicircle:"Semicerc", proggen_angle:"Unghi drept", proggen_pocketc:"Buzunar circular (golire)", proggen_pocketr:"Buzunar dreptunghiular (golire)", proggen_size2:"Înălțime (mm, dreptunghi)", proggen_drill:"Rând de găuri (G82)", proggen_roundrect:"Dreptunghi rotunjit", proggen_slot:"Canal / nut", proggen_oval:"Oval", proggen_count:"Număr găuri", proggen_resize:"Redimensionare (± mm)", proggen_apply:"Aplică + regenerează", proggen_paste:"Redimensionare fragment de cod (± mm)", nav_pedit:"Editor program", pedit_title:"Editor program", pedit_sub:"Redimensionarea unui fragment copiat cu ± mm", pedit_hint:"Exemplu: freza face gaura la 7.5 mm, dar e prea mică. Copiezi blocul cercului din Program, îl lipești aici, scrii: +0.1 – și codul e rescris cu 0.1 mm mai mare. Se poate și minus, orice valoare. Zecimale: cu PUNCT (ex. 0.1).", pedit_in:"Fragment lipit:", pedit_out:"Cod rescris:", pedit_bigger:"Mai mare", pedit_smaller:"Mai mic", proggen_paste_btn:"Rescrie", proggen_mode_round:"Formă curbată (cerc, oval)", proggen_mode_rect:"Formă dreaptă (dreptunghi)",
+  proggen_form:"Parametri program", proggen_shape:"Formă", proggen_line:"Linie dreaptă", proggen_circle:"Cerc", proggen_semicircle:"Semicerc", proggen_angle:"Unghi drept", proggen_pocketc:"Buzunar circular (golire)", proggen_pocketr:"Buzunar dreptunghiular (golire)", proggen_size2:"Înălțime (mm, dreptunghi)", proggen_drill:"Rând de găuri (G82)", proggen_roundrect:"Dreptunghi rotunjit", proggen_slot:"Canal / nut", proggen_oval:"Oval", proggen_keyhole:"Gaură de cheie (cap + tijă)", proggen_count:"Număr găuri", proggen_resize:"Redimensionare (± mm)", proggen_apply:"Aplică + regenerează", proggen_paste:"Redimensionare fragment de cod (± mm)", nav_pedit:"Editor program", pedit_title:"Editor program", pedit_sub:"Redimensionarea unui fragment copiat cu ± mm", pedit_hint:"Exemplu: freza face gaura la 7.5 mm, dar e prea mică. Copiezi blocul cercului din Program, îl lipești aici, scrii: +0.1 – și codul e rescris cu 0.1 mm mai mare. Se poate și minus, orice valoare. Zecimale: cu PUNCT (ex. 0.1).", pedit_in:"Fragment lipit:", pedit_out:"Cod rescris:", pedit_bigger:"Mai mare", pedit_smaller:"Mai mic", pedit_axis:"Dimensiune pe axe (X / Y separat)", pedit_axis_btn:"Rescrie pe axe", pedit_axis_hint:"Unde valoarea e 0, axa NU se schimbă. Orice precizie (ex. 0.3647).", proggen_paste_btn:"Rescrie", proggen_mode_round:"Formă curbată (cerc, oval)", proggen_mode_rect:"Formă dreaptă (dreptunghi)",
   proggen_depth:"Adâncime (mm)", proggen_feed:"Avans (mm/min)", proggen_spindle:"Viteză ax (RPM)", proggen_rotations:"Repetări", proggen_generate:"Generează program", proggen_copy:"Copiază programul", proggen_dl:"Descarcă (.xxl)", proggen_add:"Adaugă formă", proggen_example:"Încarcă exemplul", proggen_clear:"Șterge", proggen_ops:"Structura programului (operații)", proggen_size:"Dimensiune / rază (mm)", proggen_passes:"Treceri", proggen_empty:"Încă nu există forme – adaugă una sau încarcă exemplul!",
   st_mastered:"Coduri învățate", st_weak:"Cele mai multe greșeli", st_time:"Timp de învățare", st_bycat:"Precizie pe categorii", st_none:"Încă nu există date – începe cu Flashcarduri!", st_min:"min", st_focus:"Aici trebuie să progresezi",
   in_worker:"Muncitor", in_best:"Cel mai bun", in_avg:"Media", in_flash:"Carduri", in_mist:"Greșeli", in_time:"Timp", in_common:"Cele mai frecvente greșeli (toți)", in_detail:"Detalii", in_none:"Niciun muncitor înregistrat. Introdu un nume în câmpul din stânga!",
@@ -1947,7 +1945,7 @@ de: {
   err_q:"Was ist der Fehler in diesem Programm?", err_check:"Antwort prüfen", err_next:"Nächste Aufgabe", err_good:"✅ Richtig! Du hast den Fehler gefunden.", err_bad:"❌ Das ist nicht der Fehler.", err_expl:"Erklärung", err_danger:"Gefahrenanalyse", err_solution:"Richtige Lösung", err_progress:"Aufgabe", err_anim:"▶ Fehler mit Animation abspielen",
   fc_know:"✅ Ich weiß es", fc_dontknow:"❌ Noch nicht", fc_flip:"Zum Umdrehen klicken", fc_shuffle:"🔀 Mischen", fc_next:"Weiter ➡", fc_prev:"⬅ Zurück",
   dnd_task:"Bringe in die richtige Reihenfolge:", dnd_check:"✔ Prüfen", dnd_showsol:"💡 Richtige Reihenfolge", dnd_new:"🎲 Neue Aufgabe", dnd_ok:"✅ Perfekte Reihenfolge!", dnd_bad:"❌ falsche Positionen – rot = falscher Platz", dnd_play:"▶ Mit Animation abspielen",
-  proggen_form:"Programmparameter", proggen_shape:"Form", proggen_line:"Gerade Linie", proggen_circle:"Kreis", proggen_semicircle:"Halbkreis", proggen_angle:"Rechter Winkel", proggen_pocketc:"Kreistasche (Ausräumen)", proggen_pocketr:"Rechtecktasche (Ausräumen)", proggen_size2:"Höhe (mm, Rechteck)", proggen_drill:"Bohrreihe (G82)", proggen_roundrect:"Abgerundetes Rechteck", proggen_slot:"Nut", proggen_oval:"Oval", proggen_count:"Anzahl Bohrungen", proggen_resize:"Größenänderung (± mm)", proggen_apply:"Anwenden + neu generieren", proggen_paste:"Codeabschnitt skalieren (± mm)", nav_pedit:"Programm-Editor", pedit_title:"Programm-Editor", pedit_sub:"Kopierten Programmteil um ± mm skalieren", pedit_hint:"Beispiel: der Fräser macht das Loch mit 7.5 mm, aber es ist zu klein. Du kopierst den Kreisblock aus dem Programm, fügst ihn hier ein, gibst +0.1 ein – und der Code ist 0.1 mm größer umgeschrieben. Auch minus möglich, beliebiger Wert. Dezimal: mit PUNKT (z. B. 0.1).", pedit_in:"Eingefügter Codeabschnitt:", pedit_out:"Umgeschriebener Code:", pedit_bigger:"Größer", pedit_smaller:"Kleiner", proggen_paste_btn:"Umschreiben", proggen_mode_round:"Runde Form (Kreis, Oval)", proggen_mode_rect:"Eckige Form (Rechteck)",
+  proggen_form:"Programmparameter", proggen_shape:"Form", proggen_line:"Gerade Linie", proggen_circle:"Kreis", proggen_semicircle:"Halbkreis", proggen_angle:"Rechter Winkel", proggen_pocketc:"Kreistasche (Ausräumen)", proggen_pocketr:"Rechtecktasche (Ausräumen)", proggen_size2:"Höhe (mm, Rechteck)", proggen_drill:"Bohrreihe (G82)", proggen_roundrect:"Abgerundetes Rechteck", proggen_slot:"Nut", proggen_oval:"Oval", proggen_keyhole:"Schlüsselloch (Kopf + Schaft)", proggen_count:"Anzahl Bohrungen", proggen_resize:"Größenänderung (± mm)", proggen_apply:"Anwenden + neu generieren", proggen_paste:"Codeabschnitt skalieren (± mm)", nav_pedit:"Programm-Editor", pedit_title:"Programm-Editor", pedit_sub:"Kopierten Programmteil um ± mm skalieren", pedit_hint:"Beispiel: der Fräser macht das Loch mit 7.5 mm, aber es ist zu klein. Du kopierst den Kreisblock aus dem Programm, fügst ihn hier ein, gibst +0.1 ein – und der Code ist 0.1 mm größer umgeschrieben. Auch minus möglich, beliebiger Wert. Dezimal: mit PUNKT (z. B. 0.1).", pedit_in:"Eingefügter Codeabschnitt:", pedit_out:"Umgeschriebener Code:", pedit_bigger:"Größer", pedit_smaller:"Kleiner", pedit_axis:"Größe je Achse (X / Y getrennt)", pedit_axis_btn:"Je Achse umschreiben", pedit_axis_hint:"Wo der Wert 0 ist, bleibt die Achse UNVERÄNDERT. Beliebige Genauigkeit (z. B. 0.3647).", proggen_paste_btn:"Umschreiben", proggen_mode_round:"Runde Form (Kreis, Oval)", proggen_mode_rect:"Eckige Form (Rechteck)",
   proggen_depth:"Tiefe (mm)", proggen_feed:"Vorschub (mm/min)", proggen_spindle:"Spindeldrehzahl (RPM)", proggen_rotations:"Wiederholungen", proggen_generate:"Programm generieren", proggen_copy:"Programm kopieren", proggen_dl:"Herunterladen (.xxl)", proggen_add:"Form hinzufügen", proggen_example:"Beispiel laden", proggen_clear:"Löschen", proggen_ops:"Programmaufbau (Operationen)", proggen_size:"Größe / Radius (mm)", proggen_passes:"Zustellungen", proggen_empty:"Noch keine Formen – füge eine hinzu oder lade das Beispiel!",
   st_mastered:"Gelernte Codes", st_weak:"Meiste Fehler", st_time:"Lernzeit", st_bycat:"Genauigkeit nach Kategorie", st_none:"Noch keine Daten – beginne mit Lernkarten!", st_min:"Min", st_focus:"Hier musst du dich verbessern",
   in_worker:"Arbeiter", in_best:"Beste", in_avg:"Durchschnitt", in_flash:"Karten", in_mist:"Fehler", in_time:"Zeit", in_common:"Häufigste Fehler (alle)", in_detail:"Details", in_none:"Noch kein Arbeiter erfasst. Gib links einen Namen ein!",
@@ -1987,7 +1985,7 @@ en: {
   err_q:"What is the error in this program?", err_check:"Check answer", err_next:"Next task", err_good:"✅ Correct! You found the error.", err_bad:"❌ That's not the error.", err_expl:"Explanation", err_danger:"Danger analysis", err_solution:"Correct solution", err_progress:"Task", err_anim:"▶ Play the error with animation",
   fc_know:"✅ I know it", fc_dontknow:"❌ Not yet", fc_flip:"Click to flip", fc_shuffle:"🔀 Shuffle", fc_next:"Next ➡", fc_prev:"⬅ Previous",
   dnd_task:"Put in the correct order:", dnd_check:"✔ Check", dnd_showsol:"💡 Correct order", dnd_new:"🎲 New task", dnd_ok:"✅ Perfect order!", dnd_bad:"❌ wrong positions – red = wrong place", dnd_play:"▶ Play with animation",
-  proggen_form:"Program parameters", proggen_shape:"Shape", proggen_line:"Straight line", proggen_circle:"Circle", proggen_semicircle:"Semicircle", proggen_angle:"Right angle", proggen_pocketc:"Circle pocket (clear inside)", proggen_pocketr:"Rectangle pocket (clear inside)", proggen_size2:"Height (mm, rectangle)", proggen_drill:"Drill row (G82)", proggen_roundrect:"Rounded rectangle", proggen_slot:"Slot / groove", proggen_oval:"Oval", proggen_count:"Hole count", proggen_resize:"Resize (± mm)", proggen_apply:"Apply + regenerate", proggen_paste:"Resize code fragment (± mm)", nav_pedit:"Program editor", pedit_title:"Program editor", pedit_sub:"Resize a copied program fragment by ± mm", pedit_hint:"Example: the router makes the hole at 7.5 mm but it is too small. You copy the circle block from Program, paste it here, enter +0.1 – and the code is rewritten 0.1 mm bigger. Minus works too, any value. Decimals: use a DOT (e.g. 0.1).", pedit_in:"Pasted code fragment:", pedit_out:"Rewritten code:", pedit_bigger:"Bigger", pedit_smaller:"Smaller", proggen_paste_btn:"Rewrite", proggen_mode_round:"Curved shape (circle, oval)", proggen_mode_rect:"Square shape (rectangle)",
+  proggen_form:"Program parameters", proggen_shape:"Shape", proggen_line:"Straight line", proggen_circle:"Circle", proggen_semicircle:"Semicircle", proggen_angle:"Right angle", proggen_pocketc:"Circle pocket (clear inside)", proggen_pocketr:"Rectangle pocket (clear inside)", proggen_size2:"Height (mm, rectangle)", proggen_drill:"Drill row (G82)", proggen_roundrect:"Rounded rectangle", proggen_slot:"Slot / groove", proggen_oval:"Oval", proggen_keyhole:"Keyhole (head + stem)", proggen_count:"Hole count", proggen_resize:"Resize (± mm)", proggen_apply:"Apply + regenerate", proggen_paste:"Resize code fragment (± mm)", nav_pedit:"Program editor", pedit_title:"Program editor", pedit_sub:"Resize a copied program fragment by ± mm", pedit_hint:"Example: the router makes the hole at 7.5 mm but it is too small. You copy the circle block from Program, paste it here, enter +0.1 – and the code is rewritten 0.1 mm bigger. Minus works too, any value. Decimals: use a DOT (e.g. 0.1).", pedit_in:"Pasted code fragment:", pedit_out:"Rewritten code:", pedit_bigger:"Bigger", pedit_smaller:"Smaller", pedit_axis:"Per-axis size (X / Y separately)", pedit_axis_btn:"Rewrite per axis", pedit_axis_hint:"Where the value is 0, that axis does NOT change. Any precision (e.g. 0.3647).", proggen_paste_btn:"Rewrite", proggen_mode_round:"Curved shape (circle, oval)", proggen_mode_rect:"Square shape (rectangle)",
   proggen_depth:"Depth (mm)", proggen_feed:"Feed rate (mm/min)", proggen_spindle:"Spindle speed (RPM)", proggen_rotations:"Repetitions", proggen_generate:"Generate program", proggen_copy:"Copy program", proggen_dl:"Download (.xxl)", proggen_add:"Add shape", proggen_example:"Load example", proggen_clear:"Clear", proggen_ops:"Program structure (operations)", proggen_size:"Size / radius (mm)", proggen_passes:"Passes", proggen_empty:"No shapes yet – add one above or load the example!",
   st_mastered:"Mastered codes", st_weak:"Most mistakes", st_time:"Learning time", st_bycat:"Accuracy by category", st_none:"No data yet – start with Flashcards!", st_min:"min", st_focus:"You should improve here",
   in_worker:"Worker", in_best:"Best", in_avg:"Average", in_flash:"Cards", in_mist:"Mistakes", in_time:"Time", in_common:"Most common mistakes (everyone)", in_detail:"Details", in_none:"No workers recorded yet. Enter a name in the left field!",
@@ -3076,20 +3074,24 @@ function infographicSvg() {
   const half = 6;
   const stepItem = (s, i) => {
     const col = i < half ? 40 : 445;
-    const y = 272 + (i % half) * 62;
-    return `<circle cx="${col+18}" cy="${y}" r="19" fill="${stepCols[i]}" opacity=".92"/>
-      <text x="${col+18}" y="${y+7}" font-size="20" font-weight="800" fill="#06121a" text-anchor="middle">${i+1}</text>
-      <rect x="${col+44}" y="${y-17}" width="${s[0].length > 6 ? 124 : 72}" height="34" rx="8" fill="${stepCols[i]}" opacity=".2" stroke="${stepCols[i]}"/>
-      <text x="${col+50}" y="${y+6}" font-size="18" font-weight="800" fill="${stepCols[i]}" font-family="'Courier New',monospace">${s[0]}</text>
-      <text x="${col+44+(s[0].length>6?132:80)}" y="${y+6}" font-size="18" fill="#dfe7f3" font-family="Arial,sans-serif">${s[1]}</text>
-      ${i % half < half-1 ? `<line x1="${col+18}" y1="${y+21}" x2="${col+18}" y2="${y+43}" stroke="${stepCols[i]}" stroke-width="2.5" opacity=".5"/>` : ""}`;
+    const y = Y0 + (i % half) * GAP;
+    return `<circle cx="${col+19}" cy="${y}" r="21" fill="${stepCols[i]}" opacity=".92"/>
+      <text x="${col+19}" y="${y+7}" font-size="22" font-weight="800" fill="#06121a" text-anchor="middle">${i+1}</text>
+      <rect x="${col+46}" y="${y-18}" width="${s[0].length > 6 ? 128 : 74}" height="36" rx="8" fill="${stepCols[i]}" opacity=".2" stroke="${stepCols[i]}"/>
+      <text x="${col+52}" y="${y+6}" font-size="19" font-weight="800" fill="${stepCols[i]}" font-family="'Courier New',monospace">${s[0]}</text>
+      <text x="${col+46+(s[0].length>6?136:82)}" y="${y+6}" font-size="18" fill="#dfe7f3" font-family="Arial,sans-serif">${s[1]}</text>
+      ${i % half < half-1 ? `<line x1="${col+19}" y1="${y+23}" x2="${col+19}" y2="${y+GAP-23}" stroke="${stepCols[i]}" stroke-width="2.5" opacity=".5"/>` : ""}`;
   };
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="860" height="1050" viewBox="0 0 860 1050" font-family="Arial,sans-serif">
-    <rect width="860" height="1050" rx="18" fill="#0b111c"/>
-    <rect x="0" y="0" width="860" height="64" rx="18" fill="#101a2c"/>
-    <text x="430" y="42" font-size="32" font-weight="900" fill="#2ee6ff" text-anchor="middle">${T.title}</text>
+  const Y0 = 288, GAP = (typeof window !== "undefined" && window.IG_GAP) ? window.IG_GAP : 115;
+  const boxesY = Y0 + 5 * GAP + 46, boxH = 212;
+  const goldenY = boxesY + boxH + 22, goldenH = 60;
+  const vbH = goldenY + goldenH + 16;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="860" height="${vbH}" viewBox="0 0 860 ${vbH}" font-family="Arial,sans-serif">
+    <rect width="860" height="${vbH}" rx="18" fill="#0b111c"/>
+    <rect x="0" y="0" width="860" height="66" rx="18" fill="#101a2c"/>
+    <text x="430" y="44" font-size="33" font-weight="900" fill="#2ee6ff" text-anchor="middle">${T.title}</text>
     <!-- mini gép -->
-    <g transform="translate(130,84) scale(.7)">
+    <g transform="translate(106,82) scale(.78)">
       <rect x="30" y="180" width="800" height="36" rx="8" fill="#1a2436" stroke="#2a3a58"/>
       <rect x="70" y="140" width="330" height="42" rx="6" fill="#22304a" stroke="#2ee6ff" stroke-width="2"/>
       <rect x="460" y="140" width="330" height="42" rx="6" fill="#22304a" stroke="#39424f"/>
@@ -3103,23 +3105,20 @@ function infographicSvg() {
       <rect x="60" y="118" width="66" height="42" rx="8" fill="#26334d" stroke="#b085ff"/>
       <rect x="734" y="118" width="66" height="42" rx="8" fill="#26334d" stroke="#b085ff"/>
     </g>
-    <text x="40" y="250" font-size="21.5" font-weight="900" fill="#34ffab">▶ ${T.start} + ${T.work}</text>
-    <text x="445" y="250" font-size="21.5" font-weight="900" fill="#ffc234">■ ${T.stop}</text>
+    <text x="40" y="262" font-size="23" font-weight="900" fill="#34ffab">▶ ${T.start} + ${T.work}</text>
+    <text x="445" y="262" font-size="23" font-weight="900" fill="#ffc234">■ ${T.stop}</text>
     ${T.steps.map(stepItem).join("")}
     <!-- veszélyszintek -->
-    <rect x="40" y="672" width="380" height="196" rx="14" fill="#101a2c" stroke="#2a3a58"/>
-    <text x="60" y="708" font-size="21.5" font-weight="900" fill="#dfe7f3">⚠ ${T.dngTitle}</text>
-    ${T.dng.map((d, i) => `<rect x="60" y="${726+i*26}" width="22" height="17" rx="4" fill="${dngCols[i]}"/><text x="92" y="${740+i*26}" font-size="17" fill="#b9c4d4">${i+1} – ${d}</text>`).join("")}
+    <rect x="40" y="${boxesY}" width="380" height="${boxH}" rx="14" fill="#101a2c" stroke="#2a3a58"/>
+    <text x="60" y="${boxesY+36}" font-size="24.5" font-weight="900" fill="#dfe7f3">⚠ ${T.dngTitle}</text>
+    ${T.dng.map((d, i) => `<rect x="60" y="${boxesY+56+i*29}" width="25" height="19" rx="4" fill="${dngCols[i]}"/><text x="97" y="${boxesY+71+i*29}" font-size="19.5" fill="#b9c4d4">${i+1} – ${d}</text>`).join("")}
     <!-- top hibák -->
-    <rect x="445" y="672" width="375" height="196" rx="14" fill="#1c1220" stroke="#ff6b81"/>
-    <text x="465" y="708" font-size="21.5" font-weight="900" fill="#ff8a9a">✖ ${T.mistTitle}</text>
-    ${T.mist.map((m, i) => `<text x="465" y="${736+i*27}" font-size="16" fill="#e8ccd2">${i+1}. ${m}</text>`).join("")}
+    <rect x="445" y="${boxesY}" width="375" height="${boxH}" rx="14" fill="#1c1220" stroke="#ff6b81"/>
+    <text x="465" y="${boxesY+36}" font-size="22.5" font-weight="900" fill="#ff8a9a">✖ ${T.mistTitle}</text>
+    ${T.mist.map((m, i) => `<text x="465" y="${boxesY+66+i*29}" font-size="16.5" fill="#e8ccd2">${i+1}. ${m}</text>`).join("")}
     <!-- aranyszabály -->
-    <rect x="40" y="894" width="780" height="66" rx="14" fill="#0f2118" stroke="#34ffab" stroke-width="2"/>
-    <text x="430" y="935" font-size="22" font-weight="900" fill="#34ffab" text-anchor="middle">★ ${T.rule}</text>
-    <!-- teljes sorrend -->
-    <text x="430" y="1000" font-size="18" fill="#93a1b5" text-anchor="middle" font-family="'Courier New',monospace">M20 → M26 → M50 → M54 → M120 → M140 → M3</text>
-    <text x="430" y="1028" font-size="18" fill="#93a1b5" text-anchor="middle" font-family="'Courier New',monospace">→ 🪚 → M5 → M141 → M121 → M55 → M51 → M2</text>
+    <rect x="40" y="${goldenY}" width="780" height="${goldenH}" rx="14" fill="#0f2118" stroke="#34ffab" stroke-width="2"/>
+    <text x="430" y="${goldenY+38}" font-size="22.5" font-weight="900" fill="#34ffab" text-anchor="middle">★ ${T.rule}</text>
   </svg>`;
 }
 function renderInfog() {
@@ -3131,6 +3130,48 @@ function renderInfog() {
 /* ============================================================
    PROGRAM GENERATOR – Parametric CNC program creation
    ============================================================ */
+/* alakzat-előnézet ikonok (kis rajz mutatja, mit fog kimarni) */
+function pgShapeIcon(shape) {
+  const s = 'fill="none" stroke="#2ee6ff" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"';
+  const f = 'fill="#2ee6ff" opacity=".16"';
+  const g = {
+    circle: `<circle cx="32" cy="23" r="14" ${s}/>`,
+    line: `<line x1="9" y1="23" x2="55" y2="23" ${s}/>`,
+    semicircle: `<path d="M17 31 A15 15 0 0 1 47 31" ${s}/><line x1="17" y1="31" x2="47" y2="31" ${s}/>`,
+    angle: `<polyline points="15,8 15,38 51,38" ${s}/>`,
+    pocketc: `<circle cx="32" cy="23" r="15" ${f}/><circle cx="32" cy="23" r="15" ${s}/><circle cx="32" cy="23" r="9" stroke="#2ee6ff" stroke-width="1.6" fill="none" opacity=".55"/><circle cx="32" cy="23" r="3.5" stroke="#2ee6ff" stroke-width="1.6" fill="none" opacity=".55"/>`,
+    pocketr: `<rect x="15" y="9" width="34" height="28" rx="3" ${f}/><rect x="15" y="9" width="34" height="28" rx="3" ${s}/><rect x="22" y="15" width="20" height="16" stroke="#2ee6ff" stroke-width="1.5" fill="none" opacity=".55"/>`,
+    drill: `<circle cx="13" cy="23" r="3.4" fill="#2ee6ff"/><circle cx="26" cy="23" r="3.4" fill="#2ee6ff"/><circle cx="39" cy="23" r="3.4" fill="#2ee6ff"/><circle cx="52" cy="23" r="3.4" fill="#2ee6ff"/>`,
+    roundrect: `<rect x="11" y="10" width="42" height="26" rx="8" ${s}/>`,
+    slot: `<rect x="9" y="17" width="46" height="12" rx="6" ${s}/>`,
+    oval: `<rect x="9" y="12" width="46" height="22" rx="11" ${s}/>`,
+    keyhole: `<circle cx="43" cy="23" r="12" ${s}/><rect x="11" y="19" width="26" height="8" rx="1" ${s}/>`
+  };
+  return `<svg viewBox="0 0 64 46" width="100%" height="46" preserveAspectRatio="xMidYMid meet">${g[shape] || ""}</svg>`;
+}
+const PG_SHAPES = ["circle","line","semicircle","angle","roundrect","oval","slot","keyhole","pocketc","pocketr","drill"];
+function pgShapeLabelKey(sh) {
+  return { circle:"proggen_circle", line:"proggen_line", semicircle:"proggen_semicircle", angle:"proggen_angle",
+    roundrect:"proggen_roundrect", oval:"proggen_oval", slot:"proggen_slot", keyhole:"proggen_keyhole",
+    pocketc:"proggen_pocketc", pocketr:"proggen_pocketr", drill:"proggen_drill" }[sh];
+}
+function pgDrawShapeGrid() {
+  const grid = document.getElementById("pgShapeGrid");
+  const sel = document.getElementById("pgShape");
+  if (!grid || !sel) return;
+  const cur = sel.value;
+  grid.innerHTML = PG_SHAPES.map(sh => {
+    const on = sh === cur;
+    const nm = getText(PG_SHAPE_NAME[sh]);
+    return `<button type="button" data-pgshape="${sh}" title="${escapeHtml(t(pgShapeLabelKey(sh)))}"
+      style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:12px;cursor:pointer;
+      background:${on ? "rgba(46,230,255,.12)" : "var(--glass)"};border:2px solid ${on ? "var(--cyan)" : "var(--stroke)"};
+      ${on ? "box-shadow:0 0 14px var(--cyan-glow);" : ""}transition:.15s;">
+      ${pgShapeIcon(sh)}
+      <span style="font-size:12.5px;font-weight:700;color:${on ? "var(--cyan)" : "var(--txt-dim)"};text-align:center;line-height:1.15;">${escapeHtml(nm)}</span>
+    </button>`;
+  }).join("");
+}
 function renderProgedit() {
   view.innerHTML = `
   <div style="max-width:820px;">
@@ -3140,8 +3181,8 @@ function renderProgedit() {
       <textarea id="peIn" rows="9" placeholder="N440 G42 X120 Y258.25&#10;N450 G2 X122.815 Y253.376 R3.25&#10;N460 G2 X117.185 Y253.376 R3.25&#10;N470 G2 X120 Y258.25 R3.25" style="width:100%;margin-top:6px;font-family:var(--mono);font-size:16px;padding:10px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);"></textarea>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0;">
         <div style="display:flex;gap:6px;">
-          <button type="button" class="ed-btn primary" id="peSignP">➕ ${t("pedit_bigger")}</button>
-          <button type="button" class="ed-btn ghost" id="peSignM">➖ ${t("pedit_smaller")}</button>
+          <button type="button" class="ed-btn primary" id="peSignP" style="font-size:24px;padding:8px 22px;">➕</button>
+          <button type="button" class="ed-btn ghost" id="peSignM" style="font-size:24px;padding:8px 22px;">➖</button>
         </div>
         <label style="font-size:19px;">mm: <input id="peDelta" type="text" inputmode="decimal" value="0.1" style="width:90px;padding:8px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);font-family:var(--mono);font-size:18px;"></label>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -3157,6 +3198,23 @@ function renderProgedit() {
         <label><input type="radio" name="peMode" value="rect"> ${t("proggen_mode_rect")}</label>
       </div>
       <button type="button" class="ed-btn primary" id="peBtn" style="width:100%;">✏️ ${t("proggen_paste_btn")}</button>
+      <div style="border-top:1px solid var(--stroke);margin-top:16px;padding-top:14px;">
+        <b>📏 ${t("pedit_axis")}</b>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0;">
+          <b style="font-family:var(--mono);min-width:24px;">X:</b>
+          <button type="button" class="ed-btn primary" id="peXP" style="font-size:22px;padding:6px 18px;">➕</button>
+          <button type="button" class="ed-btn ghost" id="peXM" style="font-size:22px;padding:6px 18px;">➖</button>
+          <input id="peDX" type="text" inputmode="decimal" value="0" style="width:130px;padding:8px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);font-family:var(--mono);font-size:18px;">
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0;">
+          <b style="font-family:var(--mono);min-width:24px;">Y:</b>
+          <button type="button" class="ed-btn primary" id="peYP" style="font-size:22px;padding:6px 18px;">➕</button>
+          <button type="button" class="ed-btn ghost" id="peYM" style="font-size:22px;padding:6px 18px;">➖</button>
+          <input id="peDY" type="text" inputmode="decimal" value="0" style="width:130px;padding:8px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);font-family:var(--mono);font-size:18px;">
+        </div>
+        <div style="color:var(--txt-faint);font-size:15px;margin-bottom:8px;">${t("pedit_axis_hint")}</div>
+        <button type="button" class="ed-btn primary" id="peAxisBtn" style="width:100%;">📏 ${t("pedit_axis_btn")}</button>
+      </div>
       <div style="margin-top:14px;"><b>${t("pedit_out")}</b></div>
       <textarea id="peOut" rows="9" readonly style="width:100%;margin-top:6px;font-family:var(--mono);font-size:16px;padding:10px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:#7dffa9;"></textarea>
       <button type="button" class="ed-btn ghost" id="peCopy" style="margin-top:10px;">📋 ${t("proggen_copy")}</button>
@@ -3185,6 +3243,26 @@ function renderProgedit() {
     ta.select();
     try { document.execCommand("copy"); toast("📋 ✅"); } catch (e) {}
   });
+  let sx = 1, sy = 1;
+  const axUi = () => {
+    document.getElementById("peXP").className = "ed-btn " + (sx > 0 ? "primary" : "ghost");
+    document.getElementById("peXM").className = "ed-btn " + (sx < 0 ? "primary" : "ghost");
+    document.getElementById("peYP").className = "ed-btn " + (sy > 0 ? "primary" : "ghost");
+    document.getElementById("peYM").className = "ed-btn " + (sy < 0 ? "primary" : "ghost");
+  };
+  document.getElementById("peXP").addEventListener("click", () => { sx = 1; axUi(); });
+  document.getElementById("peXM").addEventListener("click", () => { sx = -1; axUi(); });
+  document.getElementById("peYP").addEventListener("click", () => { sy = 1; axUi(); });
+  document.getElementById("peYM").addEventListener("click", () => { sy = -1; axUi(); });
+  document.getElementById("peAxisBtn").addEventListener("click", () => {
+    const txt = document.getElementById("peIn").value;
+    const ax = sx * Math.abs(parseFloat(document.getElementById("peDX").value) || 0);
+    const ay = sy * Math.abs(parseFloat(document.getElementById("peDY").value) || 0);
+    if (!ax && !ay) { toast("⚠️ X / Y = 0"); return; }
+    const res = pgOffsetCode(txt, 0, "axes", ax, ay);
+    document.getElementById("peOut").value = res === null ? "" : res;
+    toast(res === null ? "⚠️ X/Y/R?" : "📏 X" + (ax >= 0 ? "+" : "") + ax + " · Y" + (ay >= 0 ? "+" : "") + ay + " ✅");
+  });
 }
 function renderProggen() {
   view.innerHTML = `
@@ -3193,18 +3271,13 @@ function renderProggen() {
     <form id="proggenForm" style="max-width:560px;">
       <div style="margin-bottom:12px;">
         <label>${t("proggen_shape")}:</label>
-        <select id="pgShape" style="width:100%;padding:8px;margin-top:4px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);">
-          <option value="circle">${t("proggen_circle")}</option>
-          <option value="line">${t("proggen_line")}</option>
-          <option value="semicircle">${t("proggen_semicircle")}</option>
-          <option value="angle">${t("proggen_angle")}</option>
-          <option value="pocketc">${t("proggen_pocketc")}</option>
-          <option value="pocketr">${t("proggen_pocketr")}</option>
-          <option value="drill">${t("proggen_drill")}</option>
-          <option value="roundrect">${t("proggen_roundrect")}</option>
-          <option value="slot">${t("proggen_slot")}</option>
-          <option value="oval">${t("proggen_oval")}</option>
+        <select id="pgShape" style="display:none;">
+          <option value="circle"></option><option value="line"></option><option value="semicircle"></option>
+          <option value="angle"></option><option value="pocketc"></option><option value="pocketr"></option>
+          <option value="drill"></option><option value="roundrect"></option><option value="slot"></option>
+          <option value="oval"></option><option value="keyhole"></option>
         </select>
+        <div id="pgShapeGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;"></div>
       </div>
       <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
         <label style="flex:1;min-width:100px;">X: <input id="pgX" type="number" value="300" min="0" max="3000" style="width:90px;padding:6px;border:1px solid var(--stroke);border-radius:8px;background:var(--bg-1);color:var(--txt);font-family:var(--mono);"></label>
@@ -3248,6 +3321,14 @@ function renderProggen() {
   bindRange("pgFeed", v => v);
   bindRange("pgSpindle", v => v + " RPM");
   bindRange("pgPasses", v => v);
+
+  pgDrawShapeGrid();
+  document.getElementById("pgShapeGrid").addEventListener("click", e => {
+    const b = e.target.closest("[data-pgshape]");
+    if (!b) return;
+    document.getElementById("pgShape").value = b.dataset.pgshape;
+    pgDrawShapeGrid();
+  });
 
   document.getElementById("pgAddBtn").addEventListener("click", () => {
     PG.ops.push({
@@ -3299,7 +3380,8 @@ const PG_SHAPE_NAME = {
   drill:{hu:"FURATSOR",ro:"RÂND DE GĂURI",de:"BOHRREIHE",en:"DRILL ROW"},
   roundrect:{hu:"LEKEREKÍTETT TÉGLA",ro:"DREPTUNGHI ROTUNJIT",de:"ABGERUNDETES RECHTECK",en:"ROUNDED RECTANGLE"},
   slot:{hu:"HORONY",ro:"CANAL",de:"NUT",en:"SLOT"},
-  oval:{hu:"OVÁL",ro:"OVAL",de:"OVAL",en:"OVAL"}
+  oval:{hu:"OVÁL",ro:"OVAL",de:"OVAL",en:"OVAL"},
+  keyhole:{hu:"KULCSLYUK",ro:"GAURĂ DE CHEIE",de:"SCHLÜSSELLOCH",en:"KEYHOLE"}
 };
 function pgDrawOps() {
   const box = document.getElementById("pgOps");
@@ -3310,7 +3392,7 @@ function pgDrawOps() {
     box.innerHTML = PG.ops.map((o, i) => `
     <div style="display:flex;align-items:center;gap:10px;background:var(--glass);border:1px solid var(--stroke);border-radius:10px;padding:8px 12px;font-size:18px;">
       <b style="min-width:30px;">OP ${i+1}</b>
-      <span style="flex:1;">${getText(PG_SHAPE_NAME[o.shape])} · X${o.x} Y${o.y} · ${(function(o){if(o.shape==="pocketr"||o.shape==="roundrect"||o.shape==="slot"||o.shape==="oval")return o.size+"×"+o.h+" mm";if(o.shape==="drill")return o.count+"× furat · "+o.size+" mm";if(o.shape==="circle"||o.shape==="semicircle"||o.shape==="pocketc")return "R"+o.size;return o.size+" mm";})(o)} · Z${o.z} · F${o.f} · S${o.s}${o.passes>1 ? " · "+o.passes+"×" : ""}</span>
+      <span style="flex:1;">${getText(PG_SHAPE_NAME[o.shape])} · X${o.x} Y${o.y} · ${(function(o){if(o.shape==="keyhole")return "fej "+o.size+" · szár "+o.h+" mm";if(o.shape==="pocketr"||o.shape==="roundrect"||o.shape==="slot"||o.shape==="oval")return o.size+"×"+o.h+" mm";if(o.shape==="drill")return o.count+"× furat · "+o.size+" mm";if(o.shape==="circle"||o.shape==="semicircle"||o.shape==="pocketc")return "R"+o.size;return o.size+" mm";})(o)} · Z${o.z} · F${o.f} · S${o.s}${o.passes>1 ? " · "+o.passes+"×" : ""}</span>
       <button type="button" class="ed-btn ghost" data-pgdel="${i}" style="padding:4px 10px;">✖</button>
     </div>`).join("");
   }
@@ -3321,12 +3403,13 @@ function pgDrawOps() {
 /* beillesztett kódrészlet átméretezése ± mm-rel:
    íves mód – minden pont sugárirányban tolódik a középponttól, R nő/csökken;
    szögletes mód – minden pont tengelyenként tolódik kifelé/befelé */
-function pgOffsetCode(txt, d, mode) {
+function pgOffsetCode(txt, d, mode, ax, ay) {
+  ax = ax || 0; ay = ay || 0;
   /* előtag-karakter külön csoportban (nincs lookbehind – régi böngészőkön is fut):
      így az "ER30" / "EF0.25" tokenek R/F-je NEM illeszkedik, csak a szabad X/Y/R */
   const mkRe = () => /(^|[^A-Za-z])([XYR])(-?\d+(?:\.\d+)?)/g;
   const rows = txt.split(/\n/);
-  const rnd = v => Math.round(v * 1000) / 1000;
+  const rnd = v => Math.round(v * 1e6) / 1e6;
   const readXY = l => {
     let x = null, y = null, m, re = mkRe();
     while ((m = re.exec(l)) !== null) { if (m[2] === "X") x = +m[3]; else if (m[2] === "Y") y = +m[3]; }
@@ -3358,6 +3441,9 @@ function pgOffsetCode(txt, d, mode) {
       if (mode === "round") {
         const dx = curX - cx, dy = curY - cy, dist = Math.hypot(dx, dy);
         if (dist > 1e-6) { const f = (dist + d) / dist; nx2 = cx + dx * f; ny2 = cy + dy * f; }
+      } else if (mode === "axes") {
+        nx2 = curX + Math.sign(curX - cx) * ax;
+        ny2 = curY + Math.sign(curY - cy) * ay;
       } else {
         nx2 = curX + Math.sign(curX - cx) * d;
         ny2 = curY + Math.sign(curY - cy) * d;
@@ -3740,6 +3826,50 @@ function proggenGenerate() {
           "OVALUL e ÎNCHIS.",
           "Das OVAL ist GESCHLOSSEN.",
           "The OVAL is CLOSED."));
+      } else if (op.shape === "keyhole") {
+        const hw = SZ/2, R = Math.max(2, Math.round(SZ/5)), sw = Math.max(2, Math.round(SZ/8)), Lst = op.h || 30, xl = X - hw - Lst;
+        lines.push(L(`${nx()} G0 X${num(X - hw)} Y${num(Y + sw - 6)} Z30`,
+          `GYORSJÁRAT (G0) a kulcslyuk-kontúr kezdőpontja alá (a fej bal oldala, a szárnál).` + passInfo.hu,
+          "RAPID (G0) sub punctul de start al gaurii de cheie." + passInfo.ro,
+          "EILGANG (G0) unter den Startpunkt des Schlüssellochs." + passInfo.de,
+          "RAPID (G0) below the keyhole start point." + passInfo.en));
+        lines.push(L(`${nx()} G1 G9 X${num(X - hw)} Y${num(Y + sw - 6)} Z${z} F3000`,
+          `Merülés ${z} mm mélyre.`, `Coborâre la ${z} mm.`, `Eintauchen auf ${z} mm.`, `Plunge to ${z} mm.`));
+        lines.push(L(`${nx()} G9 F${F} S${S}`,
+          `Előtolás: ${F} mm/perc – jön a KULCSLYUK: ${SZ}×${SZ} mm-es lekerekített fej (R${R} sarkok) + ${Lst} mm hosszú szár. Bútor-függesztőknél tipikus.`,
+          `Avans: ${F} mm/min – GAURĂ DE CHEIE: cap ${SZ}×${SZ} mm (colțuri R${R}) + tijă ${Lst} mm.`,
+          `Vorschub: ${F} mm/min – SCHLÜSSELLOCH: Kopf ${SZ}×${SZ} mm (R${R}-Ecken) + ${Lst} mm Schaft.`,
+          `Feed: ${F} mm/min – KEYHOLE: ${SZ}×${SZ} mm head (R${R} corners) + ${Lst} mm stem.`));
+        lines.push(L(`${nx()} G42 X${num(X - hw)} Y${num(Y + sw)}`,
+          `Sugárkorrekció JOBBRA (G42): rááll a kontúrra, a fej bal-felső csatlakozásánál (a szár fölött).`,
+          `Compensare DREAPTA (G42): pe contur.`, `Korrektur RECHTS (G42): auf die Kontur.`, `Compensation RIGHT (G42): onto the contour.`));
+        lines.push(L(`${nx()} G1 G9 X${num(X - hw)} Y${num(Y + hw - R)}`,
+          `A fej bal éle FELFELÉ a bal-felső sarokívig.`, `Latura stângă a capului în sus.`, `Linke Kopfkante nach oben.`, `Head left edge upward.`));
+        lines.push(L(`${nx()} G2 X${num(X - hw + R)} Y${num(Y + hw)} R${R}`,
+          `Bal-felső SAROKÍV (G2, R${R}).`, `Colț stânga-sus (G2, R${R}).`, `Ecke links oben (G2, R${R}).`, `Top-left corner (G2, R${R}).`));
+        lines.push(L(`${nx()} G1 G9 X${num(X + hw - R)} Y${num(Y + hw)}`,
+          `A fej felső éle jobbra.`, `Latura de sus spre dreapta.`, `Obere Kante nach rechts.`, `Top edge to the right.`));
+        lines.push(L(`${nx()} G2 X${num(X + hw)} Y${num(Y + hw - R)} R${R}`,
+          `Jobb-felső sarokív.`, `Colț dreapta-sus.`, `Ecke rechts oben.`, `Top-right corner.`));
+        lines.push(L(`${nx()} G1 G9 X${num(X + hw)} Y${num(Y - hw + R)}`,
+          `A fej jobb éle lefelé.`, `Latura dreaptă în jos.`, `Rechte Kante nach unten.`, `Right edge downward.`));
+        lines.push(L(`${nx()} G2 X${num(X + hw - R)} Y${num(Y - hw)} R${R}`,
+          `Jobb-alsó sarokív.`, `Colț dreapta-jos.`, `Ecke rechts unten.`, `Bottom-right corner.`));
+        lines.push(L(`${nx()} G1 G9 X${num(X - hw + R)} Y${num(Y - hw)}`,
+          `A fej alsó éle balra.`, `Latura de jos spre stânga.`, `Untere Kante nach links.`, `Bottom edge to the left.`));
+        lines.push(L(`${nx()} G2 X${num(X - hw)} Y${num(Y - hw + R)} R${R}`,
+          `Bal-alsó sarokív – a FEJ kész.`, `Colț stânga-jos – capul gata.`, `Ecke links unten – Kopf fertig.`, `Bottom-left corner – head done.`));
+        lines.push(L(`${nx()} G1 G9 X${num(X - hw)} Y${num(Y - sw)}`,
+          `Vissza a fej bal élén a szár alsó csatlakozásáig.`, `Înapoi la baza tijei.`, `Zurück zur unteren Schaftkante.`, `Back to the lower stem junction.`));
+        lines.push(L(`${nx()} G9 X${num(xl)} Y${num(Y - sw)}`,
+          `A SZÁR alsó éle balra, ${Lst} mm hosszan.`, `Latura de jos a tijei, ${Lst} mm.`, `Untere Schaftkante, ${Lst} mm.`, `Stem bottom edge, ${Lst} mm.`));
+        lines.push(L(`${nx()} G9 X${num(xl)} Y${num(Y + sw)}`,
+          `A szár bal vége (lezárás).`, `Capătul stâng al tijei.`, `Linkes Schaftende.`, `Stem left end.`));
+        lines.push(L(`${nx()} G9 X${num(X - hw)} Y${num(Y + sw)}`,
+          `A szár felső éle vissza a fejhez – a KULCSLYUK KONTÚR BEZÁRULT.`, `Latura de sus a tijei – GAURA DE CHEIE e închisă.`, `Obere Schaftkante – SCHLÜSSELLOCH geschlossen.`, `Stem top edge – KEYHOLE contour CLOSED.`));
+        lines.push(L(`${nx()} G1 G9`, `Pontos megállás (G9).`, `Oprire exactă (G9).`, `Genauhalt (G9).`, `Exact stop (G9).`));
+        lines.push(L(`${nx()} G40 G9 X${num(X - hw - 6)} Y${num(Y + sw)}`,
+          `Sugárkorrekció KI (G40): kilépés a kontúrból.`, `Compensarea OPRITĂ (G40).`, `Korrektur AUS (G40).`, `Compensation OFF (G40).`));
       } else if (op.shape === "pocketc") {
         const r = Math.max(4, SZ - 4);
         const rings = [];
@@ -4241,6 +4371,7 @@ function renderRealprog() {
     <b>${t("rp_src")}</b>
     <textarea id="rpOwn" rows="3" placeholder="N10 G53 G90&#10;N20 M3 S12000&#10;…" style="flex:1;min-width:220px;font-family:var(--mono);"></textarea>
     <button class="dict-dl" id="rpLoad">${t("sim_load")}</button>
+    <button class="dict-dl" id="rpClear">🗑 ${t("rp_clear")}</button>
   </div>
   <div class="rp-grid">
     <div class="rp-list" id="rpList"></div>
@@ -4263,6 +4394,19 @@ function renderRealprog() {
     const txt = document.getElementById("rpOwn").value;
     const lines = txt.split(/\n/).map(l => l.trim()).filter(Boolean).map(raw => ({ raw }));
     if (lines.length) { RP.own = true; RP.lines = lines; RP.i = 0; rpDrawList(); rpShow(0); rpRenderBlocks(); }
+  });
+  document.getElementById("rpClear").addEventListener("click", () => {
+    /* teljes ürítés: beviteli mező + memória (RP) + minden nézet visszaáll */
+    document.getElementById("rpOwn").value = "";
+    RP.lines = []; RP.i = 0; RP.own = false; RP.blocks = null;
+    rpDrawList();
+    const card = document.getElementById("rpCard"); if (card) card.innerHTML = "";
+    const cnt = document.getElementById("rpCnt"); if (cnt) cnt.textContent = "0 / 0";
+    const bw = document.getElementById("rpBlocksWrap"); if (bw) bw.style.display = "none";
+    const bb = document.getElementById("rpBlocks"); if (bb) bb.innerHTML = "";
+    renderMachineState("rp", newMachineState());
+    document.getElementById("rpOwn").focus();
+    toast("🗑 " + t("rp_cleared"));
   });
   view.addEventListener("click", e => {
     const cb = e.target.closest("[data-rpbcopy]");
