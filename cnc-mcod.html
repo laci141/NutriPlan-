@@ -311,6 +311,10 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
   .page-sub{font-size:15px}
   .code-badge{font-size:26px;padding:3px 10px}
   .card-titles .hu{font-size:19px}
+  /* telefon: badge + cím marad az 1. sorban, az ikonok TELJES szélességű 2. sorba kerülnek (nem lógnak ki) */
+  .card-top{flex-wrap:wrap;align-items:flex-start}
+  .card-actions{width:100%;margin-top:10px;gap:8px;flex-wrap:wrap;justify-content:space-between}
+  .icon-btn{width:46px;height:46px;font-size:21px;flex:1 1 auto;max-width:72px}
   .card-desc-top{font-size:18px;padding-left:10px}
   .card-field .val{font-size:16px}
   .card-field .val.mono{font-size:15px}
@@ -634,7 +638,7 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
     <button class="nav-mini-btn" id="navMini">«</button>
     <div class="brand">
       <div class="logo">🛠️</div>
-      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v15</span></div>
+      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v16</span></div>
     </div>
     <div class="search-wrap">
       <span class="ico">🔎</span>
