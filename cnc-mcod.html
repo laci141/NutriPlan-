@@ -634,7 +634,7 @@ body.mm-full[data-page="sim"],body.mm-full[data-page="prez"]{overflow:auto}
     <button class="nav-mini-btn" id="navMini">«</button>
     <div class="brand">
       <div class="logo">🛠️</div>
-      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v14</span></div>
+      <div><h1>CNC M-cod</h1><span>Învățare · HMI · v15</span></div>
     </div>
     <div class="search-wrap">
       <span class="ico">🔎</span>
@@ -858,7 +858,7 @@ const UI_TEXTS = {
         nav_gcode:"G-kódok", gcode_title:"G-kódok", gcode_sub:"Szabványos G-kódok + a gép saját kódjai (G77, G79…)", gcode_search:"Keresés: G0, körív, fúróciklus…", gcode_ex:"Példa", gcode_note:"Megjegyzés", gcode_count:"kód", gc_add:"➕ Új G-kód",
         nav_prez:"Prezentáció", prez_title:"Prezentáció", prez_sub:"Hogyan dolgozik a gép az M-kódokkal – 3 nézetben", prez_zoom:"🔍 Zoom-prezi", prez_slides:"🎞️ Diák", prez_scroll:"📜 Görgetés", prez_play:"▶ Lejátszás", prez_pause:"⏸ Szünet",
         nav_infog:"Infografika", infog_title:"Infografika", infog_sub:"", infog_dl:"⬇️ Letöltés képként (PNG)",
-        nav_realprog:"Program", rp_title:"Valós program – G+M együtt", rp_sub:"A gépről beírt program soronként elmagyarázva", rp_src:"Program:", rp_own:"Saját program beillesztése…", rp_story:"Mi történik itt?", rp_codes:"Kódok ebben a sorban", rp_photo:"Minta program", rp_cmt:"Megjegyzés a programban – a gép nem hajtja végre, a kezelőnek szól.", rp_hdr:"Programfej – a program neve/azonosítója a vezérlőnek.", rp_blocks:"Műveleti blokkok – kimásolható részek", rp_clear:"Törlés", rp_cleared:"Törölve – jöhet az új program", rp_blocks_d:"A program automatikusan szétszedve: egy blokk = egy összefüggő vágás (amíg a szerszám fel nem emelkedik). Mindegyik külön másolható.", blk_drill:"Fúrássorozat – {n} furat (G82 ciklus)", blk_drill_d:"A G82 ciklust egyszer definiálja, utána minden koordináta egy új furat. A blokkot a G80 zárja.", blk_circle:"Kör – középpont X{x} Y{y}, ív R{r}", blk_circle_d:"Merülés a középpontban, G42 korrekció, körívek, G40 – egy kör kimarása egyetlen szerszámemelés nélkül.", blk_semi:"Félkör – X{x} Y{y} környékén", blk_semi_d:"Két ív egyetlen folyamatos vágásban.", blk_line:"Egyenes vágás – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Merülés, egyenes húzás, emelés – egy vonal.", blk_contour:"Kontúr – {n} ív+egyenes EGYBEN kivágva", blk_contour_d:"A teljes kontúrt egyben vágja: a szerszám végig lent marad, egyenesek és ívek folyamatosan követik egymást.", blk_cut:"Megmunkálás", blk_header:"Programfej – koordináták és nullapont", blk_header_d:"A program eleje: gépi koordináta-rendszer és munkadarab-nullapont.", blk_setup:"Művelet-előkészítés – orsó + szerszám indítás", blk_setup_d:"Orsóindítás (M3), várakozás (G4), szerszám le, alprogram (G77), korrektor (D).", blk_close:"Művelet lezárása – szerszám fel", blk_close_d:"M129 emelés, biztonsági szint (Z-75), szerszámcsoport ki (M149).", blk_tandem:"Tandem rakodó szakasz (P)", blk_tandem_d:"A két asztal váltakozó rakodása L-változókkal – végtelen ciklus a G79-cel.",
+        nav_realprog:"Program", rp_title:"Valós program – G+M együtt", rp_sub:"A gépről beírt program soronként elmagyarázva", rp_src:"Program:", rp_own:"Saját program beillesztése…", rp_story:"Mi történik itt?", rp_codes:"Kódok ebben a sorban", rp_photo:"Minta program", rp_cmt:"Megjegyzés a programban – a gép nem hajtja végre, a kezelőnek szól.", rp_hdr:"Programfej – a program neve/azonosítója a vezérlőnek.", rp_blocks:"Műveleti blokkok – kimásolható részek", rp_clear:"Törlés", rp_cleared:"Törölve – jöhet az új program", rp_more:"további sor (használd a 📋 Másolás gombot a teljes programhoz)", rp_blocks_d:"A program automatikusan szétszedve: egy blokk = egy összefüggő vágás (amíg a szerszám fel nem emelkedik). Mindegyik külön másolható.", blk_drill:"Fúrássorozat – {n} furat (G82 ciklus)", blk_drill_d:"A G82 ciklust egyszer definiálja, utána minden koordináta egy új furat. A blokkot a G80 zárja.", blk_circle:"Kör – középpont X{x} Y{y}, ív R{r}", blk_circle_d:"Merülés a középpontban, G42 korrekció, körívek, G40 – egy kör kimarása egyetlen szerszámemelés nélkül.", blk_semi:"Félkör – X{x} Y{y} környékén", blk_semi_d:"Két ív egyetlen folyamatos vágásban.", blk_line:"Egyenes vágás – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Merülés, egyenes húzás, emelés – egy vonal.", blk_contour:"Kontúr – {n} ív+egyenes EGYBEN kivágva", blk_contour_d:"A teljes kontúrt egyben vágja: a szerszám végig lent marad, egyenesek és ívek folyamatosan követik egymást.", blk_cut:"Megmunkálás", blk_header:"Programfej – koordináták és nullapont", blk_header_d:"A program eleje: gépi koordináta-rendszer és munkadarab-nullapont.", blk_setup:"Művelet-előkészítés – orsó + szerszám indítás", blk_setup_d:"Orsóindítás (M3), várakozás (G4), szerszám le, alprogram (G77), korrektor (D).", blk_close:"Művelet lezárása – szerszám fel", blk_close_d:"M129 emelés, biztonsági szint (Z-75), szerszámcsoport ki (M149).", blk_tandem:"Tandem rakodó szakasz (P)", blk_tandem_d:"A két asztal váltakozó rakodása L-változókkal – végtelen ciklus a G79-cel.",
         stat_codes:"M-kódok", stat_cats:"Kategóriák", stat_flows:"Munkamenetek", stat_favs:"Kedvencek",
         card_exp:"📖 Magyarázat", card_when:"⏱️ Mikor használjuk", card_ex:"💡 Példa", card_warn:"⚠️ Figyelem", card_note:"Saját jegyzet",
         safety_common:"Gyakori hibák", safety_danger:"Veszélyek", safety_not:"Mit nem szabad", safety_order:"Helyes sorrend", safety_warn:"Biztonsági figyelmeztetések",
@@ -883,7 +883,7 @@ const UI_TEXTS = {
         nav_gcode:"Coduri G", gcode_title:"Coduri G", gcode_sub:"Coduri G standard + codurile specifice mașinii (G77, G79…)", gcode_search:"Căutare: G0, arc, ciclu de găurire…", gcode_ex:"Exemplu", gcode_note:"Notă", gcode_count:"coduri", gc_add:"➕ Cod G nou",
         nav_prez:"Prezentare", prez_title:"Prezentare", prez_sub:"Cum lucrează mașina cu codurile M – în 3 moduri", prez_zoom:"🔍 Zoom-prezi", prez_slides:"🎞️ Diapozitive", prez_scroll:"📜 Derulare", prez_play:"▶ Redare", prez_pause:"⏸ Pauză",
         nav_infog:"Infografic", infog_title:"Infografic", infog_sub:"", infog_dl:"⬇️ Descarcă ca imagine (PNG)",
-        nav_realprog:"Program", rp_title:"Program real – G+M împreună", rp_sub:"Programul de pe mașină, explicat rând cu rând", rp_src:"Program:", rp_own:"Lipește propriul program…", rp_story:"Ce se întâmplă aici?", rp_codes:"Coduri în acest rând", rp_photo:"Program exemplu", rp_cmt:"Comentariu în program – mașina nu îl execută, e pentru operator.", rp_hdr:"Antet de program – numele/ID-ul programului pentru comandă.", rp_blocks:"Blocuri de operații – părți copiabile", rp_clear:"Șterge", rp_cleared:"Șters – poți încărca alt program", rp_blocks_d:"Programul e împărțit automat: un bloc = o tăiere continuă (până scula se ridică). Fiecare se poate copia separat.", blk_drill:"Serie de găuri – {n} găuri (ciclu G82)", blk_drill_d:"Ciclul G82 e definit o dată, apoi fiecare coordonată e o gaură nouă. Blocul se închide cu G80.", blk_circle:"Cerc – centru X{x} Y{y}, arc R{r}", blk_circle_d:"Coborâre în centru, compensare G42, arce, G40 – un cerc fără ridicarea sculei.", blk_semi:"Semicerc – lângă X{x} Y{y}", blk_semi_d:"Două arce într-o tăiere continuă.", blk_line:"Tăiere dreaptă – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Coborâre, tăiere dreaptă, ridicare – o linie.", blk_contour:"Contur – {n} arce+linii tăiate ÎMPREUNĂ", blk_contour_d:"Conturul întreg e tăiat dintr-o bucată: scula rămâne jos tot timpul.", blk_cut:"Prelucrare", blk_header:"Antet – coordonate și zero", blk_header_d:"Începutul programului: coordonate mașină și zero piesă.", blk_setup:"Pregătire operație – pornire ax + sculă", blk_setup_d:"Pornire ax (M3), pauză (G4), sculă jos, subprogram (G77), corector (D).", blk_close:"Închidere operație – scula sus", blk_close_d:"Ridicare M129, nivel de siguranță (Z-75), agregat oprit (M149).", blk_tandem:"Secțiune de încărcare tandem (P)", blk_tandem_d:"Încărcarea alternantă a celor două mese cu variabile L – ciclu infinit cu G79.",
+        nav_realprog:"Program", rp_title:"Program real – G+M împreună", rp_sub:"Programul de pe mașină, explicat rând cu rând", rp_src:"Program:", rp_own:"Lipește propriul program…", rp_story:"Ce se întâmplă aici?", rp_codes:"Coduri în acest rând", rp_photo:"Program exemplu", rp_cmt:"Comentariu în program – mașina nu îl execută, e pentru operator.", rp_hdr:"Antet de program – numele/ID-ul programului pentru comandă.", rp_blocks:"Blocuri de operații – părți copiabile", rp_clear:"Șterge", rp_cleared:"Șters – poți încărca alt program", rp_more:"rânduri în plus (folosește 📋 Copiere pentru tot programul)", rp_blocks_d:"Programul e împărțit automat: un bloc = o tăiere continuă (până scula se ridică). Fiecare se poate copia separat.", blk_drill:"Serie de găuri – {n} găuri (ciclu G82)", blk_drill_d:"Ciclul G82 e definit o dată, apoi fiecare coordonată e o gaură nouă. Blocul se închide cu G80.", blk_circle:"Cerc – centru X{x} Y{y}, arc R{r}", blk_circle_d:"Coborâre în centru, compensare G42, arce, G40 – un cerc fără ridicarea sculei.", blk_semi:"Semicerc – lângă X{x} Y{y}", blk_semi_d:"Două arce într-o tăiere continuă.", blk_line:"Tăiere dreaptă – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Coborâre, tăiere dreaptă, ridicare – o linie.", blk_contour:"Contur – {n} arce+linii tăiate ÎMPREUNĂ", blk_contour_d:"Conturul întreg e tăiat dintr-o bucată: scula rămâne jos tot timpul.", blk_cut:"Prelucrare", blk_header:"Antet – coordonate și zero", blk_header_d:"Începutul programului: coordonate mașină și zero piesă.", blk_setup:"Pregătire operație – pornire ax + sculă", blk_setup_d:"Pornire ax (M3), pauză (G4), sculă jos, subprogram (G77), corector (D).", blk_close:"Închidere operație – scula sus", blk_close_d:"Ridicare M129, nivel de siguranță (Z-75), agregat oprit (M149).", blk_tandem:"Secțiune de încărcare tandem (P)", blk_tandem_d:"Încărcarea alternantă a celor două mese cu variabile L – ciclu infinit cu G79.",
         stat_codes:"Coduri M", stat_cats:"Categorii", stat_flows:"Fluxuri", stat_favs:"Favorite",
         card_exp:"📖 Explicație", card_when:"⏱️ Când se folosește", card_ex:"💡 Exemplu", card_warn:"⚠️ Atenție", card_note:"Nota ta",
         safety_common:"Erori frecvente", safety_danger:"Pericole", safety_not:"Ce nu trebuie făcut", safety_order:"Ordine corectă", safety_warn:"Avertismente de siguranță",
@@ -908,7 +908,7 @@ const UI_TEXTS = {
         nav_gcode:"G-Codes", gcode_title:"G-Codes", gcode_sub:"Standard-G-Codes + maschinenspezifische Codes (G77, G79…)", gcode_search:"Suche: G0, Kreisbogen, Bohrzyklus…", gcode_ex:"Beispiel", gcode_note:"Hinweis", gcode_count:"Codes", gc_add:"➕ Neuer G-Code",
         nav_prez:"Präsentation", prez_title:"Präsentation", prez_sub:"Wie die Maschine mit M-Codes arbeitet – in 3 Ansichten", prez_zoom:"🔍 Zoom-Prezi", prez_slides:"🎞️ Folien", prez_scroll:"📜 Scrollen", prez_play:"▶ Abspielen", prez_pause:"⏸ Pause",
         nav_infog:"Infografik", infog_title:"Infografik", infog_sub:"", infog_dl:"⬇️ Als Bild herunterladen (PNG)",
-        nav_realprog:"Programm", rp_title:"Echtes Programm – G+M zusammen", rp_sub:"Das Maschinenprogramm, Zeile für Zeile erklärt", rp_src:"Programm:", rp_own:"Eigenes Programm einfügen…", rp_story:"Was passiert hier?", rp_codes:"Codes in dieser Zeile", rp_photo:"Beispielprogramm", rp_cmt:"Kommentar im Programm – wird nicht ausgeführt, ist für den Bediener.", rp_hdr:"Programmkopf – Name/ID des Programms für die Steuerung.", rp_blocks:"Operationsblöcke – kopierbare Teile", rp_clear:"Löschen", rp_cleared:"Gelöscht – neues Programm möglich", rp_blocks_d:"Das Programm ist automatisch zerlegt: ein Block = ein durchgehender Schnitt (bis das Werkzeug abhebt). Jeder einzeln kopierbar.", blk_drill:"Bohrserie – {n} Bohrungen (G82-Zyklus)", blk_drill_d:"Der G82-Zyklus wird einmal definiert, danach ist jede Koordinate eine neue Bohrung. G80 schließt den Block.", blk_circle:"Kreis – Mitte X{x} Y{y}, Bogen R{r}", blk_circle_d:"Eintauchen in der Mitte, G42-Korrektur, Bögen, G40 – ein Kreis ohne Werkzeugabheben.", blk_semi:"Halbkreis – bei X{x} Y{y}", blk_semi_d:"Zwei Bögen in einem durchgehenden Schnitt.", blk_line:"Gerader Schnitt – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Eintauchen, gerader Zug, Abheben – eine Linie.", blk_contour:"Kontur – {n} Bögen+Geraden in EINEM Stück", blk_contour_d:"Die ganze Kontur wird in einem Zug geschnitten: das Werkzeug bleibt die ganze Zeit unten.", blk_cut:"Bearbeitung", blk_header:"Programmkopf – Koordinaten und Nullpunkt", blk_header_d:"Programmanfang: Maschinenkoordinaten und Werkstücknullpunkt.", blk_setup:"Operationsvorbereitung – Spindel + Werkzeug", blk_setup_d:"Spindelstart (M3), Warten (G4), Werkzeug ab, Unterprogramm (G77), Korrektor (D).", blk_close:"Operationsende – Werkzeug hoch", blk_close_d:"M129 heben, Sicherheitshöhe (Z-75), Aggregat aus (M149).", blk_tandem:"Tandem-Ladeteil (P)", blk_tandem_d:"Wechselndes Beladen der zwei Tische mit L-Variablen – Endlosschleife mit G79.",
+        nav_realprog:"Programm", rp_title:"Echtes Programm – G+M zusammen", rp_sub:"Das Maschinenprogramm, Zeile für Zeile erklärt", rp_src:"Programm:", rp_own:"Eigenes Programm einfügen…", rp_story:"Was passiert hier?", rp_codes:"Codes in dieser Zeile", rp_photo:"Beispielprogramm", rp_cmt:"Kommentar im Programm – wird nicht ausgeführt, ist für den Bediener.", rp_hdr:"Programmkopf – Name/ID des Programms für die Steuerung.", rp_blocks:"Operationsblöcke – kopierbare Teile", rp_clear:"Löschen", rp_cleared:"Gelöscht – neues Programm möglich", rp_more:"weitere Zeilen (📋 Kopieren für das ganze Programm)", rp_blocks_d:"Das Programm ist automatisch zerlegt: ein Block = ein durchgehender Schnitt (bis das Werkzeug abhebt). Jeder einzeln kopierbar.", blk_drill:"Bohrserie – {n} Bohrungen (G82-Zyklus)", blk_drill_d:"Der G82-Zyklus wird einmal definiert, danach ist jede Koordinate eine neue Bohrung. G80 schließt den Block.", blk_circle:"Kreis – Mitte X{x} Y{y}, Bogen R{r}", blk_circle_d:"Eintauchen in der Mitte, G42-Korrektur, Bögen, G40 – ein Kreis ohne Werkzeugabheben.", blk_semi:"Halbkreis – bei X{x} Y{y}", blk_semi_d:"Zwei Bögen in einem durchgehenden Schnitt.", blk_line:"Gerader Schnitt – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Eintauchen, gerader Zug, Abheben – eine Linie.", blk_contour:"Kontur – {n} Bögen+Geraden in EINEM Stück", blk_contour_d:"Die ganze Kontur wird in einem Zug geschnitten: das Werkzeug bleibt die ganze Zeit unten.", blk_cut:"Bearbeitung", blk_header:"Programmkopf – Koordinaten und Nullpunkt", blk_header_d:"Programmanfang: Maschinenkoordinaten und Werkstücknullpunkt.", blk_setup:"Operationsvorbereitung – Spindel + Werkzeug", blk_setup_d:"Spindelstart (M3), Warten (G4), Werkzeug ab, Unterprogramm (G77), Korrektor (D).", blk_close:"Operationsende – Werkzeug hoch", blk_close_d:"M129 heben, Sicherheitshöhe (Z-75), Aggregat aus (M149).", blk_tandem:"Tandem-Ladeteil (P)", blk_tandem_d:"Wechselndes Beladen der zwei Tische mit L-Variablen – Endlosschleife mit G79.",
         stat_codes:"M-Codes", stat_cats:"Kategorien", stat_flows:"Abläufe", stat_favs:"Favoriten",
         card_exp:"📖 Erklärung", card_when:"⏱️ Wann verwenden", card_ex:"💡 Beispiel", card_warn:"⚠️ Achtung", card_note:"Eigene Notiz",
         safety_common:"Häufige Fehler", safety_danger:"Gefahren", safety_not:"Was nicht erlaubt ist", safety_order:"Richtige Reihenfolge", safety_warn:"Sicherheitshinweise",
@@ -933,7 +933,7 @@ const UI_TEXTS = {
         nav_gcode:"G-codes", gcode_title:"G-codes", gcode_sub:"Standard G-codes + machine-specific codes (G77, G79…)", gcode_search:"Search: G0, arc, drilling cycle…", gcode_ex:"Example", gcode_note:"Note", gcode_count:"codes", gc_add:"➕ New G-code",
         nav_prez:"Presentation", prez_title:"Presentation", prez_sub:"How the machine works with M-codes – in 3 views", prez_zoom:"🔍 Zoom-prezi", prez_slides:"🎞️ Slides", prez_scroll:"📜 Scroll", prez_play:"▶ Play", prez_pause:"⏸ Pause",
         nav_infog:"Infographic", infog_title:"Infographic", infog_sub:"", infog_dl:"⬇️ Download as image (PNG)",
-        nav_realprog:"Program", rp_title:"Real program – G+M together", rp_sub:"The machine program, explained line by line", rp_src:"Program:", rp_own:"Paste your own program…", rp_story:"What happens here?", rp_codes:"Codes in this line", rp_photo:"Example program", rp_cmt:"Comment in the program – not executed, meant for the operator.", rp_hdr:"Program header – the program's name/ID for the control.", rp_blocks:"Operation blocks – copyable parts", rp_clear:"Clear", rp_cleared:"Cleared – ready for a new program", rp_blocks_d:"The program is split automatically: one block = one continuous cut (until the tool lifts). Each can be copied separately.", blk_drill:"Drill series – {n} holes (G82 cycle)", blk_drill_d:"The G82 cycle is defined once, then every coordinate is a new hole. G80 closes the block.", blk_circle:"Circle – center X{x} Y{y}, arc R{r}", blk_circle_d:"Plunge at the center, G42 compensation, arcs, G40 – one circle without lifting the tool.", blk_semi:"Semicircle – near X{x} Y{y}", blk_semi_d:"Two arcs in one continuous cut.", blk_line:"Straight cut – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Plunge, straight pull, lift – one line.", blk_contour:"Contour – {n} arcs+lines cut in ONE piece", blk_contour_d:"The whole contour is cut in one go: the tool stays down the whole time.", blk_cut:"Machining", blk_header:"Program header – coordinates and zero", blk_header_d:"Program start: machine coordinates and work zero.", blk_setup:"Operation setup – spindle + tool start", blk_setup_d:"Spindle start (M3), dwell (G4), tool down, subroutine (G77), offset (D).", blk_close:"Operation close – tool up", blk_close_d:"M129 lift, safe level (Z-75), unit off (M149).", blk_tandem:"Tandem loading section (P)", blk_tandem_d:"Alternate loading of the two tables with L variables – infinite loop via G79.",
+        nav_realprog:"Program", rp_title:"Real program – G+M together", rp_sub:"The machine program, explained line by line", rp_src:"Program:", rp_own:"Paste your own program…", rp_story:"What happens here?", rp_codes:"Codes in this line", rp_photo:"Example program", rp_cmt:"Comment in the program – not executed, meant for the operator.", rp_hdr:"Program header – the program's name/ID for the control.", rp_blocks:"Operation blocks – copyable parts", rp_clear:"Clear", rp_cleared:"Cleared – ready for a new program", rp_more:"more lines (use 📋 Copy for the full program)", rp_blocks_d:"The program is split automatically: one block = one continuous cut (until the tool lifts). Each can be copied separately.", blk_drill:"Drill series – {n} holes (G82 cycle)", blk_drill_d:"The G82 cycle is defined once, then every coordinate is a new hole. G80 closes the block.", blk_circle:"Circle – center X{x} Y{y}, arc R{r}", blk_circle_d:"Plunge at the center, G42 compensation, arcs, G40 – one circle without lifting the tool.", blk_semi:"Semicircle – near X{x} Y{y}", blk_semi_d:"Two arcs in one continuous cut.", blk_line:"Straight cut – X{x} Y{y} → X{x2} Y{y2}", blk_line_d:"Plunge, straight pull, lift – one line.", blk_contour:"Contour – {n} arcs+lines cut in ONE piece", blk_contour_d:"The whole contour is cut in one go: the tool stays down the whole time.", blk_cut:"Machining", blk_header:"Program header – coordinates and zero", blk_header_d:"Program start: machine coordinates and work zero.", blk_setup:"Operation setup – spindle + tool start", blk_setup_d:"Spindle start (M3), dwell (G4), tool down, subroutine (G77), offset (D).", blk_close:"Operation close – tool up", blk_close_d:"M129 lift, safe level (Z-75), unit off (M149).", blk_tandem:"Tandem loading section (P)", blk_tandem_d:"Alternate loading of the two tables with L variables – infinite loop via G79.",
         stat_codes:"M-codes", stat_cats:"Categories", stat_flows:"Workflows", stat_favs:"Favorites",
         card_exp:"📖 Explanation", card_when:"⏱️ When to use it", card_ex:"💡 Example", card_warn:"⚠️ Warning", card_note:"Your note",
         safety_common:"Common mistakes", safety_danger:"Hazards", safety_not:"What not to do", safety_order:"Correct sequence", safety_warn:"Safety warnings",
@@ -1841,7 +1841,7 @@ hu: {
   nav_progress:"Haladás", nav_stats:"Statisztika", nav_instructor:"Oktatói mód", worker_label:"Dolgozó neve",
   sim_title:"CNC Szimulátor", sim_sub:"Lejátszás lépésről lépésre, animációval",
   m3d_title:"3D Gépmodell", m3d_sub:"Forgasd, nagyítsd, kattints az alkatrészekre",
-  flash_title:"Tanulókártyák", flash_sub:"Kártya elöl a kód, hátul a jelentés",
+  flash_title:"Tanulókártyák", flash_sub:"Kártya elöl a kód, hátul a jelentés", fc_mode_m:"M-kódok", fc_mode_g:"G-kódok", fc_mode_both:"Mind", fc_gcode:"kód",
   dnd_title:"Sorrend gyakorlás", dnd_sub:"Húzd az M-kódokat helyes sorrendbe",
   proggen_title:"Generator program", proggen_sub:"Saját CNC program létrehozása geometriáből",
   ana_title:"Program elemző", ana_sub:"Illessz be teljes CNC programot elemzésre",
@@ -1881,7 +1881,7 @@ ro: {
   nav_progress:"Progres", nav_stats:"Statistici", nav_instructor:"Mod instructor", worker_label:"Nume muncitor",
   sim_title:"Simulator CNC", sim_sub:"Redare pas cu pas, cu animație",
   m3d_title:"Model 3D", m3d_sub:"Rotește, mărește, apasă pe componente",
-  flash_title:"Flashcarduri", flash_sub:"Față: codul · verso: explicația",
+  flash_title:"Flashcarduri", flash_sub:"Față: codul · verso: explicația", fc_mode_m:"Coduri M", fc_mode_g:"Coduri G", fc_mode_both:"Toate", fc_gcode:"cod",
   dnd_title:"Exercițiu ordine", dnd_sub:"Trage codurile M în ordinea corectă",
   proggen_title:"Generator program", proggen_sub:"Creează propriul program CNC din geometrie",
   ana_title:"Analizor program", ana_sub:"Lipește un program CNC complet",
@@ -1921,7 +1921,7 @@ de: {
   nav_progress:"Fortschritt", nav_stats:"Statistik", nav_instructor:"Ausbilder-Modus", worker_label:"Name des Arbeiters",
   sim_title:"CNC-Simulator", sim_sub:"Schritt-für-Schritt-Wiedergabe mit Animation",
   m3d_title:"3D-Modell", m3d_sub:"Drehen, zoomen, Bauteile anklicken",
-  flash_title:"Lernkarten", flash_sub:"Vorne: Code · hinten: Bedeutung",
+  flash_title:"Lernkarten", flash_sub:"Vorne: Code · hinten: Bedeutung", fc_mode_m:"M-Codes", fc_mode_g:"G-Codes", fc_mode_both:"Alle", fc_gcode:"Code",
   dnd_title:"Reihenfolge üben", dnd_sub:"Ziehe die M-Codes in die richtige Reihenfolge",
   proggen_title:"Programmgenerator", proggen_sub:"Erstelle ein CNC-Programm aus Geometrie",
   ana_title:"Programm-Analyse", ana_sub:"Komplettes CNC-Programm einfügen",
@@ -1961,7 +1961,7 @@ en: {
   nav_progress:"Progress", nav_stats:"Statistics", nav_instructor:"Instructor mode", worker_label:"Worker name",
   sim_title:"CNC Simulator", sim_sub:"Step-by-step playback with animation",
   m3d_title:"3D Machine Model", m3d_sub:"Rotate, zoom, click on parts",
-  flash_title:"Flashcards", flash_sub:"Front: the code · back: the meaning",
+  flash_title:"Flashcards", flash_sub:"Front: the code · back: the meaning", fc_mode_m:"M-codes", fc_mode_g:"G-codes", fc_mode_both:"All", fc_gcode:"code",
   dnd_title:"Order practice", dnd_sub:"Drag M-codes into the correct order",
   proggen_title:"Program generator", proggen_sub:"Create your own CNC program from geometry",
   ana_title:"Program analyzer", ana_sub:"Paste a complete CNC program",
@@ -3371,7 +3371,9 @@ function renderProggen() {
   });
   document.getElementById("pgClearBtn").addEventListener("click", () => {
     PG.ops = []; pgDrawOps();
+    RP.lines = []; RP.i = 0; RP.blocks = null;   /* generált program memóriájának ürítése */
     document.getElementById("pgResult").innerHTML = "";
+    toast("🗑 " + t("rp_cleared"));
   });
   document.getElementById("pgOps").addEventListener("click", e => {
     const b = e.target.closest("[data-pgdel]");
@@ -4260,6 +4262,8 @@ function rpChipDesc(tk) {
   return "";
 }
 const RP = { lines: [], i: 0, own:false };
+const RP_MAX = 2500;   /* max. kirajzolt sor a lépegetős listában (telefon ne fagyjon) */
+const RP_BLK_MAX = 350; /* max. sor egy blokk kód-előnézetében */
 /* ---------- MŰVELETI BLOKKOK: a program szétszedése összefüggő vágásokra ----------
    Egy vágás-blokk = pozicionálástól a szerszám-emelésig (G0 Z30 X/Y nélkül).
    Így egy kör / egyenes / kontúr / fúrássorozat egy külön, kimásolható blokk. */
@@ -4375,7 +4379,7 @@ function rpRenderBlocks() {
         <button class="dict-dl" data-rpbcopy="${i}" style="padding:6px 12px;">📋 ${t("proggen_copy")}</button>
       </div>
       ${b.desc ? `<div style="color:var(--txt-dim);font-size:16px;margin:6px 0 2px;">${escapeHtml(b.desc)}</div>` : ""}
-      <pre style="font-family:var(--mono);font-size:15px;background:var(--bg-1);border:1px solid var(--stroke-soft);border-radius:8px;padding:10px 12px;margin:8px 0 0;overflow-x:auto;white-space:pre;">${escapeHtml(b.ls.join("\n"))}</pre>
+      <pre style="font-family:var(--mono);font-size:15px;background:var(--bg-1);border:1px solid var(--stroke-soft);border-radius:8px;padding:10px 12px;margin:8px 0 0;overflow-x:auto;white-space:pre;">${escapeHtml(b.ls.slice(0, RP_BLK_MAX).join("\n"))}${b.ls.length > RP_BLK_MAX ? "\n… +" + (b.ls.length - RP_BLK_MAX) + " " + t("rp_more") : ""}</pre>
     </div>`).join("");
 }
 function renderRealprog() {
@@ -4450,12 +4454,17 @@ function renderRealprog() {
 function rpDrawList() {
   const list = document.getElementById("rpList");
   if (!list) return;
-  list.innerHTML = RP.lines.map((l, i) => {
+  const total = RP.lines.length;
+  const shown = Math.min(total, RP_MAX);
+  let html = RP.lines.slice(0, shown).map((l, i) => {
     const cmt = /^['(%]/.test(l.raw.trim());
     return `<div class="rp-line ${cmt ? "cmt" : ""} ${i < RP.i ? "done" : ""} ${i === RP.i ? "cur" : ""}" data-rpi="${i}">${escapeHtml(l.raw)}</div>`;
   }).join("");
+  if (total > shown) html += `<div class="rp-line cmt" style="color:var(--c-act);font-weight:700;">… +${total - shown} ${t("rp_more")}</div>`;
+  list.innerHTML = html;
 }
 function rpShow(i) {
+  if (RP.lines.length > RP_MAX) i = Math.min(i, RP_MAX - 1);
   if (!RP.lines.length) {
     const c = document.getElementById("rpCard"); if (c) c.innerHTML = "";
     const cn = document.getElementById("rpCnt"); if (cn) cn.textContent = "0 / 0";
@@ -4769,15 +4778,58 @@ setInterval(() => {
   }
 }, 30000);
 /* ---------- FLASHCARD ---------- */
-let fcOrder = [], fcIdx = 0, fcFlip = false;
+let fcOrder = [], fcIdx = 0, fcFlip = false, fcMode = "m";
+function fcResolve(code) {
+  if (byCode[code]) return { type: "m", m: byCode[code] };
+  const g = (typeof GCODES !== "undefined") ? GCODES.find(x => x.g === code) : null;
+  if (g) return { type: "g", g };
+  return null;
+}
+function fcDeck() {
+  const mm = MCODES.map(x => x.code);
+  const gg = (typeof GCODES !== "undefined") ? GCODES.map(x => x.g) : [];
+  return fcMode === "g" ? gg : (fcMode === "both" ? mm.concat(gg) : mm);
+}
 function renderFlash() {
-  if (!fcOrder.length || fcOrder.some(c => !byCode[c])) fcOrder = MCODES.map(m => m.code);
+  const deck = fcDeck();
+  const deckSet = new Set(deck);
+  if (!fcOrder.length || fcOrder.length !== deck.length || fcOrder.some(c => !deckSet.has(c))) { fcOrder = deck.slice(); fcIdx = 0; }
   if (fcIdx >= fcOrder.length) fcIdx = 0;
   const code = fcOrder[fcIdx];
-  const m = byCode[code];
+  const r = fcResolve(code) || { type: "m", m: MCODES[0] };
   const { p } = getProfile();
   const st = p.flash[code];
+  const modeBtn = (mo, lab) => `<button class="ed-btn ${fcMode===mo?"":"ghost"}" data-fcmode="${mo}" style="${fcMode===mo?"background:linear-gradient(120deg,var(--cyan),var(--green));color:#06121a;":""}">${lab}</button>`;
+  let back;
+  if (r.type === "g") {
+    const g = r.g;
+    back = `
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+        <span style="font-family:var(--mono);font-weight:800;font-size:24px;color:#06121a;background:var(--cyan);padding:2px 12px;border-radius:9px;">${escapeHtml(g.g)}</span>
+        <b style="font-size:21px;">${escapeHtml(getText(g.name))}</b>
+        <span style="font-size:13px;color:var(--txt-faint);border:1px solid var(--stroke);border-radius:8px;padding:2px 8px;">G-${t("fc_gcode")}</span>
+      </div>
+      <div style="font-size:18px;">${escapeHtml(getText(g.desc))}</div>
+      <div style="margin-top:10px;font-family:var(--mono);font-size:15px;color:var(--cyan);background:rgba(46,230,255,.08);padding:6px 10px;border-radius:9px;">${escapeHtml(g.ex).replace(/\n/g,"<br>")}</div>`;
+  } else {
+    const m = r.m;
+    back = `
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+        <span style="font-family:var(--mono);font-weight:800;font-size:26px;color:#06121a;background:${CATS[m.cat].hex};padding:2px 12px;border-radius:9px;">${escapeHtml(code)}</span>
+        <b style="font-size:21px;">${escapeHtml(getText(m.name))}</b> ${dangerBadge(code)}
+      </div>
+      <div style="font-size:18px;">${escapeHtml(getText(m.exp))}</div>
+      <div style="margin-top:8px;color:var(--txt-dim);font-size:16px;">⏱️ ${escapeHtml(getText(m.when))}</div>
+      <div style="margin-top:8px;font-family:var(--mono);font-size:15px;color:var(--cyan);background:rgba(46,230,255,.08);padding:6px 10px;border-radius:9px;">${escapeHtml(m.ex).replace(/\n/g,"<br>")}</div>
+      ${getText(m.warn) ? `<div class="warn" style="margin-top:8px;font-size:15px;"><span>⚠️</span><span>${escapeHtml(getText(m.warn))}</span></div>` : ""}
+      <div class="ed-actions" style="margin-top:12px;">
+        <button class="ed-btn ghost" data-animcode="${escapeHtml(code)}">▶ ${t("btn_anim")}</button>
+      </div>`;
+  }
   view.innerHTML = `
+  <div class="fc-btns" style="margin-bottom:14px;">
+    ${modeBtn("m", t("fc_mode_m"))}${modeBtn("g", t("fc_mode_g"))}${modeBtn("both", t("fc_mode_both"))}
+  </div>
   <div class="fc-stage">
     <div class="fc-card ${fcFlip ? "flip" : ""}" id="fcCard">
       <div class="fc-face">
@@ -4785,19 +4837,7 @@ function renderFlash() {
         <div style="color:var(--txt-faint);margin-top:14px;font-size:17px;">👆 ${t("fc_flip")}</div>
         ${st ? `<div style="margin-top:10px;font-size:15px;color:var(--txt-dim);">✅ ${st.ok} · ❌ ${st.bad}</div>` : ""}
       </div>
-      <div class="fc-face back">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
-          <span style="font-family:var(--mono);font-weight:800;font-size:26px;color:#06121a;background:${CATS[m.cat].hex};padding:2px 12px;border-radius:9px;">${escapeHtml(code)}</span>
-          <b style="font-size:21px;">${escapeHtml(getText(m.name))}</b> ${dangerBadge(code)}
-        </div>
-        <div style="font-size:18px;">${escapeHtml(getText(m.exp))}</div>
-        <div style="margin-top:8px;color:var(--txt-dim);font-size:16px;">⏱️ ${escapeHtml(getText(m.when))}</div>
-        <div style="margin-top:8px;font-family:var(--mono);font-size:15px;color:var(--cyan);background:rgba(46,230,255,.08);padding:6px 10px;border-radius:9px;">${escapeHtml(m.ex).replace(/\n/g,"<br>")}</div>
-        ${getText(m.warn) ? `<div class="warn" style="margin-top:8px;font-size:15px;"><span>⚠️</span><span>${escapeHtml(getText(m.warn))}</span></div>` : ""}
-        <div class="ed-actions" style="margin-top:12px;">
-          <button class="ed-btn ghost" data-animcode="${escapeHtml(code)}">▶ ${t("btn_anim")}</button>
-        </div>
-      </div>
+      <div class="fc-face back">${back}</div>
     </div>
     <div class="fc-btns">
       <button class="ed-btn ghost" id="fcPrev">${t("fc_prev")}</button>
@@ -4808,6 +4848,9 @@ function renderFlash() {
     <div class="fc-btns"><button class="ed-btn ghost" id="fcShuffle">${t("fc_shuffle")}</button></div>
     <div class="fc-counter">${fcIdx + 1} / ${fcOrder.length}</div>
   </div>`;
+  view.querySelectorAll("[data-fcmode]").forEach(b => b.addEventListener("click", () => {
+    fcMode = b.dataset.fcmode; fcOrder = []; fcIdx = 0; fcFlip = false; renderFlash();
+  }));
   document.getElementById("fcCard").addEventListener("click", e => {
     if (e.target.closest("[data-animcode]") || e.target.closest("button")) return;
     fcFlip = !fcFlip;
