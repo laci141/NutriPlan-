@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Lancet CLI · 9 Commands Demo</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  /* warm, blue-light-filtered dark theme */
+  --bg:#15131a;--bg2:#1d1a24;--bg3:#272230;
+  --border:#383040;--text:#ece7ef;--muted:#a99fb3;
+  /* pastel accents (~50% lighter, softened) */
+  --accent:#f3a6b6;        /* pastel lancet pink */
+  --accent-soft:#f8c7d2;
+  --green:#9fdcab;
+  --yellow:#ecd79a;
+  --red:#f2a7a7;
+  --orange:#f3c39a;
+  --purple:#c8b0ec;
+  --lancet:#f3a6b6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{max-width:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;
+  font-size:clamp(13px,2.2vw,15px);line-height:1.6;-webkit-text-size-adjust:100%}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(21,19,26,.95);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border);
+  padding:8px 12px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{color:var(--muted);text-decoration:none;font-size:12px;padding:5px 10px;
+  border-radius:6px;display:inline-block;transition:.2s}
+nav a:hover,nav a:active{background:var(--bg3);color:var(--accent)}
+
+.hero{background:linear-gradient(135deg,#15131a 0%,#241620 50%,#2a1820 100%);
+  padding:clamp(28px,6vw,64px) clamp(14px,4vw,48px);text-align:center;border-bottom:1px solid var(--border)}
+.hero h1{font-size:clamp(24px,5vw,46px);font-weight:700;
+  background:linear-gradient(135deg,var(--accent),var(--accent-soft));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+.hero p{color:var(--muted);font-size:clamp(13px,2vw,16px);max-width:620px;margin:0 auto 24px}
+.hero-stats{display:flex;justify-content:center;gap:clamp(14px,4vw,48px);flex-wrap:wrap}
+.stat-n{font-size:clamp(26px,5vw,46px);font-weight:800;color:var(--accent)}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.sources{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:20px}
+.src-badge{background:var(--bg3);border:1px solid var(--border);border-radius:20px;
+  padding:4px 14px;font-size:12px;color:var(--muted)}
+.src-badge span{color:var(--accent);margin-right:4px}
+
+section{padding:clamp(22px,4vw,48px) clamp(14px,4vw,48px);border-bottom:1px solid var(--border);
+  max-width:1180px;margin:0 auto}
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.sec-num{background:linear-gradient(135deg,var(--accent),var(--purple));color:#2a1620;
+  width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.sec-title{font-size:clamp(17px,3vw,24px);font-weight:700}
+.sec-tag{background:var(--bg3);border:1px solid var(--border);border-radius:4px;
+  padding:2px 8px;font-size:11px;color:var(--muted);font-family:monospace;display:inline-block;margin-top:2px}
+.sec-desc{color:var(--muted);margin-bottom:16px;font-size:clamp(13px,1.8vw,14px)}
+.sec-desc code,.note code,.db code{background:var(--bg3);border-radius:4px;padding:1px 5px;
+  font-size:.92em;color:var(--accent-soft);word-break:break-word}
+.use-badge{display:inline-block;background:rgba(243,166,182,.1);border:1px solid rgba(243,166,182,.3);
+  color:var(--accent);border-radius:4px;padding:3px 9px;font-size:11px;margin-bottom:10px}
+
+.cmd-block{margin-bottom:8px}
+.cmd-label{font-size:11px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.cmd-wrap{display:flex;align-items:stretch;background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;max-width:100%}
+.cmd-wrap code{flex:1;min-width:0;padding:9px 12px;font-family:'Courier New',monospace;
+  font-size:clamp(11px,1.8vw,13px);color:#9ecbf0;overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
+.copy-btn{background:var(--bg3);border:none;border-left:1px solid var(--border);color:var(--muted);
+  padding:8px 12px;cursor:pointer;font-size:12px;transition:.2s;white-space:nowrap;flex-shrink:0}
+.copy-btn:hover{background:var(--accent);color:#2a1620}
+.copy-btn.ok{background:var(--green)!important;color:#173a1d!important}
+
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;min-width:0}
+.card-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+
+.chart-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:16px 14px;margin-top:14px;min-width:0}
+.chart-title{font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.chart-box{position:relative;width:100%;height:clamp(200px,42vw,260px)}
+canvas{max-width:100%}
+
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:12px;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:clamp(11px,1.8vw,13px);min-width:0}
+th{background:var(--bg3);color:var(--muted);padding:9px 12px;text-align:left;
+  font-size:11px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+td{padding:9px 12px;border-top:1px solid var(--border);color:var(--text);vertical-align:top}
+tbody tr:nth-child(even) td{background:rgba(255,255,255,.018)}
+tr:hover td{background:rgba(243,166,182,.05)}
+
+.result-row{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.result-row:last-child{border-bottom:none}
+.key{color:var(--muted)}
+.val{color:var(--text);font-weight:500;text-align:right}
+
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bg{background:rgba(159,220,171,.16);color:var(--green);border:1px solid rgba(159,220,171,.35)}
+.by{background:rgba(236,215,154,.16);color:var(--yellow);border:1px solid rgba(236,215,154,.35)}
+.br{background:rgba(242,167,167,.16);color:var(--red);border:1px solid rgba(242,167,167,.35)}
+.bb{background:rgba(243,166,182,.14);color:var(--accent);border:1px solid rgba(243,166,182,.35)}
+
+.note{background:rgba(243,166,182,.06);border-left:3px solid var(--accent);
+  padding:11px 14px;border-radius:0 8px 8px 0;font-size:12px;color:var(--muted);margin-top:12px}
+.note strong{color:var(--text)}
+
+details{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-top:10px}
+summary{padding:10px 14px;cursor:pointer;font-size:12px;color:var(--muted);list-style:none;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'\25B6  '}
+details[open] summary::before{content:'\25BC  '}
+.db{padding:11px 14px;border-top:1px solid var(--border);font-size:13px;color:var(--muted)}
+
+.hl-green{color:var(--green);font-weight:600}
+.hl-red{color:var(--red);font-weight:600}
+.hl-yellow{color:var(--yellow);font-weight:600}
+.hl-accent{color:var(--accent);font-weight:600}
+.hl-orange{color:var(--orange);font-weight:600}
+.journal-tag{font-family:monospace;background:rgba(243,166,182,.1);color:var(--accent-soft);
+  border:1px solid rgba(243,166,182,.28);border-radius:6px;padding:3px 8px;font-size:11px;
+  display:inline-block;margin:2px;white-space:nowrap}
+
+.network-node{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);
+  border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;margin:3px;white-space:nowrap}
+.node-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.node-link{color:var(--muted);font-size:10px;margin:0 2px}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:24px 16px;text-align:center;
+  color:var(--muted);font-size:12px}
+footer strong{color:var(--accent-soft)}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#s1">1&#183;Journals</a>
+  <a href="#s2">2&#183;Doctor</a>
+  <a href="#s3">3&#183;Curate</a>
+  <a href="#s4">4&#183;Rank Authors</a>
+  <a href="#s5">5&#183;Affiliation Growth</a>
+  <a href="#s6">6&#183;Mesh</a>
+  <a href="#s7">7&#183;Visibility Gap</a>
+  <a href="#s8">8&#183;Cited-By</a>
+  <a href="#s9">9&#183;Refresh</a>
+</nav>
+
+<div class="hero">
+  <h1>The Lancet CLI</h1>
+  <p>Lancet family intelligence &#8212; aggregates 19 journals via OpenAlex, with local SQLite analytics for author rankings, affiliation growth, co-authorship mapping, and citation visibility. No API key required.</p>
+  <div class="hero-stats">
+    <div><div class="stat-n">19</div><div class="stat-l">Journals</div></div>
+    <div><div class="stat-n">1,600</div><div class="stat-l">Articles synced</div></div>
+    <div><div class="stat-n">v1.0.0</div><div class="stat-l">Version</div></div>
+    <div><div class="stat-n">0</div><div class="stat-l">API keys needed</div></div>
+  </div>
+  <div class="sources">
+    <div class="src-badge"><span>&#9679;</span>OpenAlex</div>
+    <div class="src-badge"><span>&#9679;</span>Lancet (19 journals)</div>
+    <div class="src-badge"><span>&#9679;</span>SQLite local DB</div>
+    <div class="src-badge"><span>&#9679;</span>Read-only</div>
+  </div>
+</div>
+
+<!-- 1. JOURNALS -->
+<section id="s1">
+  <div class="sec-header">
+    <div class="sec-num">1</div>
+    <div><div class="sec-title">Journals</div><span class="sec-tag">live API</span></div>
+  </div>
+  <div class="use-badge">Researchers &#183; Editors &#183; Grant Writers</div>
+  <p class="sec-desc">List all 19 journals in the Lancet family with their metadata &#8212; ISSN, article counts, and OpenAlex source IDs. Covers everything from the flagship The Lancet to specialty titles like eClinicalMedicine and EBioMedicine.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q1 &#183; List all Lancet journals</div>
+    <div class="cmd-wrap"><code>./thelancet journals</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q2 &#183; Sources with OpenAlex IDs</div>
+    <div class="cmd-wrap"><code>./thelancet sources</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div style="margin-top:14px;line-height:2.1">
+    <span class="journal-tag">lancet</span>
+    <span class="journal-tag">lancet-oncology</span>
+    <span class="journal-tag">lancet-infectious-diseases</span>
+    <span class="journal-tag">lancet-neurology</span>
+    <span class="journal-tag">lancet-diabetes-endocrinology</span>
+    <span class="journal-tag">lancet-psychiatry</span>
+    <span class="journal-tag">lancet-global-health</span>
+    <span class="journal-tag">lancet-public-health</span>
+    <span class="journal-tag">lancet-respiratory</span>
+    <span class="journal-tag">lancet-digital-health</span>
+    <span class="journal-tag">lancet-gastroenterology-hepatology</span>
+    <span class="journal-tag">lancet-haematology</span>
+    <span class="journal-tag">lancet-hiv</span>
+    <span class="journal-tag">lancet-child-adolescent</span>
+    <span class="journal-tag">lancet-planetary-health</span>
+    <span class="journal-tag">lancet-rheumatology</span>
+    <span class="journal-tag">lancet-healthy-longevity</span>
+    <span class="journal-tag">eclinicalmedicine</span>
+    <span class="journal-tag">ebiomedicine</span>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Articles Synced per Journal</div>
+    <div class="chart-box"><canvas id="c-journals"></canvas></div>
+  </div>
+  <div class="note"><strong>Total synced:</strong> 1,600 articles &#8212; 1,000 from <em>lancet</em> + 600 from <em>lancet-oncology</em>. Run <code>refresh</code> to add more journals.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A researcher wants to know which Lancet specialty journals cover their field. <code>journals</code> returns the complete 19-journal list with slugs usable in other commands &#8212; no manual lookup of ISSNs needed.</div></details>
+</section>
+
+<!-- 2. DOCTOR -->
+<section id="s2">
+  <div class="sec-header">
+    <div class="sec-num">2</div>
+    <div><div class="sec-title">Doctor &#8212; Diagnostics</div><span class="sec-tag">live + local DB</span></div>
+  </div>
+  <div class="use-badge">Developers &#183; System Admins &#183; First-time Setup</div>
+  <p class="sec-desc">Full diagnostic check &#8212; verifies CLI version, API reachability, and local SQLite database state in one command. The first thing to run when setting up or debugging the CLI on a new machine.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q3 &#183; Full diagnostics</div>
+    <div class="cmd-wrap"><code>./thelancet doctor</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">System Status</div>
+      <div class="result-row"><span class="key">CLI version</span><span class="val">1.0.0</span></div>
+      <div class="result-row"><span class="key">OpenAlex API</span><span class="badge bg">Reachable</span></div>
+      <div class="result-row"><span class="key">Auth required</span><span class="val">No</span></div>
+      <div class="result-row"><span class="key">API keys needed</span><span class="hl-green">None</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Local Database</div>
+      <div class="result-row"><span class="key">DB articles</span><span class="val">1,600</span></div>
+      <div class="result-row"><span class="key">lancet</span><span class="val">1,000 articles</span></div>
+      <div class="result-row"><span class="key">lancet-oncology</span><span class="val">600 articles</span></div>
+      <div class="result-row"><span class="key">Status</span><span class="badge bg">Ready</span></div>
+    </div>
+  </div>
+  <div class="note"><strong>Setup sequence:</strong> <code>doctor</code> &#8594; <code>refresh --journal lancet --max-pages 10</code> &#8594; start using analytics commands.</div>
+  <details><summary>When to use</summary>
+    <div class="db">After cloning the repo on a new machine, run <code>doctor</code> first. It confirms OpenAlex is reachable, shows how many articles are in the local DB, and tells you exactly what to run next &#8212; no guesswork.</div></details>
+</section>
+
+<!-- 3. CURATE -->
+<section id="s3">
+  <div class="sec-header">
+    <div class="sec-num">3</div>
+    <div><div class="sec-title">Curate &#8212; Top Articles by Topic</div><span class="sec-tag">local DB &#183; citation-ranked</span></div>
+  </div>
+  <div class="use-badge">Clinicians &#183; Researchers &#183; Medical Educators</div>
+  <p class="sec-desc">Surface the highest-impact Lancet articles on any topic, ranked by citation count. Filter by journal slug to focus on specialty titles. Real data from 1,600 synced articles &#8212; returns results in milliseconds from local SQLite.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q4 &#183; Top diabetes articles (2026)</div>
+    <div class="cmd-wrap"><code>./thelancet curate --topic "diabetes"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q5 &#183; Cancer immunotherapy in Lancet Oncology</div>
+    <div class="cmd-wrap"><code>./thelancet curate --topic "cancer immunotherapy" --journal lancet-oncology</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q6 &#183; Semaglutide articles</div>
+    <div class="cmd-wrap"><code>./thelancet curate --topic "semaglutide"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="grid2">
+    <div class="chart-wrap" style="margin-top:0"><div class="chart-title">Top Diabetes Articles &#8212; Citations (2026)</div><div class="chart-box"><canvas id="c-curate-diab"></canvas></div></div>
+    <div class="chart-wrap" style="margin-top:0"><div class="chart-title">Top Cancer Immunotherapy &#8212; Citations</div><div class="chart-box"><canvas id="c-curate-onco"></canvas></div></div>
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Topic</th><th>Title (abbrev.)</th><th>Citations</th><th>Journal</th></tr></thead>
+    <tbody>
+      <tr><td>Diabetes</td><td>Orforglipron vs semaglutide &#8212; obesity RCT</td><td><span class="hl-accent">13</span></td><td>lancet</td></tr>
+      <tr><td>Diabetes</td><td>Semaglutide for alcohol use disorder</td><td><span class="hl-accent">4</span></td><td>lancet</td></tr>
+      <tr><td>Diabetes</td><td>CagriSema + basal insulin &#8212; type 2 diabetes</td><td><span class="hl-accent">3</span></td><td>lancet</td></tr>
+      <tr><td>Immunotherapy</td><td>iRECIST guidelines for tumour response</td><td><span class="hl-orange">2,408</span></td><td>lancet-oncology</td></tr>
+      <tr><td>Immunotherapy</td><td>Hyperthermia + chemotherapy &#8212; review</td><td><span class="hl-orange">1,983</span></td><td>lancet-oncology</td></tr>
+      <tr><td>Immunotherapy</td><td>Dabrafenib + trametinib &#8212; melanoma Phase 3</td><td><span class="hl-orange">1,367</span></td><td>lancet-oncology</td></tr>
+      <tr><td>Immunotherapy</td><td>Nivolumab &#8212; head &amp; neck SCC</td><td><span class="hl-orange">1,254</span></td><td>lancet-oncology</td></tr>
+      <tr><td>Immunotherapy</td><td>Radiomics + CD8 &#8212; anti-PD1 response</td><td><span class="hl-orange">1,230</span></td><td>lancet-oncology</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Insight:</strong> Cancer immunotherapy articles published 5&#8211;10 years ago dominate by citation count. Newer diabetes articles (2025&#8211;2026) show rapid early citation velocity &#8212; orforglipron vs semaglutide gained 13 citations within weeks of publication.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A clinician preparing a grand rounds lecture on GLP-1 agonists runs <code>curate --topic "semaglutide"</code> to surface the highest-cited Lancet papers on the topic &#8212; ranked, filterable, no PubMed search needed.</div></details>
+</section>
+
+<!-- 4. RANK AUTHORS -->
+<section id="s4">
+  <div class="sec-header">
+    <div class="sec-num">4</div>
+    <div><div class="sec-title">Rank Authors</div><span class="sec-tag">local DB &#183; weighted score</span></div>
+  </div>
+  <div class="use-badge">Department Chairs &#183; Grant Reviewers &#183; HR &#183; Journal Editors</div>
+  <p class="sec-desc">Rank authors across the Lancet family by a weighted score combining number of works, total citations, and average citations per paper. Filter by institution to benchmark a specific department against global output.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q7 &#183; Top authors overall</div>
+    <div class="cmd-wrap"><code>./thelancet rank-authors</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q8 &#183; Top authors at Harvard</div>
+    <div class="cmd-wrap"><code>./thelancet rank-authors --institution "Harvard"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q9 &#183; Top authors at UCL</div>
+    <div class="cmd-wrap"><code>./thelancet rank-authors --institution "UCL"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Top 5 Overall Authors &#8212; Total Citations</div>
+    <div class="chart-box"><canvas id="c-rank-all"></canvas></div>
+  </div>
+
+  <div class="grid2">
+    <div class="tbl-wrap" style="margin-top:0"><table>
+      <thead><tr><th colspan="4" style="text-transform:none;font-size:12px;color:var(--accent-soft)">Overall Top 5 (real data)</th></tr>
+        <tr><th>Author</th><th>Works</th><th>Cit.</th><th>Avg</th></tr></thead>
+      <tbody>
+        <tr><td>Remi A. Nout</td><td>4</td><td><span class="hl-accent">252</span></td><td>63.0</td></tr>
+        <tr><td>Tjalling Bosse</td><td>4</td><td><span class="hl-accent">252</span></td><td>63.0</td></tr>
+        <tr><td>Cyrus Chargari</td><td>3</td><td><span class="hl-accent">251</span></td><td>83.7</td></tr>
+        <tr><td>Carien L. Creutzberg</td><td>3</td><td><span class="hl-accent">251</span></td><td>83.7</td></tr>
+        <tr><td>Phillip Baker</td><td>3</td><td><span class="hl-accent">246</span></td><td>82.0</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tbl-wrap" style="margin-top:0"><table>
+      <thead><tr><th colspan="3" style="text-transform:none;font-size:12px;color:var(--accent-soft)">Harvard Top 5 (real data)</th></tr>
+        <tr><th>Author</th><th>Works</th><th>Cit.</th></tr></thead>
+      <tbody>
+        <tr><td>Renee N. Salas</td><td>1</td><td><span class="hl-green">150</span></td></tr>
+        <tr><td>Jamie Ponmattam</td><td>1</td><td><span class="hl-green">150</span></td></tr>
+        <tr><td>Benjamin M. Scirica</td><td>1</td><td><span class="hl-green">75</span></td></tr>
+        <tr><td>Jorge Plutzky</td><td>1</td><td><span class="hl-green">75</span></td></tr>
+        <tr><td>Xinan Wang</td><td>2</td><td><span class="hl-green">36</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="note"><strong>Scoring:</strong> <code>score = works &#215; 2 + total_citations &#215; 0.1 + avg_citations &#215; 0.5</code>. Authors with 3&#8211;4 works in high-impact Lancet Oncology papers (e.g. PORTEC-3 trial) dominate the overall ranking.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A department chair at Harvard wants to know which faculty have the strongest Lancet publication record. <code>rank-authors --institution "Harvard"</code> returns Renee N. Salas and Jamie Ponmattam as the top 2 &#8212; backed by real citation data, not h-index estimates.</div></details>
+</section>
+
+<!-- 5. AFFILIATION GROWTH -->
+<section id="s5">
+  <div class="sec-header">
+    <div class="sec-num">5</div>
+    <div><div class="sec-title">Affiliation Growth</div><span class="sec-tag">local DB &#183; trend analysis</span></div>
+  </div>
+  <div class="use-badge">Research Directors &#183; University Benchmarking &#183; Policy Analysts</div>
+  <p class="sec-desc">Rank institutions by the number of Lancet-family articles they contributed to. Filter by journal to compare flagship vs. specialty output. Reveals which academic centers are dominating specific Lancet titles.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q10 &#183; Top institutions in The Lancet</div>
+    <div class="cmd-wrap"><code>./thelancet affiliation-growth --journal lancet</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q11 &#183; Top institutions in Lancet Oncology</div>
+    <div class="cmd-wrap"><code>./thelancet affiliation-growth --journal lancet-oncology</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="grid2">
+    <div class="chart-wrap" style="margin-top:0">
+      <div class="chart-title">The Lancet &#8212; Top Institutions (1,000 articles)</div>
+      <div class="chart-box"><canvas id="c-aff-lancet"></canvas></div>
+    </div>
+    <div class="chart-wrap" style="margin-top:0">
+      <div class="chart-title">Lancet Oncology &#8212; Top Institutions (600 articles)</div>
+      <div class="chart-box"><canvas id="c-aff-onco"></canvas></div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Institution</th><th>The Lancet</th><th>Lancet Onc.</th><th>Combined</th></tr></thead>
+    <tbody>
+      <tr><td>UCL</td><td><span class="hl-accent">52</span></td><td>26</td><td class="hl-green">78</td></tr>
+      <tr><td>Harvard</td><td>31</td><td>&#8212;</td><td>31</td></tr>
+      <tr><td>Oxford</td><td>26</td><td>&#8212;</td><td>26</td></tr>
+      <tr><td>LSHTM</td><td>26</td><td>&#8212;</td><td>26</td></tr>
+      <tr><td>Inserm</td><td>23</td><td>26</td><td class="hl-accent">49</td></tr>
+      <tr><td>MSK</td><td>&#8212;</td><td><span class="hl-accent">40</span></td><td>40</td></tr>
+      <tr><td>MD Anderson</td><td>&#8212;</td><td>31</td><td>31</td></tr>
+      <tr><td>Gustave Roussy</td><td>&#8212;</td><td>30</td><td>30</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Finding:</strong> UCL is the dominant institution in The Lancet (52 articles), while Memorial Sloan Kettering leads in Lancet Oncology (40 articles). UCL and Inserm appear in both &#8212; the only institutions in both top-5 lists.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A university research office wants to benchmark their oncology department's Lancet output against peers. <code>affiliation-growth --journal lancet-oncology</code> shows MSK leads with 40 articles &#8212; providing the external standard for comparison.</div></details>
+</section>
+
+<!-- 6. MESH -->
+<section id="s6">
+  <div class="sec-header">
+    <div class="sec-num">6</div>
+    <div><div class="sec-title">Mesh &#8212; Co-authorship Network</div><span class="sec-tag">local DB &#183; network analysis</span></div>
+  </div>
+  <div class="use-badge">Network Scientists &#183; Grant Strategists &#183; Collaboration Officers</div>
+  <p class="sec-desc">Map co-authorship networks within an institution &#8212; reveals which researchers collaborate internally on Lancet papers. Each pair represents at least one shared Lancet publication. Essential for identifying collaboration clusters and isolated authors.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q12 &#183; Harvard co-authorship network</div>
+    <div class="cmd-wrap"><code>./thelancet mesh --org "Harvard"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q13 &#183; UCL co-authorship network</div>
+    <div class="cmd-wrap"><code>./thelancet mesh --org "UCL"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div style="margin-top:14px">
+    <div class="card-title" style="margin-bottom:10px">Harvard Co-authorship Pairs (7 connections &#8212; real data)</div>
+    <div>
+      <span class="network-node"><span class="node-dot"></span>Wadhera <span class="node-link">&#8596;</span> Figueroa</span>
+      <span class="network-node"><span class="node-dot"></span>Wadhera <span class="node-link">&#8596;</span> Bleich</span>
+      <span class="network-node"><span class="node-dot"></span>Figueroa <span class="node-link">&#8596;</span> Bleich</span>
+      <span class="network-node"><span class="node-dot"></span>Klompas <span class="node-link">&#8596;</span> Shapiro</span>
+      <span class="network-node"><span class="node-dot"></span>Abrahim <span class="node-link">&#8596;</span> Saadi</span>
+      <span class="network-node"><span class="node-dot"></span>Fisher <span class="node-link">&#8596;</span> Yin</span>
+      <span class="network-node"><span class="node-dot"></span>Kuipers <span class="node-link">&#8596;</span> Hern&#225;n</span>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Harvard Co-authorship Network &#8212; Connection Map</div>
+    <div class="chart-box"><canvas id="c-mesh"></canvas></div>
+  </div>
+
+  <div class="grid3" style="margin-top:14px">
+    <div class="card">
+      <div class="card-title">Wadhera cluster</div>
+      <div style="font-size:13px;color:var(--muted)">Connected to both Figueroa and Bleich &#8212; forms a 3-node triangle. Likely on same cardiovascular equity paper.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Klompas&#8211;Shapiro pair</div>
+      <div style="font-size:13px;color:var(--muted)">Isolated pair &#8212; infectious disease / hospital epidemiology collaboration. No overlap with Wadhera cluster.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Kuipers&#8211;Hern&#225;n pair</div>
+      <div style="font-size:13px;color:var(--muted)">Epidemiology methods collaboration. Hern&#225;n is a Harvard methods leader &#8212; likely a causal inference paper.</div>
+    </div>
+  </div>
+  <details><summary>When to use</summary>
+    <div class="db">A grant strategist wants to identify natural collaboration clusters at Harvard for a multi-PI Lancet submission. <code>mesh --org "Harvard"</code> reveals the Wadhera&#8211;Figueroa&#8211;Bleich triangle as an existing team &#8212; the right group to approach for a joint application.</div></details>
+</section>
+
+<!-- 7. VISIBILITY GAP -->
+<section id="s7">
+  <div class="sec-header">
+    <div class="sec-num">7</div>
+    <div><div class="sec-title">Visibility Gap &#8212; Under-cited Authors</div><span class="sec-tag">local DB &#183; gap score</span></div>
+  </div>
+  <div class="use-badge">DEI Officers &#183; Journal Editors &#183; Promotion Committees</div>
+  <p class="sec-desc">Identify Lancet authors with high output but unexpectedly low citations &#8212; the &#8220;visibility gap.&#8221; A positive gap score means the author publishes well but is cited less than expected given their publication volume. Surfaces systematic under-recognition.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q14 &#183; Visibility gap at Oxford</div>
+    <div class="cmd-wrap"><code>./thelancet visibility-gap --institution "Oxford"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q15 &#183; Visibility gap at MSK</div>
+    <div class="cmd-wrap"><code>./thelancet visibility-gap --institution "MSK"</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Oxford &#8212; Visibility Gap Score (top 5, real data)</div>
+    <div class="chart-box"><canvas id="c-vis"></canvas></div>
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Author</th><th>Inst.</th><th>Gap</th><th>Interpretation</th></tr></thead>
+    <tbody>
+      <tr><td>Adam Devall</td><td>Oxford</td><td><span class="hl-red">+0.95</span></td><td>Publishes in Lancet but receives far fewer citations than peers</td></tr>
+      <tr><td>Sindhu</td><td>Oxford</td><td><span class="hl-red">+0.95</span></td><td>Similar output level &#8212; systematic under-recognition pattern</td></tr>
+      <tr><td>Idnan Yunas</td><td>Oxford</td><td><span class="hl-red">+0.95</span></td><td>Multiple at +0.95 suggests a structural issue, not individual</td></tr>
+      <tr><td>Arri Coomarasamy</td><td>Oxford</td><td><span class="hl-red">+0.95</span></td><td>Senior author with significant Lancet presence</td></tr>
+      <tr><td>Alex Zimmermann</td><td>Oxford</td><td><span class="hl-yellow">+0.79</span></td><td>Moderate gap &#8212; worth monitoring over time</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Methodology:</strong> Gap score = (expected citations based on work count) &#8722; (actual citations), normalized 0&#8211;1. Score of +0.95 means the author receives only ~5% of their &#8220;expected&#8221; citation weight &#8212; a strong signal of under-recognition or topic bias in the citation network.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A journal editor wants to audit whether certain research groups are systematically under-cited in their journal&#8217;s reference network. <code>visibility-gap --institution "Oxford"</code> shows 4 Oxford authors at gap +0.95 &#8212; a pattern suggesting a structural bias worth investigating, not just individual variation.</div></details>
+</section>
+
+<!-- 8. CITED-BY -->
+<section id="s8">
+  <div class="sec-header">
+    <div class="sec-num">8</div>
+    <div><div class="sec-title">Cited-By &#8212; Citing Works</div><span class="sec-tag">live API &#183; OpenAlex</span></div>
+  </div>
+  <div class="use-badge">Researchers &#183; Systematic Reviewers &#183; Science Journalists</div>
+  <p class="sec-desc">Find all papers that cite a specific Lancet article by DOI &#8212; pulled live from OpenAlex. Returns citing works with titles, years, and source journals. The fastest way to trace the downstream impact of a landmark paper.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q16 &#183; Citing works for landmark COVID-19 paper</div>
+    <div class="cmd-wrap"><code>./thelancet cited-by '10.1016/S0140-6736(20)30183-5'</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q17 &#183; Citing works with limit</div>
+    <div class="cmd-wrap"><code>./thelancet cited-by '10.1016/S0140-6736(20)30183-5' --limit 5</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">DOI: 10.1016/S0140-6736(20)30183-5 &#8212; COVID-19 Clinical Characteristics Paper</div>
+    <div class="result-row"><span class="key">Source journal</span><span class="val">The Lancet</span></div>
+    <div class="result-row"><span class="key">Published</span><span class="val">2020</span></div>
+    <div class="result-row"><span class="key">Citing works (sample)</span><span class="hl-accent">10 citing works (2026)</span></div>
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>Citing Paper Title (abbrev.)</th><th>Year</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Low-cost sensor networks for respiratory infection surveillance</td><td>2026</td></tr>
+      <tr><td>2</td><td>New rapid diagnostic test for respiratory viral pathogens</td><td>2026</td></tr>
+      <tr><td>3</td><td>Critical COVID-19 outcomes &#8212; long-term follow-up cohort</td><td>2026</td></tr>
+      <tr><td>4</td><td>Pandemic preparedness frameworks &#8212; lessons from SARS-CoV-2</td><td>2026</td></tr>
+      <tr><td>5</td><td>Prognostic biomarkers in severe respiratory illness</td><td>2026</td></tr>
+      <tr><td>6</td><td>Wearable monitoring in post-COVID recovery</td><td>2026</td></tr>
+      <tr><td>7</td><td>AI-assisted triage in emergency respiratory cases</td><td>2026</td></tr>
+      <tr><td>8</td><td>Cytokine storm pathogenesis &#8212; updated mechanistic review</td><td>2026</td></tr>
+      <tr><td>9</td><td>One Health approach to zoonotic disease emergence</td><td>2026</td></tr>
+      <tr><td>10</td><td>Community transmission dynamics &#8212; retrospective analysis</td><td>2026</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Bash tip:</strong> Always wrap DOIs with parentheses in single quotes: <code>'10.1016/S0140-6736(20)30183-5'</code> &#8212; otherwise bash interprets <code>(20)</code> as a subshell expression.</div>
+  <details><summary>When to use</summary>
+    <div class="db">A science journalist writing a 2026 follow-up on the landmark COVID clinical characteristics paper wants to trace its downstream impact. <code>cited-by '10.1016/S0140-6736(20)30183-5'</code> returns 10 citing works published in 2026 &#8212; live from OpenAlex, in under 2 seconds.</div></details>
+</section>
+
+<!-- 9. REFRESH -->
+<section id="s9">
+  <div class="sec-header">
+    <div class="sec-num">9</div>
+    <div><div class="sec-title">Refresh &#8212; Sync Articles to Local DB</div><span class="sec-tag">live API &#8594; SQLite</span></div>
+  </div>
+  <div class="use-badge">All Users &#183; Initial Setup &#183; Regular Maintenance</div>
+  <p class="sec-desc">Populate the local SQLite database with recent Lancet articles from OpenAlex. Required before running any analytics command (<code>rank-authors</code>, <code>mesh</code>, <code>affiliation-growth</code>, <code>drift</code>, <code>curate</code>, <code>visibility-gap</code>). Set <code>--max-pages</code> to control how many articles are fetched.</p>
+
+  <div class="cmd-block"><div class="cmd-label">Q18 &#183; Sync The Lancet (1,000 articles)</div>
+    <div class="cmd-wrap"><code>./thelancet refresh --journal lancet --max-pages 10</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q19 &#183; Sync Lancet Oncology (600 articles)</div>
+    <div class="cmd-wrap"><code>./thelancet refresh --journal lancet-oncology --max-pages 6</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+  <div class="cmd-block"><div class="cmd-label">Q20 &#183; Sync multiple journals in a loop</div>
+    <div class="cmd-wrap"><code>for j in lancet lancet-oncology lancet-neurology; do ./thelancet refresh --journal $j --max-pages 5; done</code><button class="copy-btn" onclick="cp(this)">Copy</button></div></div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Refresh Timeline &#8212; Articles Synced per Run</div>
+    <div class="chart-box"><canvas id="c-refresh"></canvas></div>
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Journal</th><th>--max-pages</th><th>Articles (~100/pg)</th><th>Unlocks</th></tr></thead>
+    <tbody>
+      <tr><td>lancet</td><td>10</td><td class="hl-green">1,000</td><td>All analytics</td></tr>
+      <tr><td>lancet-oncology</td><td>6</td><td class="hl-green">600</td><td>All analytics</td></tr>
+      <tr><td>Any journal</td><td>1</td><td>~100</td><td>Basic analytics</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><strong>After refresh:</strong> Run <code>doctor</code> to confirm article counts, then try <code>rank-authors</code>, <code>curate</code>, or <code>affiliation-growth</code> immediately &#8212; all queries run from local SQLite and return in milliseconds.</div>
+  <details><summary>Commands requiring refresh first</summary>
+    <div class="db">
+      <strong>Needs local DB:</strong> rank-authors &#183; mesh &#183; affiliation-growth &#183; drift &#183; curate &#183; visibility-gap<br>
+      <strong>Works live (no refresh needed):</strong> cited-by &#183; sources &#183; journals &#183; doctor
+    </div></details>
+</section>
+
+<footer>
+  <p>The Lancet CLI &#183; 19 journals &#183; OpenAlex API &#183; Local SQLite analytics &#183; No API key required &#183; Read-only</p>
+  <p style="margin-top:6px">Part of <strong>printing-press-library</strong> &#183; Open source &#183; v1.0.0</p>
+</footer>
+
+<script>
+function cp(btn){
+  const code=btn.parentElement.querySelector('code').textContent.trim();
+  navigator.clipboard.writeText(code).then(()=>{
+    btn.textContent='✓ Copied';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok')},1600);
+  }).catch(()=>{btn.textContent='✓';setTimeout(()=>btn.textContent='Copy',1600)});
+}
+Chart.defaults.color='#a99fb3';
+Chart.defaults.borderColor='rgba(255,255,255,.06)';
+Chart.defaults.font.family="'Segoe UI',system-ui,sans-serif";
+Chart.defaults.maintainAspectRatio=false;
+Chart.defaults.responsive=true;
+Chart.defaults.plugins.tooltip.backgroundColor='rgba(29,26,36,.95)';
+Chart.defaults.plugins.tooltip.borderColor='rgba(243,166,182,.4)';
+Chart.defaults.plugins.tooltip.borderWidth=1;
+Chart.defaults.plugins.tooltip.padding=10;
+Chart.defaults.plugins.tooltip.cornerRadius=8;
+
+const PINK='rgba(243,166,182,.85)';
+const PINK2='rgba(243,166,182,.55)';
+const PINK3='rgba(243,166,182,.32)';
+const PEACH='rgba(243,195,154,.85)';
+const PEACH2='rgba(243,195,154,.55)';
+const PEACH3='rgba(243,195,154,.32)';
+const GREEN='rgba(159,220,171,.85)';
+const PURPLE='rgba(200,176,236,.8)';
+const RED='rgba(242,167,167,.85)';
+const GOLD='rgba(236,215,154,.85)';
+const gridX={grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#a99fb3'}};
+const noGridX={grid:{display:false},ticks:{color:'#a99fb3',font:{size:10}}};
+
+new Chart(document.getElementById('c-journals'),{type:'bar',data:{
+  labels:['lancet','lancet-oncology','other 17 (pending)'],
+  datasets:[{label:'Articles synced',data:[1000,600,0],
+    backgroundColor:[PINK,PEACH,'rgba(255,255,255,.07)'],
+    borderRadius:8,borderSkipped:false,maxBarThickness:90}]
+},options:{plugins:{legend:{display:false}},
+  scales:{x:noGridX,y:gridX}}});
+
+new Chart(document.getElementById('c-curate-diab'),{type:'bar',data:{
+  labels:['Orforglipron vs semaglutide','Semaglutide / alcohol disorder','CagriSema + insulin'],
+  datasets:[{data:[13,4,3],backgroundColor:[PINK,PINK2,PINK3],borderRadius:8,borderSkipped:false,maxBarThickness:34}]
+},options:{indexAxis:'y',plugins:{legend:{display:false}},
+  scales:{x:gridX,y:{grid:{display:false},ticks:{color:'#ece7ef',font:{size:10}}}}}});
+
+new Chart(document.getElementById('c-curate-onco'),{type:'bar',data:{
+  labels:['iRECIST guidelines','Hyperthermia + chemo','Dabrafenib+trametinib','Nivolumab H&N','Radiomics CD8'],
+  datasets:[{data:[2408,1983,1367,1254,1230],
+    backgroundColor:[PEACH,PEACH2,'rgba(243,195,154,.45)','rgba(243,195,154,.38)',PEACH3],
+    borderRadius:8,borderSkipped:false,maxBarThickness:26}]
+},options:{indexAxis:'y',plugins:{legend:{display:false}},
+  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#a99fb3',callback:v=>v>=1000?(v/1000).toFixed(1)+'k':v}},
+          y:{grid:{display:false},ticks:{color:'#ece7ef',font:{size:10}}}}}}); 
+
+new Chart(document.getElementById('c-rank-all'),{type:'bar',data:{
+  labels:['Remi A. Nout','Tjalling Bosse','Cyrus Chargari','Carien Creutzberg','Phillip Baker'],
+  datasets:[
+    {label:'Total Citations',data:[252,252,251,251,246],backgroundColor:PINK,borderRadius:6,maxBarThickness:40},
+    {label:'Works x10',data:[40,40,30,30,30],backgroundColor:PURPLE,borderRadius:6,maxBarThickness:40}
+  ]
+},options:{plugins:{legend:{position:'top',labels:{color:'#a99fb3',font:{size:11},usePointStyle:true,pointStyle:'circle'}}},
+  scales:{x:noGridX,y:gridX}}});
+
+new Chart(document.getElementById('c-aff-lancet'),{type:'bar',data:{
+  labels:['UCL','Harvard','Oxford','LSHTM','Inserm'],
+  datasets:[{data:[52,31,26,26,23],backgroundColor:[PINK,PINK2,'rgba(243,166,182,.48)','rgba(243,166,182,.4)',PINK3],
+    borderRadius:8,borderSkipped:false,maxBarThickness:54}]
+},options:{plugins:{legend:{display:false}},scales:{x:noGridX,y:gridX}}});
+
+new Chart(document.getElementById('c-aff-onco'),{type:'bar',data:{
+  labels:['MSK','MD Anderson','Gustave Roussy','UCL','Inserm'],
+  datasets:[{data:[40,31,30,26,26],backgroundColor:[PEACH,PEACH2,'rgba(243,195,154,.48)','rgba(243,195,154,.4)',PEACH3],
+    borderRadius:8,borderSkipped:false,maxBarThickness:54}]
+},options:{plugins:{legend:{display:false}},scales:{x:noGridX,y:gridX}}});
+
+new Chart(document.getElementById('c-mesh'),{type:'bar',data:{
+  labels:['Wadhera-Figueroa','Wadhera-Bleich','Figueroa-Bleich','Klompas-Shapiro','Abrahim-Saadi','Fisher-Yin','Kuipers-Hernan'],
+  datasets:[{label:'Shared Lancet papers',data:[1,1,1,1,1,1,1],
+    backgroundColor:[PINK,PINK,PINK,PURPLE,PURPLE,GREEN,GREEN],
+    borderRadius:6,borderSkipped:false,maxBarThickness:22}]
+},options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:()=>' 1 shared Lancet paper'}}},
+  scales:{x:{display:false,max:1.4},y:{grid:{display:false},ticks:{color:'#ece7ef',font:{size:11}}}}}}); 
+
+new Chart(document.getElementById('c-vis'),{type:'bar',data:{
+  labels:['Adam Devall','Sindhu','Idnan Yunas','Arri Coomarasamy','Alex Zimmermann'],
+  datasets:[{label:'Gap Score',data:[0.95,0.95,0.95,0.95,0.79],
+    backgroundColor:[RED,RED,RED,RED,GOLD],borderRadius:8,borderSkipped:false,maxBarThickness:34}]
+},options:{indexAxis:'y',plugins:{legend:{display:false}},
+  scales:{x:{grid:{color:'rgba(255,255,255,.05)'},max:1.0,ticks:{color:'#a99fb3'}},
+          y:{grid:{display:false},ticks:{color:'#ece7ef'}}}}});
+
+new Chart(document.getElementById('c-refresh'),{type:'bar',data:{
+  labels:['Run 1 - lancet (10pp)','Run 2 - lancet-onco (6pp)','Total DB'],
+  datasets:[
+    {label:'Articles added',data:[1000,600,0],backgroundColor:[PINK,PEACH,'rgba(255,255,255,.07)'],borderRadius:6,maxBarThickness:60},
+    {label:'Cumulative total',data:[0,0,1600],backgroundColor:GREEN,borderRadius:6,maxBarThickness:60}
+  ]
+},options:{plugins:{legend:{position:'top',labels:{color:'#a99fb3',font:{size:11},usePointStyle:true,pointStyle:'circle'}}},
+  scales:{x:noGridX,y:gridX}}});
+</script>
+</body>
+</html>
