@@ -4,24 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Miben kódolj Claude-dal? — 2026 Útmutató</title>
+<meta name="description" content="Gyakorlati útmutató a legjobb fejlesztői környezetekhez Claude-dal: CLI, IDE, web, Artifacts, API. Modern 2026 glassmorphism dizájn.">
+<!-- Open Graph / közösségi megosztás -->
+<meta property="og:title" content="Miben kódolj Claude-dal? — 2026 Útmutató">
+<meta property="og:description" content="Terminál, IDE, böngésző vagy API? Válaszd ki a hozzád illő Claude fejlesztői környezetet.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="hu_HU">
+<meta name="twitter:card" content="summary">
 <style>
   :root {
     --bg: #070a14;
     --glass: rgba(255, 255, 255, 0.06);
-    --glass-strong: rgba(255, 255, 255, 0.10);
+    --glass-strong: rgba(255, 255, 255, 0.11);
     --border: rgba(255, 255, 255, 0.14);
-    --border-hover: rgba(255, 255, 255, 0.30);
+    --border-hover: rgba(255, 255, 255, 0.32);
     --text: #eef1fa;
-    --text-dim: #9aa3bd;
+    --text-dim: #adb6cf;
     --accent1: #7c6bff;
     --accent2: #22d3ee;
     --accent3: #f472b6;
     --accent4: #34d399;
-    --radius: 22px;
+    --glow: rgba(255, 255, 255, 0.65);
+    --shadow: rgba(0, 0, 0, 0.35);
+    --code-bg: rgba(10, 13, 24, 0.55);
+    --radius: 20px;
+    --sidebar-w: 250px;
+  }
+
+  html[data-theme="light"] {
+    --bg: #e9edf6;
+    --glass: rgba(255, 255, 255, 0.48);
+    --glass-strong: rgba(255, 255, 255, 0.72);
+    --border: rgba(30, 41, 70, 0.14);
+    --border-hover: rgba(30, 41, 70, 0.30);
+    --text: #16203a;
+    --text-dim: #45506e;
+    --glow: rgba(124, 107, 255, 0.55);
+    --shadow: rgba(30, 41, 70, 0.14);
+    --code-bg: rgba(18, 23, 40, 0.92);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -31,22 +54,20 @@
     min-height: 100vh;
     overflow-x: hidden;
     line-height: 1.6;
+    transition: background 0.4s ease, color 0.4s ease;
   }
 
   /* ===== Animált háttér blobok ===== */
-  .bg-blobs {
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    overflow: hidden;
-  }
+  .bg-blobs { position: fixed; inset: 0; z-index: -2; overflow: hidden; }
   .blob {
     position: absolute;
     border-radius: 50%;
     filter: blur(90px);
     opacity: 0.45;
+    will-change: transform;
     animation: float 18s ease-in-out infinite alternate;
   }
+  html[data-theme="light"] .blob { opacity: 0.30; }
   .blob:nth-child(1) { width: 520px; height: 520px; background: #4c1d95; top: -140px; left: -120px; }
   .blob:nth-child(2) { width: 460px; height: 460px; background: #0e7490; top: 30%; right: -160px; animation-delay: -6s; animation-duration: 22s; }
   .blob:nth-child(3) { width: 420px; height: 420px; background: #9d174d; bottom: -120px; left: 25%; animation-delay: -12s; animation-duration: 26s; }
@@ -58,50 +79,93 @@
     100% { transform: translate(-50px, 60px) scale(0.95); }
   }
 
-  /* Finom zaj/rács réteg a mélységért */
   .bg-grid {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
+    position: fixed; inset: 0; z-index: -1;
     background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
     background-size: 44px 44px;
+    opacity: 0.35;
     mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
     -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
   }
 
-  .container {
-    max-width: 1120px;
-    margin: 0 auto;
-    padding: 0 24px;
+  /* ===== Egérkövető fény-perem (glow border) ===== */
+  .glow-panel { position: relative; }
+  .glow-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%),
+                var(--glow), transparent 65%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+  .glow-panel:hover::after { opacity: 1; }
+
+  /* ===== Közös glass alap ===== */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 40px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.10);
   }
 
-  /* ===== Navigáció ===== */
-  nav {
-    position: sticky;
-    top: 16px;
-    z-index: 100;
-    margin: 16px auto 0;
-    max-width: 1120px;
-    padding: 0 24px;
+  /* ===== Hamburger + felső sáv ===== */
+  .hamburger {
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 300;
+    width: 46px; height: 46px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--glass-strong);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
-  .nav-inner {
+  .hamburger:hover { transform: scale(1.06); border-color: var(--border-hover); }
+
+  /* ===== Bal oldali sidebar ===== */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 400;
+    width: var(--sidebar-w);
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    transform: translateX(0);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+  body.sb-closed .sidebar { transform: translateX(-105%); }
+
+  .sb-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    padding: 14px 22px;
-    background: var(--glass);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.10);
+    gap: 10px;
+    margin-bottom: 22px;
   }
   .logo {
     font-weight: 800;
-    font-size: 1.05rem;
+    font-size: 1rem;
     letter-spacing: 0.02em;
     background: linear-gradient(90deg, var(--accent1), var(--accent2));
     -webkit-background-clip: text;
@@ -109,38 +173,101 @@
     color: transparent;
     white-space: nowrap;
   }
-  .nav-links { display: flex; gap: 6px; flex-wrap: wrap; }
-  .nav-links a {
+  .sb-close {
+    width: 34px; height: 34px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .sb-close:hover { color: var(--text); border-color: var(--border-hover); transform: rotate(90deg); }
+
+  .sb-nav { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  .sb-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
     color: var(--text-dim);
     text-decoration: none;
-    font-size: 0.86rem;
-    padding: 7px 13px;
-    border-radius: 12px;
-    transition: all 0.25s ease;
+    font-size: 0.92rem;
+    font-weight: 500;
+    border-radius: 13px;
+    border: 1px solid transparent;
+    transition: all 0.22s ease;
   }
-  .nav-links a:hover {
+  .sb-nav a .ico { font-size: 1.05rem; width: 22px; text-align: center; }
+  .sb-nav a:hover {
     color: var(--text);
     background: var(--glass-strong);
+    border-color: var(--border);
   }
+  .sb-nav a.active {
+    color: var(--text);
+    background: var(--glass-strong);
+    border-color: var(--border-hover);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 16px var(--shadow);
+  }
+  .sb-nav a.active .ico { filter: drop-shadow(0 0 6px var(--accent2)); }
 
-  /* ===== Hero ===== */
+  .sb-foot { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .theme-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 11px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--glass-strong);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+  .theme-btn:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+  .sb-note { font-size: 0.72rem; color: var(--text-dim); text-align: center; opacity: 0.8; }
+
+  #backdrop {
+    position: fixed; inset: 0;
+    z-index: 350;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #backdrop.show { opacity: 1; pointer-events: auto; }
+
+  /* ===== Fő tartalom ===== */
+  .main {
+    margin-left: var(--sidebar-w);
+    transition: margin-left 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  body.sb-closed .main { margin-left: 0; }
+  .container { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+
+  /* ===== Kompakt hero ===== */
   header {
-    padding: 96px 0 72px;
+    padding: 84px 0 40px;
     text-align: center;
   }
   .badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 18px;
-    background: var(--glass);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
+    padding: 7px 16px;
     border-radius: 999px;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     color: var(--text-dim);
-    margin-bottom: 28px;
+    margin-bottom: 20px;
   }
   .badge .dot {
     width: 8px; height: 8px; border-radius: 50%;
@@ -151,11 +278,11 @@
   @keyframes pulse { 50% { opacity: 0.4; } }
 
   h1 {
-    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-size: clamp(1.7rem, 4.2vw, 2.7rem);
     font-weight: 800;
-    line-height: 1.12;
+    line-height: 1.18;
     letter-spacing: -0.02em;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
   h1 .grad {
     background: linear-gradient(90deg, var(--accent1) 0%, var(--accent2) 50%, var(--accent3) 100%);
@@ -164,93 +291,109 @@
     color: transparent;
   }
   .subtitle {
-    max-width: 640px;
+    max-width: 560px;
     margin: 0 auto;
     color: var(--text-dim);
-    font-size: 1.08rem;
+    font-size: 0.98rem;
   }
 
-  /* ===== Szekciók ===== */
-  section { padding: 56px 0; }
-  .section-title {
-    font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+  /* ===== Szekciók + kiemelt szekciócím panelek ===== */
+  section { padding: 44px 0; scroll-margin-top: 24px; }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+  }
+  .section-head .s-ico {
+    flex-shrink: 0;
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.35rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(124,107,255,0.30), rgba(34,211,238,0.22));
+    border: 1px solid var(--border);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
+  }
+  .section-head .s-txt h2 {
+    font-size: clamp(1.25rem, 2.8vw, 1.6rem);
     font-weight: 750;
-    margin-bottom: 10px;
     letter-spacing: -0.01em;
+    line-height: 1.25;
   }
-  .section-sub {
+  .section-head .s-txt p {
     color: var(--text-dim);
-    margin-bottom: 36px;
-    max-width: 620px;
+    font-size: 0.87rem;
+    margin-top: 2px;
   }
+  .section-head .s-bar {
+    margin-left: auto;
+    align-self: stretch;
+    width: 4px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--accent1), var(--accent2));
+    box-shadow: 0 0 12px rgba(124,107,255,0.5);
+  }
+  .section-body { margin-top: 22px; }
 
   /* ===== Glass kártyák ===== */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 22px;
+    gap: 20px;
   }
   .card {
-    position: relative;
-    padding: 30px 28px;
-    background: var(--glass);
-    backdrop-filter: blur(24px) saturate(150%);
-    -webkit-backdrop-filter: blur(24px) saturate(150%);
-    border: 1px solid var(--border);
+    padding: 26px 24px;
     border-radius: var(--radius);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.09);
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    display: flex;
+    flex-direction: column;
   }
   .card:hover {
     transform: translateY(-6px);
     border-color: var(--border-hover);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.14);
+    box-shadow: 0 20px 60px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.14);
   }
   .card .icon {
-    width: 52px; height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    border-radius: 15px;
-    margin-bottom: 18px;
+    width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    border-radius: 14px;
+    margin-bottom: 16px;
     background: var(--glass-strong);
     border: 1px solid var(--border);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
   }
-  .card h3 {
-    font-size: 1.15rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
+  .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
   .card .tag {
     display: inline-block;
-    font-size: 0.72rem;
+    align-self: flex-start;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     padding: 3px 10px;
     border-radius: 999px;
-    margin-bottom: 12px;
+    margin-bottom: 11px;
   }
-  .tag.best   { background: rgba(52, 211, 153, 0.14); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.3); }
-  .tag.pro    { background: rgba(124, 107, 255, 0.16); color: #b4a8ff; border: 1px solid rgba(124,107,255,0.35); }
-  .tag.gyors  { background: rgba(34, 211, 238, 0.13); color: #67e8f9; border: 1px solid rgba(34,211,238,0.3); }
-  .tag.mobil  { background: rgba(244, 114, 182, 0.13); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.3); }
-  .card p { color: var(--text-dim); font-size: 0.93rem; margin-bottom: 14px; }
-  .card ul { list-style: none; }
+  .tag.best   { background: rgba(52, 211, 153, 0.14); color: #34d399; border: 1px solid rgba(52,211,153,0.35); }
+  .tag.pro    { background: rgba(124, 107, 255, 0.16); color: #8f80ff; border: 1px solid rgba(124,107,255,0.4); }
+  .tag.gyors  { background: rgba(34, 211, 238, 0.13); color: #14b3cc; border: 1px solid rgba(34,211,238,0.35); }
+  .tag.mobil  { background: rgba(244, 114, 182, 0.13); color: #ec6bab; border: 1px solid rgba(244,114,182,0.35); }
+  html:not([data-theme="light"]) .tag.best  { color: #6ee7b7; }
+  html:not([data-theme="light"]) .tag.pro   { color: #b4a8ff; }
+  html:not([data-theme="light"]) .tag.gyors { color: #67e8f9; }
+  html:not([data-theme="light"]) .tag.mobil { color: #f9a8d4; }
+
+  .card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 12px; }
+  .card ul { list-style: none; margin-bottom: 12px; }
   .card li {
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     color: var(--text-dim);
-    padding: 5px 0 5px 24px;
+    padding: 4px 0 4px 24px;
     position: relative;
   }
   .card li::before {
@@ -261,87 +404,148 @@
     font-weight: 700;
   }
 
+  /* ===== Leugró magyarázat (accordion) ===== */
+  details.acc {
+    margin-top: auto;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--glass);
+    overflow: hidden;
+    transition: border-color 0.25s ease;
+  }
+  details.acc:hover { border-color: var(--border-hover); }
+  details.acc summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 15px;
+    font-size: 0.85rem;
+    font-weight: 650;
+    cursor: pointer;
+    color: var(--text);
+    user-select: none;
+  }
+  details.acc summary::-webkit-details-marker { display: none; }
+  details.acc summary .chev {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    transition: transform 0.3s ease;
+  }
+  details.acc[open] summary .chev { transform: rotate(180deg); }
+  details.acc .acc-body {
+    padding: 0 15px 13px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+    animation: accIn 0.3s ease;
+  }
+  @keyframes accIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  details.acc[open] summary { border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+
   /* ===== Összehasonlító táblázat ===== */
   .table-wrap {
-    background: var(--glass);
-    backdrop-filter: blur(24px) saturate(150%);
-    -webkit-backdrop-filter: blur(24px) saturate(150%);
-    border: 1px solid var(--border);
     border-radius: var(--radius);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.09);
     overflow-x: auto;
+    position: relative;
   }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 660px;
+  .table-scroll-hint {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 10px 4px 0;
   }
+  .table-fade {
+    position: sticky;
+    left: 0;
+    pointer-events: none;
+  }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
   th, td {
     text-align: left;
-    padding: 16px 20px;
-    font-size: 0.9rem;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
+    padding: 15px 18px;
+    font-size: 0.89rem;
+    border-bottom: 1px solid var(--border);
   }
   th {
     color: var(--text-dim);
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    background: rgba(255,255,255,0.04);
+    background: var(--glass);
   }
   tbody tr { transition: background 0.2s ease; }
-  tbody tr:hover { background: rgba(255,255,255,0.045); }
+  tbody tr:hover { background: var(--glass-strong); }
   tbody tr:last-child td { border-bottom: none; }
   td:first-child { font-weight: 650; color: var(--text); white-space: nowrap; }
   td { color: var(--text-dim); }
-  .stars { color: #fbbf24; letter-spacing: 2px; white-space: nowrap; }
+  .stars { color: #f59e0b; letter-spacing: 2px; white-space: nowrap; }
 
-  /* ===== Tippek ===== */
-  .tips { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
-  .tip {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    padding: 22px;
-    background: var(--glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border);
-    border-radius: 18px;
+  /* ===== Tippek — leugró accordion stílusban ===== */
+  .tips { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
+  details.tip {
+    border-radius: 17px;
+    overflow: hidden;
     transition: border-color 0.25s ease, transform 0.25s ease;
+    align-self: start;
   }
-  .tip:hover { border-color: var(--border-hover); transform: translateY(-3px); }
-  .tip .num {
-    flex-shrink: 0;
-    width: 38px; height: 38px;
+  details.tip:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+  details.tip summary {
+    list-style: none;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 14px;
+    padding: 17px 19px;
+    cursor: pointer;
+    user-select: none;
+  }
+  details.tip summary::-webkit-details-marker { display: none; }
+  details.tip .num {
+    flex-shrink: 0;
+    width: 37px; height: 37px;
+    display: flex; align-items: center; justify-content: center;
     font-weight: 800;
-    font-size: 0.95rem;
+    font-size: 0.93rem;
     border-radius: 12px;
-    background: linear-gradient(135deg, rgba(124,107,255,0.28), rgba(34,211,238,0.22));
+    background: linear-gradient(135deg, rgba(124,107,255,0.30), rgba(34,211,238,0.22));
     border: 1px solid var(--border);
   }
-  .tip h4 { font-size: 0.98rem; margin-bottom: 4px; }
-  .tip p { font-size: 0.86rem; color: var(--text-dim); }
+  details.tip h4 { font-size: 0.96rem; flex: 1; }
+  details.tip .chev {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    transition: transform 0.3s ease;
+  }
+  details.tip[open] .chev { transform: rotate(180deg); }
+  details.tip .tip-body {
+    padding: 0 19px 17px 70px;
+    font-size: 0.87rem;
+    color: var(--text-dim);
+    animation: accIn 0.3s ease;
+  }
 
-  /* ===== Kód blokk ===== */
+  /* ===== Kód blokk + másolás gomb ===== */
   .code-glass {
-    background: rgba(10, 13, 24, 0.55);
+    background: var(--code-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 10px 40px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08);
     overflow: hidden;
   }
   .code-head {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 13px 18px;
+    padding: 12px 16px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
     background: rgba(255,255,255,0.03);
   }
@@ -349,34 +553,55 @@
   .circle.r { background: #ff5f57; }
   .circle.y { background: #febc2e; }
   .circle.g { background: #28c840; }
-  .code-head span { margin-left: 8px; font-size: 0.78rem; color: var(--text-dim); font-family: 'Cascadia Code', 'Fira Code', monospace; }
+  .code-head .fname { margin-left: 8px; font-size: 0.78rem; color: #9aa3bd; font-family: 'Cascadia Code', 'Fira Code', monospace; }
+  .copy-btn {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #cdd4e8;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
+  .copy-btn.copied {
+    color: #6ee7b7;
+    border-color: rgba(52,211,153,0.5);
+    background: rgba(52,211,153,0.12);
+  }
   .code-glass pre {
-    padding: 22px;
+    padding: 20px;
     overflow-x: auto;
     font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
-    font-size: 0.86rem;
+    font-size: 0.85rem;
     line-height: 1.75;
+    color: #dfe5f3;
   }
-  .c-cmt { color: #6b7490; }
+  .c-cmt { color: #7d87a5; }
   .c-cmd { color: #67e8f9; }
   .c-str { color: #6ee7b7; }
   .c-flag { color: #f9a8d4; }
 
   /* ===== Lábléc ===== */
   footer {
-    padding: 48px 0 40px;
+    padding: 44px 0 38px;
     text-align: center;
     color: var(--text-dim);
     font-size: 0.85rem;
   }
   footer .line {
-    width: 100%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
-    margin-bottom: 32px;
+    background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
+    margin-bottom: 30px;
   }
 
-  /* ===== Scroll-reveal animáció ===== */
+  /* ===== Scroll-reveal ===== */
   .reveal {
     opacity: 0;
     transform: translateY(26px);
@@ -384,15 +609,26 @@
   }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  @media (max-width: 640px) {
-    .nav-links a { font-size: 0.78rem; padding: 6px 9px; }
-    header { padding: 64px 0 48px; }
-    section { padding: 40px 0; }
+  /* ===== Reszponzív ===== */
+  @media (max-width: 979px) {
+    .main { margin-left: 0; }
+    .sidebar { transform: translateX(-105%); width: min(300px, 84vw); border-radius: 0 var(--radius) var(--radius) 0; }
+    body.sb-open-mobile .sidebar { transform: translateX(0); }
+    header { padding: 76px 0 34px; }
+    section { padding: 34px 0; }
+    .section-head { padding: 15px 16px; gap: 12px; }
+    .table-scroll-hint { display: flex; }
+    .table-wrap {
+      -webkit-mask-image: linear-gradient(90deg, black 88%, transparent 100%);
+              mask-image: linear-gradient(90deg, black 88%, transparent 100%);
+    }
+    details.tip .tip-body { padding-left: 19px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .blob, .badge .dot { animation: none; }
     .reveal { opacity: 1; transform: none; transition: none; }
+    .sidebar, .main { transition: none; }
   }
 </style>
 </head>
@@ -406,225 +642,236 @@
 </div>
 <div class="bg-grid"></div>
 
-<nav>
-  <div class="nav-inner">
-    <div class="logo">⬡ Claude Kódolás 2026</div>
-    <div class="nav-links">
-      <a href="#eszkozok">Eszközök</a>
-      <a href="#osszehasonlitas">Összehasonlítás</a>
-      <a href="#tippek">Tippek</a>
-      <a href="#kezdes">Kezdés</a>
-    </div>
+<button class="hamburger" id="hamburger" aria-label="Menü megnyitása">☰</button>
+<div id="backdrop"></div>
+
+<aside class="sidebar glass glow-panel" id="sidebar" aria-label="Oldalsó navigáció">
+  <div class="sb-head">
+    <div class="logo">⬡ Claude Kódolás</div>
+    <button class="sb-close" id="sbClose" aria-label="Menü bezárása">✕</button>
   </div>
-</nav>
-
-<header class="container">
-  <div class="badge"><span class="dot"></span> Frissítve: 2026 · Glass Edition</div>
-  <h1>Miben érdemes kódolni,<br>ha <span class="grad">Claude-ot</span> használsz?</h1>
-  <p class="subtitle">Gyakorlati útmutató a legjobb fejlesztői környezetekhez — a terminaltól a böngészőig. Válaszd ki, melyik illik a munkastílusodhoz.</p>
-</header>
-
-<section id="eszkozok" class="container">
-  <h2 class="section-title reveal">🛠️ A legjobb környezetek</h2>
-  <p class="section-sub reveal">Claude többféle felületen érhető el — mindegyiknek megvan a maga erőssége.</p>
-
-  <div class="grid">
-    <div class="card reveal">
-      <div class="icon">⌨️</div>
-      <h3>Claude Code — Terminál (CLI)</h3>
-      <span class="tag best">Legjobb választás</span>
-      <p>A legerősebb módja a Claude-dal való fejlesztésnek. Közvetlenül a projekted mappájában dolgozik: olvassa, írja, futtatja a kódot.</p>
-      <ul>
-        <li>Teljes projekthozzáférés, git integráció</li>
-        <li>Tesztek futtatása, hibakeresés automatikusan</li>
-        <li>Nagy refaktorálások, több fájlos módosítások</li>
-        <li>Skillek, MCP szerverek, automatizálás</li>
-      </ul>
-    </div>
-
-    <div class="card reveal">
-      <div class="icon">🧩</div>
-      <h3>VS Code / JetBrains bővítmény</h3>
-      <span class="tag pro">IDE-ben élőknek</span>
-      <p>A Claude Code beépül a kedvenc szerkesztődbe. Látod a diffeket, egy kattintással elfogadod a módosításokat.</p>
-      <ul>
-        <li>Inline diff megjelenítés a szerkesztőben</li>
-        <li>Kijelölt kód alapján kérdezhetsz</li>
-        <li>Ismerős környezet, nem kell váltani</li>
-        <li>VS Code, Cursor, IntelliJ, PyCharm támogatás</li>
-      </ul>
-    </div>
-
-    <div class="card reveal">
-      <div class="icon">🌐</div>
-      <h3>Claude Code Web (claude.ai/code)</h3>
-      <span class="tag gyors">Telepítés nélkül</span>
-      <p>Böngészőből indítasz felhőbeli munkameneteket a GitHub repóidon. Nem kell semmit telepíteni — pont így készült ez az oldal is.</p>
-      <ul>
-        <li>Fut a felhőben, a géped pihenhet</li>
-        <li>Több feladat párhuzamosan</li>
-        <li>PR-t készít, CI-t figyel helyetted</li>
-        <li>Mobilról is elindítható</li>
-      </ul>
-    </div>
-
-    <div class="card reveal">
-      <div class="icon">✨</div>
-      <h3>Claude.ai — Artifacts</h3>
-      <span class="tag mobil">Gyors prototípus</span>
-      <p>Chat felületen kérsz egy appot, és azonnal élőben látod. Ideális kisebb weboldalakhoz, játékokhoz, vizualizációkhoz.</p>
-      <ul>
-        <li>Azonnali élő előnézet a chatben</li>
-        <li>HTML, React, SVG egy lépésben</li>
-        <li>Megosztható link egy kattintással</li>
-        <li>Nem kell hozzá fejlesztői környezet</li>
-      </ul>
-    </div>
-
-    <div class="card reveal">
-      <div class="icon">🖥️</div>
-      <h3>Claude Desktop alkalmazás</h3>
-      <span class="tag pro">Mac / Windows</span>
-      <p>Asztali alkalmazás MCP-integrációkkal: fájlok, naptár, adatbázisok — a Claude a helyi eszközeiddel is dolgozhat.</p>
-      <ul>
-        <li>Helyi fájlokhoz való hozzáférés</li>
-        <li>MCP szerverek egyszerű beállítása</li>
-        <li>Claude Code is elérhető benne</li>
-      </ul>
-    </div>
-
-    <div class="card reveal">
-      <div class="icon">🤖</div>
-      <h3>Claude API + Agent SDK</h3>
-      <span class="tag pro">Fejlesztőknek</span>
-      <p>Saját alkalmazásba építenéd a Claude-ot? Az API és az Agent SDK segítségével saját AI-ügynököket készíthetsz.</p>
-      <ul>
-        <li>Saját chatbotok, automatizálások</li>
-        <li>Python és TypeScript SDK</li>
-        <li>Tool use, MCP, streaming támogatás</li>
-      </ul>
-    </div>
+  <nav class="sb-nav" id="sbNav">
+    <a href="#eszkozok"><span class="ico">🛠️</span> Eszközök</a>
+    <a href="#osszehasonlitas"><span class="ico">⚖️</span> Összehasonlítás</a>
+    <a href="#tippek"><span class="ico">💡</span> Tippek</a>
+    <a href="#kezdes"><span class="ico">🚀</span> Kezdés</a>
+  </nav>
+  <div class="sb-foot">
+    <button class="theme-btn" id="themeBtn"><span id="themeIco">☀️</span> <span id="themeTxt">Világos mód</span></button>
+    <div class="sb-note">2026 · Glass Edition</div>
   </div>
-</section>
+</aside>
 
-<section id="osszehasonlitas" class="container">
-  <h2 class="section-title reveal">⚖️ Melyiket mikor?</h2>
-  <p class="section-sub reveal">Gyors összehasonlítás, hogy könnyebben dönts.</p>
+<div class="main">
 
-  <div class="table-wrap reveal">
-    <table>
-      <thead>
-        <tr>
-          <th>Eszköz</th>
-          <th>Mire ideális</th>
-          <th>Telepítés</th>
-          <th>Erő</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Claude Code CLI</td>
-          <td>Komoly projektek, refaktorálás, tesztelés, git munka</td>
-          <td>Egy parancs</td>
-          <td class="stars">★★★★★</td>
-        </tr>
-        <tr>
-          <td>IDE bővítmény</td>
-          <td>Napi fejlesztés a megszokott szerkesztőben</td>
-          <td>Bővítmény</td>
-          <td class="stars">★★★★★</td>
-        </tr>
-        <tr>
-          <td>Claude Code Web</td>
-          <td>GitHub repók, párhuzamos feladatok, gép nélkül</td>
-          <td>Nincs</td>
-          <td class="stars">★★★★☆</td>
-        </tr>
-        <tr>
-          <td>Artifacts (claude.ai)</td>
-          <td>Prototípusok, demók, egyszerű weboldalak</td>
-          <td>Nincs</td>
-          <td class="stars">★★★☆☆</td>
-        </tr>
-        <tr>
-          <td>Desktop app</td>
-          <td>Helyi fájlok + MCP integrációk</td>
-          <td>Letöltés</td>
-          <td class="stars">★★★★☆</td>
-        </tr>
-        <tr>
-          <td>API / Agent SDK</td>
-          <td>Saját AI-alkalmazások építése</td>
-          <td>SDK</td>
-          <td class="stars">★★★★★</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+  <header class="container">
+    <div class="badge glass glow-panel"><span class="dot"></span> Frissítve: 2026</div>
+    <h1>Miben érdemes kódolni, ha <span class="grad">Claude-ot</span> használsz?</h1>
+    <p class="subtitle">Gyakorlati útmutató a legjobb fejlesztői környezetekhez — a terminaltól a böngészőig.</p>
+  </header>
 
-<section id="tippek" class="container">
-  <h2 class="section-title reveal">💡 Profi tippek 2026-ra</h2>
-  <p class="section-sub reveal">Így hozod ki a legtöbbet a Claude-ból fejlesztés közben.</p>
+  <section id="eszkozok" class="container">
+    <div class="section-head glass glow-panel reveal">
+      <div class="s-ico">🛠️</div>
+      <div class="s-txt">
+        <h2>A legjobb környezetek</h2>
+        <p>Claude többféle felületen érhető el — mindegyiknek megvan a maga erőssége.</p>
+      </div>
+      <div class="s-bar"></div>
+    </div>
 
-  <div class="tips">
-    <div class="tip reveal">
-      <div class="num">1</div>
-      <div>
-        <h4>Készíts CLAUDE.md fájlt</h4>
-        <p>A projekt gyökerébe tett CLAUDE.md-ben leírhatod a szabályokat, parancsokat — a Claude minden munkamenetben elolvassa.</p>
+    <div class="section-body grid">
+      <div class="card glass glow-panel reveal">
+        <div class="icon">⌨️</div>
+        <h3>Claude Code — Terminál (CLI)</h3>
+        <span class="tag best">Legjobb választás</span>
+        <p>A legerősebb módja a Claude-dal való fejlesztésnek. Közvetlenül a projekted mappájában dolgozik.</p>
+        <ul>
+          <li>Teljes projekthozzáférés, git integráció</li>
+          <li>Tesztek futtatása, hibakeresés automatikusan</li>
+          <li>Nagy refaktorálások, több fájlos módosítások</li>
+        </ul>
+        <details class="acc">
+          <summary>Mikor válaszd? <span class="chev">▼</span></summary>
+          <div class="acc-body">Ha valódi szoftverprojekten dolgozol: webapp, API, mobilalkalmazás. A CLI látja a teljes kódbázist, futtatja a parancsokat, és addig iterál a hibákon, amíg minden működik. Skillekkel és MCP szerverekkel tovább bővíthető.</div>
+        </details>
+      </div>
+
+      <div class="card glass glow-panel reveal">
+        <div class="icon">🧩</div>
+        <h3>VS Code / JetBrains bővítmény</h3>
+        <span class="tag pro">IDE-ben élőknek</span>
+        <p>A Claude Code beépül a kedvenc szerkesztődbe. Látod a diffeket, egy kattintással elfogadod a módosításokat.</p>
+        <ul>
+          <li>Inline diff megjelenítés a szerkesztőben</li>
+          <li>Kijelölt kód alapján kérdezhetsz</li>
+          <li>VS Code, Cursor, IntelliJ, PyCharm</li>
+        </ul>
+        <details class="acc">
+          <summary>Mikor válaszd? <span class="chev">▼</span></summary>
+          <div class="acc-body">Ha már van bejáratott IDE-munkafolyamatod, és nem akarsz terminál és szerkesztő között ugrálni. A módosítások vizuálisan, diff nézetben jelennek meg — kényelmesebb átnézni, mint a nyers terminál kimenetet.</div>
+        </details>
+      </div>
+
+      <div class="card glass glow-panel reveal">
+        <div class="icon">🌐</div>
+        <h3>Claude Code Web</h3>
+        <span class="tag gyors">Telepítés nélkül</span>
+        <p>Böngészőből indítasz felhőbeli munkameneteket a GitHub repóidon — pont így készült ez az oldal is.</p>
+        <ul>
+          <li>Fut a felhőben, a géped pihenhet</li>
+          <li>Több feladat párhuzamosan</li>
+          <li>PR-t készít, CI-t figyel helyetted</li>
+        </ul>
+        <details class="acc">
+          <summary>Mikor válaszd? <span class="chev">▼</span></summary>
+          <div class="acc-body">Ha GitHubon van a projekted, és bárhonnan — akár telefonról — szeretnél feladatot kiadni. Ideális párhuzamos munkára: több munkamenet fut egyszerre, mindegyik a saját branchén, te pedig csak a kész PR-eket nézed át.</div>
+        </details>
+      </div>
+
+      <div class="card glass glow-panel reveal">
+        <div class="icon">✨</div>
+        <h3>Claude.ai — Artifacts</h3>
+        <span class="tag mobil">Gyors prototípus</span>
+        <p>Chat felületen kérsz egy appot, és azonnal élőben látod a chat mellett.</p>
+        <ul>
+          <li>Azonnali élő előnézet</li>
+          <li>HTML, React, SVG egy lépésben</li>
+          <li>Megosztható link egy kattintással</li>
+        </ul>
+        <details class="acc">
+          <summary>Mikor válaszd? <span class="chev">▼</span></summary>
+          <div class="acc-body">Ha gyorsan akarsz látni valamit: egy landing oldal ötletet, kis játékot, kalkulátort, diagramot. Nem kell hozzá semmilyen fejlesztői környezet — a böngésző és egy jó prompt elég.</div>
+        </details>
+      </div>
+
+      <div class="card glass glow-panel reveal">
+        <div class="icon">🖥️</div>
+        <h3>Claude Desktop alkalmazás</h3>
+        <span class="tag pro">Mac / Windows</span>
+        <p>Asztali alkalmazás MCP-integrációkkal: fájlok, naptár, adatbázisok.</p>
+        <ul>
+          <li>Helyi fájlokhoz való hozzáférés</li>
+          <li>MCP szerverek egyszerű beállítása</li>
+          <li>Claude Code is elérhető benne</li>
+        </ul>
+        <details class="acc">
+          <summary>Mikor válaszd? <span class="chev">▼</span></summary>
+          <div class="acc-body">Ha a Claude-nak a helyi gépeddel kell dolgoznia: dokumentumokat rendezni, táblázatokat elemezni, vagy MCP-n keresztül más appokkal (Slack, naptár, adatbázis) együttműködni.</div>
+        </details>
+      </div>
+
+      <div class="card glass glow-panel reveal">
+        <div class="icon">🤖</div>
+        <h3>Claude API + Agent SDK</h3>
+        <span class="tag pro">Fejlesztőknek</span>
+        <p>Saját alkalmazásba építenéd a Claude-ot? Az API-val saját AI-ügynököket készíthetsz.</p>
+        <ul>
+          <li>Saját chatbotok, automatizálások</li>
+          <li>Python és TypeScript SDK</li>
+          <li>Tool use, MCP, streaming támogatás</li>
+        </ul>
+        <details class="acc">
+          <summary>Mikor válaszd? <span class="chev">▼</span></summary>
+          <div class="acc-body">Ha terméket építesz: ügyfélszolgálati botot, dokumentum-feldolgozót, saját kódoló ügynököt. Az Agent SDK ugyanazt a motort adja a kezedbe, ami a Claude Code-ot is hajtja.</div>
+        </details>
       </div>
     </div>
-    <div class="tip reveal">
-      <div class="num">2</div>
-      <div>
-        <h4>Adj pontos, konkrét feladatot</h4>
-        <p>Minél konkrétabb a kérés (fájlnév, elvárt viselkedés, példa), annál jobb az eredmény. A homályos kérés homályos kódot szül.</p>
-      </div>
-    </div>
-    <div class="tip reveal">
-      <div class="num">3</div>
-      <div>
-        <h4>Használj plan módot nagy feladatnál</h4>
-        <p>Összetett módosítás előtt kérj tervet — így előbb átbeszélitek a megközelítést, és csak utána nyúl a kódhoz.</p>
-      </div>
-    </div>
-    <div class="tip reveal">
-      <div class="num">4</div>
-      <div>
-        <h4>Kérj teszteket is</h4>
-        <p>„Írd meg és futtasd is a teszteket" — a Claude Code képes futtatni a tesztjeidet és addig javítani, míg zöld nem lesz.</p>
-      </div>
-    </div>
-    <div class="tip reveal">
-      <div class="num">5</div>
-      <div>
-        <h4>Dolgozz külön brancheken</h4>
-        <p>Hagyd, hogy a Claude feature branchen dolgozzon és PR-t nyisson — így mindig átnézheted a változásokat merge előtt.</p>
-      </div>
-    </div>
-    <div class="tip reveal">
-      <div class="num">6</div>
-      <div>
-        <h4>MCP-vel bővítsd a képességeit</h4>
-        <p>MCP szerverekkel a Claude eléri az adatbázisodat, a Slacket, a naptáradat — és így a teljes munkafolyamatodban segít.</p>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section id="kezdes" class="container">
-  <h2 class="section-title reveal">🚀 Kezdés 60 másodperc alatt</h2>
-  <p class="section-sub reveal">A Claude Code CLI telepítése és első használata.</p>
-
-  <div class="code-glass reveal">
-    <div class="code-head">
-      <div class="circle r"></div>
-      <div class="circle y"></div>
-      <div class="circle g"></div>
-      <span>terminál</span>
+  <section id="osszehasonlitas" class="container">
+    <div class="section-head glass glow-panel reveal">
+      <div class="s-ico">⚖️</div>
+      <div class="s-txt">
+        <h2>Melyiket mikor?</h2>
+        <p>Gyors összehasonlítás, hogy könnyebben dönts.</p>
+      </div>
+      <div class="s-bar"></div>
     </div>
-    <pre><span class="c-cmt"># 1. Telepítés (Node.js szükséges)</span>
+
+    <div class="section-body">
+      <div class="table-wrap glass glow-panel reveal">
+        <table>
+          <thead>
+            <tr>
+              <th>Eszköz</th>
+              <th>Mire ideális</th>
+              <th>Telepítés</th>
+              <th>Erő</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Claude Code CLI</td><td>Komoly projektek, refaktorálás, tesztelés, git munka</td><td>Egy parancs</td><td class="stars">★★★★★</td></tr>
+            <tr><td>IDE bővítmény</td><td>Napi fejlesztés a megszokott szerkesztőben</td><td>Bővítmény</td><td class="stars">★★★★★</td></tr>
+            <tr><td>Claude Code Web</td><td>GitHub repók, párhuzamos feladatok, gép nélkül</td><td>Nincs</td><td class="stars">★★★★☆</td></tr>
+            <tr><td>Artifacts (claude.ai)</td><td>Prototípusok, demók, egyszerű weboldalak</td><td>Nincs</td><td class="stars">★★★☆☆</td></tr>
+            <tr><td>Desktop app</td><td>Helyi fájlok + MCP integrációk</td><td>Letöltés</td><td class="stars">★★★★☆</td></tr>
+            <tr><td>API / Agent SDK</td><td>Saját AI-alkalmazások építése</td><td>SDK</td><td class="stars">★★★★★</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-scroll-hint">👉 A táblázat oldalra húzható</div>
+    </div>
+  </section>
+
+  <section id="tippek" class="container">
+    <div class="section-head glass glow-panel reveal">
+      <div class="s-ico">💡</div>
+      <div class="s-txt">
+        <h2>Profi tippek 2026-ra</h2>
+        <p>Koppints egy tippre a részletes magyarázatért.</p>
+      </div>
+      <div class="s-bar"></div>
+    </div>
+
+    <div class="section-body tips">
+      <details class="tip glass glow-panel reveal">
+        <summary><span class="num">1</span><h4>Készíts CLAUDE.md fájlt</h4><span class="chev">▼</span></summary>
+        <div class="tip-body">A projekt gyökerébe tett CLAUDE.md-ben leírhatod a szabályokat, build parancsokat, kódolási konvenciókat — a Claude minden munkamenet elején elolvassa, így nem kell újra elmagyaráznod. Generáltathatod is a <code>/init</code> paranccsal.</div>
+      </details>
+      <details class="tip glass glow-panel reveal">
+        <summary><span class="num">2</span><h4>Adj pontos, konkrét feladatot</h4><span class="chev">▼</span></summary>
+        <div class="tip-body">Minél konkrétabb a kérés (fájlnév, elvárt viselkedés, példa bemenet és kimenet), annál jobb az eredmény. A homályos kérés homályos kódot szül. Képernyőképet is csatolhatsz — a Claude látja és érti.</div>
+      </details>
+      <details class="tip glass glow-panel reveal">
+        <summary><span class="num">3</span><h4>Használj plan módot nagy feladatnál</h4><span class="chev">▼</span></summary>
+        <div class="tip-body">Összetett módosítás előtt kérj tervet — így előbb átbeszélitek a megközelítést, és csak jóváhagyás után nyúl a kódhoz. Ez sok felesleges kört spórol meg nagy refaktorálásoknál.</div>
+      </details>
+      <details class="tip glass glow-panel reveal">
+        <summary><span class="num">4</span><h4>Kérj teszteket is</h4><span class="chev">▼</span></summary>
+        <div class="tip-body">„Írd meg és futtasd is a teszteket" — a Claude Code képes futtatni a tesztjeidet és addig javítani a kódot, amíg minden zöld nem lesz. Így a kész munka valóban működik, nem csak jól néz ki.</div>
+      </details>
+      <details class="tip glass glow-panel reveal">
+        <summary><span class="num">5</span><h4>Dolgozz külön brancheken</h4><span class="chev">▼</span></summary>
+        <div class="tip-body">Hagyd, hogy a Claude feature branchen dolgozzon és PR-t nyisson — így mindig átnézheted a változásokat merge előtt, és bármikor visszaléphetsz, ha valami nem tetszik.</div>
+      </details>
+      <details class="tip glass glow-panel reveal">
+        <summary><span class="num">6</span><h4>MCP-vel bővítsd a képességeit</h4><span class="chev">▼</span></summary>
+        <div class="tip-body">MCP szerverekkel a Claude eléri az adatbázisodat, a Slacket, a naptáradat, a böngészőt — így nem csak kódol, hanem a teljes munkafolyamatodban segít, a hibajegytől a deployig.</div>
+      </details>
+    </div>
+  </section>
+
+  <section id="kezdes" class="container">
+    <div class="section-head glass glow-panel reveal">
+      <div class="s-ico">🚀</div>
+      <div class="s-txt">
+        <h2>Kezdés 60 másodperc alatt</h2>
+        <p>A Claude Code CLI telepítése és első használata.</p>
+      </div>
+      <div class="s-bar"></div>
+    </div>
+
+    <div class="section-body">
+      <div class="code-glass glow-panel reveal">
+        <div class="code-head">
+          <div class="circle r"></div>
+          <div class="circle y"></div>
+          <div class="circle g"></div>
+          <span class="fname">terminál</span>
+          <button class="copy-btn" id="copyBtn" aria-label="Parancsok másolása"><span id="copyIco">⧉</span> <span id="copyTxt">Másolás</span></button>
+        </div>
+        <pre id="codeBlock"><span class="c-cmt"># 1. Telepítés (Node.js szükséges)</span>
 <span class="c-cmd">npm</span> install <span class="c-flag">-g</span> @anthropic-ai/claude-code
 
 <span class="c-cmt"># 2. Lépj a projekted mappájába</span>
@@ -635,27 +882,138 @@
 
 <span class="c-cmt"># 4. Kérj bármit magyarul is</span>
 &gt; <span class="c-str">"Írj egy modern glassmorphism stílusú landing oldalt"</span></pre>
-  </div>
-</section>
+      </div>
+    </div>
+  </section>
 
-<footer class="container">
-  <div class="line"></div>
-  <p>⬡ Claude Kódolás Útmutató · 2026 · Glassmorphism Edition</p>
-  <p style="margin-top:6px; opacity:0.7;">Készült Claude Code-dal, természetesen. 💜</p>
-</footer>
+  <footer class="container">
+    <div class="line"></div>
+    <p>⬡ Claude Kódolás Útmutató · 2026 · Glassmorphism Edition</p>
+    <p style="margin-top:6px; opacity:0.7;">Készült Claude Code-dal, természetesen. 💜</p>
+  </footer>
+
+</div><!-- /.main -->
 
 <script>
-  // Scroll-reveal animáció
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const body = document.body;
+  const mqDesktop = window.matchMedia('(min-width: 980px)');
+
+  /* ===== Sidebar nyitás/zárás ===== */
+  function openSidebar() {
+    if (mqDesktop.matches) {
+      body.classList.remove('sb-closed');
+      localStorage.setItem('sbClosed', '0');
+    } else {
+      body.classList.add('sb-open-mobile');
+      $('#backdrop').classList.add('show');
+    }
+  }
+  function closeSidebar() {
+    if (mqDesktop.matches) {
+      body.classList.add('sb-closed');
+      localStorage.setItem('sbClosed', '1');
+    } else {
+      body.classList.remove('sb-open-mobile');
+      $('#backdrop').classList.remove('show');
+    }
+  }
+  $('#hamburger').addEventListener('click', openSidebar);
+  $('#sbClose').addEventListener('click', closeSidebar);
+  $('#backdrop').addEventListener('click', closeSidebar);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+
+  // Mentett állapot visszatöltése (csak asztali nézetben)
+  if (mqDesktop.matches && localStorage.getItem('sbClosed') === '1') {
+    body.classList.add('sb-closed');
+  }
+  mqDesktop.addEventListener('change', () => {
+    body.classList.remove('sb-open-mobile');
+    $('#backdrop').classList.remove('show');
+  });
+
+  // Mobilon linkre kattintva záródjon a menü
+  $('#sbNav').addEventListener('click', (e) => {
+    if (e.target.closest('a') && !mqDesktop.matches) closeSidebar();
+  });
+
+  /* ===== Téma váltó ===== */
+  const themeBtn = $('#themeBtn');
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    $('#themeIco').textContent = t === 'light' ? '🌙' : '☀️';
+    $('#themeTxt').textContent = t === 'light' ? 'Sötét mód' : 'Világos mód';
+    localStorage.setItem('theme', t);
+  }
+  applyTheme(localStorage.getItem('theme') === 'light' ? 'light' : 'dark');
+  themeBtn.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    applyTheme(cur === 'light' ? 'dark' : 'light');
+  });
+
+  /* ===== Egérkövető fény-perem ===== */
+  document.querySelectorAll('.glow-panel').forEach((el) => {
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  /* ===== Scroll-reveal ===== */
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (en.isIntersecting) {
+        en.target.classList.add('visible');
+        revealObs.unobserve(en.target);
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach((el) => revealObs.observe(el));
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  /* ===== Scrollspy — aktív menüpont kiemelése ===== */
+  const navLinks = Array.from(document.querySelectorAll('.sb-nav a'));
+  const sections = navLinks
+    .map((a) => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+  const spyObs = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (en.isIntersecting) {
+        navLinks.forEach((a) =>
+          a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id));
+      }
+    });
+  }, { rootMargin: '-35% 0px -55% 0px' });
+  sections.forEach((s) => spyObs.observe(s));
+
+  /* ===== Kód másolása ===== */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const raw = $('#codeBlock').innerText
+      .split('\n')
+      .filter((l) => l.trim() && !l.trim().startsWith('#') && !l.trim().startsWith('>'))
+      .join('\n');
+    try {
+      await navigator.clipboard.writeText(raw);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = raw;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    copyBtn.classList.add('copied');
+    $('#copyIco').textContent = '✓';
+    $('#copyTxt').textContent = 'Kimásolva!';
+    setTimeout(() => {
+      copyBtn.classList.remove('copied');
+      $('#copyIco').textContent = '⧉';
+      $('#copyTxt').textContent = 'Másolás';
+    }, 2200);
+  });
+})();
 </script>
 
 </body>
