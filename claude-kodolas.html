@@ -4,13 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Miben kódolj Claude-dal? — 2026 Útmutató</title>
-<meta name="description" content="Gyakorlati útmutató a legjobb fejlesztői környezetekhez Claude-dal: CLI, IDE, web, Artifacts, API. Modern 2026 glassmorphism dizájn.">
+<meta name="description" content="Interaktív útmutató a Claude-dal való fejlesztéshez: elmetérkép, prompt-írás animáció, teljes projekt-munkafolyamat, eszköz-összehasonlítás. 2026 glassmorphism dizájn.">
 <!-- Open Graph / közösségi megosztás -->
 <meta property="og:title" content="Miben kódolj Claude-dal? — 2026 Útmutató">
-<meta property="og:description" content="Terminál, IDE, böngésző vagy API? Válaszd ki a hozzád illő Claude fejlesztői környezetet.">
+<meta property="og:description" content="Terminál, IDE, böngésző vagy API? Interaktív elmetérkép, animációk és lépésről lépésre magyarázatok.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="hu_HU">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://laci141.github.io/NutriPlan-/og-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://laci141.github.io/NutriPlan-/og-banner.png">
 <style>
   :root {
     --bg: #070a14;
@@ -24,6 +28,8 @@
     --accent2: #22d3ee;
     --accent3: #f472b6;
     --accent4: #34d399;
+    --accent5: #f59e0b;
+    --accent6: #60a5fa;
     --glow: rgba(255, 255, 255, 0.65);
     --shadow: rgba(0, 0, 0, 0.35);
     --code-bg: rgba(10, 13, 24, 0.55);
@@ -110,6 +116,24 @@
   }
   .glow-panel:hover::after { opacity: 1; }
 
+  /* ===== Liquid Glass tükröződés-csík ===== */
+  .glass-shine { overflow: hidden; }
+  .glass-shine::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -80%;
+    width: 45%;
+    height: 140%;
+    background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.13) 48%, rgba(255,255,255,0.05) 52%, transparent 100%);
+    transform: skewX(-18deg);
+    transition: left 0.8s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .glass-shine:hover::before { left: 130%; }
+  .glass-shine > * { position: relative; z-index: 2; }
+
   /* ===== Közös glass alap ===== */
   .glass {
     background: var(--glass);
@@ -119,7 +143,7 @@
     box-shadow: 0 10px 40px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.10);
   }
 
-  /* ===== Hamburger + felső sáv ===== */
+  /* ===== Hamburger ===== */
   .hamburger {
     position: fixed;
     top: 14px; left: 14px;
@@ -161,7 +185,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 22px;
+    margin-bottom: 14px;
   }
   .logo {
     font-weight: 800;
@@ -187,21 +211,60 @@
   }
   .sb-close:hover { color: var(--text); border-color: var(--border-hover); transform: rotate(90deg); }
 
-  .sb-nav { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  /* Kereső */
+  .sb-search { position: relative; margin-bottom: 14px; }
+  .sb-search input {
+    width: 100%;
+    padding: 10px 34px 10px 36px;
+    font-size: 0.86rem;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .sb-search input:focus { border-color: var(--accent2); box-shadow: 0 0 14px rgba(34,211,238,0.25); }
+  .sb-search input::placeholder { color: var(--text-dim); opacity: 0.7; }
+  .sb-search .s-ico-l {
+    position: absolute; left: 12px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem; opacity: 0.7;
+    pointer-events: none;
+  }
+  .sb-search .s-clear {
+    position: absolute; right: 8px; top: 50%;
+    transform: translateY(-50%);
+    width: 22px; height: 22px;
+    display: none;
+    align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    background: var(--glass-strong);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+  }
+  .sb-search.has-q .s-clear { display: flex; }
+  .sb-count { font-size: 0.72rem; color: var(--text-dim); margin: -8px 4px 10px; display: none; }
+  .sb-count.show { display: block; }
+
+  .sb-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
   .sb-nav a {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 11px 14px;
+    padding: 10px 13px;
     color: var(--text-dim);
     text-decoration: none;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 500;
     border-radius: 13px;
     border: 1px solid transparent;
     transition: all 0.22s ease;
   }
-  .sb-nav a .ico { font-size: 1.05rem; width: 22px; text-align: center; }
+  .sb-nav a .ico { font-size: 1.02rem; width: 22px; text-align: center; }
   .sb-nav a:hover {
     color: var(--text);
     background: var(--glass-strong);
@@ -215,7 +278,7 @@
   }
   .sb-nav a.active .ico { filter: drop-shadow(0 0 6px var(--accent2)); }
 
-  .sb-foot { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .sb-foot { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
   .theme-btn {
     display: flex;
     align-items: center;
@@ -224,6 +287,7 @@
     padding: 11px;
     font-size: 0.88rem;
     font-weight: 600;
+    font-family: inherit;
     color: var(--text);
     background: var(--glass-strong);
     border: 1px solid var(--border);
@@ -255,10 +319,7 @@
   .container { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
 
   /* ===== Kompakt hero ===== */
-  header {
-    padding: 84px 0 40px;
-    text-align: center;
-  }
+  header { padding: 84px 0 40px; text-align: center; }
   .badge {
     display: inline-flex;
     align-items: center;
@@ -297,9 +358,8 @@
     font-size: 0.98rem;
   }
 
-  /* ===== Szekciók + kiemelt szekciócím panelek ===== */
-  section { padding: 44px 0; scroll-margin-top: 24px; }
-
+  /* ===== Szekciócím panelek ===== */
+  section { padding: 40px 0; scroll-margin-top: 24px; }
   .section-head {
     display: flex;
     align-items: center;
@@ -324,11 +384,7 @@
     letter-spacing: -0.01em;
     line-height: 1.25;
   }
-  .section-head .s-txt p {
-    color: var(--text-dim);
-    font-size: 0.87rem;
-    margin-top: 2px;
-  }
+  .section-head .s-txt p { color: var(--text-dim); font-size: 0.87rem; margin-top: 2px; }
   .section-head .s-bar {
     margin-left: auto;
     align-self: stretch;
@@ -428,11 +484,7 @@
     user-select: none;
   }
   details.acc summary::-webkit-details-marker { display: none; }
-  details.acc summary .chev {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    transition: transform 0.3s ease;
-  }
+  details.acc summary .chev { font-size: 0.75rem; color: var(--text-dim); transition: transform 0.3s ease; }
   details.acc[open] summary .chev { transform: rotate(180deg); }
   details.acc .acc-body {
     padding: 0 15px 13px;
@@ -447,12 +499,338 @@
   }
   details.acc[open] summary { border-bottom: 1px solid var(--border); margin-bottom: 10px; }
 
-  /* ===== Összehasonlító táblázat ===== */
-  .table-wrap {
+  /* ===== Elmetérkép ===== */
+  .mm-box {
     border-radius: var(--radius);
-    overflow-x: auto;
-    position: relative;
+    padding: 18px 12px 8px;
   }
+  .mm-box svg { width: 100%; height: auto; display: block; }
+  .mm-hint {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    padding: 4px 0 12px;
+  }
+  .mm-node { cursor: pointer; transition: filter 0.2s ease; }
+  .mm-node:hover { filter: brightness(1.4) drop-shadow(0 0 10px rgba(255,255,255,0.25)); }
+  .mm-node rect, .mm-center { transition: filter 0.2s ease; }
+  .mm-t { font-size: 19px; font-weight: 700; fill: var(--text); text-anchor: middle; dominant-baseline: central; }
+  .mm-s { font-size: 13px; fill: var(--text-dim); text-anchor: middle; dominant-baseline: central; }
+  .mm-c-t { font-size: 26px; font-weight: 800; fill: var(--text); text-anchor: middle; dominant-baseline: central; }
+  .mm-line { fill: none; stroke-width: 2; opacity: 0.45; stroke-dasharray: 7 7; animation: dashmove 24s linear infinite; }
+  @keyframes dashmove { to { stroke-dashoffset: -700; } }
+
+  /* ===== Modal (leugró magyarázó ablak) ===== */
+  .modal-wrap {
+    position: fixed; inset: 0;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+  }
+  .modal-wrap.show { opacity: 1; pointer-events: auto; }
+  .modal {
+    width: 100%;
+    max-width: 620px;
+    max-height: 84vh;
+    max-height: 84dvh;
+    overflow-y: auto;
+    padding: 28px 26px;
+    border-radius: var(--radius);
+    transform: translateY(24px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+  }
+  .modal-wrap.show .modal { transform: translateY(0) scale(1); }
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    color: var(--text-dim);
+    background: var(--glass-strong);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 3;
+  }
+  .modal-close:hover { color: var(--text); transform: rotate(90deg); border-color: var(--border-hover); }
+  .m-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid;
+    margin-bottom: 12px;
+  }
+  .modal h3 { font-size: 1.35rem; font-weight: 780; margin-bottom: 14px; letter-spacing: -0.01em; }
+  .modal .m-intro { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 16px; }
+  .m-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .m-chips span {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 7px 13px;
+    border-radius: 999px;
+    background: var(--glass-strong);
+    border: 1px solid var(--border);
+  }
+  .modal h5 {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin: 18px 0 10px;
+  }
+  .m-steps { list-style: none; counter-reset: st; margin-bottom: 6px; }
+  .m-steps li {
+    counter-increment: st;
+    position: relative;
+    padding: 8px 0 8px 44px;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+  .m-steps li strong { color: var(--text); }
+  .m-steps li::before {
+    content: counter(st);
+    position: absolute;
+    left: 0; top: 7px;
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--text);
+    background: linear-gradient(135deg, rgba(124,107,255,0.30), rgba(34,211,238,0.22));
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .m-ex {
+    margin-top: 14px;
+    padding: 14px 16px;
+    font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: #dfe5f3;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
+  .m-ex .lbl {
+    display: block;
+    font-family: inherit;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7d87a5;
+    margin-bottom: 6px;
+  }
+
+  /* ===== Prompt animáció ===== */
+  .prompt-demo {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .bad-prompt {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(244, 114, 182, 0.35);
+    background: rgba(244, 114, 182, 0.07);
+    font-size: 0.88rem;
+    color: var(--text-dim);
+  }
+  .bad-prompt .x { font-size: 1.1rem; color: #f472b6; font-weight: 800; }
+  .bad-prompt code { color: var(--text); background: var(--glass-strong); padding: 2px 8px; border-radius: 7px; }
+
+  .pd-term {
+    background: var(--code-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 10px 40px var(--shadow);
+  }
+  .pd-term .code-head { border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .pd-body {
+    padding: 18px;
+    min-height: 190px;
+    font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 0.87rem;
+    line-height: 1.85;
+    color: #dfe5f3;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .pd-body .pd-prefix { color: #7d87a5; }
+  .pd-cursor {
+    display: inline-block;
+    width: 9px; height: 1.15em;
+    background: #67e8f9;
+    vertical-align: text-bottom;
+    animation: blink 0.9s steps(1) infinite;
+    border-radius: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .seg-cel     { color: #67e8f9; }
+  .seg-kontextus { color: #b4a8ff; }
+  .seg-elvaras { color: #f9a8d4; }
+  .seg-pelda   { color: #6ee7b7; }
+  .seg-korlat  { color: #fbbf24; }
+  .pd-done {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 14px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #6ee7b7;
+    border: 1px solid rgba(52,211,153,0.45);
+    background: rgba(52,211,153,0.12);
+    border-radius: 999px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .pd-done.show { opacity: 1; }
+
+  .pd-check {
+    border-radius: var(--radius);
+    padding: 18px;
+  }
+  .pd-check h4 { font-size: 0.92rem; margin-bottom: 12px; }
+  .pd-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 11px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    font-size: 0.84rem;
+    color: var(--text-dim);
+    opacity: 0.5;
+    transition: all 0.4s ease;
+  }
+  .pd-item .p-dot {
+    width: 11px; height: 11px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    transition: all 0.4s ease;
+  }
+  .pd-item.done {
+    opacity: 1;
+    color: var(--text);
+    background: var(--glass-strong);
+    border-color: var(--border);
+  }
+  .pd-item.done .p-dot { box-shadow: 0 0 10px currentColor; }
+  .pd-item[data-k="cel"] .p-dot { color: #22d3ee; background: transparent; }
+  .pd-item[data-k="kontextus"] .p-dot { color: #7c6bff; }
+  .pd-item[data-k="elvaras"] .p-dot { color: #f472b6; }
+  .pd-item[data-k="pelda"] .p-dot { color: #34d399; }
+  .pd-item[data-k="korlat"] .p-dot { color: #f59e0b; }
+  .pd-item.done .p-dot { background: currentColor; }
+  .replay-btn {
+    margin-top: 14px;
+    width: 100%;
+    padding: 10px;
+    font-size: 0.84rem;
+    font-weight: 650;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--glass-strong);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .replay-btn:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+  /* ===== Munkafolyamat animáció ===== */
+  .flow-box { border-radius: var(--radius); padding: 26px 22px 22px; }
+  .flow-track {
+    position: relative;
+    height: 5px;
+    border-radius: 5px;
+    background: var(--glass-strong);
+    border: 1px solid var(--border);
+    margin: 0 30px 22px;
+    overflow: hidden;
+  }
+  .flow-progress {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent4));
+    box-shadow: 0 0 14px rgba(34,211,238,0.6);
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .flow-steps {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+  }
+  .fstep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 13px 6px 11px;
+    font-family: inherit;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    color: var(--text-dim);
+  }
+  .fstep .f-ico {
+    font-size: 1.35rem;
+    filter: grayscale(0.7);
+    transition: all 0.35s ease;
+  }
+  .fstep .f-name { font-size: 0.72rem; font-weight: 650; text-align: center; line-height: 1.25; }
+  .fstep:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+  .fstep.on {
+    color: var(--text);
+    background: var(--glass-strong);
+    border-color: var(--border-hover);
+    box-shadow: 0 8px 26px var(--shadow), 0 0 18px rgba(34,211,238,0.28), inset 0 1px 0 rgba(255,255,255,0.14);
+    transform: translateY(-4px);
+  }
+  .fstep.on .f-ico { filter: none; transform: scale(1.18); }
+  .flow-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .flow-desc { font-size: 0.85rem; color: var(--text-dim); flex: 1; min-width: 200px; }
+  .flow-desc strong { color: var(--text); }
+  .flow-hint { font-size: 0.76rem; color: var(--text-dim); opacity: 0.75; }
+
+  /* ===== Összehasonlító táblázat ===== */
+  .table-wrap { border-radius: var(--radius); overflow-x: auto; position: relative; }
   .table-scroll-hint {
     display: none;
     align-items: center;
@@ -460,11 +838,6 @@
     font-size: 0.78rem;
     color: var(--text-dim);
     margin: 10px 4px 0;
-  }
-  .table-fade {
-    position: sticky;
-    left: 0;
-    pointer-events: none;
   }
   table { width: 100%; border-collapse: collapse; min-width: 640px; }
   th, td {
@@ -488,7 +861,7 @@
   td { color: var(--text-dim); }
   .stars { color: #f59e0b; letter-spacing: 2px; white-space: nowrap; }
 
-  /* ===== Tippek — leugró accordion stílusban ===== */
+  /* ===== Tippek accordion ===== */
   .tips { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
   details.tip {
     border-radius: 17px;
@@ -518,11 +891,7 @@
     border: 1px solid var(--border);
   }
   details.tip h4 { font-size: 0.96rem; flex: 1; }
-  details.tip .chev {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    transition: transform 0.3s ease;
-  }
+  details.tip .chev { font-size: 0.75rem; color: var(--text-dim); transition: transform 0.3s ease; }
   details.tip[open] .chev { transform: rotate(180deg); }
   details.tip .tip-body {
     padding: 0 19px 17px 70px;
@@ -530,8 +899,9 @@
     color: var(--text-dim);
     animation: accIn 0.3s ease;
   }
+  details.tip code { background: var(--glass-strong); padding: 1px 7px; border-radius: 6px; font-size: 0.82em; }
 
-  /* ===== Kód blokk + másolás gomb ===== */
+  /* ===== Kód blokk + másolás ===== */
   .code-glass {
     background: var(--code-bg);
     backdrop-filter: blur(20px);
@@ -562,6 +932,7 @@
     padding: 6px 13px;
     font-size: 0.76rem;
     font-weight: 600;
+    font-family: inherit;
     color: #cdd4e8;
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.15);
@@ -570,11 +941,7 @@
     transition: all 0.22s ease;
   }
   .copy-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
-  .copy-btn.copied {
-    color: #6ee7b7;
-    border-color: rgba(52,211,153,0.5);
-    background: rgba(52,211,153,0.12);
-  }
+  .copy-btn.copied { color: #6ee7b7; border-color: rgba(52,211,153,0.5); background: rgba(52,211,153,0.12); }
   .code-glass pre {
     padding: 20px;
     overflow-x: auto;
@@ -588,13 +955,33 @@
   .c-str { color: #6ee7b7; }
   .c-flag { color: #f9a8d4; }
 
-  /* ===== Lábléc ===== */
-  footer {
-    padding: 44px 0 38px;
-    text-align: center;
-    color: var(--text-dim);
-    font-size: 0.85rem;
+  /* ===== Vissza a tetejére ===== */
+  #toTop {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 250;
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem;
+    color: var(--text);
+    background: var(--glass-strong);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(14px);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 26px var(--shadow);
   }
+  #toTop.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  #toTop:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+
+  /* ===== Lábléc ===== */
+  footer { padding: 44px 0 38px; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
   footer .line {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
@@ -609,13 +996,16 @@
   }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
+  /* ===== Keresési találat ===== */
+  .search-hide { display: none !important; }
+
   /* ===== Reszponzív ===== */
   @media (max-width: 979px) {
     .main { margin-left: 0; }
-    .sidebar { transform: translateX(-105%); width: min(300px, 84vw); border-radius: 0 var(--radius) var(--radius) 0; }
+    .sidebar { transform: translateX(-105%); width: min(300px, 84vw); }
     body.sb-open-mobile .sidebar { transform: translateX(0); }
     header { padding: 76px 0 34px; }
-    section { padding: 34px 0; }
+    section { padding: 32px 0; }
     .section-head { padding: 15px 16px; gap: 12px; }
     .table-scroll-hint { display: flex; }
     .table-wrap {
@@ -623,10 +1013,27 @@
               mask-image: linear-gradient(90deg, black 88%, transparent 100%);
     }
     details.tip .tip-body { padding-left: 19px; }
+    .prompt-demo { grid-template-columns: 1fr; }
+    .flow-steps { grid-template-columns: repeat(4, 1fr); }
+    .flow-track { display: none; }
+    .mm-t { font-size: 24px; }
+    .mm-s { font-size: 17px; }
+    .mm-c-t { font-size: 30px; }
+  }
+  @media (max-width: 560px) {
+    .flow-steps { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Mobil: kisebb blur a jobb teljesítményért */
+  @media (max-width: 640px) {
+    .glass, .hamburger, .code-glass, .pd-term, #toTop {
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .blob, .badge .dot { animation: none; }
+    .blob, .badge .dot, .mm-line, .pd-cursor { animation: none; }
     .reveal { opacity: 1; transform: none; transition: none; }
     .sidebar, .main { transition: none; }
   }
@@ -644,14 +1051,24 @@
 
 <button class="hamburger" id="hamburger" aria-label="Menü megnyitása">☰</button>
 <div id="backdrop"></div>
+<button id="toTop" class="glow-panel" aria-label="Vissza a tetejére">↑</button>
 
 <aside class="sidebar glass glow-panel" id="sidebar" aria-label="Oldalsó navigáció">
   <div class="sb-head">
     <div class="logo">⬡ Claude Kódolás</div>
     <button class="sb-close" id="sbClose" aria-label="Menü bezárása">✕</button>
   </div>
+  <div class="sb-search" id="sbSearch">
+    <span class="s-ico-l">🔍</span>
+    <input type="text" id="searchInput" placeholder="Keresés az oldalon…" autocomplete="off">
+    <button class="s-clear" id="searchClear" aria-label="Keresés törlése">✕</button>
+  </div>
+  <div class="sb-count" id="sbCount"></div>
   <nav class="sb-nav" id="sbNav">
     <a href="#eszkozok"><span class="ico">🛠️</span> Eszközök</a>
+    <a href="#terkep"><span class="ico">🧠</span> Elmetérkép</a>
+    <a href="#prompt"><span class="ico">🎬</span> Jó prompt</a>
+    <a href="#folyamat"><span class="ico">🔄</span> Munkafolyamat</a>
     <a href="#osszehasonlitas"><span class="ico">⚖️</span> Összehasonlítás</a>
     <a href="#tippek"><span class="ico">💡</span> Tippek</a>
     <a href="#kezdes"><span class="ico">🚀</span> Kezdés</a>
@@ -667,11 +1084,12 @@
   <header class="container">
     <div class="badge glass glow-panel"><span class="dot"></span> Frissítve: 2026</div>
     <h1>Miben érdemes kódolni, ha <span class="grad">Claude-ot</span> használsz?</h1>
-    <p class="subtitle">Gyakorlati útmutató a legjobb fejlesztői környezetekhez — a terminaltól a böngészőig.</p>
+    <p class="subtitle">Interaktív útmutató — elmetérkép, animációk és lépésről lépésre magyarázatok.</p>
   </header>
 
+  <!-- ============ ESZKÖZÖK ============ -->
   <section id="eszkozok" class="container">
-    <div class="section-head glass glow-panel reveal">
+    <div class="section-head glass glow-panel glass-shine reveal">
       <div class="s-ico">🛠️</div>
       <div class="s-txt">
         <h2>A legjobb környezetek</h2>
@@ -681,7 +1099,7 @@
     </div>
 
     <div class="section-body grid">
-      <div class="card glass glow-panel reveal">
+      <div class="card glass glow-panel glass-shine reveal searchable">
         <div class="icon">⌨️</div>
         <h3>Claude Code — Terminál (CLI)</h3>
         <span class="tag best">Legjobb választás</span>
@@ -697,7 +1115,7 @@
         </details>
       </div>
 
-      <div class="card glass glow-panel reveal">
+      <div class="card glass glow-panel glass-shine reveal searchable">
         <div class="icon">🧩</div>
         <h3>VS Code / JetBrains bővítmény</h3>
         <span class="tag pro">IDE-ben élőknek</span>
@@ -713,7 +1131,7 @@
         </details>
       </div>
 
-      <div class="card glass glow-panel reveal">
+      <div class="card glass glow-panel glass-shine reveal searchable">
         <div class="icon">🌐</div>
         <h3>Claude Code Web</h3>
         <span class="tag gyors">Telepítés nélkül</span>
@@ -729,7 +1147,7 @@
         </details>
       </div>
 
-      <div class="card glass glow-panel reveal">
+      <div class="card glass glow-panel glass-shine reveal searchable">
         <div class="icon">✨</div>
         <h3>Claude.ai — Artifacts</h3>
         <span class="tag mobil">Gyors prototípus</span>
@@ -745,7 +1163,7 @@
         </details>
       </div>
 
-      <div class="card glass glow-panel reveal">
+      <div class="card glass glow-panel glass-shine reveal searchable">
         <div class="icon">🖥️</div>
         <h3>Claude Desktop alkalmazás</h3>
         <span class="tag pro">Mac / Windows</span>
@@ -761,7 +1179,7 @@
         </details>
       </div>
 
-      <div class="card glass glow-panel reveal">
+      <div class="card glass glow-panel glass-shine reveal searchable">
         <div class="icon">🤖</div>
         <h3>Claude API + Agent SDK</h3>
         <span class="tag pro">Fejlesztőknek</span>
@@ -779,8 +1197,152 @@
     </div>
   </section>
 
+  <!-- ============ ELMETÉRKÉP ============ -->
+  <section id="terkep" class="container">
+    <div class="section-head glass glow-panel glass-shine reveal">
+      <div class="s-ico">🧠</div>
+      <div class="s-txt">
+        <h2>Claude használata — elmetérkép</h2>
+        <p>Kattints egy panelre a részletes, lépésenkénti magyarázatért!</p>
+      </div>
+      <div class="s-bar"></div>
+    </div>
+
+    <div class="section-body">
+      <div class="mm-box glass glow-panel reveal">
+        <svg viewBox="0 0 1000 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Claude használata elmetérkép">
+          <!-- összekötő vonalak -->
+          <path class="mm-line" stroke="#34d399" d="M420,265 Q300,190 288,145"/>
+          <path class="mm-line" stroke="#22d3ee" d="M580,265 Q700,190 712,145"/>
+          <path class="mm-line" stroke="#7c6bff" d="M360,320 Q300,320 258,320"/>
+          <path class="mm-line" stroke="#f472b6" d="M640,320 Q700,320 742,320"/>
+          <path class="mm-line" stroke="#f59e0b" d="M420,375 Q300,450 288,495"/>
+          <path class="mm-line" stroke="#60a5fa" d="M580,375 Q700,450 712,495"/>
+
+          <!-- központi csomópont -->
+          <ellipse class="mm-center" cx="500" cy="320" rx="142" ry="66" fill="rgba(124,107,255,0.16)" stroke="url(#mmGrad)" stroke-width="2.5"/>
+          <text class="mm-c-t" x="500" y="305">Claude</text>
+          <text class="mm-s" x="500" y="340">használata</text>
+          <defs>
+            <linearGradient id="mmGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7c6bff"/>
+              <stop offset="50%" stop-color="#22d3ee"/>
+              <stop offset="100%" stop-color="#f472b6"/>
+            </linearGradient>
+          </defs>
+
+          <!-- ágak -->
+          <g class="mm-node" data-key="elonyok">
+            <rect x="170" y="80" width="240" height="86" rx="20" fill="rgba(52,211,153,0.15)" stroke="#34d399" stroke-width="1.8"/>
+            <text class="mm-t" x="290" y="112">🌟 Miért előnyös?</text>
+            <text class="mm-s" x="290" y="141">gyorsaság · kevesebb hiba</text>
+          </g>
+          <g class="mm-node" data-key="skillek">
+            <rect x="590" y="80" width="240" height="86" rx="20" fill="rgba(34,211,238,0.13)" stroke="#22d3ee" stroke-width="1.8"/>
+            <text class="mm-t" x="710" y="112">⚡ Skillek</text>
+            <text class="mm-s" x="710" y="141">/parancsok · saját skill</text>
+          </g>
+          <g class="mm-node" data-key="projekt">
+            <rect x="18" y="277" width="240" height="86" rx="20" fill="rgba(124,107,255,0.15)" stroke="#7c6bff" stroke-width="1.8"/>
+            <text class="mm-t" x="138" y="309">📁 Projekt</text>
+            <text class="mm-s" x="138" y="338">CLAUDE.md · /init</text>
+          </g>
+          <g class="mm-node" data-key="planmode">
+            <rect x="742" y="277" width="240" height="86" rx="20" fill="rgba(244,114,182,0.13)" stroke="#f472b6" stroke-width="1.8"/>
+            <text class="mm-t" x="862" y="309">🗺️ Plan mód</text>
+            <text class="mm-s" x="862" y="338">előbb terv, aztán kód</text>
+          </g>
+          <g class="mm-node" data-key="engedelyek">
+            <rect x="170" y="474" width="240" height="86" rx="20" fill="rgba(245,158,11,0.13)" stroke="#f59e0b" stroke-width="1.8"/>
+            <text class="mm-t" x="290" y="506">🔐 Engedélyek</text>
+            <text class="mm-s" x="290" y="535">Auto · Accept Edits</text>
+          </g>
+          <g class="mm-node" data-key="terminalweb">
+            <rect x="590" y="474" width="240" height="86" rx="20" fill="rgba(96,165,250,0.13)" stroke="#60a5fa" stroke-width="1.8"/>
+            <text class="mm-t" x="710" y="506">⌨️ Terminál vs Web</text>
+            <text class="mm-s" x="710" y="535">melyik mikor jobb?</text>
+          </g>
+        </svg>
+        <div class="mm-hint">👆 Koppints a panelekre a leugró magyarázatért</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ JÓ PROMPT ANIMÁCIÓ ============ -->
+  <section id="prompt" class="container">
+    <div class="section-head glass glow-panel glass-shine reveal">
+      <div class="s-ico">🎬</div>
+      <div class="s-txt">
+        <h2>Hogyan írj jó promptot?</h2>
+        <p>Nézd az animációt: így épül fel egy erős kérés, elemről elemre.</p>
+      </div>
+      <div class="s-bar"></div>
+    </div>
+
+    <div class="section-body prompt-demo">
+      <div class="bad-prompt glass glow-panel reveal">
+        <span class="x">✗</span>
+        <span>Rossz példa: <code>"csinálj weboldalt"</code> — túl általános, a Claude találgatni fog. Lent az erős változat épül fel:</span>
+      </div>
+
+      <div class="pd-term glow-panel reveal">
+        <div class="code-head">
+          <div class="circle r"></div>
+          <div class="circle y"></div>
+          <div class="circle g"></div>
+          <span class="fname">claude — prompt írás élőben</span>
+        </div>
+        <div class="pd-body"><span class="pd-prefix">&gt; </span><span id="pdText"></span><span class="pd-cursor" id="pdCursor"></span>
+<span class="pd-done" id="pdDone">✓ Erős prompt — a Claude pontosan tudja, mit kérsz!</span></div>
+      </div>
+
+      <div class="pd-check glass glow-panel reveal">
+        <h4>✅ Egy jó prompt fő szempontjai</h4>
+        <div class="pd-item" data-k="cel"><span class="p-dot"></span> Világos cél — mit építsen?</div>
+        <div class="pd-item" data-k="kontextus"><span class="p-dot"></span> Hely — melyik fájl, projekt?</div>
+        <div class="pd-item" data-k="elvaras"><span class="p-dot"></span> Stílus és elvárt viselkedés</div>
+        <div class="pd-item" data-k="pelda"><span class="p-dot"></span> Konkrét elemek, példák</div>
+        <div class="pd-item" data-k="korlat"><span class="p-dot"></span> Korlátok — mit NE csináljon</div>
+        <button class="replay-btn" id="pdReplay">▶ Animáció újra</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MUNKAFOLYAMAT ANIMÁCIÓ ============ -->
+  <section id="folyamat" class="container">
+    <div class="section-head glass glow-panel glass-shine reveal">
+      <div class="s-ico">🔄</div>
+      <div class="s-txt">
+        <h2>Egy projekt levezetése Claude-dal</h2>
+        <p>A 8 lépés sorban felvillan — kattints bármelyikre a részletes magyarázatért!</p>
+      </div>
+      <div class="s-bar"></div>
+    </div>
+
+    <div class="section-body">
+      <div class="flow-box glass glow-panel reveal">
+        <div class="flow-track"><div class="flow-progress" id="flowProgress"></div></div>
+        <div class="flow-steps" id="flowSteps">
+          <button class="fstep" data-key="terv"><span class="f-ico">📋</span><span class="f-name">Tervezés</span></button>
+          <button class="fstep" data-key="plan"><span class="f-ico">🗺️</span><span class="f-name">Plan mód</span></button>
+          <button class="fstep" data-key="edit"><span class="f-ico">✏️</span><span class="f-name">Szerkesztés</span></button>
+          <button class="fstep" data-key="teszt"><span class="f-ico">🧪</span><span class="f-name">Tesztelés</span></button>
+          <button class="fstep" data-key="javit"><span class="f-ico">🔧</span><span class="f-name">Javítás</span></button>
+          <button class="fstep" data-key="commit"><span class="f-ico">📤</span><span class="f-name">Commit &amp; Push</span></button>
+          <button class="fstep" data-key="bizt"><span class="f-ico">🛡️</span><span class="f-name">Biztonság</span></button>
+          <button class="fstep" data-key="opt"><span class="f-ico">⚡</span><span class="f-name">Optimalizálás</span></button>
+        </div>
+        <div class="flow-foot">
+          <div class="flow-desc" id="flowDesc"><strong>Tervezés:</strong> írd le, mit akarsz építeni, és bontsd kis feladatokra.</div>
+          <div class="flow-hint">👆 Kattints egy lépésre a részletekért</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ÖSSZEHASONLÍTÁS ============ -->
   <section id="osszehasonlitas" class="container">
-    <div class="section-head glass glow-panel reveal">
+    <div class="section-head glass glow-panel glass-shine reveal">
       <div class="s-ico">⚖️</div>
       <div class="s-txt">
         <h2>Melyiket mikor?</h2>
@@ -814,8 +1376,9 @@
     </div>
   </section>
 
+  <!-- ============ TIPPEK ============ -->
   <section id="tippek" class="container">
-    <div class="section-head glass glow-panel reveal">
+    <div class="section-head glass glow-panel glass-shine reveal">
       <div class="s-ico">💡</div>
       <div class="s-txt">
         <h2>Profi tippek 2026-ra</h2>
@@ -825,35 +1388,36 @@
     </div>
 
     <div class="section-body tips">
-      <details class="tip glass glow-panel reveal">
+      <details class="tip glass glow-panel reveal searchable">
         <summary><span class="num">1</span><h4>Készíts CLAUDE.md fájlt</h4><span class="chev">▼</span></summary>
         <div class="tip-body">A projekt gyökerébe tett CLAUDE.md-ben leírhatod a szabályokat, build parancsokat, kódolási konvenciókat — a Claude minden munkamenet elején elolvassa, így nem kell újra elmagyaráznod. Generáltathatod is a <code>/init</code> paranccsal.</div>
       </details>
-      <details class="tip glass glow-panel reveal">
+      <details class="tip glass glow-panel reveal searchable">
         <summary><span class="num">2</span><h4>Adj pontos, konkrét feladatot</h4><span class="chev">▼</span></summary>
         <div class="tip-body">Minél konkrétabb a kérés (fájlnév, elvárt viselkedés, példa bemenet és kimenet), annál jobb az eredmény. A homályos kérés homályos kódot szül. Képernyőképet is csatolhatsz — a Claude látja és érti.</div>
       </details>
-      <details class="tip glass glow-panel reveal">
+      <details class="tip glass glow-panel reveal searchable">
         <summary><span class="num">3</span><h4>Használj plan módot nagy feladatnál</h4><span class="chev">▼</span></summary>
         <div class="tip-body">Összetett módosítás előtt kérj tervet — így előbb átbeszélitek a megközelítést, és csak jóváhagyás után nyúl a kódhoz. Ez sok felesleges kört spórol meg nagy refaktorálásoknál.</div>
       </details>
-      <details class="tip glass glow-panel reveal">
+      <details class="tip glass glow-panel reveal searchable">
         <summary><span class="num">4</span><h4>Kérj teszteket is</h4><span class="chev">▼</span></summary>
         <div class="tip-body">„Írd meg és futtasd is a teszteket" — a Claude Code képes futtatni a tesztjeidet és addig javítani a kódot, amíg minden zöld nem lesz. Így a kész munka valóban működik, nem csak jól néz ki.</div>
       </details>
-      <details class="tip glass glow-panel reveal">
+      <details class="tip glass glow-panel reveal searchable">
         <summary><span class="num">5</span><h4>Dolgozz külön brancheken</h4><span class="chev">▼</span></summary>
         <div class="tip-body">Hagyd, hogy a Claude feature branchen dolgozzon és PR-t nyisson — így mindig átnézheted a változásokat merge előtt, és bármikor visszaléphetsz, ha valami nem tetszik.</div>
       </details>
-      <details class="tip glass glow-panel reveal">
+      <details class="tip glass glow-panel reveal searchable">
         <summary><span class="num">6</span><h4>MCP-vel bővítsd a képességeit</h4><span class="chev">▼</span></summary>
         <div class="tip-body">MCP szerverekkel a Claude eléri az adatbázisodat, a Slacket, a naptáradat, a böngészőt — így nem csak kódol, hanem a teljes munkafolyamatodban segít, a hibajegytől a deployig.</div>
       </details>
     </div>
   </section>
 
+  <!-- ============ KEZDÉS ============ -->
   <section id="kezdes" class="container">
-    <div class="section-head glass glow-panel reveal">
+    <div class="section-head glass glow-panel glass-shine reveal">
       <div class="s-ico">🚀</div>
       <div class="s-txt">
         <h2>Kezdés 60 másodperc alatt</h2>
@@ -894,11 +1458,23 @@
 
 </div><!-- /.main -->
 
+<!-- ============ MODAL ============ -->
+<div class="modal-wrap" id="modalWrap" role="dialog" aria-modal="true">
+  <div class="modal glass glow-panel">
+    <button class="modal-close" id="modalClose" aria-label="Bezárás">✕</button>
+    <span class="m-tag" id="modalTag"></span>
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
 <script>
 (function () {
   const $ = (s) => document.querySelector(s);
+  const $$ = (s) => Array.from(document.querySelectorAll(s));
   const body = document.body;
   const mqDesktop = window.matchMedia('(min-width: 980px)');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ===== Sidebar nyitás/zárás ===== */
   function openSidebar() {
@@ -922,9 +1498,7 @@
   $('#hamburger').addEventListener('click', openSidebar);
   $('#sbClose').addEventListener('click', closeSidebar);
   $('#backdrop').addEventListener('click', closeSidebar);
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
 
-  // Mentett állapot visszatöltése (csak asztali nézetben)
   if (mqDesktop.matches && localStorage.getItem('sbClosed') === '1') {
     body.classList.add('sb-closed');
   }
@@ -932,14 +1506,11 @@
     body.classList.remove('sb-open-mobile');
     $('#backdrop').classList.remove('show');
   });
-
-  // Mobilon linkre kattintva záródjon a menü
   $('#sbNav').addEventListener('click', (e) => {
     if (e.target.closest('a') && !mqDesktop.matches) closeSidebar();
   });
 
   /* ===== Téma váltó ===== */
-  const themeBtn = $('#themeBtn');
   function applyTheme(t) {
     document.documentElement.setAttribute('data-theme', t);
     $('#themeIco').textContent = t === 'light' ? '🌙' : '☀️';
@@ -947,13 +1518,12 @@
     localStorage.setItem('theme', t);
   }
   applyTheme(localStorage.getItem('theme') === 'light' ? 'light' : 'dark');
-  themeBtn.addEventListener('click', () => {
-    const cur = document.documentElement.getAttribute('data-theme');
-    applyTheme(cur === 'light' ? 'dark' : 'light');
+  $('#themeBtn').addEventListener('click', () => {
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
   });
 
   /* ===== Egérkövető fény-perem ===== */
-  document.querySelectorAll('.glow-panel').forEach((el) => {
+  $$('.glow-panel').forEach((el) => {
     el.addEventListener('pointermove', (e) => {
       const r = el.getBoundingClientRect();
       el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
@@ -970,13 +1540,11 @@
       }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach((el) => revealObs.observe(el));
+  $$('.reveal').forEach((el) => revealObs.observe(el));
 
-  /* ===== Scrollspy — aktív menüpont kiemelése ===== */
-  const navLinks = Array.from(document.querySelectorAll('.sb-nav a'));
-  const sections = navLinks
-    .map((a) => document.querySelector(a.getAttribute('href')))
-    .filter(Boolean);
+  /* ===== Scrollspy ===== */
+  const navLinks = $$('.sb-nav a');
+  const sections = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
   const spyObs = new IntersectionObserver((entries) => {
     entries.forEach((en) => {
       if (en.isIntersecting) {
@@ -986,6 +1554,364 @@
     });
   }, { rootMargin: '-35% 0px -55% 0px' });
   sections.forEach((s) => spyObs.observe(s));
+
+  /* ===== Vissza a tetejére ===== */
+  const toTop = $('#toTop');
+  window.addEventListener('scroll', () => {
+    toTop.classList.toggle('show', window.scrollY > 600);
+  }, { passive: true });
+  toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  /* ===== Kereső ===== */
+  const searchInput = $('#searchInput');
+  const searchWrap = $('#sbSearch');
+  const sbCount = $('#sbCount');
+  function runSearch() {
+    const q = searchInput.value.trim().toLowerCase();
+    searchWrap.classList.toggle('has-q', q.length > 0);
+    const items = $$('.searchable');
+    if (!q) {
+      items.forEach((el) => el.classList.remove('search-hide'));
+      sbCount.classList.remove('show');
+      return;
+    }
+    let hits = 0;
+    items.forEach((el) => {
+      const ok = el.textContent.toLowerCase().includes(q);
+      el.classList.toggle('search-hide', !ok);
+      if (ok) hits++;
+    });
+    sbCount.textContent = hits ? hits + ' találat a kártyák és tippek között' : 'Nincs találat 😕';
+    sbCount.classList.add('show');
+  }
+  searchInput.addEventListener('input', runSearch);
+  $('#searchClear').addEventListener('click', () => { searchInput.value = ''; runSearch(); searchInput.focus(); });
+
+  /* ===== Modal rendszer ===== */
+  const INFO = {
+    /* --- elmetérkép csomópontok --- */
+    elonyok: {
+      tag: 'Elmetérkép', color: '#34d399', title: '🌟 Miért előnyös a Claude?',
+      html: `
+        <p class="m-intro">A Claude nem csak kódot generál — végigkíséri a teljes fejlesztést, mint egy tapasztalt programozó társ.</p>
+        <div class="m-chips"><span>⚡ Gyorsaság</span><span>🐛 Kevesebb hiba</span><span>📚 Tanulás</span><span>🔁 Automatizálás</span></div>
+        <h5>Mit nyersz vele — lépésben</h5>
+        <ol class="m-steps">
+          <li><strong>Órák helyett percek:</strong> egy landing oldal, API végpont vagy adatfeldolgozó szkript egyetlen jó prompt után elkészül.</li>
+          <li><strong>Magától javít:</strong> lefuttatja a kódot és a teszteket, elolvassa a hibaüzenetet, és addig iterál, amíg működik.</li>
+          <li><strong>Tanulsz belőle:</strong> minden lépését elmagyarázza — kérdezz rá bátran, miért úgy csinálta.</li>
+          <li><strong>Az unalmas munkát leveszi rólad:</strong> átnevezés, dokumentáció, tesztírás, fordítás — a robotmunka az övé.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa prompt</span>&gt; "Nézd át a nutriplan.html-t, keresd meg a hibákat, javítsd ki őket, és magyarázd el, mit találtál"</div>`
+    },
+    skillek: {
+      tag: 'Elmetérkép', color: '#22d3ee', title: '⚡ Skillek — újrafelhasználható tudás',
+      html: `
+        <p class="m-intro">A skill egy előre megírt utasításcsomag, amit <b>/parancsként</b> hívsz elő. Beépítettek is vannak (pl. <code>/review</code>, <code>/init</code>), de sajátot is készíthetsz.</p>
+        <h5>Saját skill készítése — lépésben</h5>
+        <ol class="m-steps">
+          <li><strong>Hozz létre mappát</strong> a projektben: <code>.claude/skills/sajat-skill/</code></li>
+          <li><strong>Írj bele SKILL.md fájlt:</strong> mikor használja, és pontosan milyen lépéseket kövessen.</li>
+          <li><strong>Hívd elő:</strong> a chatben írd be, hogy <code>/sajat-skill</code> — a Claude betölti és követi az utasításokat.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa: .claude/skills/uj-oldal/SKILL.md</span>---
+name: uj-oldal
+description: Új aloldal a glassmorphism stílusban
+---
+Készíts új HTML aloldalt: vedd át a claude-kodolas.html
+színpalettáját és sidebar menüjét, a tartalmat pedig
+a felhasználó kérése alapján töltsd fel.</div>`
+    },
+    projekt: {
+      tag: 'Elmetérkép', color: '#7c6bff', title: '📁 Projekt beállítása — CLAUDE.md',
+      html: `
+        <p class="m-intro">A CLAUDE.md a projekted „szabálykönyve". A Claude minden munkamenet elején automatikusan elolvassa — így nem kell mindent újra elmagyaráznod.</p>
+        <h5>Beállítás — lépésben</h5>
+        <ol class="m-steps">
+          <li><strong>Futtasd le:</strong> <code>/init</code> — a Claude felméri a projektet, és legenerálja a CLAUDE.md-t.</li>
+          <li><strong>Egészítsd ki:</strong> build és teszt parancsok, kódstílus, mappastruktúra, mit szabad és mit nem.</li>
+          <li><strong>Kész:</strong> mostantól minden új munkamenet ezzel a tudással indul.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa CLAUDE.md részlet</span># NutriPlan projekt
+- Minden oldal önálló HTML, külső könyvtár nélkül
+- Stílus: sötét glassmorphism, magyar nyelvű tartalom
+- Teszt: nyisd meg böngészőben, mobil nézetet is ellenőrizd
+- Commit üzenet: magyarul, rövid, jelen időben</div>`
+    },
+    planmode: {
+      tag: 'Elmetérkép', color: '#f472b6', title: '🗺️ Plan mód — előbb terv, aztán kód',
+      html: `
+        <p class="m-intro">Plan módban a Claude <b>csak olvas</b>: átnézi a kódbázist, megtervezi a megoldást, és <b>a jóváhagyásodig egyetlen fájlhoz sem nyúl</b>.</p>
+        <h5>Így használd — lépésben</h5>
+        <ol class="m-steps">
+          <li><strong>Kapcsold be:</strong> a CLI-ben nyomd meg a <code>Shift+Tab</code>-ot, amíg a „plan mode" fel nem tűnik.</li>
+          <li><strong>Írd le a feladatot:</strong> a Claude felderíti a kódot, és részletes tervet ad: mely fájlok, milyen sorrendben, milyen kockázatokkal.</li>
+          <li><strong>Dönts:</strong> ha jó a terv, jóváhagyod — csak ekkor kezd el ténylegesen kódolni. Ha nem, pontosítod, és új tervet kérsz.</li>
+        </ol>
+        <h5>Mikor éri meg?</h5>
+        <div class="m-chips"><span>🔨 Nagy refaktor</span><span>🗺️ Ismeretlen kódbázis</span><span>⚠️ Kockázatos módosítás</span></div>`
+    },
+    engedelyek: {
+      tag: 'Elmetérkép', color: '#f59e0b', title: '🔐 Engedélyek — Auto és Accept Edits',
+      html: `
+        <p class="m-intro">Te szabod meg, mennyire dolgozhat önállóan a Claude. A módok között a <code>Shift+Tab</code> billentyűvel váltasz.</p>
+        <h5>A négy mód</h5>
+        <ol class="m-steps">
+          <li><strong>Normál:</strong> minden fájlmódosítást és parancsot egyenként hagysz jóvá. A legbiztonságosabb — ezzel kezdj.</li>
+          <li><strong>Accept Edits:</strong> a fájlszerkesztéseket magától elvégzi, de a parancsok futtatásához még engedélyt kér. Jó középút napi munkára.</li>
+          <li><strong>Plan mód:</strong> semmit nem módosít, csak olvas és tervez.</li>
+          <li><strong>Auto (bypass):</strong> mindent magától csinál, kérdezés nélkül. Csak elszigetelt, biztonságos környezetben (pl. felhő munkamenet) ajánlott!</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Tipp</span>Kezdd normál módban. Ha már megbízol benne az adott
+projekten, válts Accept Edits-re — sokkal gördülékenyebb.</div>`
+    },
+    terminalweb: {
+      tag: 'Elmetérkép', color: '#60a5fa', title: '⌨️ Terminál vs Web — mi a különbség?',
+      html: `
+        <p class="m-intro">Mindkettő ugyanaz a Claude Code, de máshol fut — és ez sok mindent eldönt.</p>
+        <h5>Terminál (CLI) — a te gépeden</h5>
+        <ol class="m-steps">
+          <li><strong>Helyi fájlok:</strong> azonnal látja és futtatja a projektedet, offline fejlesztésre is jó.</li>
+          <li><strong>Leggyorsabb iteráció:</strong> mentés → futtatás → javítás másodpercek alatt.</li>
+          <li><strong>Teljes kontroll:</strong> a te környezeted, a te eszközeid, MCP szerverekkel bővíthető.</li>
+        </ol>
+        <h5>Web (claude.ai/code) — a felhőben</h5>
+        <ol class="m-steps">
+          <li><strong>Semmit nem kell telepíteni:</strong> böngészőből — akár telefonról — indítod a GitHub repóidon.</li>
+          <li><strong>Párhuzamos munka:</strong> több munkamenet fut egyszerre, mindegyik saját branchen, PR-t készít.</li>
+          <li><strong>A géped pihen:</strong> hosszú feladatokat is nyugodtan rábízhatsz, közben mást csinálsz.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Ökölszabály</span>Napi aktív fejlesztés, helyi projekt → Terminál
+Több feladat egyszerre, útközben, GitHub repó → Web</div>`
+    },
+    /* --- munkafolyamat lépések --- */
+    terv: {
+      tag: 'Munkafolyamat · 1. lépés', color: '#7c6bff', title: '📋 Tervezés',
+      html: `
+        <p class="m-intro">Minden jó projekt egy világos céllal indul. Minél jobban átgondolod az elején, annál kevesebb kört futsz később.</p>
+        <ol class="m-steps">
+          <li><strong>Fogalmazd meg a célt:</strong> mit fog tudni a kész alkalmazás? Kinek készül?</li>
+          <li><strong>Bontsd kis feladatokra:</strong> „főoldal", „bejelentkezés", „adatmentés" — a Claude-nak is könnyebb egyszerre egy dolgot adni.</li>
+          <li><strong>Írd össze az elvárásokat:</strong> stílus, nyelv, milyen eszközökön fusson, mi NE legyen benne.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa nyitó prompt</span>&gt; "Receptgyűjtő webappot építek magamnak. Fő funkciók:
+recept hozzáadása, keresés, kedvencek. Egy HTML fájl,
+sötét glass stílus, magyar felület. Mi legyen a terv?"</div>`
+    },
+    plan: {
+      tag: 'Munkafolyamat · 2. lépés', color: '#f472b6', title: '🗺️ Plan mód — a terv jóváhagyása',
+      html: `
+        <p class="m-intro">Mielőtt a Claude kódolni kezdene, kérj tőle tervet plan módban — így nem lesz meglepetés.</p>
+        <ol class="m-steps">
+          <li><strong>Válts plan módba:</strong> <code>Shift+Tab</code> a CLI-ben.</li>
+          <li><strong>Add ki a feladatot:</strong> a Claude átnézi a meglévő kódot, és lépésenkénti tervet ír.</li>
+          <li><strong>Nézd át a tervet:</strong> jók a fájlok? Jó a sorrend? Ha igen, hagyd jóvá — ha nem, kérj módosítást.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Tipp</span>Kis feladatnál (egy gomb színe) felesleges a plan mód.
+Nagy feladatnál (új funkció, refaktor) szinte kötelező.</div>`
+    },
+    edit: {
+      tag: 'Munkafolyamat · 3. lépés', color: '#22d3ee', title: '✏️ Szerkesztés',
+      html: `
+        <p class="m-intro">A jóváhagyott terv alapján a Claude nekiáll: fájlokat hoz létre és módosít, te pedig követed a diffeket.</p>
+        <ol class="m-steps">
+          <li><strong>Figyeld a diffeket:</strong> minden módosítás látszik — zöld az új, piros a törölt sor.</li>
+          <li><strong>Gyorsíts Accept Edits móddal:</strong> ha megbízol a tervben, a fájlszerkesztéseket nem kell egyenként jóváhagynod.</li>
+          <li><strong>Szólj közbe bátran:</strong> bármikor megállíthatod és pontosíthatsz — „ez a gomb inkább zöld legyen".</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa közbeszólás</span>&gt; "A kereső mezőt tedd a fejlécbe, és adj hozzá
+törlés gombot is"</div>`
+    },
+    teszt: {
+      tag: 'Munkafolyamat · 4. lépés', color: '#34d399', title: '🧪 Tesztelés',
+      html: `
+        <p class="m-intro">A kész kód még nem kész munka — teszteld, mielőtt továbblépsz. A Claude ezt is elvégzi helyetted.</p>
+        <ol class="m-steps">
+          <li><strong>Kérd a tesztek futtatását:</strong> „futtasd a teszteket" — vagy webes projektnél „nyisd meg és ellenőrizd az oldalt".</li>
+          <li><strong>Kérj új teszteket:</strong> a fontos funkciókra írasson tesztet, ami később is védi a kódot.</li>
+          <li><strong>Nézd meg te is:</strong> a saját szemed a legjobb teszt — próbáld ki mobilon is!</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa</span>&gt; "Írj tesztet a recept-mentés funkcióra, futtasd le,
+és mutasd meg az eredményt"</div>`
+    },
+    javit: {
+      tag: 'Munkafolyamat · 5. lépés', color: '#f59e0b', title: '🔧 Javítás',
+      html: `
+        <p class="m-intro">Hiba mindig lesz — a kérdés csak az, milyen gyorsan találod meg. A Claude-dal: nagyon gyorsan.</p>
+        <ol class="m-steps">
+          <li><strong>Másold be a hibaüzenetet</strong> vagy csatolj képernyőképet — a Claude érti mindkettőt.</li>
+          <li><strong>Hagyd iterálni:</strong> „javítsd, amíg minden teszt zöld nem lesz" — magától dolgozik, amíg kész nincs.</li>
+          <li><strong>Kérdezz rá az okra:</strong> „miért történt ez?" — így legközelebb te is felismered.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa</span>&gt; "Mobilon nem nyílik ki a menü — itt egy képernyőkép.
+Találd meg az okát és javítsd!"</div>`
+    },
+    commit: {
+      tag: 'Munkafolyamat · 6. lépés', color: '#7c6bff', title: '📤 Commit & Push',
+      html: `
+        <p class="m-intro">Mentsd el a kész munkát a git történetbe — a Claude az egész git munkafolyamatot ismeri.</p>
+        <ol class="m-steps">
+          <li><strong>Dolgozz külön branchen:</strong> „hozz létre feature branchet" — így a fő ág mindig stabil marad.</li>
+          <li><strong>Kérd a commitot:</strong> „commitold érthető üzenettel és pushold" — a Claude összefoglalja, mi változott.</li>
+          <li><strong>Nyiss PR-t:</strong> ha kéred, pull requestet is készít, leírással együtt — te csak átnézed és merge-ölöd.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa</span>&gt; "Commitold a változásokat, pushold, és nyiss PR-t
+rövid magyar leírással"</div>`
+    },
+    bizt: {
+      tag: 'Munkafolyamat · 7. lépés', color: '#f472b6', title: '🛡️ Biztonság',
+      html: `
+        <p class="m-intro">Mielőtt bárki más is használná az alkalmazást, ellenőrizd a biztonságát — ebben is segít a Claude.</p>
+        <ol class="m-steps">
+          <li><strong>Futtass biztonsági átnézést:</strong> a <code>/security-review</code> paranccsal a Claude átvizsgálja a kódot sérülékenységek után.</li>
+          <li><strong>Titkok a kódon kívül:</strong> jelszó, API kulcs soha ne kerüljön a kódba — <code>.env</code> fájlba, ami a <code>.gitignore</code>-ban van.</li>
+          <li><strong>Ellenőrizd a bemeneteket:</strong> minden felhasználói adatot (űrlap, URL) validálni kell — kérd meg rá a Claude-ot.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa</span>&gt; "/security-review — és magyarázd el magyarul,
+mit találtál és mit javítottál"</div>`
+    },
+    opt: {
+      tag: 'Munkafolyamat · 8. lépés', color: '#34d399', title: '⚡ Optimalizálás',
+      html: `
+        <p class="m-intro">A működő alkalmazásból csinálj gyors alkalmazást — a felhasználók (és a Google) meghálálják.</p>
+        <ol class="m-steps">
+          <li><strong>Mérd meg:</strong> kérd meg a Claude-ot, hogy elemezze a betöltési időt és a szűk keresztmetszeteket.</li>
+          <li><strong>Csökkentsd a terhet:</strong> képek tömörítése, felesleges kód törlése, mobilon kisebb blur effektek — mint ezen az oldalon!</li>
+          <li><strong>Finomhangold az élményt:</strong> animációk GPU-gyorsítása (<code>will-change</code>), lusta betöltés, gyors első kirajzolás.</li>
+        </ol>
+        <div class="m-ex"><span class="lbl">Példa</span>&gt; "Elemezd az oldal teljesítményét mobilon, és
+javasolj 3 gyorsítást — aztán csináld is meg"</div>`
+    }
+  };
+
+  const modalWrap = $('#modalWrap');
+  let lastFocus = null;
+  function openModal(key) {
+    const d = INFO[key];
+    if (!d) return;
+    lastFocus = document.activeElement;
+    $('#modalTag').textContent = d.tag;
+    $('#modalTag').style.color = d.color;
+    $('#modalTag').style.borderColor = d.color;
+    $('#modalTitle').textContent = d.title;
+    $('#modalBody').innerHTML = d.html;
+    modalWrap.classList.add('show');
+    body.style.overflow = 'hidden';
+    $('#modalClose').focus();
+  }
+  function closeModal() {
+    modalWrap.classList.remove('show');
+    body.style.overflow = '';
+    if (lastFocus) lastFocus.focus();
+  }
+  $('#modalClose').addEventListener('click', closeModal);
+  modalWrap.addEventListener('click', (e) => { if (e.target === modalWrap) closeModal(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (modalWrap.classList.contains('show')) closeModal();
+    else closeSidebar();
+  });
+
+  /* Elmetérkép kattintás */
+  $$('.mm-node').forEach((n) => {
+    n.addEventListener('click', () => openModal(n.dataset.key));
+  });
+
+  /* ===== Munkafolyamat animáció ===== */
+  const FLOW_DESC = {
+    terv:   '<strong>Tervezés:</strong> írd le, mit akarsz építeni, és bontsd kis feladatokra.',
+    plan:   '<strong>Plan mód:</strong> a Claude tervet készít — te jóváhagyod, mielőtt kódolna.',
+    edit:   '<strong>Szerkesztés:</strong> a Claude módosítja a fájlokat, te követed a diffeket.',
+    teszt:  '<strong>Tesztelés:</strong> tesztek futtatása és a működés ellenőrzése.',
+    javit:  '<strong>Javítás:</strong> hibaüzenet vagy képernyőkép alapján iterál, amíg zöld nem lesz.',
+    commit: '<strong>Commit &amp; Push:</strong> feature branch, érthető commit üzenet, PR nyitás.',
+    bizt:   '<strong>Biztonság:</strong> /security-review, titkok .env-ben, bemenetek validálása.',
+    opt:    '<strong>Optimalizálás:</strong> mérés, tömörítés, GPU-gyorsítás, gyors betöltés.'
+  };
+  const fsteps = $$('.fstep');
+  const flowDesc = $('#flowDesc');
+  const flowProgress = $('#flowProgress');
+  let flowIdx = 0;
+  let flowTimer = null;
+  function flowShow(i) {
+    flowIdx = i;
+    fsteps.forEach((s, j) => s.classList.toggle('on', j === i));
+    flowProgress.style.width = (fsteps.length > 1 ? (i / (fsteps.length - 1)) * 100 : 0) + '%';
+    flowDesc.innerHTML = FLOW_DESC[fsteps[i].dataset.key];
+  }
+  function flowPlay() {
+    if (flowTimer || reducedMotion) return;
+    flowTimer = setInterval(() => flowShow((flowIdx + 1) % fsteps.length), 1600);
+  }
+  function flowPause() { clearInterval(flowTimer); flowTimer = null; }
+  fsteps.forEach((s, i) => s.addEventListener('click', () => {
+    flowPause();
+    flowShow(i);
+    openModal(s.dataset.key);
+    setTimeout(flowPlay, 12000);
+  }));
+  flowShow(0);
+  const flowObs = new IntersectionObserver((entries) => {
+    entries.forEach((en) => en.isIntersecting ? flowPlay() : flowPause());
+  }, { threshold: 0.3 });
+  flowObs.observe($('#flowSteps'));
+
+  /* ===== Prompt animáció ===== */
+  const PROMPT_SEGS = [
+    { t: 'Készíts egy reszponzív receptgyűjtő oldalt ', k: 'cel' },
+    { t: 'a projekt receptek.html fájljába. ', k: 'kontextus' },
+    { t: 'Sötét glassmorphism stílus, magyar felület, mobilra optimalizálva. ', k: 'elvaras' },
+    { t: 'Legyen benne: keresőmező, recept kártyák képpel, kedvencek gomb. ', k: 'pelda' },
+    { t: 'Ne használj külső könyvtárat — minden egyetlen fájlban legyen!', k: 'korlat' }
+  ];
+  const pdText = $('#pdText');
+  const pdDone = $('#pdDone');
+  const pdItems = {};
+  $$('.pd-item').forEach((el) => { pdItems[el.dataset.k] = el; });
+  let pdRunId = 0;
+  function pdReset() {
+    pdText.innerHTML = '';
+    pdDone.classList.remove('show');
+    Object.values(pdItems).forEach((el) => el.classList.remove('done'));
+  }
+  async function pdPlay() {
+    const run = ++pdRunId;
+    pdReset();
+    if (reducedMotion) {
+      PROMPT_SEGS.forEach((seg) => {
+        const sp = document.createElement('span');
+        sp.className = 'seg-' + seg.k;
+        sp.textContent = seg.t;
+        pdText.appendChild(sp);
+        pdItems[seg.k].classList.add('done');
+      });
+      pdDone.classList.add('show');
+      return;
+    }
+    for (const seg of PROMPT_SEGS) {
+      const sp = document.createElement('span');
+      sp.className = 'seg-' + seg.k;
+      pdText.appendChild(sp);
+      for (const ch of seg.t) {
+        if (run !== pdRunId) return;
+        sp.textContent += ch;
+        await new Promise((r) => setTimeout(r, 26));
+      }
+      pdItems[seg.k].classList.add('done');
+      await new Promise((r) => setTimeout(r, 350));
+    }
+    if (run !== pdRunId) return;
+    pdDone.classList.add('show');
+    setTimeout(() => { if (run === pdRunId) pdPlay(); }, 7000);
+  }
+  $('#pdReplay').addEventListener('click', pdPlay);
+  let pdStarted = false;
+  const pdObs = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (en.isIntersecting && !pdStarted) { pdStarted = true; pdPlay(); }
+    });
+  }, { threshold: 0.3 });
+  pdObs.observe($('.pd-term'));
 
   /* ===== Kód másolása ===== */
   const copyBtn = $('#copyBtn');
