@@ -1,0 +1,149 @@
+package com.nutriplan.app.presentation.nutrition
+
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nutriplan.app.R
+import com.nutriplan.app.domain.model.WeekDay
+import com.nutriplan.app.presentation.components.EmptyState
+import com.nutriplan.app.presentation.components.NutritionSummary
+import com.nutriplan.app.presentation.components.ScreenTitle
+import com.nutriplan.app.presentation.util.label
+
+/**
+ * Tápérték képernyő – heti összesítés és napi bontás.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    Scaffold(
+        topBar = { TopAppBar(title = { ScreenTitle(stringResource(R.string.nutrition_title)) }) }
+    ) { padding ->
+        if (!state.hasData) {
+            EmptyState(
+                message = stringResource(R.string.no_nutrition_data),
+                modifier = Modifier.padding(padding)
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Heti összesítő kártya
+                item(key = "week") {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = stringResource(R.string.weekly_totals),
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                            NutritionSummary(totals = state.weekTotals)
+                            // Heti cél = napi cél × 7
+                            CalorieGoalProgress(
+                                consumed = state.weekTotals.calories,
+                                goal = state.calorieGoal * 7
+                            )
+                        }
+                    }
+                }
+
+                // Napi bontás fejléc
+                item(key = "daily_header") {
+                    Text(
+                        text = stringResource(R.string.daily_breakdown),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+
+                // Napi kártyák
+                items(
+                    count = WeekDay.entries.size,
+                    key = { WeekDay.entries[it].key }
+                ) { index ->
+                    val day = WeekDay.entries[index]
+                    val totals = state.dayTotals[day] ?: return@items
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = day.label(),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            NutritionSummary(totals = totals)
+                            CalorieGoalProgress(
+                                consumed = totals.calories,
+                                goal = state.calorieGoal
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Kalóriacél haladásjelző: színes csík + szöveges állapot (hátralévő / cél felett).
+ * Ha nincs cél beállítva (0), nem jelenik meg semmi.
+ */
+@Composable
+private fun CalorieGoalProgress(consumed: Int, goal: Int) {
+    if (goal <= 0) return
+    val fraction = (consumed.toFloat() / goal).coerceIn(0f, 1f)
+    val animated by animateFloatAsState(targetValue = fraction, label = "goalProgress")
+    val over = consumed > goal
+    val barColor = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+
+    Column(modifier = Modifier.padding(top = 12.dp)) {
+        LinearProgressIndicator(
+            progress = { animated },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(RoundedCornerShape(4.dp)),
+            color = barColor,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+        Text(
+            text = stringResource(R.string.goal_progress, consumed, goal) + " · " + when {
+                over -> stringResource(R.string.kcal_over_goal, consumed - goal)
+                consumed == goal -> stringResource(R.string.goal_reached)
+                else -> stringResource(R.string.kcal_remaining, goal - consumed)
+            },
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+    }
+}

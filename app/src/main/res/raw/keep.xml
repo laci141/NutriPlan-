@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A recept- és hozzávaló-neveket dinamikusan (getIdentifier) hivatkozzuk a fordításhoz,
+  ezért az erőforrás-zsugorítónak (shrinkResources) meg kell tartania ezeket a string-eket.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@string/rcp_*,@string/ing_*" />

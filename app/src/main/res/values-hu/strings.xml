@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NutriPlan</string>
+
+    <!-- Navigáció -->
+    <string name="nav_planner">Tervező</string>
+    <string name="nav_recipes">Receptek</string>
+    <string name="nav_shopping">Bevásárlás</string>
+    <string name="nav_nutrition">Tápérték</string>
+    <string name="nav_settings">Beállítás</string>
+
+    <!-- Étkezések -->
+    <string name="meal_breakfast">Reggeli</string>
+    <string name="meal_morning_snack">Tízórai</string>
+    <string name="meal_lunch">Ebéd</string>
+    <string name="meal_afternoon_snack">Uzsonna</string>
+    <string name="meal_dinner">Vacsora</string>
+
+    <!-- Napok -->
+    <string name="day_monday">Hétfő</string>
+    <string name="day_tuesday">Kedd</string>
+    <string name="day_wednesday">Szerda</string>
+    <string name="day_thursday">Csütörtök</string>
+    <string name="day_friday">Péntek</string>
+    <string name="day_saturday">Szombat</string>
+    <string name="day_sunday">Vasárnap</string>
+
+    <!-- Mértékegységek -->
+    <string name="unit_g">g</string>
+    <string name="unit_kg">kg</string>
+    <string name="unit_ml">ml</string>
+    <string name="unit_l">l</string>
+    <string name="unit_piece">db</string>
+
+    <!-- Kategóriák -->
+    <string name="cat_vegetables">Zöldségek</string>
+    <string name="cat_fruits">Gyümölcsök</string>
+    <string name="cat_meat">Húsok</string>
+    <string name="cat_fish">Halak</string>
+    <string name="cat_dairy">Tejtermékek</string>
+    <string name="cat_bakery">Pékáruk</string>
+    <string name="cat_dry_goods">Száraz áruk</string>
+    <string name="cat_nuts">Olajos magvak</string>
+    <string name="cat_other">Egyéb</string>
+
+    <!-- Receptek -->
+    <string name="recipes_title">Receptek</string>
+    <string name="search_hint">Receptek keresése…</string>
+    <string name="add_recipe">Recept hozzáadása</string>
+    <string name="edit_recipe">Recept szerkesztése</string>
+    <string name="new_recipe">Új recept</string>
+    <string name="delete_recipe">Recept törlése</string>
+    <string name="no_recipes">Még nincs recept. Koppints a + gombra egy hozzáadásához.</string>
+    <string name="recipe_name">Recept neve</string>
+    <string name="calories">Kalória</string>
+    <string name="protein">Fehérje</string>
+    <string name="carbs">Szénhidrát</string>
+    <string name="fat">Zsír</string>
+    <string name="ingredients">Hozzávalók</string>
+    <string name="add_ingredient">Hozzávaló hozzáadása</string>
+    <string name="ingredient_name">Hozzávaló neve</string>
+    <string name="quantity">Mennyiség</string>
+    <string name="unit">Mértékegység</string>
+    <string name="category">Kategória</string>
+    <string name="meal_type">Étkezés típusa</string>
+    <string name="kcal_unit">kcal</string>
+
+    <!-- Tervező -->
+    <string name="planner_title">Heti tervező</string>
+    <string name="clear_week">Hét törlése</string>
+    <string name="add_meal">Hozzáad</string>
+    <string name="select_recipe">Recept kiválasztása</string>
+    <string name="no_recipes_for_meal">Nincs elérhető recept ehhez az étkezéshez.</string>
+    <string name="day_total">Napi összesen</string>
+
+    <!-- Bevásárlás -->
+    <string name="shopping_title">Bevásárlólista</string>
+    <string name="generate_list">Generálás a tervből</string>
+    <string name="clear_purchased">Megvettek törlése</string>
+    <string name="clear_all">Összes törlése</string>
+    <string name="empty_shopping">A bevásárlólista üres. Generáld a heti tervből.</string>
+    <string name="shopping_generated">Bevásárlólista elkészült: %1$d tétel</string>
+
+    <!-- Tápérték -->
+    <string name="nutrition_title">Tápérték</string>
+    <string name="weekly_totals">Heti összesen</string>
+    <string name="daily_breakdown">Napi bontás</string>
+    <string name="no_nutrition_data">Még nincs betervezett étkezés.</string>
+
+    <!-- Beállítások -->
+    <string name="settings_title">Beállítások</string>
+    <string name="language">Nyelv</string>
+    <string name="theme">Téma</string>
+    <string name="theme_light">Világos</string>
+    <string name="theme_dark">Sötét</string>
+    <string name="theme_system">Rendszer szerinti</string>
+    <string name="lang_hungarian">Magyar</string>
+    <string name="lang_english">Angol</string>
+    <string name="lang_romanian">Román</string>
+    <string name="export_data">Adatok exportálása (JSON)</string>
+    <string name="import_data">Adatok importálása (JSON)</string>
+    <string name="data_management">Adatkezelés</string>
+    <string name="export_success">Exportálás kész</string>
+    <string name="import_success">Importálás kész</string>
+    <string name="import_error">Sikertelen importálás. Hibás fájl.</string>
+    <string name="export_error">Sikertelen exportálás.</string>
+    <string name="about">Névjegy</string>
+    <string name="about_text">NutriPlan – offline étkezéstervező. Verzió: 1.0.0</string>
+    <string name="daily_calorie_goal">Napi kalóriacél</string>
+    <string name="calorie_goal_summary">A Tápérték képernyőn a napi haladásod követésére használjuk.</string>
+
+    <!-- Kalóriacél haladás -->
+    <string name="goal_progress">%1$d / %2$d kcal</string>
+    <string name="kcal_remaining">még %1$d kcal</string>
+    <string name="kcal_over_goal">%1$d kcal a cél felett</string>
+    <string name="goal_reached">Cél elérve</string>
+
+    <!-- Kezdőlap (Dashboard) -->
+    <string name="nav_dashboard">Kezdőlap</string>
+    <string name="greeting_morning">Jó reggelt! Készen állsz egy egészséges reggelire?</string>
+    <string name="greeting_afternoon">Szép napot! Csak így tovább.</string>
+    <string name="greeting_evening">Szép munka mára! Ne felejtsd el beírni a vacsorát.</string>
+    <string name="dashboard_calories_today">Mai kalória</string>
+    <string name="dashboard_macros">Makrók</string>
+    <string name="dashboard_water">Víz</string>
+    <string name="dashboard_steps">Lépések</string>
+    <string name="water_add">+250 ml</string>
+    <string name="ml_progress">%1$d / %2$d ml</string>
+    <string name="steps_progress">%1$d / %2$d</string>
+    <string name="enable">Bekapcsolás</string>
+    <string name="left_short">még %1$d</string>
+
+    <!-- Wearable (okosóra) szinkron a Health Connecten keresztül -->
+    <string name="wearable_connect">Óra csatlakoztatása</string>
+    <string name="wearable_source">Óra</string>
+    <string name="heart_rate">Pulzus</string>
+    <string name="heart_rate_bpm">%1$d bpm</string>
+
+    <!-- Biztonság / alkalmazászár -->
+    <string name="security">Biztonság</string>
+    <string name="app_lock">Alkalmazászár</string>
+    <string name="app_lock_summary">Ujjlenyomat vagy PIN szükséges az app megnyitásához.</string>
+    <string name="app_lock_prompt">Azonosítsd magad a NutriPlan megnyitásához</string>
+    <string name="app_locked">A NutriPlan zárolva van</string>
+    <string name="unlock">Feloldás</string>
+    <!-- PIN-zár -->
+    <string name="set_pin">PIN beállítása</string>
+    <string name="change_pin">PIN módosítása</string>
+    <string name="remove_pin">PIN törlése</string>
+    <string name="pin_label">PIN (4–8 számjegy)</string>
+    <string name="pin_confirm_label">PIN megerősítése</string>
+    <string name="enter_pin">Add meg a PIN-kódot</string>
+    <string name="wrong_pin">Hibás PIN</string>
+    <string name="pin_mismatch">A két PIN nem egyezik</string>
+    <string name="pin_too_short">A PIN legalább 4 számjegy legyen</string>
+    <string name="use_biometric">Inkább ujjlenyomattal</string>
+    <string name="pin_set_summary">A PIN be van állítva – ujjlenyomat nélkül is működik.</string>
+    <string name="pin_not_set_summary">Állíts be PIN-t, hogy ujjlenyomat nélkül is fel tudd oldani.</string>
+
+    <!-- Recept-fotó és elkészítés -->
+    <string name="recipe_image">Recept fotó</string>
+    <string name="take_photo">Fotó</string>
+    <string name="choose_gallery">Galéria</string>
+    <string name="remove_image">Fotó eltávolítása</string>
+    <string name="instructions">Elkészítés</string>
+    <string name="instructions_hint">Hogyan készül…</string>
+
+    <!-- Nap másolása -->
+    <string name="copy_day">Nap másolása</string>
+    <string name="copy_to_all_days">Másolás minden napra</string>
+
+    <!-- Kedvencek, rendezés, megosztás -->
+    <string name="favorite">Kedvenc</string>
+    <string name="favorites">Kedvencek</string>
+    <string name="sort_by_name">Név</string>
+    <string name="sort_by_calories">Kalória</string>
+    <string name="share_list">Lista megosztása</string>
+
+    <!-- Általános -->
+    <string name="save">Mentés</string>
+    <string name="cancel">Mégse</string>
+    <string name="close">Bezárás</string>
+    <string name="delete">Törlés</string>
+    <string name="ok">Rendben</string>
+
+    <!-- Vonalkód-olvasó -->
+    <string name="scan_barcode">Vonalkód beolvasása</string>
+    <string name="scan_hint">Irányítsd a kamerát a termék vonalkódjára</string>
+    <string name="scan_success">Termék megtalálva – tápérték kitöltve (100 g-ra)</string>
+    <string name="scan_not_found">A termék nem található az adatbázisban</string>
+    <string name="scan_error">Nincs kapcsolat. Ellenőrizd az internetet, és próbáld újra</string>
+    <string name="confirm">Megerősítés</string>
+    <string name="field_required">Ez a mező kötelező</string>
+    <string name="delete_confirm_title">Törlés megerősítése</string>
+    <string name="delete_recipe_message">Biztosan törlöd ezt a receptet?</string>
+    <string name="clear_week_message">Eltávolítod az összes hozzárendelést a heti tervből?</string>
+    <string name="clear_all_message">Törlöd a teljes bevásárlólistát?</string>
+    <string name="remove">Eltávolítás</string>
+
+    <!-- Alapreceptek nevei (fordítható) -->
+    <string name="rcp_b1">Zabkása áfonyával</string>
+    <string name="rcp_b2">Zöldséges omlett</string>
+    <string name="rcp_b3">Görög joghurt</string>
+    <string name="rcp_b4">Túrókrém</string>
+    <string name="rcp_b5">Avokádós tojáskrém</string>
+    <string name="rcp_b6">Cottage cheese paradicsommal</string>
+    <string name="rcp_b7">Csirkés tortilla</string>
+    <string name="rcp_b8">Chia puding</string>
+    <string name="rcp_b9">Skyr almával</string>
+    <string name="rcp_b10">Tonhalkrémes szendvics</string>
+    <string name="rcp_ms1">Alma mandulával</string>
+    <string name="rcp_ms2">Banán dióval</string>
+    <string name="rcp_ms3">Körte tökmaggal</string>
+    <string name="rcp_ms4">Joghurt</string>
+    <string name="rcp_ms5">Skyr</string>
+    <string name="rcp_ms6">Humusz sárgarépával</string>
+    <string name="rcp_ms7">Paprika</string>
+    <string name="rcp_ms8">Cottage cheese uborkával</string>
+    <string name="rcp_ms9">Narancs</string>
+    <string name="rcp_ms10">Bogyós gyümölcs</string>
+    <string name="rcp_l1">Csirkemell barna rizzsel</string>
+    <string name="rcp_l2">Lazac salátával</string>
+    <string name="rcp_l3">Pulykamell bulgurral</string>
+    <string name="rcp_l4">Csirkemell vegyes zöldséggel</string>
+    <string name="rcp_l5">Lencse tojással</string>
+    <string name="rcp_l6">Tonhalsaláta</string>
+    <string name="rcp_l7">Marhahús zöldséggel</string>
+    <string name="rcp_l8">Csicseriborsó rizzsel</string>
+    <string name="rcp_l9">Brokkoli darált hússal</string>
+    <string name="rcp_l10">Csirkemell paradicsommal és uborkával</string>
+    <string name="rcp_as1">Alma dióval</string>
+    <string name="rcp_as2">Kefir</string>
+    <string name="rcp_as3">Skyr</string>
+    <string name="rcp_as4">Cottage cheese</string>
+    <string name="rcp_as5">Körte</string>
+    <string name="rcp_as6">Teljes kiőrlésű keksz</string>
+    <string name="rcp_as7">Mandula</string>
+    <string name="rcp_as8">Popcorn</string>
+    <string name="rcp_as9">Bogyós gyümölcs</string>
+    <string name="rcp_as10">Humusz uborkával</string>
+    <string name="rcp_d1">Paradicsomos-uborkás feta saláta</string>
+    <string name="rcp_d2">Tonhal salátával</string>
+    <string name="rcp_d3">Tojás kenyérrel</string>
+    <string name="rcp_d4">Cottage cheese paprikával</string>
+    <string name="rcp_d5">Pulykamell salátával</string>
+    <string name="rcp_d6">Zöldségleves</string>
+    <string name="rcp_d7">Lazac salátával</string>
+    <string name="rcp_d8">Csirkemell tortillával</string>
+    <string name="rcp_d9">Cottage cheese paprikával és uborkával</string>
+    <string name="rcp_d10">Mozzarella paradicsommal</string>
+
+    <!-- Alaphozzávalók nevei (fordítható) -->
+    <string name="ing_oats">Zabpehely</string>
+    <string name="ing_milk">Tej</string>
+    <string name="ing_blueberry">Áfonya</string>
+    <string name="ing_walnut">Dió</string>
+    <string name="ing_egg">Tojás</string>
+    <string name="ing_bell_pepper">Paprika</string>
+    <string name="ing_tomato">Paradicsom</string>
+    <string name="ing_wholegrain_bread">Teljes kiőrlésű kenyér</string>
+    <string name="ing_greek_yogurt">Görög joghurt</string>
+    <string name="ing_honey">Méz</string>
+    <string name="ing_quark">Túró</string>
+    <string name="ing_cottage_cheese">Cottage cheese</string>
+    <string name="ing_avocado">Avokádó</string>
+    <string name="ing_chicken_breast">Csirkemell</string>
+    <string name="ing_tortilla">Tortilla</string>
+    <string name="ing_lettuce">Saláta</string>
+    <string name="ing_chia">Chia mag</string>
+    <string name="ing_banana">Banán</string>
+    <string name="ing_skyr">Skyr</string>
+    <string name="ing_apple">Alma</string>
+    <string name="ing_tuna">Tonhal</string>
+    <string name="ing_bread">Kenyér</string>
+    <string name="ing_cucumber">Uborka</string>
+    <string name="ing_almond">Mandula</string>
+    <string name="ing_pumpkin_seed">Tökmag</string>
+    <string name="ing_yogurt">Joghurt</string>
+    <string name="ing_hummus">Humusz</string>
+    <string name="ing_carrot">Sárgarépa</string>
+    <string name="ing_orange">Narancs</string>
+    <string name="ing_berries">Bogyós gyümölcs</string>
+    <string name="ing_brown_rice">Barna rizs</string>
+    <string name="ing_broccoli">Brokkoli</string>
+    <string name="ing_salmon">Lazac</string>
+    <string name="ing_turkey_breast">Pulykamell</string>
+    <string name="ing_bulgur">Bulgur</string>
+    <string name="ing_mixed_vegetables">Vegyes zöldség</string>
+    <string name="ing_lentils">Lencse</string>
+    <string name="ing_beef">Marhahús</string>
+    <string name="ing_vegetables">Zöldség</string>
+    <string name="ing_chickpeas">Csicseriborsó</string>
+    <string name="ing_rice">Rizs</string>
+    <string name="ing_minced_meat">Darált hús</string>
+    <string name="ing_sour_cream">Tejföl</string>
+    <string name="ing_kefir">Kefir</string>
+    <string name="ing_wholegrain_biscuit">Teljes kiőrlésű keksz</string>
+    <string name="ing_popcorn">Popcorn</string>
+    <string name="ing_feta">Feta</string>
+    <string name="ing_vegetable_soup">Zöldségleves</string>
+    <string name="ing_mozzarella">Mozzarella</string>
+    <string name="ing_pear">Körte</string>
+
+    <!-- Új funkciók: auto-terv, recept-megosztás, makrók, dinamikus szín -->
+    <string name="share">Megosztás</string>
+    <string name="auto_plan">Heti terv automatikusan</string>
+    <string name="plan_generated">Auto-terv kész: %1$d étkezés</string>
+    <string name="plan_no_recipes">Előbb adj hozzá recepteket a tervhez</string>
+    <string name="import_recipe">Recept importálása</string>
+    <string name="recipe_import_ok">Recept importálva</string>
+    <string name="recipe_import_fail">A recept nem importálható</string>
+    <string name="dynamic_color">Dinamikus színek</string>
+    <string name="dynamic_color_summary">A háttérkép színeit használja (Android 12+).</string>
+    <string name="macro_goals">Makró-célok (g)</string>
+    <string name="macro_goals_summary">Hagyd üresen az automatikus értékhez (a kalóriacélból).</string>
+    <string name="macro_auto">Auto</string>
+
+    <!-- Étkezés-napló -->
+    <string name="streak_days">%1$d napos sorozat</string>
+    <string name="food_log_title">Mai napló</string>
+    <string name="food_log_empty">Ma még nincs naplózva semmi.</string>
+    <string name="log_food">Étel naplózása</string>
+    <string name="food_name">Étel neve</string>
+    <string name="grams">Mennyiség (g)</string>
+
+    <!-- Heti diagram és testsúly -->
+    <string name="weekly_calories">Heti kalória</string>
+    <!-- Heti összefoglaló -->
+    <string name="weekly_insights">Heti összefoglaló</string>
+    <string name="insight_days_logged">Naplózott napok</string>
+    <string name="insight_days_value">%1$d / 7</string>
+    <string name="insight_avg_calories">Átlag kalória/nap</string>
+    <string name="insight_kcal_value">%1$d kcal</string>
+    <string name="insight_avg_protein">Átlag fehérje/nap</string>
+    <string name="insight_gram_value">%1$d g</string>
+    <string name="insight_top_food">Leggyakoribb étel</string>
+    <!-- Hangulat-napló -->
+    <string name="mood_title">Hangulat</string>
+    <string name="mood_prompt">Hogy érzed magad ma?</string>
+    <!-- Sorozat és jelvények -->
+    <string name="streak_badges_title">Sorozat és jelvények</string>
+    <string name="streak_current">%1$d napos sorozat</string>
+    <string name="streak_best">Leghosszabb: %1$d nap</string>
+    <string name="badge_streak_3">3 napos</string>
+    <string name="badge_streak_7">7 napos</string>
+    <string name="badge_streak_14">14 napos</string>
+    <string name="badge_streak_30">30 napos</string>
+    <string name="badge_first_log">Első napló</string>
+    <string name="badge_log_30_days">30 nap naplózva</string>
+    <string name="badge_weight_tracker">Súlykövető</string>
+    <!-- AI étel-fotó felismerés -->
+    <string name="ai_photo_recognize">AI fotó-felismerés</string>
+    <string name="ai_photo_hint">Irányítsd az ételre és fotózz</string>
+    <string name="ai_photo_capture">Fotózás</string>
+    <string name="ai_photo_loading">Étel felismerése…</string>
+    <string name="ai_photo_error">Nem sikerült felismerni az ételt. Próbáld újra.</string>
+    <string name="weight_title">Testsúly</string>
+    <string name="weight_add">Testsúly hozzáadása</string>
+    <string name="weight_hint">Adj meg legalább két mérést a trendhez.</string>
+
+    <!-- Szinkron & AI (saját kulccsal) -->
+    <string name="sync_ai">Szinkron &amp; AI (kísérleti)</string>
+    <string name="sync_ai_enable">Szinkron &amp; AI bekapcsolása</string>
+    <string name="sync_ai_summary">Saját fiók/kulcs használata a felhő-szinkronhoz és az AI-funkciókhoz.</string>
+    <string name="sync_provider">Szolgáltató (pl. Drive, WebDAV, OpenAI…)</string>
+    <string name="api_key">API-kulcs / token</string>
+    <string name="clear_key">Kulcs törlése</string>
+    <string name="sync_key_set">Van eltárolt kulcs (titkosítva).</string>
+    <string name="sync_key_none">Még nincs eltárolt kulcs.</string>
+    <string name="sync_ai_note">Az eszközön titkosítva tárolva (Keystore), és sosem kerül a mentésbe. A tényleges szinkron/AI még véglegesítés alatt.</string>
+    <string name="servings">Adagok</string>
+
+    <!-- AI providers (proxy) -->
+    <string name="ai_providers">AI szolgáltatók</string>
+    <string name="ai_enable">AI funkciók bekapcsolása</string>
+    <string name="ai_summary">Kösd be a saját Cloudflare Worker proxydat (a kulcsok a szerveren maradnak).</string>
+    <string name="proxy_url">Proxy URL</string>
+    <string name="proxy_token">App-token</string>
+    <string name="clear_token">Token törlése</string>
+    <string name="token_set">Token eltárolva (titkosítva).</string>
+    <string name="token_none">Még nincs token.</string>
+    <string name="providers">Szolgáltatók</string>
+    <string name="test_connection">Teszt</string>
+    <string name="ai_suggest">AI étrend-ötlet</string>
+    <string name="ai_working">Folyamatban…</string>
+    <string name="ai_note">Az URL + token titkosítva tárolva (Keystore), az app-zár védi. A szolgáltató-kulcsok csak a Workereden vannak.</string>
+
+    <!-- Dashboard UI extras -->
+    <string name="tab_daily">Mai</string>
+    <string name="tab_weekly">Heti</string>
+    <string name="weight_previous">Előző</string>
+    <string name="date_today">Ma</string>
+    <string name="date_yesterday">Tegnap</string>
+
+    <!-- Mikrotápanyagok -->
+    <string name="micro_nutrients">Mikrotápanyagok</string>
+    <string name="fiber">Rostanyag</string>
+    <string name="vitamin_c">C-vitamin</string>
+    <string name="iron">Vas</string>
+    <string name="calcium">Kalcium</string>
+    <string name="vitamin_d">D-vitamin</string>
+    <string name="vitamin_b12">B12-vitamin</string>
+    <string name="magnesium">Magnézium</string>
+
+    <!-- Helyi ételadatbázis -->
+    <string name="local_foods">Helyi ételek (HU/RO)</string>
+    <string name="search_foods">Helyi ételek keresése…</string>
+
+    <!-- Időszakos böjt időzítő -->
+    <string name="fasting_title">Böjt-időzítő (16:8)</string>
+    <string name="fasting_idle">Nem böjtölsz — nyomj Start-ot egy 16 órás böjthöz</string>
+    <string name="fasting_active">Eltelt: %1$s · Hátralévő: %2$s</string>
+    <string name="fasting_complete">Böjt kész! Most megszakíthatod a böjtöt.</string>
+    <string name="fasting_start">Indítás</string>
+    <string name="fasting_stop">Leállítás</string>
+    <string name="fasting_window">Ablak: %1$s (időszakos böjt)</string>
+
+    <!-- Tápértékcserék -->
+    <string name="swap_food">Csere-javaslatok</string>
+    <string name="swap_desc">Hasonló fehérje/kalória arányú alternatívák a(z) "%1$s" helyett</string>
+
+    <!-- Hangnaplózás -->
+    <string name="voice_log">Hangnaplózás</string>
+
+    <!-- Szezonális ételek -->
+    <string name="seasonal_foods">Ez havi szezonális ételek</string>
+    <string name="seasonal_tip">Most idényben lévő friss termények</string>
+
+    <!-- Mértékegységek -->
+    <string name="units">Mértékegységek</string>
+    <string name="unit_mass">Testsúly</string>
+    <string name="unit_length">Magasság / hossz</string>
+    <string name="unit_mass_kg">Kilogramm (kg)</string>
+    <string name="unit_mass_lb">Font (lb)</string>
+    <string name="unit_length_cm">Centiméter (cm)</string>
+    <string name="unit_length_inch">Hüvelyk (in)</string>
+
+    <!-- Idény-régió -->
+    <string name="seasonal_region">Idény-régió</string>
+    <string name="seasonal_region_summary">Válaszd ki a régiódat a pontos idény-terményekhez.</string>
+    <string name="region_central_europe">Közép-Európa</string>
+    <string name="region_mediterranean">Mediterrán</string>
+    <string name="region_northern_europe">Észak-Európa</string>
+    <string name="region_north_america">Észak-Amerika</string>
+
+    <!-- Tányér-validátor -->
+    <string name="plate_composition">Tányér-egyensúly (cél 30/40/30)</string>
+</resources>

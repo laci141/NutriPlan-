@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Alkalmazás alapszínek (XML téma és launcher ikon háttér) -->
+    <color name="green_primary">#059669</color>
+    <color name="light_background">#F6F8F7</color>
+    <color name="dark_background">#12140F</color>
+    <color name="white">#FFFFFF</color>
+    <color name="ic_launcher_background">#059669</color>
+</resources>
